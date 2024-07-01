@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  web-unit-tests:
+  test:
     name: Test
     runs-on: ubuntu-latest
     steps:
