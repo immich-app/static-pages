@@ -9,6 +9,13 @@ jobs:
   checks:
     name: Deploy checks
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - app: my.immich.app
+            name: my-immich
+          - app: buy.immich.app
+            name: buy-immich
     outputs:
       parameters: ${{ steps.parameters.outputs.result }}
     steps:
@@ -106,7 +113,7 @@ jobs:
                run_id: context.payload.workflow_run.id,
             });
             let matchArtifact = allArtifacts.data.artifacts.filter((artifact) => {
-              return artifact.name == "build-output"
+              return artifact.name == "build-output-${{ matrix.name }}"
             })[0];
             let download = await github.rest.actions.downloadArtifact({
                owner: context.repo.owner,
@@ -122,7 +129,7 @@ jobs:
 
       - name: Deploy App
         env:
-          TF_VAR_prefix_name: ${{ steps.parameters.outputs.name}}
+          TF_VAR_prefix_name: ${{ steps.parameters.outputs.name }}
           TF_VAR_prefix_event_type: ${{ steps.parameters.outputs.event }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -137,7 +144,7 @@ jobs:
       - name: Deploy App Output
         id: terraform-output
         env:
-          TF_VAR_prefix_name: ${{ steps.parameters.outputs.name}}
+          TF_VAR_prefix_name: ${{ steps.parameters.outputs.name }}
           TF_VAR_prefix_event_type: ${{ steps.parameters.outputs.event }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
