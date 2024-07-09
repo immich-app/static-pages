@@ -1,7 +1,7 @@
 <script lang="ts">
   import { StorageKey } from '$lib';
   import type { PageData } from './$types';
-  import '/src/app.css';
+  import '$lib/app.css';
 
   export let data: PageData;
 

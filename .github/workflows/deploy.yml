@@ -9,6 +9,13 @@ jobs:
   checks:
     name: Deploy checks
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - app: my.immich.app
+            name: my-immich
+          - app: buy.immich.app
+            name: buy-immich
     outputs:
       parameters: ${{ steps.parameters.outputs.result }}
     steps:
@@ -106,7 +113,7 @@ jobs:
                run_id: context.payload.workflow_run.id,
             });
             let matchArtifact = allArtifacts.data.artifacts.filter((artifact) => {
-              return artifact.name == "build-output"
+              return artifact.name == "build-output-${{ matrix.name }}"
             })[0];
             let download = await github.rest.actions.downloadArtifact({
                owner: context.repo.owner,
@@ -122,8 +129,10 @@ jobs:
 
       - name: Deploy App
         env:
-          TF_VAR_prefix_name: ${{ steps.parameters.outputs.name}}
+          TF_VAR_prefix_name: ${{ steps.parameters.outputs.name }}
           TF_VAR_prefix_event_type: ${{ steps.parameters.outputs.event }}
+          TF_VAR_app_url: ${{ matrix.app }}
+          TF_VAR_app_name: ${{ matrix.name }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           TF_STATE_POSTGRES_CONN_STR: ${{ secrets.TF_STATE_POSTGRES_CONN_STR }}
@@ -131,14 +140,16 @@ jobs:
         with:
           tg_version: '0.58.12'
           tofu_version: '1.7.1'
-          tg_dir: 'deployment/modules/cloudflare/my-immich'
+          tg_dir: 'deployment/modules/cloudflare/static-pages'
           tg_command: 'apply'
 
       - name: Deploy App Output
         id: terraform-output
         env:
-          TF_VAR_prefix_name: ${{ steps.parameters.outputs.name}}
+          TF_VAR_prefix_name: ${{ steps.parameters.outputs.name }}
           TF_VAR_prefix_event_type: ${{ steps.parameters.outputs.event }}
+          TF_VAR_app_url: ${{ matrix.app }}
+          TF_VAR_app_name: ${{ matrix.name }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           TF_STATE_POSTGRES_CONN_STR: ${{ secrets.TF_STATE_POSTGRES_CONN_STR }}
@@ -146,7 +157,7 @@ jobs:
         with:
           tg_version: '0.58.12'
           tofu_version: '1.7.1'
-          tg_dir: 'deployment/modules/cloudflare/my-immich'
+          tg_dir: 'deployment/modules/cloudflare/static-pages'
           tg_command: 'output -json'
 
       - name: Output Cleaning
@@ -171,6 +182,6 @@ jobs:
         with:
           number: ${{ fromJson(needs.checks.outputs.parameters).pr_number }}
           body: |
-            📖 Preview of my.immich.app deployed to [${{ fromJson(steps.clean.outputs.output).immich_app_branch_subdomain.value }}](https://${{ fromJson(steps.clean.outputs.output).immich_app_branch_subdomain.value }})
+            📖 Preview of ${{ matrix.app }} deployed to [${{ fromJson(steps.clean.outputs.output).immich_app_branch_subdomain.value }}](https://${{ fromJson(steps.clean.outputs.output).immich_app_branch_subdomain.value }})
           emojis: 'rocket'
-          body-include: '<!-- Pages PR URL -->'
+          body-include: '<!-- ${{ matrix.app }} PR URL -->'

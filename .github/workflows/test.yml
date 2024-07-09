@@ -13,6 +13,10 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [my.immich.app, buy.immich.app]
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,6 +25,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
+
+      - name: Set app
+        run: |
+          touch .env
+          echo IMMICH_APP="${{ matrix.app }}" >> .env
 
       - name: Run npm install
         run: npm ci
