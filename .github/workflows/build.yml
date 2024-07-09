@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - app: my.immich-app
+          - app: my.immich.app
             name: my-immich
           - app: buy.immich.app
             name: buy-immich
