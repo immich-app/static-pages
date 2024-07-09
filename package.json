@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "dotenv -- vite dev",
-    "build": "dotenv -- vite build",
+    "build": "npm run sync && dotenv -- vite build",
     "preview": "dotenv -- vite preview",
     "check": "npm run sync && dotenv -- svelte-check --tsconfig ./tsconfig.json",
     "sync": "dotenv -- svelte-kit sync",
