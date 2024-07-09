@@ -12,6 +12,7 @@ include {
 
 locals {
   prefix_name = get_env("TF_VAR_prefix_name")
+  app_name = replace(get_env("TF_VAR_app_name"), "-", "_")
 }
 
 remote_state {
@@ -19,6 +20,6 @@ remote_state {
 
   config = {
     conn_str = get_env("TF_STATE_POSTGRES_CONN_STR")
-    schema_name = "prod_cloudflare_immich_app_my_immich_${local.prefix_name}"
+    schema_name = "prod_cloudflare_immich_app_${local.app_name}_${local.prefix_name}"
   }
 }

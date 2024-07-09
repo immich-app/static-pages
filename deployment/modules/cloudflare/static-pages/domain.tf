@@ -1,6 +1,6 @@
 resource "cloudflare_pages_domain" "immich_app_branch_domain" {
   account_id   = var.cloudflare_account_id
-  project_name = data.terraform_remote_state.cloudflare_account.outputs.my_immich_app_pages_project_name
+  project_name = data.terraform_remote_state.cloudflare_account.outputs.static_pages_project_names[var.app_url]
   domain       = local.domain
 }
 
@@ -9,7 +9,7 @@ resource "cloudflare_record" "immich_app_branch_subdomain" {
   proxied = true
   ttl     = 1
   type    = "CNAME"
-  value   = local.is_main ? data.terraform_remote_state.cloudflare_account.outputs.my_immich_app_pages_project_subdomain : "${replace(var.prefix_name, "/\\/|\\./", "-")}.${data.terraform_remote_state.cloudflare_account.outputs.my_immich_app_pages_project_subdomain}"
+  value   = local.is_main ? data.terraform_remote_state.cloudflare_account.outputs.static_pages_project_subdomains[var.app_url] : "${replace(var.prefix_name, "/\\/|\\./", "-")}.${data.terraform_remote_state.cloudflare_account.outputs.static_pages_project_subdomains[var.app_url]}"
   zone_id = data.terraform_remote_state.cloudflare_account.outputs.immich_app_zone_id
 }
 
