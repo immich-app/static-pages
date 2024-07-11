@@ -5,7 +5,7 @@
   import { mdiCheckCircleOutline, mdiServer, mdiAccount } from '@mdi/js';
 </script>
 
-<div class="w-full h-full md:max-w-[900px] overflow-auto dark:bg-immich-dark-bg px-4 py-10 sm:px-20 lg:p-10 m-auto">
+<div class="w-full h-full md:max-w-[900px] overflow-auto px-4 py-10 sm:px-20 lg:p-10 m-auto">
   <div class="m-auto">
     <h1 class="text-4xl font-bold text-immich-primary dark:text-immich-dark-primary tracking-wider">LICENSE</h1>
     <p class="text-lg mt-2 dark:text-immich-gray">Buy a license to support Immich</p>
