@@ -3,6 +3,26 @@
   import Button from '$lib/components/button.svelte';
   import Icon from '$lib/components/icon.svelte';
   import { mdiCheckCircleOutline, mdiServer, mdiAccount } from '@mdi/js';
+  import { onMount } from 'svelte';
+  import type { PageData } from './$types';
+
+  export let data: PageData;
+
+  const futoPayBase = new URL('https://futopay-test.azurewebsites.net/api/PaymentPortal');
+  const immichBuyBase = new URL('http://10.1.15.216:5173');
+
+  onMount(() => {
+    if (data.productId && data.instanceUrl) {
+      console.log('Navigating to FUTO Pay');
+
+      immichBuyBase.searchParams.append('instanceUrl', data.instanceUrl);
+
+      futoPayBase.searchParams.append('productId', data.productId);
+      futoPayBase.searchParams.append('success', immichBuyBase.href);
+
+      window.location.href = futoPayBase.href;
+    }
+  });
 </script>
 
 <div class="w-full h-full md:max-w-[900px] px-4 py-10 sm:px-20 lg:p-10 m-auto">
