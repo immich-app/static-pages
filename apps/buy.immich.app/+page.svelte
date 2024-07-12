@@ -8,7 +8,7 @@
 
   export let data: PageData;
 
-  const futoPayBase = new URL('https://futopay-test.azurewebsites.net/api/PaymentPortal');
+  const redirectUrl = FUTO_ROUTES.paymentPortal;
   const immichBuyBase = new URL('http://10.1.15.216:5173');
 
   onMount(() => {
@@ -17,10 +17,10 @@
 
       immichBuyBase.searchParams.append('instanceUrl', data.instanceUrl);
 
-      futoPayBase.searchParams.append('productId', data.productId);
-      futoPayBase.searchParams.append('success', immichBuyBase.href);
+      redirectUrl.searchParams.append('product', data.productId);
+      redirectUrl.searchParams.append('success', immichBuyBase.href);
 
-      window.location.href = futoPayBase.href;
+      window.location.href = redirectUrl.href;
     }
   });
 </script>
@@ -78,7 +78,7 @@
       >
         <div class="text-immich-primary dark:text-immich-dark-primary">
           <Icon path={mdiAccount} size="56" />
-          <p class="font-semibold text-lg mt-1">User License</p>
+          <p class="font-semibold text-lg mt-1">Individual License</p>
         </div>
 
         <div class="mt-4 dark:text-immich-gray">

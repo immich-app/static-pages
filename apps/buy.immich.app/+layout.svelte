@@ -1,7 +1,7 @@
 <script>
   import Icon from '$lib/components/icon.svelte';
   import { mdiGithub, mdiWeb } from '@mdi/js';
-
+  import '$lib/app.css';
   // document.documentElement.classList.add('dark');
 </script>
 
