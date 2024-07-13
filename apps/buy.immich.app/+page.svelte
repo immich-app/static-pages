@@ -5,6 +5,7 @@
   import { mdiCheckCircleOutline, mdiServer, mdiAccount } from '@mdi/js';
   import { onMount } from 'svelte';
   import type { PageData } from './$types';
+  import { FUTO_ROUTES } from '$lib/utils/endpoints';
 
   export let data: PageData;
 

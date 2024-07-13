@@ -1,8 +1,11 @@
 <script lang="ts">
+  import Icon from '$lib/components/icon.svelte';
   import LoadingSpinner from '$lib/components/loading-spinner.svelte';
   import { FUTO_ROUTES } from '$lib/utils/endpoints';
+  import { mdiCheckCircleOutline } from '@mdi/js';
   import type { PageData } from '../$types';
   import { onMount } from 'svelte';
+  import { fade } from 'svelte/transition';
 
   enum PurchaseStatus {
     Pending = -1,
@@ -21,7 +24,8 @@
   let paymentStatus: PurchaseStatus = PurchaseStatus.Unknown;
   let setIntervalHandler: number;
   let setTimeoutHandler: number;
-  let licenseKey: string;
+  let activationKey: string;
+  let redirectUrl: URL;
 
   onMount(() => {
     if (data.orderId && data.instanceUrl) {
@@ -51,10 +55,10 @@
       const data = (await status.json()) as PaymentStatusResponseDto;
 
       if (data.status === PurchaseStatus.Succeeded && data.purchaseId) {
-        licenseKey = data.purchaseId;
+        const licenseKey = data.purchaseId;
         paymentStatus = data.status;
         clearTimers();
-        await getActivationKey(data.purchaseId);
+        await getActivationKey(licenseKey);
       }
 
       if (data.status === PurchaseStatus.Failed) {
@@ -72,10 +76,17 @@
     const status = await fetch(new URL(licenkeyKey, FUTO_ROUTES.getActivationKey));
 
     if (status.ok) {
-      const data = await status.text();
-
-      console.log('activation key', data);
+      activationKey = await status.text();
+      redirect(licenkeyKey, activationKey);
     }
+  };
+
+  const redirect = (licenkeyKey: string, activiationKey: string) => {
+    redirectUrl = new URL('/buy', data.instanceUrl);
+    redirectUrl.searchParams.append('licenseKey', licenkeyKey);
+    redirectUrl.searchParams.append('activationKey', activiationKey);
+
+    window.location.href = redirectUrl.href;
   };
 </script>
 
@@ -108,17 +119,41 @@
   </section>
 
   <section class="mt-10">
-    {#if paymentStatus === PurchaseStatus.Unknown}
-      <div class="flex gap-4 flex-col place-content-center place-items-center text-center mt-4 justify-between">
-        <LoadingSpinner />
-        <p>Fetching purchase status</p>
-      </div>
-    {/if}
+    <div
+      class="flex gap-4 flex-col place-content-center place-items-center text-center mt-4 justify-between relative border p-10 rounded-3xl immich-gradient"
+    >
+      <div class="absolute -top-[24px] left-[calc(50%-24px)]">
+        {#if paymentStatus === PurchaseStatus.Unknown}
+          <div class="bg-immich-bg rounded-full p-1">
+            <LoadingSpinner size="48" />
+          </div>
+        {/if}
 
-    {#if paymentStatus === PurchaseStatus.Succeeded}
-      <div class="flex gap-4 flex-col place-content-center place-items-center text-center mt-4 justify-between">
-        <p>License Key: {licenseKey}</p>
+        {#if paymentStatus === PurchaseStatus.Succeeded}
+          <div in:fade={{ duration: 200 }}>
+            <Icon path={mdiCheckCircleOutline} size="48" class="text-white rounded-full bg-immich-primary" />
+          </div>
+        {/if}
       </div>
-    {/if}
+
+      {#if paymentStatus === PurchaseStatus.Unknown}
+        <p>Getting payment status</p>
+      {/if}
+
+      {#if paymentStatus === PurchaseStatus.Succeeded}
+        <p class="text-xl font-bold">Success</p>
+
+        <div class="flex gap-2 place-items-center place-content-center">
+          <LoadingSpinner />
+          <p>Redirecting back to your instance, click on the button below if you aren't navigated back</p>
+        </div>
+
+        <a href={redirectUrl?.href}>
+          <button class="mt-2 p-4 bg-immich-primary text-white rounded-lg dark:text-black dark:bg-immich-dark-primary"
+            >Activate your instance</button
+          >
+        </a>
+      {/if}
+    </div>
   </section>
 </div>
