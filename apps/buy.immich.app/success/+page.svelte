@@ -55,10 +55,9 @@
       const data = (await status.json()) as PaymentStatusResponseDto;
 
       if (data.status === PurchaseStatus.Succeeded && data.purchaseId) {
-        const licenseKey = data.purchaseId;
         paymentStatus = data.status;
         clearTimers();
-        await getActivationKey(licenseKey);
+        redirect(data.purchaseId);
       }
 
       if (data.status === PurchaseStatus.Failed) {
@@ -72,21 +71,11 @@
     }
   };
 
-  const getActivationKey = async (licenkeyKey: string) => {
-    const status = await fetch(new URL(licenkeyKey, FUTO_ROUTES.getActivationKey));
-
-    if (status.ok) {
-      activationKey = await status.text();
-      redirect(licenkeyKey, activationKey);
-    }
-  };
-
-  const redirect = (licenkeyKey: string, activiationKey: string) => {
+  const redirect = (licenkeyKey: string) => {
     redirectUrl = new URL('/buy', data.instanceUrl);
     redirectUrl.searchParams.append('licenseKey', licenkeyKey);
-    redirectUrl.searchParams.append('activationKey', activiationKey);
 
-    // window.location.href = redirectUrl.href;
+    window.location.href = redirectUrl.href;
   };
 </script>
 
