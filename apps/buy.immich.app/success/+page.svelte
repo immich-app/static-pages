@@ -24,7 +24,6 @@
   let paymentStatus: PurchaseStatus = PurchaseStatus.Unknown;
   let setIntervalHandler: number;
   let setTimeoutHandler: number;
-  let activationKey: string;
   let redirectUrl: URL;
 
   onMount(() => {
@@ -75,7 +74,9 @@
     redirectUrl = new URL('/buy', data.instanceUrl);
     redirectUrl.searchParams.append('licenseKey', licenkeyKey);
 
-    window.location.href = redirectUrl.href;
+    setTimeout(() => {
+      window.location.href = redirectUrl.href;
+    }, 2000);
   };
 </script>
 
