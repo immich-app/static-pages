@@ -86,7 +86,7 @@
     redirectUrl.searchParams.append('licenseKey', licenkeyKey);
     redirectUrl.searchParams.append('activationKey', activiationKey);
 
-    window.location.href = redirectUrl.href;
+    // window.location.href = redirectUrl.href;
   };
 </script>
 
@@ -120,11 +120,11 @@
 
   <section class="mt-10">
     <div
-      class="flex gap-4 flex-col place-content-center place-items-center text-center mt-4 justify-between relative border p-10 rounded-3xl immich-gradient"
+      class="flex gap-4 flex-col place-content-center place-items-center text-center mt-4 justify-between relative border p-10 rounded-3xl bg-gray-100"
     >
       <div class="absolute -top-[24px] left-[calc(50%-24px)]">
         {#if paymentStatus === PurchaseStatus.Unknown}
-          <div class="bg-immich-bg rounded-full p-1">
+          <div class="bg-immich-bg rounded-full p-1 border">
             <LoadingSpinner size="48" />
           </div>
         {/if}

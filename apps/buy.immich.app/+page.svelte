@@ -69,7 +69,10 @@
               <p class="self-center">License for all users on the server</p>
             </div>
           </div>
-          <Button fullwidth>Select</Button>
+
+          <a href={`${FUTO_ROUTES.paymentPortal}?product=immich-server`}>
+            <Button fullwidth>Select</Button>
+          </a>
         </div>
       </div>
 
@@ -100,9 +103,9 @@
             </div>
           </div>
 
-          <div>
+          <a href={`${FUTO_ROUTES.paymentPortal}?product=immich-client`}>
             <Button fullwidth>Select</Button>
-          </div>
+          </a>
         </div>
       </div>
     </div>
