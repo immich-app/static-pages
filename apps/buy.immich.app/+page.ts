@@ -14,7 +14,7 @@ export const load = (async ({ url }) => {
   const orderId = url.searchParams.get('orderId') as string;
 
   if (orderId && instanceUrl) {
-    // ?instanceUrl=http%3A%2F%2F10.1.15.216%3A2283&orderId=c945fba0-088b-479b-b6af-0ec23d632108
+    // http://10.1.15.216:5173/?instanceUrl=http%3A%2F%2F10.1.15.216%3A2283&orderId=c945fba0-088b-479b-b6af-0ec23d632108
 
     const successUrl = new URL(`/success`, url.href);
     successUrl.searchParams.append('instanceUrl', instanceUrl);
