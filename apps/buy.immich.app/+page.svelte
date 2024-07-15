@@ -11,7 +11,7 @@
   export let data: PageData;
 
   const redirectUrl = FUTO_ROUTES.paymentPortal;
-  const immichBuyBase = new URL('http://10.1.15.216:5173');
+  const immichBuyBase = new URL('https://buy.immich.app');
   const isRedirecting = data.productId && data.instanceUrl;
 
   onMount(() => {
