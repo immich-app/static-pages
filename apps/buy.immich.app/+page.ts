@@ -26,5 +26,6 @@ export const load = (async ({ url }) => {
   return {
     productId,
     instanceUrl,
+    orderId,
   };
 }) satisfies PageLoad;
