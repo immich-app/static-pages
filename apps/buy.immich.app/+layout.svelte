@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Icon from '$lib/components/icon.svelte';
   import { mdiGithub, mdiWeb } from '@mdi/js';
   import '$lib/app.css';

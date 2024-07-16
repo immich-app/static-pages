@@ -12,7 +12,7 @@
 
   const redirectUrl = FUTO_ROUTES.paymentPortal;
   const immichBuySuccess = new URL('https://buy.immich.app/success');
-  // const immichBuySuccess = new URL('http://10.1.15.216:5173/success');
+
   const isRedirecting = data.productId && data.instanceUrl;
 
   onMount(() => {
