@@ -5,24 +5,6 @@
   // document.documentElement.classList.add('dark');
 </script>
 
-<svelte:head>
-  <title>Immich - Purchase License</title>
-  <meta name="theme-color" content="currentColor" />
-  <meta name="description" content="Buy a license to support Immich" />
-
-  <!-- Facebook Meta Tags -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Immich Licenses" />
-  <meta property="og:description" content="Buy a license to support Immich" />
-  <meta property="og:image" content="/img/social-preview.png" />
-
-  <!-- Twitter Meta Tags -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Immich Licenses" />
-  <meta name="twitter:description" content="Buy a license to support Immich" />
-  <meta name="twitter:image" content="/img/social-preview.png" />
-</svelte:head>
-
 <section class="grid grid-rows-[auto_60px] h-auto lg:h-screen">
   <slot />
 

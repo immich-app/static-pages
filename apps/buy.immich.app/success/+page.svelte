@@ -3,9 +3,10 @@
   import LoadingSpinner from '$lib/components/loading-spinner.svelte';
   import { FUTO_ROUTES } from '$lib/utils/endpoints';
   import { mdiCheckCircleOutline } from '@mdi/js';
-  import type { PageData } from '../$types';
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
+
+  import type { PageData } from './$types';
 
   enum PurchaseStatus {
     Pending = -1,
@@ -65,7 +66,8 @@
       }
 
       if (data.status === PurchaseStatus.Pending) {
-        console.log('Purchase is still pending');
+        paymentStatus = data.status;
+        clearTimers();
       }
     }
   };
@@ -82,20 +84,6 @@
 
 <svelte:head>
   <title>Immich - Purchase Success</title>
-  <meta name="theme-color" content="currentColor" />
-  <meta name="description" content="Buy a license to support Immich" />
-
-  <!-- Facebook Meta Tags -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Immich Licenses" />
-  <meta property="og:description" content="Buy a license to support Immich" />
-  <meta property="og:image" content="/img/social-preview.png" />
-
-  <!-- Twitter Meta Tags -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Immich Licenses" />
-  <meta name="twitter:description" content="Buy a license to support Immich" />
-  <meta name="twitter:image" content="/img/social-preview.png" />
 </svelte:head>
 
 <div class="w-full h-full md:max-w-[900px] px-4 py-10 sm:px-20 lg:p-10 m-auto">
@@ -128,6 +116,10 @@
 
       {#if paymentStatus === PurchaseStatus.Unknown}
         <p>Getting payment status</p>
+      {/if}
+
+      {#if paymentStatus === PurchaseStatus.Pending}
+        <p>Purchase is still pending, please check your email after a few minutes for the license key</p>
       {/if}
 
       {#if paymentStatus === PurchaseStatus.Succeeded}

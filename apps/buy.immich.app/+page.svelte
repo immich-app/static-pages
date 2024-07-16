@@ -11,17 +11,16 @@
   export let data: PageData;
 
   const redirectUrl = FUTO_ROUTES.paymentPortal;
-  const immichBuyBase = new URL('https://buy.immich.app');
+  const immichBuySuccess = new URL('https://buy.immich.app/success');
+  // const immichBuySuccess = new URL('http://10.1.15.216:5173/success');
   const isRedirecting = data.productId && data.instanceUrl;
 
   onMount(() => {
     if (data.productId && data.instanceUrl) {
-      console.log('Navigating to FUTO Pay');
-
-      immichBuyBase.searchParams.append('instanceUrl', data.instanceUrl);
+      immichBuySuccess.searchParams.append('instanceUrl', data.instanceUrl);
 
       redirectUrl.searchParams.append('product', data.productId);
-      redirectUrl.searchParams.append('success', immichBuyBase.href);
+      redirectUrl.searchParams.append('success', immichBuySuccess.href);
 
       setTimeout(() => {
         window.location.href = redirectUrl.href;

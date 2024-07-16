@@ -1,3 +1,4 @@
+// const FUTO_BASE_URL = 'https://futopay-test.azurewebsites.net';
 const FUTO_BASE_URL = 'https://pay.futo.org';
 
 export const FUTO_ROUTES = {
