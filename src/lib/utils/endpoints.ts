@@ -14,7 +14,7 @@ export const getRedirectUrl = (productId: string, instanceUrl?: string): string 
     successUrl.searchParams.append('instanceUrl', instanceUrl);
   }
 
-  const redirectUrl = FUTO_ROUTES.paymentPortal;
+  const redirectUrl = new URL(FUTO_ROUTES.paymentPortal);
   redirectUrl.searchParams.append('product', productId);
   redirectUrl.searchParams.append('success', successUrl.href);
 
