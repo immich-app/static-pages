@@ -122,7 +122,10 @@
         <p>Getting payment status</p>
       {:else}
         {#if response.status === PurchaseStatus.Pending}
-          <p>Purchase is still pending, please check your email after a few minutes for the license key</p>
+          <p>
+            Purchase is still pending, please check your email after a few minutes for the license key. Payment can take
+            up to 48 hours in some cases, depending on payment provider
+          </p>
         {/if}
 
         {#if response.status === PurchaseStatus.Failed || response.status === PurchaseStatus.Unknown}
@@ -130,8 +133,6 @@
         {/if}
 
         {#if response.status === PurchaseStatus.Succeeded}
-          <p class="text-xl font-bold">Success</p>
-
           {#if response.purchaseId}
             {#if data.instanceUrl}
               <div class="flex gap-2 place-items-center place-content-center">
@@ -141,18 +142,20 @@
 
               <a href={getRedirectUrl(response.purchaseId, data.instanceUrl)}>
                 <button
-                  class="mt-2 p-4 bg-immich-primary text-white rounded-lg dark:text-black dark:bg-immich-dark-primary"
+                  class="mt-2 p-4 bg-immich-primary text-white rounded-full dark:text-black dark:bg-immich-dark-primary hover:shadow-xl"
                   >Activate your instance</button
                 >
               </a>
             {:else}
-              <p>License key: {response.purchaseId}</p>
+              <p class="text-lg font-bold">Your License Key</p>
+              <div class="bg-immich-primary/10 text-immich-primary py-4 px-8 rounded-lg">{response.purchaseId}</div>
               <a href={getRedirectUrl(response.purchaseId, 'https://my.immich.app')}>
                 <button
-                  class="mt-2 p-4 bg-immich-primary text-white rounded-lg dark:text-black dark:bg-immich-dark-primary"
+                  class="mt-2 p-4 bg-immich-primary text-white rounded-full dark:text-black dark:bg-immich-dark-primary hover:shadow-xl"
                   >Activate your instance</button
                 >
               </a>
+              <p class="text-sm mt-4">The license key is also sent to the email you provided</p>
             {/if}
           {/if}
         {/if}
