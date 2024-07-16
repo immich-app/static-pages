@@ -2,7 +2,7 @@
   import Icon from '$lib/components/icon.svelte';
   import LoadingSpinner from '$lib/components/loading-spinner.svelte';
   import { FUTO_ROUTES } from '$lib/utils/endpoints';
-  import { mdiCheckCircleOutline } from '@mdi/js';
+  import { mdiAlertCircleOutline, mdiCheckCircleOutline } from '@mdi/js';
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
 
@@ -21,23 +21,11 @@
   };
 
   export let data: PageData;
-
-  let paymentStatus: PurchaseStatus = PurchaseStatus.Unknown;
   let setIntervalHandler: number;
-  let setTimeoutHandler: number;
-  let redirectUrl: URL;
+  let isLoading = true;
+  let response: PaymentStatusResponseDto = { status: PurchaseStatus.Unknown };
 
   onMount(() => {
-    if (data.orderId && data.instanceUrl) {
-      setIntervalHandler = setInterval(() => {
-        getPurchaseStatus(data.orderId);
-      }, 5_000);
-
-      setTimeoutHandler = setTimeout(() => {
-        clearInterval(setIntervalHandler);
-      }, 30_000);
-    }
-
     return () => {
       clearTimers();
     };
@@ -45,41 +33,52 @@
 
   const clearTimers = () => {
     clearInterval(setIntervalHandler);
-    clearTimeout(setTimeoutHandler);
+  };
+
+  const getRedirectUrl = (licenseKey: string, instanceUrl: string) => {
+    const redirectUrl = new URL('/link?target=activate_license', instanceUrl);
+    redirectUrl.searchParams.append('licenseKey', licenseKey);
+
+    return redirectUrl.href;
   };
 
   const getPurchaseStatus = async (orderId: string) => {
     const status = await fetch(new URL(orderId, FUTO_ROUTES.getPaymentStatus));
 
-    if (status.ok) {
-      const data = (await status.json()) as PaymentStatusResponseDto;
+    if (!status.ok) {
+      return;
+    }
 
-      if (data.status === PurchaseStatus.Succeeded && data.purchaseId) {
-        paymentStatus = data.status;
-        clearTimers();
-        redirect(data.purchaseId);
-      }
+    response = (await status.json()) as PaymentStatusResponseDto;
 
-      if (data.status === PurchaseStatus.Failed) {
-        paymentStatus = data.status;
-        clearTimers();
-      }
+    switch (response.status) {
+      case PurchaseStatus.Failed:
+        isLoading = false;
+        break;
+      case PurchaseStatus.Succeeded:
+        isLoading = false;
+        if (data.instanceUrl && response.purchaseId) {
+          const url = getRedirectUrl(response.purchaseId, data.instanceUrl);
 
-      if (data.status === PurchaseStatus.Pending) {
-        paymentStatus = data.status;
-        clearTimers();
-      }
+          setTimeout(() => (window.location.href = url), 2000);
+        }
+        break;
+      default:
+        break;
     }
   };
 
-  const redirect = (licenkeyKey: string) => {
-    redirectUrl = new URL('/buy', data.instanceUrl);
-    redirectUrl.searchParams.append('licenseKey', licenkeyKey);
+  getPurchaseStatus(data.orderId);
 
-    setTimeout(() => {
-      window.location.href = redirectUrl.href;
-    }, 2000);
-  };
+  setIntervalHandler = setInterval(() => {
+    if (isLoading) {
+      getPurchaseStatus(data.orderId);
+    } else {
+      clearTimers();
+    }
+  }, 5_000);
+
+  setTimeout(() => (isLoading = false), 30_000);
 </script>
 
 <svelte:head>
@@ -101,40 +100,62 @@
       class="flex gap-4 flex-col place-content-center place-items-center text-center mt-4 justify-between relative border p-10 rounded-3xl bg-gray-100"
     >
       <div class="absolute -top-[24px] left-[calc(50%-24px)]">
-        {#if paymentStatus === PurchaseStatus.Unknown}
+        {#if isLoading}
           <div class="bg-immich-bg rounded-full p-1 border">
             <LoadingSpinner size="48" />
           </div>
-        {/if}
-
-        {#if paymentStatus === PurchaseStatus.Succeeded}
-          <div in:fade={{ duration: 200 }}>
-            <Icon path={mdiCheckCircleOutline} size="48" class="text-white rounded-full bg-immich-primary" />
-          </div>
+        {:else}
+          <!-- abc -->
+          {#if response.status === PurchaseStatus.Succeeded}
+            <div in:fade={{ duration: 200 }}>
+              <Icon path={mdiCheckCircleOutline} size="48" class="text-white rounded-full bg-immich-primary" />
+            </div>
+          {:else}
+            <div in:fade={{ duration: 200 }}>
+              <Icon path={mdiAlertCircleOutline} size="48" class="text-white rounded-full bg-red-500" />
+            </div>
+          {/if}
         {/if}
       </div>
 
-      {#if paymentStatus === PurchaseStatus.Unknown}
+      {#if isLoading}
         <p>Getting payment status</p>
-      {/if}
+      {:else}
+        {#if response.status === PurchaseStatus.Pending}
+          <p>Purchase is still pending, please check your email after a few minutes for the license key</p>
+        {/if}
 
-      {#if paymentStatus === PurchaseStatus.Pending}
-        <p>Purchase is still pending, please check your email after a few minutes for the license key</p>
-      {/if}
+        {#if response.status === PurchaseStatus.Failed || response.status === PurchaseStatus.Unknown}
+          <p>Fail to get payment status, please check your email for more details</p>
+        {/if}
 
-      {#if paymentStatus === PurchaseStatus.Succeeded}
-        <p class="text-xl font-bold">Success</p>
+        {#if response.status === PurchaseStatus.Succeeded}
+          <p class="text-xl font-bold">Success</p>
 
-        <div class="flex gap-2 place-items-center place-content-center">
-          <LoadingSpinner />
-          <p>Redirecting back to your instance, click on the button below if you aren't navigated back</p>
-        </div>
+          {#if response.purchaseId}
+            {#if data.instanceUrl}
+              <div class="flex gap-2 place-items-center place-content-center">
+                <LoadingSpinner />
+                <p>Redirecting back to your instance, click on the button below if you aren't navigated back</p>
+              </div>
 
-        <a href={redirectUrl?.href}>
-          <button class="mt-2 p-4 bg-immich-primary text-white rounded-lg dark:text-black dark:bg-immich-dark-primary"
-            >Activate your instance</button
-          >
-        </a>
+              <a href={getRedirectUrl(response.purchaseId, data.instanceUrl)}>
+                <button
+                  class="mt-2 p-4 bg-immich-primary text-white rounded-lg dark:text-black dark:bg-immich-dark-primary"
+                  >Activate your instance</button
+                >
+              </a>
+            {:else}
+              <p>License key: {response.purchaseId}</p>
+              <a href={getRedirectUrl(response.purchaseId, 'https://my.immich.app')}>
+                <button
+                  class="mt-2 p-4 bg-immich-primary text-white rounded-lg dark:text-black dark:bg-immich-dark-primary"
+                  >Activate your instance</button
+                >
+              </a>
+            {/if}
+          {/if}
+        {/if}
       {/if}
     </div>
   </section>
