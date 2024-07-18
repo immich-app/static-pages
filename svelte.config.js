@@ -20,6 +20,7 @@ const config = {
     }),
     files: {
       routes: `./apps/${app}`,
+      appTemplate: `./apps/${app}/app.html`,
     },
   },
 };
