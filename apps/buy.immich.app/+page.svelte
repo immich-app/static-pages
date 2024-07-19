@@ -3,7 +3,7 @@
   import Button from '$lib/components/button.svelte';
   import Icon from '$lib/components/icon.svelte';
   import { mdiCheckCircleOutline, mdiServer, mdiAccount } from '@mdi/js';
-  import { getRedirectUrl } from '$lib/utils/endpoints';
+  import { getCallbackUrl, ImmichLicense } from '$lib/utils/license';
 </script>
 
 <div class="w-full h-full md:max-w-[900px] px-4 py-10 sm:px-20 lg:p-10 m-auto">
@@ -50,7 +50,7 @@
             </div>
           </div>
 
-          <a href={getRedirectUrl('immich-server')}>
+          <a href={getCallbackUrl(ImmichLicense.Server)}>
             <Button fullwidth>Select</Button>
           </a>
         </div>
@@ -83,7 +83,7 @@
             </div>
           </div>
 
-          <a href={getRedirectUrl('immich-client')}>
+          <a href={getCallbackUrl(ImmichLicense.Individual)}>
             <Button fullwidth>Select</Button>
           </a>
         </div>
