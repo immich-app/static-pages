@@ -3,3 +3,5 @@
 export enum StorageKey {
   INSTANCE_URL = 'immich-instance-url',
 }
+
+export type Fetch = typeof fetch;
