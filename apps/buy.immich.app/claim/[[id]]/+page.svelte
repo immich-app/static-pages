@@ -25,8 +25,8 @@
       } else {
         errorMessage = error;
       }
-    } catch (error: Error | any) {
-      errorMessage = error?.message || String(error);
+    } catch (error: Error | unknown) {
+      errorMessage = error instanceof Error ? error?.message : String(error);
     }
   };
 </script>
