@@ -18,11 +18,15 @@
   }
 
   const handleLogin = async () => {
-    const { error, url } = await getAuthorizeUrl();
-    if (url) {
-      window.location.href = url;
-    } else {
-      errorMessage = error;
+    try {
+      const { error, url } = await getAuthorizeUrl();
+      if (url) {
+        window.location.href = url;
+      } else {
+        errorMessage = error;
+      }
+    } catch (error: Error | any) {
+      errorMessage = error?.message || String(error);
     }
   };
 </script>

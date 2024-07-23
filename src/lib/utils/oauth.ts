@@ -15,13 +15,17 @@ export type ClaimErrorResponseDto = {
 };
 
 export const getAuthorizeUrl = async () => {
-  const response = await fetch(new URL('/oauth/authorize', PUBLIC_IMMICH_API_HOST).href);
+  const response = await fetch(new URL('/oauth/authorize', PUBLIC_IMMICH_API_HOST).href, {
+    method: 'POST',
+    body: JSON.stringify({ redirectUri: window.location.origin + '/claim/callback' }),
+    headers: { 'Content-Type': 'application/json' },
+  });
   if (!response.ok) {
     return { error: 'Something went wrong' };
   }
 
   const { url } = await response.json();
-  return { url: url + '&redirect_uri=' + encodeURIComponent(window.location.origin + '/claim/callback') };
+  return { url };
 };
 
 export const callback = async (fetch: Fetch, url: string) => {
