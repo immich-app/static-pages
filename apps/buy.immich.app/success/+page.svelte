@@ -1,10 +1,9 @@
 <script lang="ts">
-  import Icon from '$lib/components/icon.svelte';
+  import Card from '$lib/components/card.svelte';
+  import LicenseKey from '$lib/components/license-key.svelte';
   import LoadingSpinner from '$lib/components/loading-spinner.svelte';
   import { getPaymentStatus, getRedirectUrl, PurchaseStatus, type PaymentStatusResponseDto } from '$lib/utils/license';
-  import { mdiAlertCircleOutline, mdiCheckCircleOutline } from '@mdi/js';
   import { onMount } from 'svelte';
-  import { fade } from 'svelte/transition';
   import type { PageData } from './$types';
 
   export let data: PageData;
@@ -71,28 +70,7 @@
   </section>
 
   <section class="mt-10">
-    <div
-      class="flex gap-4 flex-col place-content-center place-items-center text-center mt-4 justify-between relative border p-10 rounded-3xl bg-gray-100"
-    >
-      <div class="absolute -top-[24px] left-[calc(50%-24px)]">
-        {#if isLoading}
-          <div class="bg-immich-bg rounded-full p-1 border">
-            <LoadingSpinner size="48" />
-          </div>
-        {:else}
-          <!-- abc -->
-          {#if response.status === PurchaseStatus.Succeeded}
-            <div in:fade={{ duration: 200 }}>
-              <Icon path={mdiCheckCircleOutline} size="48" class="text-white rounded-full bg-immich-primary" />
-            </div>
-          {:else}
-            <div in:fade={{ duration: 200 }}>
-              <Icon path={mdiAlertCircleOutline} size="48" class="text-white rounded-full bg-red-500" />
-            </div>
-          {/if}
-        {/if}
-      </div>
-
+    <Card status={isLoading ? 'loading' : response.status === PurchaseStatus.Succeeded ? 'success' : 'error'}>
       {#if isLoading}
         <p>Getting payment status</p>
       {:else}
@@ -122,19 +100,12 @@
                 >
               </a>
             {:else}
-              <p class="text-lg font-bold">Your License Key</p>
-              <div class="bg-immich-primary/10 text-immich-primary py-4 px-8 rounded-lg">{response.purchaseId}</div>
-              <a href={getRedirectUrl(response.purchaseId, 'https://my.immich.app')}>
-                <button
-                  class="mt-2 p-4 bg-immich-primary text-white rounded-full dark:text-black dark:bg-immich-dark-primary hover:shadow-xl"
-                  >Activate your instance</button
-                >
-              </a>
+              <LicenseKey licenseKey={response.purchaseId} />
               <p class="text-sm mt-4">The license key is also sent to the email you provided</p>
             {/if}
           {/if}
         {/if}
       {/if}
-    </div>
+    </Card>
   </section>
 </div>
