@@ -62,7 +62,10 @@
 
       {#if response.licenses.length === 0}
         <Card status="error">
-          <p class="text-lg">Unfortunately, we did not find any licenses associated with your account.</p>
+          <p class="text-lg">
+            Unfortunately, we did not find any licenses associated with your account. If you think this is a mistake,
+            please send an email to <a href="mailto:claim@immich.app" class="underline">claim@immich.app</a>.
+          </p>
         </Card>
       {/if}
 
