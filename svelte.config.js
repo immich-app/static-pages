@@ -1,7 +1,12 @@
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import dotenv from 'dotenv';
 
-const app = process.env.IMMICH_APP;
+dotenv.config();
+
+process.env.PUBLIC_IMMICH_PAY_HOST = process.env.PUBLIC_IMMICH_PAY_HOST || 'https://pay.futo.org';
+
+const app = process.env.IMMICH_APP || 'my.immich.app';
 if (!app) {
   throw new Error('IMMICH_APP environment variable is required');
 }

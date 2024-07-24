@@ -1,55 +1,28 @@
 <script lang="ts">
   import Icon from '$lib/components/icon.svelte';
   import LoadingSpinner from '$lib/components/loading-spinner.svelte';
-  import { FUTO_ROUTES } from '$lib/utils/endpoints';
+  import { getPaymentStatus, getRedirectUrl, PurchaseStatus, type PaymentStatusResponseDto } from '$lib/utils/license';
   import { mdiAlertCircleOutline, mdiCheckCircleOutline } from '@mdi/js';
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
-
   import type { PageData } from './$types';
 
-  enum PurchaseStatus {
-    Pending = -1,
-    Failed = 0,
-    Succeeded = 1,
-    Unknown = 2,
-  }
-
-  type PaymentStatusResponseDto = {
-    status: PurchaseStatus;
-    purchaseId?: string; // License key
-  };
-
   export let data: PageData;
-  let setIntervalHandler: number;
+  let intervalId: ReturnType<typeof setInterval>;
   let isLoading = true;
   let response: PaymentStatusResponseDto = { status: PurchaseStatus.Unknown };
 
-  onMount(() => {
-    return () => {
-      clearTimers();
-    };
-  });
-
   const clearTimers = () => {
-    clearInterval(setIntervalHandler);
+    clearInterval(intervalId);
   };
 
-  const getRedirectUrl = (licenseKey: string, instanceUrl: string) => {
-    const redirectUrl = new URL('/link?target=activate_license', instanceUrl);
-    redirectUrl.searchParams.append('licenseKey', licenseKey);
-
-    return redirectUrl.href;
-  };
-
-  const getPurchaseStatus = async (orderId: string) => {
-    const status = await fetch(new URL(orderId, FUTO_ROUTES.getPaymentStatus));
-
-    if (!status.ok) {
+  const refresh = async (orderId: string) => {
+    const newResponse = await getPaymentStatus(orderId);
+    if (!newResponse) {
       return;
     }
 
-    response = (await status.json()) as PaymentStatusResponseDto;
+    response = newResponse;
 
     switch (response.status) {
       case PurchaseStatus.Failed:
@@ -59,7 +32,6 @@
         isLoading = false;
         if (data.instanceUrl && response.purchaseId) {
           const url = getRedirectUrl(response.purchaseId, data.instanceUrl);
-
           setTimeout(() => (window.location.href = url), 2000);
         }
         break;
@@ -68,17 +40,20 @@
     }
   };
 
-  getPurchaseStatus(data.orderId);
+  refresh(data.orderId);
+  setTimeout(() => (isLoading = false), 30_000);
 
-  setIntervalHandler = setInterval(() => {
+  intervalId = setInterval(() => {
     if (isLoading) {
-      getPurchaseStatus(data.orderId);
+      refresh(data.orderId);
     } else {
       clearTimers();
     }
   }, 5_000);
 
-  setTimeout(() => (isLoading = false), 30_000);
+  onMount(() => {
+    return () => clearTimers();
+  });
 </script>
 
 <svelte:head>
