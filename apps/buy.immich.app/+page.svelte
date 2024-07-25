@@ -9,7 +9,7 @@
 <div class="w-full h-full md:max-w-[900px] px-4 py-10 sm:px-20 lg:p-10 m-auto">
   <div class="m-auto">
     <section
-      class="flex flex-col justify-center place-items-center place-content-center border border-gray-300 dark:border-gray-800 rounded-3xl bg-gray-100 p-2"
+      class="flex flex-col justify-center place-items-center place-content-center border border-gray-300 dark:border-gray-800 rounded-3xl bg-gray-100 dark:bg-gray-900 p-2"
     >
       <img src="/img/immich-logo-inline-light.svg" class="h-24" alt="Immich logo" />
       <p class="md:max-w-[50%] text-center m-2 text-xl">Self-hosted photo and video management solution</p>
@@ -94,7 +94,7 @@
       </div>
     </section>
 
-    <div class="text-gray-800 dark:text-white my-4">
+    <div class="text-gray-800 dark:text-white my-10">
       <p>
         Building Immich takes a lot of time and effort, and we have full-time engineers working on it to make it as good
         as we possibly can.
