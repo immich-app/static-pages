@@ -14,7 +14,7 @@
       <div class="h-12 w-12">
         <img src={'/img/immich-logo.svg'} alt={'immich-logo'} class="shadow-lg rounded-full bg-white" />
       </div>
-      <p class="dark:text-gray-100 text-2xl font-medium text-immich-primary">Purchase immich</p>
+      <p class="dark:text-gray-100 text-2xl font-medium text-immich-primary">Purchase Immich</p>
     </div>
     <section class="mt-10">
       <div class="flex gap-6 mt-4 justify-between flex-wrap lg:flex-nowrap">
