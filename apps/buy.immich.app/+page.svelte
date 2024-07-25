@@ -16,11 +16,11 @@
       </div>
       <p class="dark:text-gray-100 text-2xl font-medium text-immich-primary">Purchase Immich</p>
     </div>
-    <section class="mt-10">
+    <section class="mt-6">
       <div class="flex gap-6 mt-4 justify-between flex-wrap lg:flex-nowrap">
         <!-- SERVER -->
         <div
-          class="border border-gray-300 dark:border-gray-800 w-full p-8 rounded-3xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20 transition-all"
+          class="border border-gray-300 dark:border-gray-800 w-full p-4 md:p-8 rounded-3xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20 transition-all"
         >
           <div class="hidden md:block text-immich-primary dark:text-immich-dark-primary">
             <Icon path={mdiServer} size="56" />
@@ -58,7 +58,7 @@
 
         <!-- INDIVIDUAL -->
         <div
-          class="border border-gray-300 dark:border-gray-800 w-full p-8 rounded-3xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20"
+          class="border border-gray-300 dark:border-gray-800 w-full p-4 md:p-8 rounded-3xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20"
         >
           <div class="hidden md:block text-immich-primary dark:text-immich-dark-primary">
             <Icon path={mdiAccount} size="56" />
