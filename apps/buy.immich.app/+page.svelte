@@ -8,13 +8,15 @@
 
 <div class="w-full h-full md:max-w-[900px] px-4 py-10 sm:px-20 lg:p-10 m-auto">
   <div class="m-auto">
-    <section
-      class="flex flex-col justify-center place-items-center place-content-center border border-gray-300 dark:border-gray-800 rounded-3xl bg-gray-100 dark:bg-gray-900 p-2"
+    <div
+      class="flex gap-4 mt-2 place-items-center dark:bg-immich-dark-primary/10 bg-gray-200/50 py-4 px-6 border supporter-effect transition-all"
     >
-      <img src="/img/immich-logo-inline-light.svg" class="h-24" alt="Immich logo" />
-      <p class="md:max-w-[50%] text-center m-2 text-xl">Self-hosted photo and video management solution</p>
-    </section>
-    <section class="mt-6">
+      <div class="h-12 w-12">
+        <img src={'/img/immich-logo.svg'} alt={'immich-logo'} class="shadow-lg rounded-full bg-white" />
+      </div>
+      <p class="dark:text-gray-100 text-2xl font-medium text-immich-primary">Purchase immich</p>
+    </div>
+    <section class="mt-10">
       <div class="flex gap-6 mt-4 justify-between flex-wrap lg:flex-nowrap">
         <!-- SERVER -->
         <div
@@ -112,3 +114,51 @@
     </div>
   </div>
 </div>
+
+<style>
+  /* Supporter Effect */
+  .supporter-effect {
+    position: relative;
+    border: 0px solid transparent;
+    background-clip: padding-box;
+    animation: gradient 10s ease infinite;
+    z-index: 1;
+    border-radius: 24px;
+    box-shadow:
+      rgba(0, 0, 0, 0.1) 0px 0px 5px 0px,
+      rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
+  }
+
+  .supporter-effect:after {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background: linear-gradient(
+      to right,
+      rgba(16, 132, 254, 0.15),
+      rgba(229, 125, 175, 0.15),
+      rgba(254, 36, 29, 0.15),
+      rgba(255, 183, 0, 0.15),
+      rgba(22, 193, 68, 0.15)
+    );
+    content: '';
+    border-radius: 24px;
+    animation: gradient 10s ease infinite;
+    background-size: 400% 400%;
+    z-index: -1;
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+</style>
