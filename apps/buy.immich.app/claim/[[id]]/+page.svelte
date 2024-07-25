@@ -72,7 +72,7 @@
       <div class="flex flex-col gap-2">
         {#each response.licenses as license (license.licenseKey)}
           <Card>
-            <LicenseKey licenseKey={license.licenseKey} />
+            <LicenseKey productKey={license.licenseKey} />
           </Card>
         {/each}
       </div>

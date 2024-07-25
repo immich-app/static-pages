@@ -1,15 +1,15 @@
 <script lang="ts">
   import { getRedirectUrl } from '$lib/utils/license';
 
-  export let licenseKey: string;
+  export let productKey: string;
 
   let clipboardStatus: 'success' | 'error' | undefined;
 
-  $: type = licenseKey.startsWith('IMSV-') ? 'Server' : 'User';
+  $: type = productKey.startsWith('IMSV-') ? 'Server' : 'User';
 
   const handleCopy = () => {
     try {
-      navigator.clipboard.writeText(licenseKey);
+      navigator.clipboard.writeText(productKey);
       clipboardStatus = 'success';
     } catch {
       clipboardStatus = 'error';
@@ -20,12 +20,12 @@
 </script>
 
 <div class="flex flex-col gap-2">
-  <p class="text-lg font-bold">{type} License Key</p>
+  <p class="text-lg font-bold">{type} Product Key</p>
   <div class="flex gap-1">
-    <div class="bg-immich-primary/10 text-immich-primary py-3 px-6 rounded-lg">{licenseKey}</div>
+    <div class="bg-immich-primary/10 text-immich-primary py-3 px-6 rounded-lg">{productKey}</div>
   </div>
   <div class="flex w-full gap-2 mt-2">
-    <a href={getRedirectUrl(licenseKey, 'https://my.immich.app')} class="w-full">
+    <a href={getRedirectUrl(productKey, 'https://my.immich.app')} class="w-full">
       <button
         type="button"
         class="px-4 py-3 text-white bg-immich-primary rounded-xl dark:text-black dark:bg-immich-dark-primary hover:shadow-xl w-full"
