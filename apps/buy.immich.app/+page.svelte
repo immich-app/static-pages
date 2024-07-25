@@ -11,6 +11,91 @@
     <h1 class="text-4xl font-bold text-immich-primary dark:text-immich-dark-primary tracking-wider">
       PURCHASE OPTIONS
     </h1>
+
+    <section class="flex justify-center mt-6">
+      <img src="/img/social-preview.png" alt="Sociel Preview" class="rounded-3xl" />
+    </section>
+
+    <section class="mt-10">
+      <div class="flex gap-6 mt-4 justify-between flex-wrap lg:flex-nowrap">
+        <!-- SERVER -->
+        <div
+          class="border border-gray-300 dark:border-gray-800 w-full p-8 rounded-3xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20 transition-all"
+        >
+          <div class="text-immich-primary dark:text-immich-dark-primary">
+            <Icon path={mdiServer} size="56" />
+            <p class="font-semibold text-lg mt-1">Server</p>
+          </div>
+
+          <div class="mt-4 dark:text-immich-gray">
+            <p class="text-6xl font-bold">$100</p>
+            <p>per server</p>
+          </div>
+
+          <div class="flex flex-col justify-between h-[200px] dark:text-immich-gray">
+            <div class="mt-6 flex flex-col gap-1">
+              <div class="grid grid-cols-[36px_auto]">
+                <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
+                <p class="self-center">For the whole server</p>
+              </div>
+
+              <div class="grid grid-cols-[36px_auto]">
+                <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
+                <p class="self-center">Lifetime purchase</p>
+              </div>
+
+              <div class="grid grid-cols-[36px_auto]">
+                <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
+                <p class="self-center">Supporter status</p>
+              </div>
+            </div>
+
+            <a href={getCallbackUrl(ImmichLicense.Server)}>
+              <Button fullwidth>Select</Button>
+            </a>
+          </div>
+        </div>
+
+        <!-- INDIVIDUAL -->
+        <div
+          class="border border-gray-300 dark:border-gray-800 w-full p-8 rounded-3xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20"
+        >
+          <div class="text-immich-primary dark:text-immich-dark-primary">
+            <Icon path={mdiAccount} size="56" />
+            <p class="font-semibold text-lg mt-1">Individual</p>
+          </div>
+
+          <div class="mt-4 dark:text-immich-gray">
+            <p class="text-6xl font-bold">$25</p>
+            <p>per user</p>
+          </div>
+
+          <div class="flex flex-col justify-between h-[200px] dark:text-immich-gray">
+            <div class="mt-6 flex flex-col gap-1">
+              <div class="grid grid-cols-[36px_auto]">
+                <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
+                <p class="self-center">For an individual</p>
+              </div>
+
+              <div class="grid grid-cols-[36px_auto]">
+                <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
+                <p class="self-center">Lifetime purchase</p>
+              </div>
+
+              <div class="grid grid-cols-[36px_auto]">
+                <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
+                <p class="self-center">Supporter status</p>
+              </div>
+            </div>
+
+            <a href={getCallbackUrl(ImmichLicense.Individual)}>
+              <Button fullwidth>Select</Button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <div class="text-gray-800 dark:text-white my-4">
       <p>
         Building Immich takes a lot of time and effort, and we have full-time engineers working on it to make it as good
@@ -28,88 +113,4 @@
       </p>
     </div>
   </div>
-
-  <section class="flex justify-center mt-6">
-    <img src="/img/social-preview.png" alt="Sociel Preview" class="rounded-3xl" />
-  </section>
-
-  <section class="mt-10">
-    <div class="flex gap-6 mt-4 justify-between flex-wrap lg:flex-nowrap">
-      <!-- SERVER -->
-      <div
-        class="border border-gray-300 dark:border-gray-800 w-full p-8 rounded-3xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20 transition-all"
-      >
-        <div class="text-immich-primary dark:text-immich-dark-primary">
-          <Icon path={mdiServer} size="56" />
-          <p class="font-semibold text-lg mt-1">Server</p>
-        </div>
-
-        <div class="mt-4 dark:text-immich-gray">
-          <p class="text-6xl font-bold">$100</p>
-          <p>per server</p>
-        </div>
-
-        <div class="flex flex-col justify-between h-[200px] dark:text-immich-gray">
-          <div class="mt-6 flex flex-col gap-1">
-            <div class="grid grid-cols-[36px_auto]">
-              <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-              <p class="self-center">For the whole server</p>
-            </div>
-
-            <div class="grid grid-cols-[36px_auto]">
-              <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-              <p class="self-center">Lifetime purchase</p>
-            </div>
-
-            <div class="grid grid-cols-[36px_auto]">
-              <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-              <p class="self-center">Supporter status</p>
-            </div>
-          </div>
-
-          <a href={getCallbackUrl(ImmichLicense.Server)}>
-            <Button fullwidth>Select</Button>
-          </a>
-        </div>
-      </div>
-
-      <!-- INDIVIDUAL -->
-      <div
-        class="border border-gray-300 dark:border-gray-800 w-full p-8 rounded-3xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20"
-      >
-        <div class="text-immich-primary dark:text-immich-dark-primary">
-          <Icon path={mdiAccount} size="56" />
-          <p class="font-semibold text-lg mt-1">Individual</p>
-        </div>
-
-        <div class="mt-4 dark:text-immich-gray">
-          <p class="text-6xl font-bold">$25</p>
-          <p>per user</p>
-        </div>
-
-        <div class="flex flex-col justify-between h-[200px] dark:text-immich-gray">
-          <div class="mt-6 flex flex-col gap-1">
-            <div class="grid grid-cols-[36px_auto]">
-              <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-              <p class="self-center">For an individual</p>
-            </div>
-
-            <div class="grid grid-cols-[36px_auto]">
-              <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-              <p class="self-center">Lifetime purchase</p>
-            </div>
-
-            <div class="grid grid-cols-[36px_auto]">
-              <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-              <p class="self-center">Supporter status</p>
-            </div>
-          </div>
-
-          <a href={getCallbackUrl(ImmichLicense.Individual)}>
-            <Button fullwidth>Select</Button>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
 </div>
