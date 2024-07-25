@@ -76,7 +76,7 @@
       {:else}
         {#if response.status === PurchaseStatus.Pending}
           <p>
-            Purchase is still pending, please check your email after a few minutes for the license key. Payment can take
+            Purchase is still pending, please check your email after a few minutes for the product key. Payment can take
             up to 48 hours in some cases, depending on payment provider
           </p>
         {/if}
@@ -100,8 +100,8 @@
                 >
               </a>
             {:else}
-              <LicenseKey licenseKey={response.purchaseId} />
-              <p class="text-sm mt-4">The license key is also sent to the email you provided</p>
+              <LicenseKey productKey={response.purchaseId} />
+              <p class="text-sm mt-4">The product key is also sent to the email you provided</p>
             {/if}
           {/if}
         {/if}
