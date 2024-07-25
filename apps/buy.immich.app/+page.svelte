@@ -8,21 +8,19 @@
 
 <div class="w-full h-full md:max-w-[900px] px-4 py-10 sm:px-20 lg:p-10 m-auto">
   <div class="m-auto">
-    <h1 class="text-4xl font-bold text-immich-primary dark:text-immich-dark-primary tracking-wider">
-      PURCHASE OPTIONS
-    </h1>
-
-    <section class="flex justify-center mt-6">
-      <img src="/img/social-preview.png" alt="Sociel Preview" class="rounded-3xl" />
+    <section
+      class="flex flex-col justify-center place-items-center place-content-center border border-gray-300 dark:border-gray-800 rounded-3xl bg-gray-100 p-2"
+    >
+      <img src="/img/immich-logo-inline-light.svg" class="h-24" alt="Immich logo" />
+      <p class="md:max-w-[50%] text-center m-2 text-xl">Self-hosted photo and video management solution</p>
     </section>
-
-    <section class="mt-10">
+    <section class="mt-6">
       <div class="flex gap-6 mt-4 justify-between flex-wrap lg:flex-nowrap">
         <!-- SERVER -->
         <div
           class="border border-gray-300 dark:border-gray-800 w-full p-8 rounded-3xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20 transition-all"
         >
-          <div class="text-immich-primary dark:text-immich-dark-primary">
+          <div class="hidden md:block text-immich-primary dark:text-immich-dark-primary">
             <Icon path={mdiServer} size="56" />
             <p class="font-semibold text-lg mt-1">Server</p>
           </div>
@@ -60,7 +58,7 @@
         <div
           class="border border-gray-300 dark:border-gray-800 w-full p-8 rounded-3xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20"
         >
-          <div class="text-immich-primary dark:text-immich-dark-primary">
+          <div class="hidden md:block text-immich-primary dark:text-immich-dark-primary">
             <Icon path={mdiAccount} size="56" />
             <p class="font-semibold text-lg mt-1">Individual</p>
           </div>
