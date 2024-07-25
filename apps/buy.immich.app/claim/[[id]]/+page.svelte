@@ -37,12 +37,10 @@
 
 <div class="w-full h-full md:max-w-[900px] px-4 py-10 sm:px-20 lg:p-10 m-auto">
   <div class="m-auto">
-    <h1 class="text-4xl font-bold text-immich-primary dark:text-immich-dark-primary tracking-wider">
-      CLAIM YOUR LICENSE
-    </h1>
+    <h1 class="text-4xl font-bold text-immich-primary dark:text-immich-dark-primary tracking-wider">CLAIM YOUR KEY</h1>
     <p class="text-left text-lg mt-2 dark:text-immich-gray">
-      If you previously supported Immich by sponsoring the project on GitHub, you are entitled to a free license. Login
-      below with your GitHub account to claim your license.
+      If you previously supported Immich by sponsoring the project on GitHub, you are entitled to a free product key.
+      Login below with your GitHub account to claim your key.
     </p>
   </div>
 
@@ -63,8 +61,8 @@
       {#if response.licenses.length === 0}
         <Card status="error">
           <p class="text-lg">
-            Unfortunately, we did not find any licenses associated with your account. If you think this is a mistake,
-            please send an email to <a href="mailto:claim@immich.app" class="underline">claim@immich.app</a>.
+            Unfortunately, we did not find any product keys associated with your account. If you think this is a
+            mistake, please send an email to <a href="mailto:claim@immich.app" class="underline">claim@immich.app</a>.
           </p>
         </Card>
       {/if}
