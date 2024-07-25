@@ -66,7 +66,7 @@
   </div>
 
   <section class="flex justify-center mt-6">
-    <img src="/img/social-preview.png" alt="Sociel Preview" class="rounded-3xl" />
+    <img src="/img/social-preview.webp" alt="Sociel Preview" class="rounded-3xl" />
   </section>
 
   <section class="mt-10">
