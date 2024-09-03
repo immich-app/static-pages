@@ -39,7 +39,7 @@
             aria-labelledby="instance-url-label"
             class="rounded-xl px-3 py-3 text-sm bg-gray-600 text-immich-dark-fg border-none outline-none"
             type="text"
-            placeholder="https://demo.immich.com/"
+            placeholder="https://demo.immich.app/"
             bind:value={instanceUrl}
             on:input={() => handleChange()}
             aria-label="Instance URL"
