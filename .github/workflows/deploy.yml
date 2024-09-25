@@ -16,6 +16,8 @@ jobs:
             name: my-immich
           - app: buy.immich.app
             name: buy-immich
+          - app: data.immich.app
+            name: data-immich
     outputs:
       parameters: ${{ steps.parameters.outputs.result }}
     steps:
@@ -91,6 +93,8 @@ jobs:
             name: my-immich
           - app: buy.immich.app
             name: buy-immich
+          - app: data.immich.app
+            name: data-immich
     if: ${{ fromJson(needs.checks.outputs.parameters).shouldDeploy }}
     steps:
       - name: Checkout code

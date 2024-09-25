@@ -22,6 +22,8 @@ jobs:
             name: my-immich
           - app: buy.immich.app
             name: buy-immich
+          - app: data.immich.app
+            name: data-immich
 
     steps:
       - name: Checkout code

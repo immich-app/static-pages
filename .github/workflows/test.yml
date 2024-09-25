@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app: [my.immich.app, buy.immich.app]
+        app: [my.immich.app, buy.immich.app, data.immich.app]
 
     steps:
       - name: Checkout code

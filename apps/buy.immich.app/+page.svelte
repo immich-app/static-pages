@@ -12,7 +12,7 @@
       class="flex gap-4 mt-2 place-items-center dark:bg-immich-dark-primary/10 bg-gray-200/50 py-4 px-6 border supporter-effect transition-all"
     >
       <div class="h-12 w-12">
-        <img src={'/img/immich-logo.svg'} alt={'immich-logo'} class="shadow-lg rounded-full bg-white" />
+        <img src="/img/immich-logo.svg" alt="immich-logo" class="shadow-lg rounded-full bg-white" />
       </div>
       <p class="dark:text-gray-100 text-2xl font-medium text-immich-primary">Purchase Immich</p>
     </div>

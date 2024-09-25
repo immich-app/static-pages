@@ -19,6 +19,7 @@
     "@sveltejs/kit": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^3.0.0",
     "@types/eslint": "^9.0.0",
+    "@types/luxon": "^3.4.2",
     "autoprefixer": "^10.4.19",
     "dotenv": "^16.4.5",
     "eslint": "^9.0.0",
@@ -39,6 +40,9 @@
   },
   "type": "module",
   "dependencies": {
-    "@mdi/js": "^7.4.47"
+    "@mdi/js": "^7.4.47",
+    "@unovis/svelte": "^1.4.3-beta.0",
+    "@unovis/ts": "^1.4.3-beta.0",
+    "luxon": "^3.5.0"
   }
 }
