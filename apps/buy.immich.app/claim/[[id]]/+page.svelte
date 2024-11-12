@@ -4,6 +4,7 @@
   import Icon from '$lib/components/icon.svelte';
   import LicenseKey from '$lib/components/license-key.svelte';
   import { getAuthorizeUrl } from '$lib/utils/oauth';
+  import { Button } from '@immich/ui';
   import { mdiGithub } from '@mdi/js';
   import type { PageData } from './$types';
 
@@ -81,15 +82,10 @@
     {:else}
       <Card status={errorMessage ? 'error' : undefined}>
         <div class="flex flex-col gap-2">
-          <a href={''}>
-            <button
-              onclick={handleLogin}
-              class="flex mt-2 items-center gap-2 text-lg p-2 w-full rounded-full text-white bg-black hover:shadow-xl"
-            >
-              <Icon path={mdiGithub} size="3em" />
-              <span class="pr-3"> Login with GitHub </span>
-            </button>
-          </a>
+          <Button onclick={handleLogin} color="secondary">
+            <Icon path={mdiGithub} size="2em" />
+            <span>Login with GitHub</span>
+          </Button>
           {#if errorMessage}
             <div class=" text-lg w-full p-4 rounded-lg">
               <p>{errorMessage}</p>

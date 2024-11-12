@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getRedirectUrl } from '$lib/utils/license';
+  import { Button } from '@immich/ui';
 
   interface Props {
     productKey: string;
@@ -29,16 +30,8 @@
     <div class="bg-immich-primary/10 text-immich-primary py-3 px-6 rounded-lg">{productKey}</div>
   </div>
   <div class="flex w-full gap-2 mt-2">
-    <a href={getRedirectUrl(productKey, 'https://my.immich.app')} class="w-full">
-      <button
-        type="button"
-        class="px-4 py-3 text-white bg-immich-primary rounded-xl dark:text-black dark:bg-immich-dark-primary hover:shadow-xl w-full"
-        >Activate</button
-      >
-    </a>
-    <button onclick={handleCopy} type="button" class="px-4 py-3 text-dark bg-gray-300 rounded-xl hover:shadow-xl w-full"
-      >Copy</button
-    >
+    <Button href={getRedirectUrl(productKey, 'https://my.immich.app')} fullWidth size="large">Activate</Button>
+    <Button onclick={handleCopy} fullWidth color="secondary" size="large">Copy</Button>
   </div>
 </div>
 {#if clipboardStatus === 'success'}

@@ -1,6 +1,6 @@
 <script lang="ts">
   import '$lib/app.css';
-  import Button from '$lib/components/button.svelte';
+  import { Button } from '@immich/ui';
   import Icon from '$lib/components/icon.svelte';
   import { mdiCheckCircleOutline, mdiServer, mdiAccount } from '@mdi/js';
   import { getCallbackUrl, ImmichLicense } from '$lib/utils/license';
@@ -9,7 +9,7 @@
 <div class="w-full h-full md:max-w-[900px] px-4 py-10 sm:px-20 lg:p-10 m-auto">
   <div class="m-auto">
     <div
-      class="flex gap-4 mt-2 place-items-center dark:bg-immich-dark-primary/10 bg-gray-200/50 py-4 px-6 border supporter-effect transition-all"
+      class="flex gap-4 mt-2 place-items-center dark:bg-immich-dark-primary/10 bg-gray-200/50 py-4 px-6 border rounded-lg overflow-hidden supporter-effect transition-all"
     >
       <div class="h-12 w-12">
         <img src={'/img/immich-logo.svg'} alt={'immich-logo'} class="shadow-lg rounded-full bg-white" />
@@ -20,7 +20,7 @@
       <div class="flex gap-6 mt-4 justify-between flex-wrap lg:flex-nowrap">
         <!-- SERVER -->
         <div
-          class="border border-gray-300 dark:border-gray-800 w-full p-4 md:p-8 rounded-3xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20 transition-all"
+          class="border border-gray-300 dark:border-gray-800 w-full p-4 md:p-8 rounded-lg bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20 transition-all"
         >
           <div class="hidden md:block text-immich-primary dark:text-immich-dark-primary">
             <Icon path={mdiServer} size="56" />
@@ -50,15 +50,13 @@
               </div>
             </div>
 
-            <a href={getCallbackUrl(ImmichLicense.Server)}>
-              <Button fullwidth>Select</Button>
-            </a>
+            <Button href={getCallbackUrl(ImmichLicense.Server)} fullWidth size="large">Select</Button>
           </div>
         </div>
 
         <!-- INDIVIDUAL -->
         <div
-          class="border border-gray-300 dark:border-gray-800 w-full p-4 md:p-8 rounded-3xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20"
+          class="border border-gray-300 dark:border-gray-800 w-full p-4 md:p-8 rounded-lg bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20"
         >
           <div class="hidden md:block text-immich-primary dark:text-immich-dark-primary">
             <Icon path={mdiAccount} size="56" />
@@ -88,9 +86,7 @@
               </div>
             </div>
 
-            <a href={getCallbackUrl(ImmichLicense.Individual)}>
-              <Button fullwidth>Select</Button>
-            </a>
+            <Button href={getCallbackUrl(ImmichLicense.Individual)} fullWidth size="large">Select</Button>
           </div>
         </div>
       </div>
@@ -123,7 +119,6 @@
     background-clip: padding-box;
     animation: gradient 10s ease infinite;
     z-index: 1;
-    border-radius: 24px;
     box-shadow:
       rgba(0, 0, 0, 0.1) 0px 0px 5px 0px,
       rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
@@ -144,7 +139,6 @@
       rgba(22, 193, 68, 0.15)
     );
     content: '';
-    border-radius: 24px;
     animation: gradient 10s ease infinite;
     background-size: 400% 400%;
     z-index: -1;
