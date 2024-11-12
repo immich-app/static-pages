@@ -1,13 +1,18 @@
 <script lang="ts">
+  import { preventDefault } from 'svelte/legacy';
   import { StorageKey } from '$lib';
   import type { PageData } from './$types';
   import '$lib/app.css';
 
-  export let data: PageData;
+  interface Props {
+    data: PageData;
+  }
+
+  let { data }: Props = $props();
 
   const targetUrl = data.targetUrl;
-  let instanceUrl = data.instanceUrl;
-  let saved = false;
+  let instanceUrl = $state(data.instanceUrl);
+  let saved = $state(false);
 
   const handleChange = () => (saved = false);
 
@@ -29,7 +34,7 @@
     <section>
       <h1 class="md:text-3xl mb-2 text-immich-dark-primary">My Immich</h1>
       <p class="mb-4">My Immich allows public links to link you to specific areas of your personal Immich instance.</p>
-      <form on:submit|preventDefault={handleSubmit}>
+      <form onsubmit={preventDefault(handleSubmit)}>
         <div class="mb-4 flex flex-col">
           <label id="instance-url-label" for="instance-url-input" class="font-medium immich-dark-fg mb-2">
             Instance URL
@@ -41,7 +46,7 @@
             type="text"
             placeholder="https://demo.immich.app/"
             bind:value={instanceUrl}
-            on:input={() => handleChange()}
+            oninput={() => handleChange()}
             aria-label="Instance URL"
           />
           <p class="mt-2 text-sm">Note: This URL is only stored in your browser.</p>

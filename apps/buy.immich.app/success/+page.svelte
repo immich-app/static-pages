@@ -6,10 +6,14 @@
   import { onMount } from 'svelte';
   import type { PageData } from './$types';
 
-  export let data: PageData;
+  interface Props {
+    data: PageData;
+  }
+
+  let { data }: Props = $props();
   let intervalId: ReturnType<typeof setInterval>;
-  let isLoading = true;
-  let response: PaymentStatusResponseDto = { status: PurchaseStatus.Unknown };
+  let isLoading = $state(true);
+  let response: PaymentStatusResponseDto = $state({ status: PurchaseStatus.Unknown });
 
   const clearTimers = () => {
     clearInterval(intervalId);

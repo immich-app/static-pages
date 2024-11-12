@@ -2,9 +2,15 @@
   import Icon from '$lib/components/icon.svelte';
   import LoadingSpinner from '$lib/components/loading-spinner.svelte';
   import { mdiAlertCircleOutline, mdiCheckCircleOutline } from '@mdi/js';
+  import type { Snippet } from 'svelte';
   import { fade } from 'svelte/transition';
 
-  export let status: 'loading' | 'success' | 'error' | undefined = undefined;
+  interface Props {
+    status?: 'loading' | 'success' | 'error' | undefined;
+    children?: Snippet;
+  }
+
+  let { status = undefined, children }: Props = $props();
 </script>
 
 <div
@@ -24,5 +30,5 @@
     {/if}
   </div>
 
-  <slot />
+  {@render children?.()}
 </div>

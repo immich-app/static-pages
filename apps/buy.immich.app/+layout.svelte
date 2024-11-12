@@ -1,12 +1,19 @@
 <script lang="ts">
   import Icon from '$lib/components/icon.svelte';
   import { mdiGithub, mdiWeb } from '@mdi/js';
+  import type { Snippet } from 'svelte';
   import '$lib/app.css';
+
+  interface Props {
+    children?: Snippet;
+  }
+
+  let { children }: Props = $props();
   // document.documentElement.classList.add('dark');
 </script>
 
 <section class="grid grid-rows-[auto_60px] h-auto lg:h-screen">
-  <slot />
+  {@render children?.()}
 
   <div class="flex flex-col place-content-center bg-gray-50 dark:bg-immich-dark-bg dark:text-white">
     <div class="flex place-items-center place-content-center gap-4">

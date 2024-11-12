@@ -1,11 +1,15 @@
 <script lang="ts">
   import { getRedirectUrl } from '$lib/utils/license';
 
-  export let productKey: string;
+  interface Props {
+    productKey: string;
+  }
 
-  let clipboardStatus: 'success' | 'error' | undefined;
+  let { productKey }: Props = $props();
 
-  $: type = productKey.startsWith('IMSV-') ? 'Server' : 'User';
+  let clipboardStatus: 'success' | 'error' | undefined = $state();
+
+  let type = $derived(productKey.startsWith('IMSV-') ? 'Server' : 'User');
 
   const handleCopy = () => {
     try {
@@ -32,10 +36,8 @@
         >Activate</button
       >
     </a>
-    <button
-      on:click={handleCopy}
-      type="button"
-      class="px-4 py-3 text-dark bg-gray-300 rounded-xl hover:shadow-xl w-full">Copy</button
+    <button onclick={handleCopy} type="button" class="px-4 py-3 text-dark bg-gray-300 rounded-xl hover:shadow-xl w-full"
+      >Copy</button
     >
   </div>
 </div>
