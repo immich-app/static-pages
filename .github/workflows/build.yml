@@ -37,6 +37,11 @@ jobs:
           touch .env
           echo IMMICH_APP="${{ matrix.app }}" >> .env
 
+      - name: Use futopay-test
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          echo PUBLIC_IMMICH_PAY_HOST=https://futopay-test.azurewebsites.net >> .env
+
       - name: Run npm install
         run: npm ci
 
