@@ -7,11 +7,15 @@
   import { mdiGithub } from '@mdi/js';
   import type { PageData } from './$types';
 
-  export let data: PageData;
+  interface Props {
+    data: PageData;
+  }
+
+  let { data }: Props = $props();
 
   const s = (n: number) => (n === 1 ? '' : 's');
 
-  let errorMessage = data.error;
+  let errorMessage = $state(data.error);
   const response = data.response;
   if (response) {
     goto('/claim', { replaceState: true });
@@ -79,7 +83,7 @@
         <div class="flex flex-col gap-2">
           <a href={''}>
             <button
-              on:click={handleLogin}
+              onclick={handleLogin}
               class="flex mt-2 items-center gap-2 text-lg p-2 w-full rounded-full text-white bg-black hover:shadow-xl"
             >
               <Icon path={mdiGithub} size="3em" />
