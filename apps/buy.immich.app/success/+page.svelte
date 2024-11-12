@@ -3,6 +3,7 @@
   import LicenseKey from '$lib/components/license-key.svelte';
   import LoadingSpinner from '$lib/components/loading-spinner.svelte';
   import { getPaymentStatus, getRedirectUrl, PurchaseStatus, type PaymentStatusResponseDto } from '$lib/utils/license';
+  import { Button } from '@immich/ui';
   import { onMount } from 'svelte';
   import type { PageData } from './$types';
 
@@ -70,7 +71,7 @@
   </div>
 
   <section class="flex justify-center mt-6">
-    <img src="/img/social-preview.webp" alt="Sociel Preview" class="rounded-3xl" />
+    <img src="/img/social-preview.webp" alt="Sociel Preview" class="rounded-lg" />
   </section>
 
   <section class="mt-10">
@@ -96,13 +97,9 @@
                 <LoadingSpinner />
                 <p>Redirecting back to your instance, click on the button below if you aren't navigated back</p>
               </div>
-
-              <a href={getRedirectUrl(response.purchaseId, data.instanceUrl)}>
-                <button
-                  class="mt-2 p-4 bg-immich-primary text-white rounded-full dark:text-black dark:bg-immich-dark-primary hover:shadow-xl"
-                  >Activate your instance</button
-                >
-              </a>
+              <Button href={getRedirectUrl(response.purchaseId, data.instanceUrl)} size="large"
+                >Activate your instance</Button
+              >
             {:else}
               <LicenseKey productKey={response.purchaseId} />
               <p class="text-sm mt-4">The product key is also sent to the email you provided</p>

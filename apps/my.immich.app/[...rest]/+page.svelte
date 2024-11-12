@@ -1,8 +1,9 @@
 <script lang="ts">
   import { preventDefault } from 'svelte/legacy';
   import { StorageKey } from '$lib';
-  import type { PageData } from './$types';
   import '$lib/app.css';
+  import { Button } from '@immich/ui';
+  import type { PageData } from './$types';
 
   interface Props {
     data: PageData;
@@ -27,7 +28,7 @@
 </script>
 
 <div class="w-screen h-screen bg-immich-dark-bg overflow-auto p-4">
-  <div class="mx-auto max-w-screen-sm m-6 p-12 rounded-[50px] bg-immich-dark-gray text-immich-dark-fg">
+  <div class="mx-auto max-w-screen-sm m-6 p-12 rounded-lg bg-immich-dark-gray text-immich-dark-fg">
     <section class="flex justify-center">
       <img src="/img/immich-logo-stacked-dark.svg" class="h-64" alt="Immich logo" />
     </section>
@@ -55,12 +56,9 @@
           {#if saved}
             <p class="text-center sm:text-right m-0 px-5 py-3 text-sm text-immich-dark-primary">Saved!</p>
           {:else}
-            <button
-              class="w-full sm:w-auto border-0 text-white rounded-xl px-5 py-3 items-center justify-center bg-immich-primary hover:bg-immich-primary/80"
-              type="submit"
-            >
+            <Button type="submit" class="w-full sm:w-auto">
               {targetUrl ? 'Save & Redirect' : 'Save'}
-            </button>
+            </Button>
           {/if}
         </div>
       </form>
