@@ -2,7 +2,7 @@
   import { preventDefault } from 'svelte/legacy';
   import { StorageKey } from '$lib';
   import '$lib/app.css';
-  import { Button } from '@immich/ui';
+  import { Button, Logo } from '@immich/ui';
   import type { PageData } from './$types';
 
   interface Props {
@@ -30,7 +30,7 @@
 <div class="w-screen h-screen bg-immich-dark-bg overflow-auto p-4">
   <div class="mx-auto max-w-screen-sm m-6 p-12 rounded-lg bg-immich-dark-gray text-immich-dark-fg">
     <section class="flex justify-center">
-      <img src="/img/immich-logo-stacked-dark.svg" class="h-64" alt="Immich logo" />
+      <Logo variant="stacked" theme="dark" size="landing" />
     </section>
     <section>
       <h1 class="md:text-3xl mb-2 text-immich-dark-primary">My Immich</h1>

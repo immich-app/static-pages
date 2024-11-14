@@ -1,6 +1,6 @@
 <script lang="ts">
   import '$lib/app.css';
-  import { Button } from '@immich/ui';
+  import { Button, Logo } from '@immich/ui';
   import Icon from '$lib/components/icon.svelte';
   import { mdiCheckCircleOutline, mdiServer, mdiAccount } from '@mdi/js';
   import { getCallbackUrl, ImmichLicense } from '$lib/utils/license';
@@ -11,9 +11,7 @@
     <div
       class="flex gap-4 mt-2 place-items-center dark:bg-immich-dark-primary/10 bg-gray-200/50 py-4 px-6 border rounded-lg overflow-hidden supporter-effect transition-all"
     >
-      <div class="h-12 w-12">
-        <img src={'/img/immich-logo.svg'} alt={'immich-logo'} class="shadow-lg rounded-full bg-white" />
-      </div>
+      <Logo />
       <p class="dark:text-gray-100 text-2xl font-medium text-immich-primary">Purchase Immich</p>
     </div>
     <section class="mt-6">
