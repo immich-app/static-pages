@@ -27,19 +27,19 @@
   };
 </script>
 
-<div class="dark w-screen h-screen bg-light overflow-auto p-4 md:p-12 lg:p-24">
-  <div class="mx-auto max-w-screen-sm">
-    <Card color="secondary" variant="subtle">
-      <CardBody class="p-4 lg:p-8">
-        <section>
-          <div class="flex justify-center">
-            <Logo variant="stacked" theme="dark" size="landing" />
-          </div>
-          <VStack gap={4}>
-            <Heading size="large" color="primary">My Immich</Heading>
-            <Text>My Immich allows public links to link you to specific areas of your personal Immich instance.</Text>
+<form onsubmit={preventDefault(handleSubmit)}>
+  <div class="dark w-screen h-screen bg-light overflow-auto p-4 md:p-12 lg:p-24">
+    <div class="mx-auto max-w-screen-sm">
+      <Card color="secondary" variant="subtle">
+        <CardBody class="p-4 lg:p-8">
+          <section>
+            <div class="flex justify-center">
+              <Logo variant="stacked" theme="dark" size="landing" />
+            </div>
+            <VStack gap={4}>
+              <Heading size="large" color="primary">My Immich</Heading>
+              <Text>My Immich allows public links to link you to specific areas of your personal Immich instance.</Text>
 
-            <form onsubmit={preventDefault(handleSubmit)}>
               <VStack>
                 <label id="instance-url-label" for="instance-url-input" class="font-medium immich-dark-fg">
                   Instance URL
@@ -65,10 +65,10 @@
                   </Button>
                 {/if}
               </div>
-            </form>
-          </VStack>
-        </section>
-      </CardBody>
-    </Card>
+            </VStack>
+          </section>
+        </CardBody>
+      </Card>
+    </div>
   </div>
-</div>
+</form>

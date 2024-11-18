@@ -4,7 +4,7 @@
   import Icon from '$lib/components/icon.svelte';
   import LicenseKey from '$lib/components/license-key.svelte';
   import { getAuthorizeUrl } from '$lib/utils/oauth';
-  import { Button } from '@immich/ui';
+  import { Button, Heading, Text, VStack } from '@immich/ui';
   import { mdiGithub } from '@mdi/js';
   import type { PageData } from './$types';
 
@@ -41,34 +41,36 @@
 </svelte:head>
 
 <div class="w-full h-full md:max-w-[900px] px-4 py-10 sm:px-20 lg:p-10 m-auto">
-  <div class="m-auto">
-    <h1 class="text-4xl font-bold text-immich-primary dark:text-immich-dark-primary tracking-wider">CLAIM YOUR KEY</h1>
-    <p class="text-left text-lg mt-2 dark:text-immich-gray">
-      If you previously supported Immich by sponsoring the project on GitHub, you are entitled to a free product key.
-      Login below with your GitHub account to claim your key.
-    </p>
-  </div>
+  <VStack gap={4}>
+    <section>
+      <VStack>
+        <Heading size="giant" color="primary" class="uppercase">Claim you key</Heading>
+        <Text size="large">
+          If you previously supported Immich by sponsoring the project on GitHub, you are entitled to a free product
+          key. Login below with your GitHub account to claim your key.
+        </Text>
+      </VStack>
+    </section>
 
-  <section class="mt-10">
     {#if response}
       <div class="flex gap-2 items-center">
         <img src={response.imageUrl} class="h-16" alt="GitHub profile" />
         <div>
           <p class="text-2xl">Welcome back <strong>{response.username}</strong>!</p>
           {#if response.licenses.length > 0}
-            <p class="text-lg">
+            <Text size="large">
               We found <strong>{response.licenses.length}</strong> license{s(response.licenses.length)}.
-            </p>
+            </Text>
           {/if}
         </div>
       </div>
 
       {#if response.licenses.length === 0}
         <Card status="error">
-          <p class="text-lg">
+          <Text size="large">
             Unfortunately, we did not find any product keys associated with your account. If you think this is a
             mistake, please send an email to <a href="mailto:claim@immich.app" class="underline">claim@immich.app</a>.
-          </p>
+          </Text>
         </Card>
       {/if}
 
@@ -84,15 +86,15 @@
         <div class="flex flex-col gap-2">
           <Button onclick={handleLogin} color="secondary">
             <Icon path={mdiGithub} size="2em" />
-            <span>Login with GitHub</span>
+            <Text>Login with GitHub</Text>
           </Button>
           {#if errorMessage}
-            <div class=" text-lg w-full p-4 rounded-lg">
+            <div class=" text-lg w-full p-4 rounded-2xl">
               <p>{errorMessage}</p>
             </div>
           {/if}
         </div>
       </Card>
     {/if}
-  </section>
+  </VStack>
 </div>
