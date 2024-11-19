@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getRedirectUrl } from '$lib/utils/license';
-  import { Button } from '@immich/ui';
+  import { Button, Card, CardBody, CardFooter, CardHeader, CardTitle, Text, VStack } from '@immich/ui';
 
   interface Props {
     productKey: string;
@@ -11,6 +11,7 @@
   let clipboardStatus: 'success' | 'error' | undefined = $state();
 
   let type = $derived(productKey.startsWith('IMSV-') ? 'Server' : 'User');
+  const color = $derived(type === 'Server' ? 'secondary' : 'primary');
 
   const handleCopy = () => {
     try {
@@ -24,18 +25,31 @@
   };
 </script>
 
-<div class="flex flex-col gap-2">
-  <p class="text-lg font-bold">{type} Product Key</p>
-  <div class="flex gap-1">
-    <div class="bg-immich-primary/10 text-immich-primary py-3 px-6 rounded-2xl">{productKey}</div>
-  </div>
-  <div class="flex w-full gap-2 mt-2">
-    <Button href={getRedirectUrl(productKey, 'https://my.immich.app')} fullWidth size="large">Activate</Button>
-    <Button onclick={handleCopy} fullWidth color="secondary" size="large">Copy</Button>
-  </div>
-</div>
-{#if clipboardStatus === 'success'}
-  <p class="text-immich-primary">Coped to clipboard!</p>
-{:else if clipboardStatus === 'error'}
-  <p class="text-immich-error">Unable to copy to clipboard</p>
-{/if}
+<Card variant="subtle" {color}>
+  <CardHeader>
+    <CardTitle size="tiny">{type} Product Key</CardTitle>
+  </CardHeader>
+  <CardBody>
+    <VStack gap={4}>
+      <div>
+        <div class="bg-primary/10 py-2 px-6 rounded-lg">
+          <Text color="primary">{productKey}</Text>
+        </div>
+      </div>
+    </VStack>
+  </CardBody>
+  <CardFooter>
+    <div class="w-full grid grid-cols-2 gap-2">
+      <Button href={getRedirectUrl(productKey, 'https://my.immich.app')} fullWidth size="medium">Activate</Button>
+      <div class="flex justify-center items-center">
+        {#if clipboardStatus === 'success'}
+          <Text color="primary">Copied to clipboard!</Text>
+        {:else if clipboardStatus === 'error'}
+          <Text color="danger">Unable to copy to clipboard</Text>
+        {:else}
+          <Button onclick={handleCopy} color="secondary" size="medium" fullWidth>Copy</Button>
+        {/if}
+      </div>
+    </div>
+  </CardFooter>
+</Card>

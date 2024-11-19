@@ -8,9 +8,20 @@
     <meta name="theme-color" content="currentColor" />
     <meta name="description" content="Immich link proxy to redirect to your personal instance" />
 
+    <!-- Facebook Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Buy Immich" />
+    <meta property="og:description" content="Immich link proxy to redirect to your personal instance" />
+    <meta property="og:image" content="/img/social-preview.png" />
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Buy Immich" />
+    <meta name="twitter:description" content="Immich link proxy to redirect to your personal instance" />
+    <meta name="twitter:image" content="/img/social-preview.png" />
     %sveltekit.head%
   </head>
-  <body data-sveltekit-preload-data="hover">
+  <body data-sveltekit-preload-data="hover" class="dark bg-light text-dark">
     <div style="display: contents">%sveltekit.body%</div>
   </body>
 </html>

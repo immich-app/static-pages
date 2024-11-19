@@ -15,15 +15,10 @@ module.exports = {
 
         // Light Theme
         'immich-primary': 'rgb(var(--immich-primary) / <alpha-value>)',
-        'immich-bg': 'rgb(var(--immich-bg) / <alpha-value>)',
-        'immich-fg': 'rgb(var(--immich-fg) / <alpha-value>)',
         'immich-gray': 'rgb(var(--immich-gray) / <alpha-value>)',
-        'immich-error': 'rgb(var(--immich-error) / <alpha-value>)',
 
         // Dark Theme
         'immich-dark-primary': 'rgb(var(--immich-dark-primary) / <alpha-value>)',
-        'immich-dark-bg': 'rgb(var(--immich-dark-bg) / <alpha-value>)',
-        'immich-dark-fg': 'rgb(var(--immich-dark-fg) / <alpha-value>)',
       },
       fontFamily: {
         'immich-title': ['Snowburst One', 'cursive'],

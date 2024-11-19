@@ -1,12 +1,11 @@
 <script lang="ts">
   import '$lib/app.css';
-  import Icon from '$lib/components/icon.svelte';
   import { getCallbackUrl, ImmichLicense } from '$lib/utils/license';
-  import { Button, Heading, Logo, SupporterBadge, Text, VStack } from '@immich/ui';
+  import { Button, Heading, Icon, Logo, SupporterBadge, Text, VStack } from '@immich/ui';
   import { mdiAccount, mdiCheckCircleOutline, mdiServer } from '@mdi/js';
 </script>
 
-<div class="w-full h-full md:max-w-[900px] p-4 sm:p-8 lg:p-10 m-auto">
+<div class="w-full h-full md:max-w-[800px] p-4 sm:p-8 lg:p-10 m-auto">
   <div class="m-auto">
     <VStack gap={4}>
       <SupporterBadge effect="always">
@@ -20,7 +19,7 @@
             class="border border-gray-300 dark:border-gray-800 w-full p-4 md:p-8 rounded-2xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20 transition-all"
           >
             <div class="hidden md:block text-immich-primary dark:text-immich-dark-primary">
-              <Icon path={mdiServer} size="56" />
+              <Icon icon={mdiServer} size="56" />
               <p class="font-semibold text-lg mt-1">Server</p>
             </div>
 
@@ -32,18 +31,18 @@
             <div class="flex flex-col justify-between h-[200px] dark:text-immich-gray">
               <div class="mt-6 flex flex-col gap-1">
                 <div class="grid grid-cols-[36px_auto]">
-                  <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-                  <p class="self-center">For the whole server</p>
+                  <Icon icon={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
+                  <Text>For the whole server</Text>
                 </div>
 
                 <div class="grid grid-cols-[36px_auto]">
-                  <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-                  <p class="self-center">Lifetime purchase</p>
+                  <Icon icon={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
+                  <Text>Lifetime purchase</Text>
                 </div>
 
                 <div class="grid grid-cols-[36px_auto]">
-                  <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-                  <p class="self-center">Supporter status</p>
+                  <Icon icon={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
+                  <Text>Supporter status</Text>
                 </div>
               </div>
 
@@ -56,7 +55,7 @@
             class="border border-gray-300 dark:border-gray-800 w-full p-4 md:p-8 rounded-2xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20"
           >
             <div class="hidden md:block text-immich-primary dark:text-immich-dark-primary">
-              <Icon path={mdiAccount} size="56" />
+              <Icon icon={mdiAccount} size="56" />
               <p class="font-semibold text-lg mt-1">Individual</p>
             </div>
 
@@ -68,18 +67,18 @@
             <div class="flex flex-col justify-between h-[200px] dark:text-immich-gray">
               <div class="mt-6 flex flex-col gap-1">
                 <div class="grid grid-cols-[36px_auto]">
-                  <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-                  <p class="self-center">For an individual</p>
+                  <Icon icon={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
+                  <Text>For an individual</Text>
                 </div>
 
                 <div class="grid grid-cols-[36px_auto]">
-                  <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-                  <p class="self-center">Lifetime purchase</p>
+                  <Icon icon={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
+                  <Text>Lifetime purchase</Text>
                 </div>
 
                 <div class="grid grid-cols-[36px_auto]">
-                  <Icon path={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-                  <p class="self-center">Supporter status</p>
+                  <Icon icon={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
+                  <Text>Supporter status</Text>
                 </div>
               </div>
 

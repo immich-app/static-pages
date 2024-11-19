@@ -1,9 +1,8 @@
 <script lang="ts">
-  import InternalCard from '$lib/components/card.svelte';
   import LicenseKey from '$lib/components/license-key.svelte';
   import LoadingSpinner from '$lib/components/loading-spinner.svelte';
   import { getPaymentStatus, getRedirectUrl, PurchaseStatus, type PaymentStatusResponseDto } from '$lib/utils/license';
-  import { Button, Card, Heading, Text, VStack } from '@immich/ui';
+  import { Alert, Button, Card, CardBody, Heading, Text, VStack } from '@immich/ui';
   import { onMount } from 'svelte';
   import type { PageData } from './$types';
 
@@ -64,7 +63,7 @@
   <title>Immich - Purchase Success</title>
 </svelte:head>
 
-<div class="w-full h-full md:max-w-[900px] px-4 py-10 sm:px-20 lg:p-10 m-auto">
+<div class="w-full h-full md:max-w-[800px] px-4 py-10 sm:px-20 lg:p-10 m-auto">
   <section>
     <Heading size="giant" color="primary" class="uppercase">Purchase Status</Heading>
     <Text size="large">Processing your purchase</Text>
@@ -75,40 +74,55 @@
   </Card>
 
   <section class="mt-10">
-    <InternalCard status={isLoading ? 'loading' : response.status === PurchaseStatus.Succeeded ? 'success' : 'error'}>
-      {#if isLoading}
-        <Text>Getting payment status</Text>
-      {:else}
-        {#if response.status === PurchaseStatus.Pending}
+    {#if isLoading}
+      <Card variant="subtle" color="secondary">
+        <CardBody>
+          <section class="flex gap-2">
+            <Text>Waiting for payment verification...</Text>
+            <LoadingSpinner />
+          </section>
+        </CardBody>
+      </Card>
+    {:else}
+      {#if response.status === PurchaseStatus.Pending}
+        <Alert title="Pending purchase" color="secondary">
           <Text
             >Purchase is still pending, please check your email after a few minutes for the product key. Payment can
-            take up to 48 hours in some cases, depending on payment provider
+            take up to 48 hours in some cases, depending on payment provider.
           </Text>
-        {/if}
+        </Alert>
+      {/if}
 
-        {#if response.status === PurchaseStatus.Failed || response.status === PurchaseStatus.Unknown}
-          <Text>Fail to get payment status, please check your email for more details</Text>
-        {/if}
+      {#if response.status === PurchaseStatus.Failed || response.status === PurchaseStatus.Unknown}
+        <Alert title="Failed to verify payment" color="danger">
+          <Text>Unable to verify payment status. Please check your email for more details.</Text>
+        </Alert>
+      {/if}
 
-        {#if response.status === PurchaseStatus.Succeeded}
-          {#if response.purchaseId}
-            {#if data.instanceUrl}
-              <div class="flex gap-2 place-items-center place-content-center">
-                <LoadingSpinner />
-                <Text>Redirecting back to your instance, click on the button below if you aren't navigated back</Text>
-              </div>
-              <Button href={getRedirectUrl(response.purchaseId, data.instanceUrl)} size="large"
-                >Activate your instance</Button
+      {#if response.status === PurchaseStatus.Succeeded}
+        {#if response.purchaseId}
+          {#if data.instanceUrl}
+            <Alert title="Success" color="success">
+              <Text
+                >You will now be redirected back to your instance. Click the button below to navigate immediately.</Text
               >
-            {:else}
-              <VStack>
-                <LicenseKey productKey={response.purchaseId} />
-                <Text size="small">The product key is also sent to the email you provided</Text>
-              </VStack>
-            {/if}
+              <div class="flex w-full">
+                <Button href={getRedirectUrl(response.purchaseId, data.instanceUrl)} variant="outline" color="secondary"
+                  >Activate your instance</Button
+                >
+              </div>
+            </Alert>
+          {:else}
+            <VStack>
+              <Alert title="Success" color="success">
+                <Text>Thank you for doing your part to support Immich and open-source software.</Text>
+                <Text size="small">Note: the product key is also sent to the email you provided.</Text>
+              </Alert>
+              <LicenseKey productKey={response.purchaseId} />
+            </VStack>
           {/if}
         {/if}
       {/if}
-    </InternalCard>
+    {/if}
   </section>
 </div>
