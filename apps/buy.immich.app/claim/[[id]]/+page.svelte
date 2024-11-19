@@ -1,10 +1,8 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
-  import Card from '$lib/components/card.svelte';
-  import Icon from '$lib/components/icon.svelte';
   import LicenseKey from '$lib/components/license-key.svelte';
   import { getAuthorizeUrl } from '$lib/utils/oauth';
-  import { Button, Heading, Text, VStack } from '@immich/ui';
+  import { Alert, Button, Heading, Icon, Link, Text, VStack } from '@immich/ui';
   import { mdiGithub } from '@mdi/js';
   import type { PageData } from './$types';
 
@@ -40,11 +38,11 @@
   <title>Immich - Claim</title>
 </svelte:head>
 
-<div class="w-full h-full md:max-w-[900px] px-4 py-10 sm:px-20 lg:p-10 m-auto">
-  <VStack gap={4}>
+<div class="w-full h-full md:max-w-[800px] px-4 py-10 sm:px-20 lg:p-10 m-auto">
+  <VStack gap={8}>
     <section>
       <VStack>
-        <Heading size="giant" color="primary" class="uppercase">Claim you key</Heading>
+        <Heading size="giant" color="primary" class="uppercase">Claim your key</Heading>
         <Text size="large">
           If you previously supported Immich by sponsoring the project on GitHub, you are entitled to a free product
           key. Login below with your GitHub account to claim your key.
@@ -59,42 +57,40 @@
           <p class="text-2xl">Welcome back <strong>{response.username}</strong>!</p>
           {#if response.licenses.length > 0}
             <Text size="large">
-              We found <strong>{response.licenses.length}</strong> license{s(response.licenses.length)}.
+              We found <strong>{response.licenses.length}</strong> product key{s(response.licenses.length)}.
             </Text>
           {/if}
         </div>
       </div>
 
       {#if response.licenses.length === 0}
-        <Card status="error">
-          <Text size="large">
-            Unfortunately, we did not find any product keys associated with your account. If you think this is a
-            mistake, please send an email to <a href="mailto:claim@immich.app" class="underline">claim@immich.app</a>.
-          </Text>
-        </Card>
+        <section>
+          <Alert color="secondary" title="No product keys">
+            <Text>
+              Unfortunately, we did not find any product keys associated with your account. If you think this is a
+              mistake, please send an email to <Link href="mailto:claim@immich.app">claim@immich.app</Link>.
+            </Text>
+          </Alert>
+        </section>
       {/if}
 
-      <div class="flex flex-col gap-2">
+      <VStack gap={4}>
         {#each response.licenses as license (license.licenseKey)}
-          <Card>
-            <LicenseKey productKey={license.licenseKey} />
-          </Card>
+          <LicenseKey productKey={license.licenseKey} />
         {/each}
-      </div>
+      </VStack>
     {:else}
-      <Card status={errorMessage ? 'error' : undefined}>
-        <div class="flex flex-col gap-2">
-          <Button onclick={handleLogin} color="secondary">
-            <Icon path={mdiGithub} size="2em" />
+      <section>
+        <VStack align="start" gap={4}>
+          <Button onclick={handleLogin} color="secondary" variant="outline">
+            <Icon icon={mdiGithub} size="2em" />
             <Text>Login with GitHub</Text>
           </Button>
           {#if errorMessage}
-            <div class=" text-lg w-full p-4 rounded-2xl">
-              <p>{errorMessage}</p>
-            </div>
+            <Alert title={errorMessage} color="danger" />
           {/if}
-        </div>
-      </Card>
+        </VStack>
+      </section>
     {/if}
   </VStack>
 </div>

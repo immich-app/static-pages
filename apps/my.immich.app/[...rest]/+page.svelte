@@ -2,7 +2,6 @@
   import { StorageKey } from '$lib';
   import '$lib/app.css';
   import { Button, Card, CardBody, Heading, Logo, Text, VStack } from '@immich/ui';
-  import { preventDefault } from 'svelte/legacy';
   import type { PageData } from './$types';
 
   interface Props {
@@ -17,7 +16,9 @@
 
   const handleChange = () => (saved = false);
 
-  const handleSubmit = () => {
+  const handleSubmit = (event: SubmitEvent) => {
+    event.preventDefault();
+
     localStorage.setItem(StorageKey.INSTANCE_URL, instanceUrl);
     if (targetUrl && instanceUrl) {
       window.location.href = new URL(targetUrl, instanceUrl).toString();
@@ -27,8 +28,8 @@
   };
 </script>
 
-<form onsubmit={preventDefault(handleSubmit)}>
-  <div class="dark w-screen h-screen bg-light overflow-auto p-4 md:p-12 lg:p-24">
+<form onsubmit={handleSubmit}>
+  <div class="p-4 md:p-12 lg:p-24">
     <div class="mx-auto max-w-screen-sm">
       <Card color="secondary" variant="subtle">
         <CardBody class="p-4 lg:p-8">
@@ -41,18 +42,16 @@
               <Text>My Immich allows public links to link you to specific areas of your personal Immich instance.</Text>
 
               <VStack>
-                <label id="instance-url-label" for="instance-url-input" class="font-medium immich-dark-fg">
-                  Instance URL
-                </label>
+                <label id="instance-url-label" for="instance-url-input" class="font-medium">Instance URL </label>
                 <input
                   id="instance-url-input"
+                  class="rounded-xl px-3 py-2 text-sm bg-gray-600 border-none outline-none"
                   aria-labelledby="instance-url-label"
-                  class="rounded-xl px-3 py-3 text-sm bg-gray-600 text-immich-dark-fg border-none outline-none"
+                  aria-label="Instance URL"
                   type="text"
                   placeholder="https://demo.immich.app/"
                   bind:value={instanceUrl}
-                  oninput={() => handleChange()}
-                  aria-label="Instance URL"
+                  oninput={handleChange}
                 />
                 <Text size="small">Note: This URL is only stored in your browser.</Text>
               </VStack>

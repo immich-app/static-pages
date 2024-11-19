@@ -6,15 +6,10 @@
   :root {
     /* light */
     --immich-primary: 66 80 175;
-    --immich-bg: 255 255 255;
-    --immich-fg: 0 0 0;
     --immich-gray: 246 246 244;
-    --immich-error: 229 115 115;
 
     /* dark */
     --immich-dark-primary: 172 203 250;
-    --immich-dark-bg: 0 0 0;
-    --immich-dark-fg: 229 231 235;
   }
 
   :root {
