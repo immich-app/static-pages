@@ -2,7 +2,7 @@
   import { goto } from '$app/navigation';
   import LicenseKey from '$lib/components/license-key.svelte';
   import { getAuthorizeUrl } from '$lib/utils/oauth';
-  import { Alert, Button, Heading, Icon, Link, Text, VStack } from '@immich/ui';
+  import { Alert, Button, Heading, Icon, Link, Stack, Text } from '@immich/ui';
   import { mdiGithub } from '@mdi/js';
   import type { PageData } from './$types';
 
@@ -39,15 +39,15 @@
 </svelte:head>
 
 <div class="w-full h-full md:max-w-[800px] px-4 py-10 sm:px-20 lg:p-10 m-auto">
-  <VStack gap={8}>
+  <Stack gap={8}>
     <section>
-      <VStack>
+      <Stack>
         <Heading size="giant" color="primary" class="uppercase">Claim your key</Heading>
         <Text size="large">
           If you previously supported Immich by sponsoring the project on GitHub, you are entitled to a free product
           key. Login below with your GitHub account to claim your key.
         </Text>
-      </VStack>
+      </Stack>
     </section>
 
     {#if response}
@@ -74,14 +74,14 @@
         </section>
       {/if}
 
-      <VStack gap={4}>
+      <Stack gap={4}>
         {#each response.licenses as license (license.licenseKey)}
           <LicenseKey productKey={license.licenseKey} />
         {/each}
-      </VStack>
+      </Stack>
     {:else}
       <section>
-        <VStack align="start" gap={4}>
+        <Stack align="start" gap={4}>
           <Button onclick={handleLogin} color="secondary" variant="outline">
             <Icon icon={mdiGithub} size="2em" />
             <Text>Login with GitHub</Text>
@@ -89,8 +89,8 @@
           {#if errorMessage}
             <Alert title={errorMessage} color="danger" />
           {/if}
-        </VStack>
+        </Stack>
       </section>
     {/if}
-  </VStack>
+  </Stack>
 </div>

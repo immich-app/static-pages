@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getRedirectUrl } from '$lib/utils/license';
-  import { Button, Card, CardBody, CardFooter, CardHeader, CardTitle, Text, VStack } from '@immich/ui';
+  import { Button, Card, CardBody, CardFooter, CardHeader, CardTitle, Stack, Text } from '@immich/ui';
 
   interface Props {
     productKey: string;
@@ -30,13 +30,13 @@
     <CardTitle size="tiny">{type} Product Key</CardTitle>
   </CardHeader>
   <CardBody>
-    <VStack gap={4}>
+    <Stack gap={4}>
       <div>
         <div class="bg-primary/10 py-2 px-6 rounded-lg">
           <Text color="primary">{productKey}</Text>
         </div>
       </div>
-    </VStack>
+    </Stack>
   </CardBody>
   <CardFooter>
     <div class="w-full grid grid-cols-2 gap-2">

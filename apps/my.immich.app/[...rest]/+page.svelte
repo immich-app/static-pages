@@ -1,7 +1,7 @@
 <script lang="ts">
   import { StorageKey } from '$lib';
   import '$lib/app.css';
-  import { Button, Card, CardBody, Heading, Logo, Text, VStack } from '@immich/ui';
+  import { Button, Card, CardBody, Field, Heading, HelperText, Input, Logo, Stack, Text } from '@immich/ui';
   import type { PageData } from './$types';
 
   interface Props {
@@ -37,24 +37,21 @@
             <div class="flex justify-center">
               <Logo variant="stacked" theme="dark" size="landing" />
             </div>
-            <VStack gap={4}>
+            <Stack gap={4}>
               <Heading size="large" color="primary">My Immich</Heading>
+
               <Text>My Immich allows public links to link you to specific areas of your personal Immich instance.</Text>
 
-              <VStack>
-                <label id="instance-url-label" for="instance-url-input" class="font-medium">Instance URL </label>
-                <input
-                  id="instance-url-input"
-                  class="rounded-xl px-3 py-2 text-sm bg-gray-600 border-none outline-none"
-                  aria-labelledby="instance-url-label"
-                  aria-label="Instance URL"
+              <Field label="Instance URL">
+                <Input
                   type="text"
                   placeholder="https://demo.immich.app/"
                   bind:value={instanceUrl}
                   oninput={handleChange}
                 />
-                <Text size="small">Note: This URL is only stored in your browser.</Text>
-              </VStack>
+                <HelperText>Note: This URL is only stored in your browser.</HelperText>
+              </Field>
+
               <div class="flex justify-end">
                 {#if saved}
                   <Text size="small" color="primary">Saved!</Text>
@@ -64,7 +61,7 @@
                   </Button>
                 {/if}
               </div>
-            </VStack>
+            </Stack>
           </section>
         </CardBody>
       </Card>

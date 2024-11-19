@@ -2,7 +2,7 @@
   import LicenseKey from '$lib/components/license-key.svelte';
   import LoadingSpinner from '$lib/components/loading-spinner.svelte';
   import { getPaymentStatus, getRedirectUrl, PurchaseStatus, type PaymentStatusResponseDto } from '$lib/utils/license';
-  import { Alert, Button, Card, CardBody, Heading, Text, VStack } from '@immich/ui';
+  import { Alert, Button, Card, CardBody, Heading, Stack, Text } from '@immich/ui';
   import { onMount } from 'svelte';
   import type { PageData } from './$types';
 
@@ -113,13 +113,13 @@
               </div>
             </Alert>
           {:else}
-            <VStack>
+            <Stack>
               <Alert title="Success" color="success">
                 <Text>Thank you for doing your part to support Immich and open-source software.</Text>
                 <Text size="small">Note: the product key is also sent to the email you provided.</Text>
               </Alert>
               <LicenseKey productKey={response.purchaseId} />
-            </VStack>
+            </Stack>
           {/if}
         {/if}
       {/if}

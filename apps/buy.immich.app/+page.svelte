@@ -1,13 +1,13 @@
 <script lang="ts">
   import '$lib/app.css';
   import { getCallbackUrl, ImmichLicense } from '$lib/utils/license';
-  import { Button, Heading, Icon, Logo, SupporterBadge, Text, VStack } from '@immich/ui';
+  import { Button, Heading, Icon, Logo, Stack, SupporterBadge, Text } from '@immich/ui';
   import { mdiAccount, mdiCheckCircleOutline, mdiServer } from '@mdi/js';
 </script>
 
 <div class="w-full h-full md:max-w-[800px] p-4 sm:p-8 lg:p-10 m-auto">
   <div class="m-auto">
-    <VStack gap={4}>
+    <Stack gap={4}>
       <SupporterBadge effect="always">
         <Logo size="large" variant="icon" />
         <Heading size="large" color="primary">Purchase Immich</Heading>
@@ -88,7 +88,7 @@
         </div>
       </section>
 
-      <VStack gap={4}>
+      <Stack gap={4}>
         <Text>
           Building Immich takes a lot of time and effort, and we have full-time engineers working on it to make it as
           good as we possibly can.
@@ -102,7 +102,7 @@
           As we’re committed not to add paywalls, this purchase will not grant you any additional features in Immich. We
           rely on users like you to support Immich’s ongoing development.
         </Text>
-      </VStack>
-    </VStack>
+      </Stack>
+    </Stack>
   </div>
 </div>
