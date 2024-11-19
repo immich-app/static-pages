@@ -43,7 +43,7 @@
       <Button href={getRedirectUrl(productKey, 'https://my.immich.app')} fullWidth size="medium">Activate</Button>
       <div class="flex justify-center items-center">
         {#if clipboardStatus === 'success'}
-          <Text color="primary">Coped to clipboard!</Text>
+          <Text color="primary">Copied to clipboard!</Text>
         {:else if clipboardStatus === 'error'}
           <Text color="danger">Unable to copy to clipboard</Text>
         {:else}
