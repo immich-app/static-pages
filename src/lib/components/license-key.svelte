@@ -27,7 +27,7 @@
 <div class="flex flex-col gap-2">
   <p class="text-lg font-bold">{type} Product Key</p>
   <div class="flex gap-1">
-    <div class="bg-immich-primary/10 text-immich-primary py-3 px-6 rounded-lg">{productKey}</div>
+    <div class="bg-immich-primary/10 text-immich-primary py-3 px-6 rounded-2xl">{productKey}</div>
   </div>
   <div class="flex w-full gap-2 mt-2">
     <Button href={getRedirectUrl(productKey, 'https://my.immich.app')} fullWidth size="large">Activate</Button>

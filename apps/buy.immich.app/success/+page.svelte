@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Card from '$lib/components/card.svelte';
+  import InternalCard from '$lib/components/card.svelte';
   import LicenseKey from '$lib/components/license-key.svelte';
   import LoadingSpinner from '$lib/components/loading-spinner.svelte';
   import { getPaymentStatus, getRedirectUrl, PurchaseStatus, type PaymentStatusResponseDto } from '$lib/utils/license';
-  import { Button } from '@immich/ui';
+  import { Button, Card, Heading, Text, VStack } from '@immich/ui';
   import { onMount } from 'svelte';
   import type { PageData } from './$types';
 
@@ -65,29 +65,29 @@
 </svelte:head>
 
 <div class="w-full h-full md:max-w-[900px] px-4 py-10 sm:px-20 lg:p-10 m-auto">
-  <div class="m-auto">
-    <h1 class="text-4xl font-bold text-immich-primary dark:text-immich-dark-primary tracking-wider">PURCHASE STATUS</h1>
-    <p class="text-lg mt-2 dark:text-immich-gray">Processing your purchase</p>
-  </div>
-
-  <section class="flex justify-center mt-6">
-    <img src="/img/social-preview.webp" alt="Sociel Preview" class="rounded-lg" />
+  <section>
+    <Heading size="giant" color="primary" class="uppercase">Purchase Status</Heading>
+    <Text size="large">Processing your purchase</Text>
   </section>
 
+  <Card class="mt-6">
+    <img src="/img/social-preview.webp" alt="Social Preview" />
+  </Card>
+
   <section class="mt-10">
-    <Card status={isLoading ? 'loading' : response.status === PurchaseStatus.Succeeded ? 'success' : 'error'}>
+    <InternalCard status={isLoading ? 'loading' : response.status === PurchaseStatus.Succeeded ? 'success' : 'error'}>
       {#if isLoading}
-        <p>Getting payment status</p>
+        <Text>Getting payment status</Text>
       {:else}
         {#if response.status === PurchaseStatus.Pending}
-          <p>
-            Purchase is still pending, please check your email after a few minutes for the product key. Payment can take
-            up to 48 hours in some cases, depending on payment provider
-          </p>
+          <Text
+            >Purchase is still pending, please check your email after a few minutes for the product key. Payment can
+            take up to 48 hours in some cases, depending on payment provider
+          </Text>
         {/if}
 
         {#if response.status === PurchaseStatus.Failed || response.status === PurchaseStatus.Unknown}
-          <p>Fail to get payment status, please check your email for more details</p>
+          <Text>Fail to get payment status, please check your email for more details</Text>
         {/if}
 
         {#if response.status === PurchaseStatus.Succeeded}
@@ -95,18 +95,20 @@
             {#if data.instanceUrl}
               <div class="flex gap-2 place-items-center place-content-center">
                 <LoadingSpinner />
-                <p>Redirecting back to your instance, click on the button below if you aren't navigated back</p>
+                <Text>Redirecting back to your instance, click on the button below if you aren't navigated back</Text>
               </div>
               <Button href={getRedirectUrl(response.purchaseId, data.instanceUrl)} size="large"
                 >Activate your instance</Button
               >
             {:else}
-              <LicenseKey productKey={response.purchaseId} />
-              <p class="text-sm mt-4">The product key is also sent to the email you provided</p>
+              <VStack>
+                <LicenseKey productKey={response.purchaseId} />
+                <Text size="small">The product key is also sent to the email you provided</Text>
+              </VStack>
             {/if}
           {/if}
         {/if}
       {/if}
-    </Card>
+    </InternalCard>
   </section>
 </div>
