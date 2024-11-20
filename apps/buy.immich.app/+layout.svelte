@@ -10,7 +10,9 @@
   let { children }: Props = $props();
 </script>
 
-<section class="w-screen h-screen overflow-auto grid grid-rows-[auto_60px] lg:h-screen">
-  {@render children?.()}
+<section class="flex flex-col w-screen h-screen overflow-auto">
+  <div class="grow">
+    {@render children?.()}
+  </div>
   <Footer />
 </section>

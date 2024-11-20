@@ -3,8 +3,8 @@
   import { mdiGithub, mdiWeb } from '@mdi/js';
 </script>
 
-<div class="flex flex-col place-content-center bg-dark/10">
-  <div class="flex place-items-center place-content-center gap-4">
+<div class="flex flex-col place-content-center bg-dark/10 p-4">
+  <div class="flex flex-col md:flex-row place-items-center place-content-center gap-4">
     <Link href="https://github.com/immich-app/immich" target="_blank" rel="noopener noreferrer">
       <HStack gap={1}>
         <Icon icon={mdiGithub} />

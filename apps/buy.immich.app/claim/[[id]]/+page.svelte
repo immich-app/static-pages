@@ -51,10 +51,10 @@
     </section>
 
     {#if response}
-      <div class="flex gap-2 items-center">
-        <img src={response.imageUrl} class="h-16" alt="GitHub profile" />
+      <div class="flex flex-col sm:flex-row gap-4 sm:items-center">
+        <img src={response.imageUrl} class="h-16 w-16" alt="GitHub profile" />
         <div>
-          <p class="text-2xl">Welcome back <strong>{response.username}</strong>!</p>
+          <Text size="giant">Welcome back <strong>{response.username}</strong>!</Text>
           {#if response.licenses.length > 0}
             <Text size="large">
               We found <strong>{response.licenses.length}</strong> product key{s(response.licenses.length)}.
