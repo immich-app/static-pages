@@ -3,6 +3,9 @@
   import { getCallbackUrl, ImmichLicense } from '$lib/utils/license';
   import { Button, Heading, Icon, Logo, Stack, SupporterBadge, Text } from '@immich/ui';
   import { mdiAccount, mdiCheckCircleOutline, mdiServer } from '@mdi/js';
+
+  const serverFeatures = ['For the whole server', 'Lifetime purchase', 'Supporter status'];
+  const userFeatures = ['For an individual', 'Lifetime purchase', 'Supporter status'];
 </script>
 
 <div class="w-full h-full md:max-w-[800px] p-4 sm:p-8 lg:p-10 m-auto">
@@ -13,77 +16,59 @@
         <Heading size="large" color="primary">Purchase Immich</Heading>
       </SupporterBadge>
       <section>
-        <div class="flex gap-6 justify-between flex-wrap lg:flex-nowrap">
+        <div class="flex gap-4 justify-between flex-wrap lg:flex-nowrap">
           <!-- SERVER -->
           <div
-            class="border border-gray-300 dark:border-gray-800 w-full p-4 md:p-8 rounded-2xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20 transition-all"
+            class="flex flex-col gap-4 border border-gray-300 dark:border-gray-800 w-full p-4 md:p-8 rounded-2xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20 transition-all"
           >
-            <div class="hidden md:block text-immich-primary dark:text-immich-dark-primary">
+            <div class="hidden md:flex flex-col gap-1 text-primary">
               <Icon icon={mdiServer} size="56" />
-              <p class="font-semibold text-lg mt-1">Server</p>
+              <Text fontWeight="bold" size="large">Server</Text>
             </div>
 
-            <div class="mt-4 dark:text-immich-gray">
-              <p class="text-6xl font-bold">$100</p>
-              <p>per server</p>
-            </div>
+            <Stack gap={0}>
+              <Heading size="giant" class="text-6xl">$100</Heading>
+              <Text>per server</Text>
+            </Stack>
 
-            <div class="flex flex-col justify-between h-[200px] dark:text-immich-gray">
-              <div class="mt-6 flex flex-col gap-1">
-                <div class="grid grid-cols-[36px_auto]">
-                  <Icon icon={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-                  <Text>For the whole server</Text>
-                </div>
-
-                <div class="grid grid-cols-[36px_auto]">
-                  <Icon icon={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-                  <Text>Lifetime purchase</Text>
-                </div>
-
-                <div class="grid grid-cols-[36px_auto]">
-                  <Icon icon={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-                  <Text>Supporter status</Text>
-                </div>
-              </div>
-
+            <Stack gap={8}>
+              <Stack gap={1}>
+                {#each serverFeatures as feature}
+                  <div class="grid grid-cols-[36px_auto] items-center">
+                    <Icon icon={mdiCheckCircleOutline} size="24" class="text-success" />
+                    <Text class="text-immich-gray">{feature}</Text>
+                  </div>
+                {/each}
+              </Stack>
               <Button href={getCallbackUrl(ImmichLicense.Server)} fullWidth size="large">Select</Button>
-            </div>
+            </Stack>
           </div>
 
           <!-- INDIVIDUAL -->
           <div
-            class="border border-gray-300 dark:border-gray-800 w-full p-4 md:p-8 rounded-2xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20"
+            class="flex flex-col gap-4 border border-gray-300 dark:border-gray-800 w-full p-4 md:p-8 rounded-2xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20 transition-all"
           >
-            <div class="hidden md:block text-immich-primary dark:text-immich-dark-primary">
+            <div class="hidden md:flex flex-col gap-1 text-primary">
               <Icon icon={mdiAccount} size="56" />
-              <p class="font-semibold text-lg mt-1">Individual</p>
+              <Text fontWeight="bold" size="large">Individual</Text>
             </div>
 
-            <div class="mt-4 dark:text-immich-gray">
-              <p class="text-6xl font-bold">$25</p>
-              <p>per user</p>
-            </div>
+            <Stack gap={0}>
+              <Heading size="giant" class="text-6xl">$25</Heading>
+              <Text>per user</Text>
+            </Stack>
 
-            <div class="flex flex-col justify-between h-[200px] dark:text-immich-gray">
-              <div class="mt-6 flex flex-col gap-1">
-                <div class="grid grid-cols-[36px_auto]">
-                  <Icon icon={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-                  <Text>For an individual</Text>
-                </div>
-
-                <div class="grid grid-cols-[36px_auto]">
-                  <Icon icon={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-                  <Text>Lifetime purchase</Text>
-                </div>
-
-                <div class="grid grid-cols-[36px_auto]">
-                  <Icon icon={mdiCheckCircleOutline} size="24" class="text-green-500 self-center" />
-                  <Text>Supporter status</Text>
-                </div>
-              </div>
-
+            <Stack gap={8}>
+              <Stack gap={1}>
+                {#each userFeatures as feature}
+                  <div class="grid grid-cols-[36px_auto] items-center">
+                    <Icon icon={mdiCheckCircleOutline} size="24" class="text-success" />
+                    <Text class="text-immich-gray">{feature}</Text>
+                  </div>
+                {/each}
+              </Stack>
               <Button href={getCallbackUrl(ImmichLicense.Individual)} fullWidth size="large">Select</Button>
-            </div>
+            </Stack>
           </div>
         </div>
       </section>
