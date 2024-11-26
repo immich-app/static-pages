@@ -36,7 +36,7 @@ jobs:
       - name: Set app
         run: |
           touch .env
-          echo IMMICH_APP="${{ matrix.app }}" >> .env
+          echo IMMICH_APP="${{ matrix.app_name }}.immich.app" >> .env
 
       - name: Use futopay-test
         if: ${{ env.ENVIRONMENT == 'dev' }}
