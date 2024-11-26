@@ -11,6 +11,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  tofu_version: '1.7.1'
+  tg_version: '0.69.0'
+  ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+
 jobs:
   build:
     name: Build
@@ -19,9 +24,9 @@ jobs:
       matrix:
         include:
           - app: my.immich.app
-            name: my-immich
+            name: my
           - app: buy.immich.app
-            name: buy-immich
+            name: buy
 
     steps:
       - name: Checkout code
@@ -38,7 +43,7 @@ jobs:
           echo IMMICH_APP="${{ matrix.app }}" >> .env
 
       - name: Use futopay-test
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ env.ENVIRONMENT == 'dev' }}
         run: |
           echo PUBLIC_IMMICH_PAY_HOST=https://futopay-test.azurewebsites.net >> .env
 
@@ -54,3 +59,73 @@ jobs:
           name: build-output-${{ matrix.name }}
           path: build
           retention-days: 1
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      matrix:
+        include:
+          - app: my.immich.app
+            name: my
+          - app: buy.immich.app
+            name: buy
+    env:
+      TF_VAR_app_name: ${{ matrix.name }}
+      TF_VAR_dist_dir: ${{ github.workspace }}/dist
+      TF_VAR_stage: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || '' }}
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ github.ref == 'refs/heads/main' && secrets.OP_TF_PROD_ENV || secrets.OP_TF_DEV_ENV }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: 'Get build artifact'
+        uses: actions/download-artifact@v4
+        with:
+          name: 'build-output-${{ matrix.name }}'
+          path: '${{ github.workspace }}/build'
+
+      - name: Install 1Password CLI
+        uses: 1password/install-cli-action@v1
+
+      - name: Install Terragrunt
+        uses: eLco/setup-terragrunt@v1
+        with:
+          terragrunt_version: ${{ env.tg_version }}
+
+      - name: 'Install OpenTofu'
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: ${{ env.tofu_version }}
+          tofu_wrapper: false
+
+      - name: Deploy All
+        working-directory: ${{ github.workspace }}/deployment
+        run: op run --env-file=".env" -- terragrunt run-all apply --terragrunt-non-interactive
+
+      - name: Cloudflare Deploy Output
+        id: deploy-output
+        working-directory: ${{ github.workspace }}/deployment/modules/cloudflare/static-pages
+        run: |
+          echo "output=$(op run --no-masking --env-file='../../../.env' -- terragrunt output -json | jq -c .)" >> $GITHUB_OUTPUT
+
+      - name: Publish Frontend to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_PAGES_UPLOAD }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ fromJson(steps.deploy-output.outputs.output).pages_project_name.value }}
+          directory: 'build'
+          branch: ${{ fromJson(steps.deploy-output.outputs.output).pages_branch.value }}
+          wranglerVersion: '3'
+
+      - name: Comment
+        uses: actions-cool/maintain-one-comment@v3
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          number: ${{ github.event.number }}
+          body: |
+            📖 Preview of ${{ matrix.app }} deployed to [${{ fromJson(steps.deploy-output.outputs.output).immich_subdomain.value }}](https://${{ fromJson(steps.deploy-output.outputs.output).immich_subdomain.value }})
+          emojis: 'rocket'
+          body-include: '<!-- ${{ matrix.app }} PR URL -->'
