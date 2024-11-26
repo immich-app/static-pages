@@ -22,11 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          - app: my.immich.app
-            name: my
-          - app: buy.immich.app
-            name: buy
+        app_name: ['my', 'buy']
 
     steps:
       - name: Checkout code
@@ -56,7 +52,7 @@ jobs:
       - name: Upload build output
         uses: actions/upload-artifact@v4
         with:
-          name: build-output-${{ matrix.name }}
+          name: build-output-${{ matrix.app_name }}
           path: build
           retention-days: 1
 
@@ -67,13 +63,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - app: my.immich.app
-            name: my
-          - app: buy.immich.app
-            name: buy
+        app_name: ['my', 'buy']
     env:
-      TF_VAR_app_name: ${{ matrix.name }}
+      TF_VAR_app_name: ${{ matrix.app_name }}
       TF_VAR_dist_dir: ${{ github.workspace }}/dist
       TF_VAR_stage: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || '' }}
       OP_SERVICE_ACCOUNT_TOKEN: ${{ github.ref == 'refs/heads/main' && secrets.OP_TF_PROD_ENV || secrets.OP_TF_DEV_ENV }}
@@ -84,7 +76,7 @@ jobs:
       - name: 'Get build artifact'
         uses: actions/download-artifact@v4
         with:
-          name: 'build-output-${{ matrix.name }}'
+          name: 'build-output-${{ matrix.app_name }}'
           path: '${{ github.workspace }}/build'
 
       - name: Install 1Password CLI
@@ -127,6 +119,6 @@ jobs:
         with:
           number: ${{ github.event.number }}
           body: |
-            📖 Preview of ${{ matrix.app }} deployed to [${{ fromJson(steps.deploy-output.outputs.output).immich_subdomain.value }}](https://${{ fromJson(steps.deploy-output.outputs.output).immich_subdomain.value }})
+            📖 Preview of ${{ matrix.app_name }}.immich.app deployed to [${{ fromJson(steps.deploy-output.outputs.output).immich_subdomain.value }}](https://${{ fromJson(steps.deploy-output.outputs.output).immich_subdomain.value }})
           emojis: 'rocket'
-          body-include: '<!-- ${{ matrix.app }} PR URL -->'
+          body-include: '<!-- ${{ matrix.app_name }} PR URL -->'
