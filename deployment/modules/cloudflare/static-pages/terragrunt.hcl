@@ -11,7 +11,8 @@ include {
 }
 
 locals {
-  prefix_name = get_env("TF_VAR_prefix_name")
+  env = get_env("TF_VAR_env")
+  stage = get_env("TF_VAR_stage")
   app_name = replace(get_env("TF_VAR_app_name"), "-", "_")
 }
 
@@ -19,7 +20,7 @@ remote_state {
   backend = "pg"
 
   config = {
-    conn_str = get_env("TF_STATE_POSTGRES_CONN_STR")
-    schema_name = "prod_cloudflare_immich_app_${local.app_name}_${local.prefix_name}"
+    conn_str = get_env("TF_VAR_tf_state_postgres_conn_str")
+    schema_name = "prod_cloudflare_immich_app_${local.app_name}_${local.env}${local.stage}"
   }
 }
