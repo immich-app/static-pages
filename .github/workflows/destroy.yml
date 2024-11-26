@@ -10,11 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         environment: ['dev', 'prod']
-        include:
-          - app: my.immich.app
-            name: my-immich
-          - app: buy.immich.app
-            name: buy-immich
+        name: ['my', 'buy']
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
