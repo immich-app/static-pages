@@ -7,7 +7,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
+        environment: ['dev', 'prod']
         include:
           - app: my.immich.app
             name: my-immich
@@ -17,21 +19,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Destroy Docs Subdomain
-        env:
-          TF_VAR_prefix_name: 'pr-${{ github.event.number }}'
-          TF_VAR_prefix_event_type: 'pr'
-          TF_VAR_app_url: ${{ matrix.app }}
-          TF_VAR_app_name: ${{ matrix.name }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          TF_STATE_POSTGRES_CONN_STR: ${{ secrets.TF_STATE_POSTGRES_CONN_STR }}
-        uses: gruntwork-io/terragrunt-action@v2
+      - name: Install 1Password CLI
+        uses: 1password/install-cli-action@v1
+
+      - name: Install Terragrunt
+        uses: eLco/setup-terragrunt@v1
         with:
-          tg_version: '0.58.12'
-          tofu_version: '1.7.1'
-          tg_dir: 'deployment/modules/cloudflare/static-pages'
-          tg_command: 'destroy -refresh=false'
+          terragrunt_version: ${{ env.tg_version }}
+
+      - name: 'Install OpenTofu'
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: ${{ env.tofu_version }}
+          tofu_wrapper: false
+
+      - name: Destroy All
+        working-directory: ${{ github.workspace }}/deployment
+        env:
+          ENVIRONMENT: ${{ matrix.environment }}
+          TF_VAR_app_name: ${{ matrix.name }}
+          TF_VAR_dist_dir: ${{ github.workspace }}/dist
+          TF_VAR_stage: pr-${{ github.event.number }}
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ matrix.environment == 'prod' && secrets.OP_TF_PROD_ENV || secrets.OP_TF_DEV_ENV }}
+        run: op run --env-file=".env" -- terragrunt run-all destroy -refresh=false --terragrunt-non-interactive
 
       - name: Comment
         uses: actions-cool/maintain-one-comment@v3
