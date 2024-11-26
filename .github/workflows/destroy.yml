@@ -7,6 +7,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         environment: ['dev', 'prod']
         include:
