@@ -3,6 +3,10 @@ on:
   pull_request_target:
     types: [closed]
 
+env:
+  tofu_version: '1.7.1'
+  tg_version: '0.69.0'
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
