@@ -40,7 +40,7 @@
     </Stack>
   </CardBody>
   <CardFooter>
-    <div class="w-full grid grid-cols-2 gap-2">
+    <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-2">
       <Button href={getRedirectUrl(productKey, 'https://my.immich.app')} fullWidth size="medium">Activate</Button>
       <div class="flex justify-center items-center">
         {#if clipboardStatus === 'error'}
@@ -54,7 +54,7 @@
             disabled={clipboardStatus === 'success'}
           >
             {#if clipboardStatus === 'success'}
-              <Icon icon={mdiCheckCircleOutline} />
+              <Icon icon={mdiCheckCircleOutline} size="1.5em" />
               Copied to clipboard!
             {:else}
               Copy
