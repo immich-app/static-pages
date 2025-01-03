@@ -1,10 +1,10 @@
 <script lang="ts">
-  import LicenseKey from '$lib/components/license-key.svelte';
-  import LoadingSpinner from '$lib/components/loading-spinner.svelte';
+  import LicenseKey from '$lib/components/LicenseKey.svelte';
   import { getPaymentStatus, getRedirectUrl, PurchaseStatus, type PaymentStatusResponseDto } from '$lib/utils/license';
-  import { Alert, Button, Card, CardBody, Heading, Stack, Text } from '@immich/ui';
+  import { Alert, Button, LoadingSpinner, Card, CardBody, Heading, Stack, Text } from '@immich/ui';
   import { onMount } from 'svelte';
   import type { PageData } from './$types';
+  import DefaultPageLayout from '$lib/components/DefaultPageLayout.svelte';
 
   interface Props {
     data: PageData;
@@ -63,17 +63,13 @@
   <title>Immich - Purchase Success</title>
 </svelte:head>
 
-<div class="w-full h-full md:max-w-[800px] px-4 py-10 sm:px-20 lg:p-10 m-auto">
-  <section>
-    <Heading size="giant" color="primary" class="uppercase">Purchase Status</Heading>
-    <Text size="large">Processing your purchase</Text>
-  </section>
+<DefaultPageLayout>
+  <Stack gap={4}>
+    <section>
+      <Heading size="giant" color="primary" class="uppercase">Purchase Status</Heading>
+      <Text size="large">Processing your purchase</Text>
+    </section>
 
-  <Card class="mt-6">
-    <img src="/img/social-preview.webp" alt="Social Preview" />
-  </Card>
-
-  <section class="mt-10">
     {#if isLoading}
       <Card variant="subtle" color="secondary">
         <CardBody>
@@ -113,16 +109,14 @@
               </div>
             </Alert>
           {:else}
-            <Stack>
-              <Alert title="Success" color="success">
-                <Text>Thank you for doing your part to support Immich and open-source software.</Text>
-                <Text size="small">Note: the product key is also sent to the email you provided.</Text>
-              </Alert>
-              <LicenseKey productKey={response.purchaseId} />
-            </Stack>
+            <Alert title="Success" color="success">
+              <Text>Thank you for doing your part to support Immich and open-source software.</Text>
+              <Text size="small">Note: the product key is also sent to the email you provided.</Text>
+            </Alert>
+            <LicenseKey productKey={response.purchaseId} />
           {/if}
         {/if}
       {/if}
     {/if}
-  </section>
-</div>
+  </Stack>
+</DefaultPageLayout>

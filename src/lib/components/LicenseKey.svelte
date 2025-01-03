@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getRedirectUrl } from '$lib/utils/license';
-  import { Button, Card, CardBody, CardFooter, CardHeader, CardTitle, Stack, Text } from '@immich/ui';
+  import { Button, Card, CardBody, CardFooter, CardHeader, CardTitle, Icon, Stack, Text } from '@immich/ui';
+  import { mdiCheckCircleOutline } from '@mdi/js';
 
   interface Props {
     productKey: string;
@@ -42,12 +43,23 @@
     <div class="w-full grid grid-cols-2 gap-2">
       <Button href={getRedirectUrl(productKey, 'https://my.immich.app')} fullWidth size="medium">Activate</Button>
       <div class="flex justify-center items-center">
-        {#if clipboardStatus === 'success'}
-          <Text color="primary">Copied to clipboard!</Text>
-        {:else if clipboardStatus === 'error'}
+        {#if clipboardStatus === 'error'}
           <Text color="danger">Unable to copy to clipboard</Text>
         {:else}
-          <Button onclick={handleCopy} color="secondary" size="medium" fullWidth>Copy</Button>
+          <Button
+            onclick={handleCopy}
+            color="secondary"
+            size="medium"
+            fullWidth
+            disabled={clipboardStatus === 'success'}
+          >
+            {#if clipboardStatus === 'success'}
+              <Icon icon={mdiCheckCircleOutline} />
+              Copied to clipboard!
+            {:else}
+              Copy
+            {/if}
+          </Button>
         {/if}
       </div>
     </div>

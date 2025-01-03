@@ -1,6 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
-  import LicenseKey from '$lib/components/license-key.svelte';
+  import DefaultPageLayout from '$lib/components/DefaultPageLayout.svelte';
+  import LicenseKey from '$lib/components/LicenseKey.svelte';
   import { getAuthorizeUrl } from '$lib/utils/oauth';
   import { Alert, Button, Heading, Icon, Link, Stack, Text } from '@immich/ui';
   import { mdiGithub } from '@mdi/js';
@@ -38,7 +39,7 @@
   <title>Immich - Claim</title>
 </svelte:head>
 
-<div class="w-full h-full md:max-w-[800px] px-4 py-10 sm:px-20 lg:p-10 m-auto">
+<DefaultPageLayout>
   <Stack gap={8}>
     <section>
       <Stack>
@@ -93,4 +94,4 @@
       </section>
     {/if}
   </Stack>
-</div>
+</DefaultPageLayout>

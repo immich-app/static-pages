@@ -1,6 +1,7 @@
 <script lang="ts">
   import { StorageKey } from '$lib';
   import '$lib/app.css';
+  import FullPageLayout from '$lib/components/FullPageLayout.svelte';
   import {
     Button,
     Card,
@@ -48,8 +49,8 @@
   };
 </script>
 
-<div class="h-full mx-auto max-w-screen-sm p-4">
-  <Stack gap={8}>
+<FullPageLayout>
+  <Stack gap={8} class="min-h-[75vh]">
     <SupporterBadge effect="always">
       <Logo size="large" variant="icon" />
       <Heading size="large" color="primary">My Immich</Heading>
@@ -87,4 +88,4 @@
       </Card>
     </form>
   </Stack>
-</div>
+</FullPageLayout>

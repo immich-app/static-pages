@@ -16,7 +16,6 @@ module.exports = {
 
         // Light Theme
         'immich-primary': 'rgb(var(--immich-primary) / <alpha-value>)',
-        'immich-gray': 'rgb(var(--immich-gray) / <alpha-value>)',
 
         // Dark Theme
         'immich-dark-primary': 'rgb(var(--immich-dark-primary) / <alpha-value>)',
