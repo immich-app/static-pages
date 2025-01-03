@@ -12,6 +12,7 @@ module.exports = {
         danger: 'rgb(var(--immich-ui-danger) / <alpha-value>)',
         warning: 'rgb(var(--immich-ui-warning) / <alpha-value>)',
         info: 'rgb(var(--immich-ui-info) / <alpha-value>)',
+        subtle: 'rgb(var(--immich-ui-gray) / <alpha-value>)',
 
         // Light Theme
         'immich-primary': 'rgb(var(--immich-primary) / <alpha-value>)',
@@ -20,6 +21,10 @@ module.exports = {
         // Dark Theme
         'immich-dark-primary': 'rgb(var(--immich-dark-primary) / <alpha-value>)',
       },
+      borderColor: ({ theme }) => ({
+        ...theme('colors'),
+        DEFAULT: 'rgb(var(--immich-ui-default-border) / <alpha-value>)',
+      }),
       fontFamily: {
         'immich-title': ['Snowburst One', 'cursive'],
         'immich-mono': ['Overpass Mono', 'monospace'],
