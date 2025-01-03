@@ -9,7 +9,7 @@
   const userFeatures = ['For an individual', 'Lifetime purchase', 'Supporter status'];
 </script>
 
-<FullPageLayout>
+<FullPageLayout width="md">
   <Stack gap={4}>
     <SupporterBadge effect="always">
       <Logo size="large" variant="icon" />

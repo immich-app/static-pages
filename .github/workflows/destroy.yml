@@ -15,7 +15,7 @@ jobs:
       max-parallel: 1
       matrix:
         environment: ['dev', 'prod']
-        name: ['my', 'buy']
+        name: ['my', 'buy', 'get']
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
