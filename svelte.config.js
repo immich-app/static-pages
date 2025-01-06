@@ -25,8 +25,8 @@ const config = {
       fallback: 'index.html',
     }),
     files: {
-      routes: `./apps/${app}`,
-      appTemplate: `./apps/${app}/app.html`,
+      routes: `./apps/${app}/routes`,
+      appTemplate: `./apps/${app}/routes/app.html`,
     },
   },
 };
