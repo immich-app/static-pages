@@ -23,6 +23,8 @@ jobs:
     strategy:
       matrix:
         app_name: ['my', 'buy', 'get']
+    env:
+      IMMICH_APP: ${{ matrix.app_name }}.immich.app
 
     steps:
       - name: Checkout code
@@ -32,11 +34,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
-
-      - name: Set app
-        run: |
-          touch .env
-          echo IMMICH_APP="${{ matrix.app_name }}.immich.app" >> .env
 
       - name: Use futopay-test
         if: ${{ env.ENVIRONMENT == 'dev' }}
