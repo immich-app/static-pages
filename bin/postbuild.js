@@ -2,6 +2,9 @@
 
 import { cpSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = process.env.IMMICH_APP;
 
