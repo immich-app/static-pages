@@ -49,7 +49,7 @@
   };
 </script>
 
-<FullPageLayout>
+<FullPageLayout width="sm">
   <Stack gap={8} class="min-h-[75vh]">
     <SupporterBadge effect="always">
       <Logo size="large" variant="icon" />
