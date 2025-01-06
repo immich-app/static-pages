@@ -8,9 +8,6 @@ process.env.PUBLIC_IMMICH_PAY_HOST = process.env.PUBLIC_IMMICH_PAY_HOST || 'http
 process.env.PUBLIC_IMMICH_API_HOST = process.env.PUBLIC_IMMICH_API_HOST || 'https://api.immich.app';
 
 const app = process.env.IMMICH_APP || 'my.immich.app';
-if (!app) {
-  throw new Error('IMMICH_APP environment variable is required');
-}
 
 console.log(`Building for "${app}"`);
 
