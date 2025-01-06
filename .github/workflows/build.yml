@@ -62,6 +62,7 @@ jobs:
     needs: build
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         app_name: ['my', 'buy', 'get']
     env:
