@@ -1,6 +1,6 @@
 <script lang="ts">
   import CodePreview from '$lib/components/CodePreview.svelte';
-  import DefaultPageLayout from '$lib/components/DefaultPageLayout.svelte';
+  import DefaultPageLayout from '$lib/layouts/DefaultPageLayout.svelte';
   import {
     Button,
     Card,

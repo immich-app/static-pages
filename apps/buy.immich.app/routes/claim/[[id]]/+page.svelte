@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
-  import DefaultPageLayout from '$lib/components/DefaultPageLayout.svelte';
   import LicenseKey from '$lib/components/LicenseKey.svelte';
+  import DefaultPageLayout from '$lib/layouts/DefaultPageLayout.svelte';
   import { getAuthorizeUrl } from '$lib/utils/oauth';
   import { Alert, Button, Heading, Icon, Link, Stack, Text } from '@immich/ui';
   import { mdiGithub } from '@mdi/js';

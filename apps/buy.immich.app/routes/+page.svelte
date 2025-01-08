@@ -1,5 +1,4 @@
 <script lang="ts">
-  import '$lib/app.css';
   import FullPageLayout from '$lib/components/FullPageLayout.svelte';
   import { getCallbackUrl, ImmichLicense } from '$lib/utils/license';
   import { Button, Heading, Icon, Logo, Stack, SupporterBadge, Text } from '@immich/ui';
