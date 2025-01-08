@@ -113,7 +113,7 @@
     <CodePreview code={spec}>
       <div class="flex flex-col lg:flex-row-reverse gap-2">
         <div>
-          <Card variant="subtle">
+          <Card color="secondary">
             <CardHeader>
               <CardTitle>Settings</CardTitle>
             </CardHeader>
@@ -144,7 +144,7 @@
 
         <form class="grow">
           <Stack>
-            <Card variant="subtle">
+            <Card color="secondary">
               <CardHeader>
                 <CardTitle>Options</CardTitle>
               </CardHeader>
@@ -158,7 +158,7 @@
             </Card>
 
             {#if settings.customFolders}
-              <Card variant="subtle">
+              <Card color="secondary">
                 <CardHeader>
                   <CardTitle>Custom Folders</CardTitle>
                 </CardHeader>
@@ -186,7 +186,7 @@
                 </CardBody>
               </Card>
             {:else}
-              <Card variant="subtle">
+              <Card color="secondary">
                 <CardHeader>
                   <CardTitle>Folders</CardTitle>
                 </CardHeader>
@@ -201,7 +201,7 @@
             {/if}
 
             {#if settings.externalPostgres}
-              <Card variant="subtle">
+              <Card color="secondary">
                 <CardHeader>
                   <CardTitle>External Postgres</CardTitle>
                 </CardHeader>
@@ -212,7 +212,7 @@
                 </CardBody>
               </Card>
             {:else}
-              <Card variant="subtle">
+              <Card color="secondary">
                 <CardHeader>
                   <CardTitle>Postgres</CardTitle>
                 </CardHeader>
@@ -244,7 +244,7 @@
             {/if}
 
             {#if settings.externalRedis}
-              <Card variant="subtle">
+              <Card color="secondary">
                 <CardHeader>
                   <CardTitle>External Redis</CardTitle>
                 </CardHeader>

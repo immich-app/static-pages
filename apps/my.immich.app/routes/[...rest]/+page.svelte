@@ -7,7 +7,6 @@
     Card,
     CardBody,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
     Heading,
@@ -58,33 +57,26 @@
     <Text>My Immich allows public links to link you to specific areas of your personal Immich instance.</Text>
 
     <form onsubmit={handleSubmit}>
-      <Card color="secondary" variant="subtle">
+      <Card color="secondary">
         <CardHeader>
           <CardTitle>Instance URL</CardTitle>
           <CardDescription>This URL is only stored in your browser</CardDescription>
         </CardHeader>
         <CardBody>
-          <section>
-            <Stack gap={4}>
-              <Input
-                type="text"
-                placeholder="https://demo.immich.app/"
-                bind:value={instanceUrl}
-                oninput={handleChange}
-              />
-            </Stack>
-          </section>
+          <Stack gap={4}>
+            <Input type="text" placeholder="https://demo.immich.app/" bind:value={instanceUrl} oninput={handleChange} />
+            <div class="flex justify-end">
+              <Button type="submit" class="w-full sm:w-auto" disabled={saved}>
+                {#if saved}
+                  <Icon icon={mdiCheckCircleOutline} />
+                  Saved!
+                {:else}
+                  {targetUrl ? 'Save & Redirect' : 'Save'}
+                {/if}
+              </Button>
+            </div>
+          </Stack>
         </CardBody>
-        <CardFooter class="justify-end">
-          <Button type="submit" class="w-full sm:w-auto" disabled={saved}>
-            {#if saved}
-              <Icon icon={mdiCheckCircleOutline} />
-              Saved!
-            {:else}
-              {targetUrl ? 'Save & Redirect' : 'Save'}
-            {/if}
-          </Button>
-        </CardFooter>
       </Card>
     </form>
   </Stack>
