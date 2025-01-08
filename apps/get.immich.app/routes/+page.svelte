@@ -41,7 +41,7 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 l gap-4">
-        <Card color="secondary" variant="subtle">
+        <Card color="secondary">
           <CardHeader>
             <CardTitle>Android</CardTitle>
           </CardHeader>
@@ -66,7 +66,7 @@
           </CardBody>
         </Card>
 
-        <Card color="secondary" variant="subtle">
+        <Card color="secondary">
           <CardHeader>
             <CardTitle>iOS</CardTitle>
           </CardHeader>
@@ -86,7 +86,7 @@
       </div>
 
       <section class="grid auto-rows-fr grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Card color="secondary" variant="subtle" class="h-full">
+        <Card color="secondary" class="h-full">
           <CardHeader>
             <CardTitle>Docker Compose</CardTitle>
             <CardDescription>Run Immich on <Link href="https://www.docker.com/">Docker</Link></CardDescription>
@@ -99,7 +99,7 @@
           </CardFooter>
         </Card>
 
-        <Card color="secondary" variant="subtle" class="h-full">
+        <Card color="secondary" class="h-full">
           <CardHeader>
             <CardTitle>Portainer</CardTitle>
             <CardDescription>Run Immich on <Link href="https://www.portainer.io/">Portainer</Link></CardDescription>
@@ -112,7 +112,7 @@
           </CardFooter>
         </Card>
 
-        <Card color="secondary" variant="subtle" class="h-full">
+        <Card color="secondary" class="h-full">
           <CardHeader>
             <CardTitle>Unraid</CardTitle>
             <CardDescription>Run Immich on <Link href="https://unraid.net/">Unraid</Link></CardDescription>
@@ -125,7 +125,7 @@
           </CardFooter>
         </Card>
 
-        <Card color="secondary" variant="subtle" class="h-full">
+        <Card color="secondary" class="h-full">
           <CardHeader>
             <CardTitle>TrueNAS SCALE</CardTitle>
             <CardDescription

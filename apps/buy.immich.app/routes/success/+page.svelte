@@ -71,7 +71,7 @@
     </section>
 
     {#if isLoading}
-      <Card variant="subtle" color="secondary">
+      <Card color="secondary">
         <CardBody>
           <section class="flex gap-2">
             <Text>Waiting for payment verification...</Text>

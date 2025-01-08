@@ -26,7 +26,7 @@
   };
 </script>
 
-<Card variant="subtle" {color}>
+<Card {color}>
   <CardHeader>
     <CardTitle size="tiny">{type} Product Key</CardTitle>
   </CardHeader>
