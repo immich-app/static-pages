@@ -1,6 +1,5 @@
 <script lang="ts">
   import { StorageKey } from '$lib';
-  import '$lib/app.css';
   import FullPageLayout from '$lib/components/FullPageLayout.svelte';
   import {
     Button,

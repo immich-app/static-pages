@@ -1,10 +1,10 @@
 <script lang="ts">
   import LicenseKey from '$lib/components/LicenseKey.svelte';
+  import DefaultPageLayout from '$lib/layouts/DefaultPageLayout.svelte';
   import { getPaymentStatus, getRedirectUrl, PurchaseStatus, type PaymentStatusResponseDto } from '$lib/utils/license';
-  import { Alert, Button, LoadingSpinner, Card, CardBody, Heading, Stack, Text } from '@immich/ui';
+  import { Alert, Button, Card, CardBody, Heading, LoadingSpinner, Stack, Text } from '@immich/ui';
   import { onMount } from 'svelte';
   import type { PageData } from './$types';
-  import DefaultPageLayout from '$lib/components/DefaultPageLayout.svelte';
 
   interface Props {
     data: PageData;
