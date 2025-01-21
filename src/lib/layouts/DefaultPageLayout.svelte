@@ -17,7 +17,7 @@
     <Header items={[]} />
   </AppShellHeader>
 
-  <PageContent>
+  <PageContent class="max-w-screen-lg w-full mx-auto">
     {@render children?.()}
   </PageContent>
 </AppShell>

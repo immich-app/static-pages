@@ -1,6 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./{apps,src}/**/*.{html,js,svelte,ts}', './node_modules/@immich/ui/dist/**/*.{svelte,js}'],
+  content: [
+    './{apps,src}/**/*.{html,js,svelte,ts}',
+    './node_modules/@immich/ui/dist/**/*.{svelte,js}',
+    '../ui/dist/**/*.{svelte,js,ts,html}',
+  ],
   darkMode: 'class',
   theme: {
     extend: {
@@ -13,6 +17,7 @@ module.exports = {
         warning: 'rgb(var(--immich-ui-warning) / <alpha-value>)',
         info: 'rgb(var(--immich-ui-info) / <alpha-value>)',
         subtle: 'rgb(var(--immich-ui-gray) / <alpha-value>)',
+        muted: 'rgb(var(--immich-ui-muted) / <alpha-value>)',
 
         // Light Theme
         'immich-primary': 'rgb(var(--immich-primary) / <alpha-value>)',
