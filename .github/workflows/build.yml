@@ -64,7 +64,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        app_name: ['my', 'buy', 'get', 'next']
+        app_name: ['next', 'my', 'buy', 'get']
     env:
       TF_VAR_app_name: ${{ matrix.app_name }}
       TF_VAR_stage: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || '' }}
