@@ -1,8 +1,9 @@
 <script lang="ts">
+  import { afterNavigate } from '$app/navigation';
   import { page } from '$app/state';
   import type { HeaderItem } from '$lib/types';
-  import { Button, HStack, IconButton, Logo, syncToDom, theme, Theme } from '@immich/ui';
-  import { mdiWeatherNight, mdiWeatherSunny } from '@mdi/js';
+  import { Button, CloseButton, HStack, IconButton, Logo, NavbarItem, syncToDom, theme, Theme } from '@immich/ui';
+  import { mdiMenu, mdiWeatherNight, mdiWeatherSunny } from '@mdi/js';
   import type { Snippet } from 'svelte';
 
   type Props = {
@@ -24,6 +25,11 @@
   $effect(() => {
     syncToDom();
   });
+
+  let menuOpen = $state(false);
+  afterNavigate(() => {
+    menuOpen = false;
+  });
 </script>
 
 <nav class="flex items-center justify-between md:gap-2 p-2">
@@ -31,9 +37,11 @@
     <Logo variant="inline" />
   </a>
   {@render children?.()}
+
   <HStack gap={0}>
     {#each items as item}
       <Button
+        class="hidden md:flex"
         href={item.href}
         shape="round"
         variant={item.variant ?? 'ghost'}
@@ -41,7 +49,7 @@
       >
     {/each}
     <IconButton
-      size="large"
+      size="giant"
       shape="round"
       color="primary"
       variant="ghost"
@@ -49,5 +57,32 @@
       icon={themeIcon}
       onclick={handleToggleTheme}
     />
+    <span class="md:hidden">
+      {#if menuOpen}
+        <CloseButton class="md:hidden" size="giant" onclick={() => (menuOpen = false)} />
+      {:else}
+        <IconButton
+          size="giant"
+          shape="round"
+          color="secondary"
+          variant="ghost"
+          class="md:hidden"
+          icon={mdiMenu}
+          onclick={() => (menuOpen = true)}
+        />
+      {/if}
+    </span>
   </HStack>
 </nav>
+
+{#if menuOpen}
+  <div class="h-dvh w-dvw bg-light/80 text-dark fixed left-0">
+    <nav class="w-full absolute bg-light text-dark overflow-y-hidden py-4 border-t">
+      <div class="flex flex-col">
+        {#each items as item}
+          <NavbarItem href={item.href} title={item.title} />
+        {/each}
+      </div>
+    </nav>
+  </div>
+{/if}

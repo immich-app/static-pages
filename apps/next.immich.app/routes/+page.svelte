@@ -9,7 +9,6 @@
     appStoreBadge,
     Button,
     Heading,
-    HStack,
     Icon,
     Logo,
     playStoreBadge,
@@ -24,38 +23,44 @@
     <DocsHeader />
   </AppShellHeader>
 
-  <PageContent class="mx-auto max-w-screen-lg">
-    <VStack gap={8} class="p-8 text-center">
+  <PageContent class="mx-auto w-full max-w-screen-lg">
+    <VStack gap={8} class="mt-4 lg:mt-16 text-center">
       <Logo size="giant" variant="logo" class="border" />
       <Heading size="title"
-        >Self-hosted <span class="text-primary">photo and<br /> video management</span> solution</Heading
+        >Self-hosted <span class="text-primary">photo and<br class="hidden lg:block" /> video management</span> solution</Heading
       >
       <Text
-        >Easily back up, organize, and manage your photos on your own server. Immich helps you<br /> browse, search and organize
-        your photos and videos with ease, without sacrificing your privacy.</Text
+        >Easily back up, organize, and manage your photos on your own server. Immich helps you<br
+          class="hidden lg:block"
+        /> browse, search and organize your photos and videos with ease, without sacrificing your privacy.</Text
       >
-      <HStack>
-        <Button size="large" href="/download">Download</Button>
-        <Button size="large" href="https://demo.immich.app/" color="secondary">
-          <span>Open Demo</span>
-          <Icon icon={mdiOpenInNew} />
-        </Button>
-      </HStack>
-      <Button size="large" variant="ghost">Join our Discord</Button>
+
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button size="large" href="/download">Download</Button>
+          <Button size="large" href="https://demo.immich.app/" color="secondary">
+            <span>Open Demo</span>
+            <Icon icon={mdiOpenInNew} />
+          </Button>
+        </div>
+        <div class="flex justify-center">
+          <Button size="large" variant="ghost">Join our Discord</Button>
+        </div>
+      </div>
 
       <img src={screenshot} alt="Immich application" />
 
       <hr class="border-t w-full max-w-screen-sm m-8" />
       <Heading size="title">Download mobile app</Heading>
       <Text>Download Immich app and start backing up your photos and videos securely to your own server</Text>
-      <HStack gap={0}>
+      <div class="flex flex-col lg:flex-row">
         <Button href="" variant="ghost" class="p-0">
           <img src={playStoreBadge} alt="Playstore Badge" class="h-24" />
         </Button>
         <Button href="" variant="ghost" class="p-0">
-          <img src={appStoreBadge} alt="Playstore Badge" class="h-24 p-4" />
+          <img src={appStoreBadge} alt="Playstore Badge" class="h-24 p-[16px]" />
         </Button>
-      </HStack>
+      </div>
       <img src={qrCode} alt="QRCode" class="h-36" />
     </VStack>
   </PageContent>
