@@ -4,10 +4,12 @@
     mdiAndroid,
     mdiApple,
     mdiGithub,
+    mdiKey,
     mdiMessageOutline,
     mdiOfficeBuildingOutline,
     mdiReddit,
     mdiServerOutline,
+    mdiShoppingOutline,
     mdiWeatherNight,
     mdiWeatherSunny,
     mdiWeb,
@@ -21,9 +23,9 @@
 </script>
 
 <div class="bg-dark/10 rounded-t-3xl mt-16 p-8">
-  <div class="max-w-screen-md mx-auto lg:py-8">
+  <div class="max-w-screen-lg mx-auto xl:py-8">
     <Stack gap={8}>
-      <div class="grid grid-cols-2 gap-8 place-center lg:grid-cols-4">
+      <div class="grid grid-cols-2 gap-8 place-center lg:grid-cols-5">
         <Stack>
           <Heading size="tiny">Social</Heading>
           <Link href="https://github.com/immich-app/immich" target="_blank" rel="noopener noreferrer">
@@ -73,17 +75,27 @@
         </Stack>
 
         <Stack>
+          <Heading size="tiny">Support</Heading>
+          <Link href="https://buy.immich.app" target="_blank" rel="noopener noreferrer">
+            <HStack>
+              <Icon icon={mdiKey} size="1.5em" />
+              <Text>Purchase</Text>
+            </HStack>
+          </Link>
+          <Link href="https://immich.store/" target="_blank" rel="noopener noreferrer">
+            <HStack>
+              <Icon icon={mdiShoppingOutline} size="1.5em" />
+              <Text>Merch</Text>
+            </HStack>
+          </Link>
+        </Stack>
+
+        <Stack>
           <Heading size="tiny">Sites</Heading>
           <Link href="https://immich.app" target="_blank" rel="noopener noreferrer">
             <HStack>
               <Icon icon={mdiWeb} size="1.5em" />
               <Text>Documentation</Text>
-            </HStack>
-          </Link>
-          <Link href="https://buy.immich.app" target="_blank" rel="noopener noreferrer">
-            <HStack>
-              <Icon icon={mdiWeb} size="1.5em" />
-              <Text>Buy Immich</Text>
             </HStack>
           </Link>
           <Link href="https://my.immich.app" target="_blank" rel="noopener noreferrer">
