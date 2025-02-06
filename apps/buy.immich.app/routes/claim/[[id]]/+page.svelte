@@ -3,7 +3,7 @@
   import LicenseKey from '$lib/components/LicenseKey.svelte';
   import DefaultPageLayout from '$lib/layouts/DefaultPageLayout.svelte';
   import { getAuthorizeUrl } from '$lib/utils/oauth';
-  import { Alert, Button, Heading, Icon, Link, Stack, Text } from '@immich/ui';
+  import { Alert, Button, Heading, Link, Stack, Text } from '@immich/ui';
   import { mdiGithub } from '@mdi/js';
   import type { PageData } from './$types';
 
@@ -83,8 +83,7 @@
     {:else}
       <section>
         <Stack align="start" gap={4}>
-          <Button onclick={handleLogin} color="secondary" variant="outline">
-            <Icon icon={mdiGithub} size="2em" />
+          <Button leadingIcon={mdiGithub} onclick={handleLogin} color="secondary" variant="outline">
             <Text>Login with GitHub</Text>
           </Button>
           {#if errorMessage}

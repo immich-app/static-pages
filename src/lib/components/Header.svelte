@@ -2,8 +2,8 @@
   import { afterNavigate } from '$app/navigation';
   import { page } from '$app/state';
   import type { HeaderItem } from '$lib/types';
-  import { Button, CloseButton, HStack, IconButton, Logo, NavbarItem, syncToDom, theme, Theme } from '@immich/ui';
-  import { mdiMenu, mdiWeatherNight, mdiWeatherSunny } from '@mdi/js';
+  import { Button, CloseButton, HStack, IconButton, Logo, NavbarItem, syncToDom, ThemeSwitcher } from '@immich/ui';
+  import { mdiMenu } from '@mdi/js';
   import type { Snippet } from 'svelte';
 
   type Props = {
@@ -15,12 +15,6 @@
     path === page.url.pathname || (options?.prefix && page.url.pathname.startsWith(path));
 
   let { items, children }: Props = $props();
-
-  const handleToggleTheme = () => {
-    theme.value = theme.value === Theme.Dark ? Theme.Light : Theme.Dark;
-  };
-
-  const themeIcon = $derived(theme.value === Theme.Light ? mdiWeatherSunny : mdiWeatherNight);
 
   $effect(() => {
     syncToDom();
@@ -48,30 +42,25 @@
         color={(item.color ?? isActive(item.href)) ? 'primary' : 'secondary'}>{item.title}</Button
       >
     {/each}
-    <IconButton
-      size="giant"
-      shape="round"
-      color="primary"
-      variant="ghost"
-      class="ml-2"
-      icon={themeIcon}
-      onclick={handleToggleTheme}
-    />
-    <span class="md:hidden">
-      {#if menuOpen}
-        <CloseButton class="md:hidden" size="giant" onclick={() => (menuOpen = false)} />
-      {:else}
-        <IconButton
-          size="giant"
-          shape="round"
-          color="secondary"
-          variant="ghost"
-          class="md:hidden"
-          icon={mdiMenu}
-          onclick={() => (menuOpen = true)}
-        />
-      {/if}
-    </span>
+    <ThemeSwitcher size="large" />
+    {#if items.length > 0}
+      <span class="md:hidden">
+        {#if menuOpen}
+          <CloseButton class="md:hidden" size="large" onclick={() => (menuOpen = false)} />
+        {:else}
+          <IconButton
+            size="large"
+            shape="round"
+            color="secondary"
+            variant="ghost"
+            class="md:hidden"
+            icon={mdiMenu}
+            aria-label="Open menu"
+            onclick={() => (menuOpen = true)}
+          />
+        {/if}
+      </span>
+    {/if}
   </HStack>
 </nav>
 

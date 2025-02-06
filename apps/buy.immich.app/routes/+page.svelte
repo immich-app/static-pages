@@ -1,5 +1,5 @@
 <script lang="ts">
-  import FullPageLayout from '$lib/components/FullPageLayout.svelte';
+  import FullPageLayout from '$lib/layouts/FullPageLayout.svelte';
   import { getCallbackUrl, ImmichLicense } from '$lib/utils/license';
   import { Button, Heading, Icon, Logo, Stack, SupporterBadge, Text } from '@immich/ui';
   import { mdiAccount, mdiCheckCircleOutline, mdiServer } from '@mdi/js';
@@ -8,7 +8,7 @@
   const userFeatures = ['For an individual', 'Lifetime purchase', 'Supporter status'];
 </script>
 
-<FullPageLayout width="md">
+<FullPageLayout size="medium">
   <Stack gap={4}>
     <SupporterBadge effect="always">
       <Logo size="large" variant="icon" />

@@ -2,7 +2,7 @@
   import portainerIcon from '$lib/assets/img/portainer.svg';
   import truenasIcon from '$lib/assets/img/truenas-scale.svg';
   import unraidIcon from '$lib/assets/img/unraid.svg';
-  import FullPageLayout from '$lib/components/FullPageLayout.svelte';
+  import FullPageLayout from '$lib/layouts/FullPageLayout.svelte';
   import {
     Button,
     Card,
@@ -25,7 +25,7 @@
   import { mdiAndroid, mdiDocker } from '@mdi/js';
 </script>
 
-<FullPageLayout width="lg">
+<FullPageLayout size="large">
   <Stack gap={8}>
     <SupporterBadge effect="always">
       <Logo size="large" variant="icon" />

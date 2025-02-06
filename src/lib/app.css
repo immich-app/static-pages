@@ -54,11 +54,13 @@
   font-family: 'Overpass', sans-serif;
 }
 
-:root.dark {
+:root.dark,
+body.dark {
   color-scheme: dark;
 }
 
-:root:not(.dark) {
+:root:not(.dark),
+body:not(.dark) {
   color-scheme: light;
 }
 
@@ -71,14 +73,4 @@ html {
 body {
   margin: 0;
   color: #3a3a3a;
-}
-
-@layer utilities {
-  .immich-gradient {
-    background:
-      linear-gradient(to bottom right, #ededed 0%, #f0f1fc 50%) bottom right / 50% 50% no-repeat,
-      linear-gradient(to bottom left, #ededed 0%, #f0f1fc 50%) bottom left / 50% 50% no-repeat,
-      linear-gradient(to top left, #ededed 0%, #f0f1fc 50%) top left / 50% 50% no-repeat,
-      linear-gradient(to top right, #ededed 0%, #f0f1fc 50%) top right / 50% 50% no-repeat;
-  }
 }

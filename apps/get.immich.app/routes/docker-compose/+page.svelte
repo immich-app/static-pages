@@ -9,7 +9,6 @@
     CardTitle,
     Field,
     Heading,
-    Icon,
     Input,
     PasswordInput,
     Stack,
@@ -99,14 +98,8 @@
         <Text>Generate a docker-compose.yaml file for Immich</Text>
       </div>
       <div class="flex gap-2 items-center">
-        <Button shape="round" onclick={() => handleShare()}>
-          <Icon icon={mdiShareVariantOutline} size="1.5rem" />
-          <span>Share</span>
-        </Button>
-        <Button shape="round" onclick={() => handleDownload()}>
-          <Icon icon={mdiDownload} size="1.5rem" />
-          <span>Download</span>
-        </Button>
+        <Button leadingIcon={mdiShareVariantOutline} shape="round" onclick={() => handleShare()}>Share</Button>
+        <Button leadingIcon={mdiDownload} shape="round" onclick={() => handleDownload()}>Download</Button>
       </div>
     </div>
 

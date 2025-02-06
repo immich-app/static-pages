@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getRedirectUrl } from '$lib/utils/license';
-  import { Button, Card, CardBody, CardFooter, CardHeader, CardTitle, Icon, Stack, Text } from '@immich/ui';
-  import { mdiCheckCircleOutline } from '@mdi/js';
+  import { Button, Card, CardBody, CardFooter, CardHeader, CardTitle, Stack, Text } from '@immich/ui';
+  import { mdiCheckCircleOutline, mdiContentCopy } from '@mdi/js';
 
   interface Props {
     productKey: string;
@@ -22,7 +22,7 @@
       clipboardStatus = 'error';
     }
 
-    setTimeout(() => (clipboardStatus = undefined), 5_000);
+    setTimeout(() => (clipboardStatus = undefined), 3_000);
   };
 </script>
 
@@ -45,21 +45,13 @@
       <div class="flex justify-center items-center">
         {#if clipboardStatus === 'error'}
           <Text color="danger">Unable to copy to clipboard</Text>
-        {:else}
-          <Button
-            onclick={handleCopy}
-            color="secondary"
-            size="medium"
-            fullWidth
-            disabled={clipboardStatus === 'success'}
+        {:else if clipboardStatus === 'success'}
+          <Button disabled color="secondary" size="medium" fullWidth leadingIcon={mdiCheckCircleOutline}>Copied!</Button
           >
-            {#if clipboardStatus === 'success'}
-              <Icon icon={mdiCheckCircleOutline} size="1.5em" />
-              Copied to clipboard!
-            {:else}
-              Copy
-            {/if}
-          </Button>
+        {:else}
+          <Button leadingIcon={mdiContentCopy} onclick={handleCopy} color="secondary" size="medium" fullWidth
+            >Copy</Button
+          >
         {/if}
       </div>
     </div>

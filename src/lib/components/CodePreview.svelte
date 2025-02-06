@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button, Card, Heading, HStack, Icon } from '@immich/ui';
+  import { Button, Card, Heading, HStack } from '@immich/ui';
   import { mdiPencilOutline, mdiXml } from '@mdi/js';
   import type { Snippet } from 'svelte';
   import { HighlightSvelte, LineNumbers } from 'svelte-highlight';
@@ -28,23 +28,20 @@
     <Heading size="medium">docker-compose.yaml</Heading>
     <HStack gap={1} class="lg:border rounded-xl p-1">
       <Button
+        leadingIcon={mdiPencilOutline}
         disabled={viewMode === 'children'}
         onclick={handleToggle}
         size="small"
         class={viewMode === 'children' ? 'hidden md:flex' : ''}
-      >
-        <Icon icon={mdiPencilOutline} size="1.5em" />
-        <span>Configure</span>
+        >Configure
       </Button>
       <Button
+        leadingIcon={mdiXml}
         disabled={viewMode === 'code'}
         onclick={handleToggle}
         size="small"
-        class={viewMode === 'code' ? 'hidden md:flex' : ''}
+        class={viewMode === 'code' ? 'hidden md:flex' : ''}>View</Button
       >
-        <Icon icon={mdiXml} size="1.5em" />
-        <span>View</span>
-      </Button>
     </HStack>
   </div>
   <div class={viewMode === 'children' ? 'px-4 pb-4' : ''}>

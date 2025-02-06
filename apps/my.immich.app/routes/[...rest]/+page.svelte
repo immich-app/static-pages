@@ -1,6 +1,6 @@
 <script lang="ts">
   import { StorageKey } from '$lib';
-  import FullPageLayout from '$lib/components/FullPageLayout.svelte';
+  import FullPageLayout from '$lib/layouts/FullPageLayout.svelte';
   import {
     Button,
     Card,
@@ -9,7 +9,6 @@
     CardHeader,
     CardTitle,
     Heading,
-    Icon,
     Input,
     Logo,
     Stack,
@@ -47,7 +46,7 @@
   };
 </script>
 
-<FullPageLayout width="sm">
+<FullPageLayout size="small">
   <Stack gap={8} class="min-h-[75vh]">
     <SupporterBadge effect="always">
       <Logo size="large" variant="icon" />
@@ -65,9 +64,13 @@
           <Stack gap={4}>
             <Input type="text" placeholder="https://demo.immich.app/" bind:value={instanceUrl} oninput={handleChange} />
             <div class="flex justify-end">
-              <Button type="submit" class="w-full sm:w-auto" disabled={saved}>
+              <Button
+                leadingIcon={saved ? mdiCheckCircleOutline : undefined}
+                type="submit"
+                class="w-full sm:w-auto"
+                disabled={saved}
+              >
                 {#if saved}
-                  <Icon icon={mdiCheckCircleOutline} />
                   Saved!
                 {:else}
                   {targetUrl ? 'Save & Redirect' : 'Save'}
