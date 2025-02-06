@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Card, Heading, HStack, Icon, IconButton, Link, Stack, Text, theme, Theme, VStack } from '@immich/ui';
+  import { Card, Heading, HStack, Icon, Link, Stack, Text, ThemeSwitcher, VStack } from '@immich/ui';
   import {
     mdiAndroid,
     mdiApple,
@@ -10,16 +10,8 @@
     mdiReddit,
     mdiServerOutline,
     mdiShoppingOutline,
-    mdiWeatherNight,
-    mdiWeatherSunny,
     mdiWeb,
   } from '@mdi/js';
-
-  const handleToggleTheme = () => {
-    theme.value = theme.value === Theme.Dark ? Theme.Light : Theme.Dark;
-  };
-
-  const themeIcon = $derived(theme.value === Theme.Light ? mdiWeatherSunny : mdiWeatherNight);
 </script>
 
 <div class="bg-dark/10 rounded-t-3xl mt-16 p-8">
@@ -122,14 +114,7 @@
       <VStack class="text-center">
         <Text size="large">This project is available under GNU AGPL v3 license.</Text>
         <Text color="muted" variant="italic">Privacy should not be a luxury</Text>
-        <IconButton
-          size="large"
-          shape="round"
-          color="secondary"
-          variant="ghost"
-          icon={themeIcon}
-          onclick={handleToggleTheme}
-        />
+        <ThemeSwitcher color="secondary" />
       </VStack>
     </Stack>
   </div>
