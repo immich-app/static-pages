@@ -36,11 +36,11 @@
   </AppShellSidebar>
 
   <PageContent class="max-w-screen-lg">
-    <Heading size="large">Welcome</Heading>
+    <Heading size="large" tag="h1">Welcome</Heading>
     <Text>This is documentation for the API that powers <Link href="https://immich.app">Immich</Link></Text>
 
     <section class="mt-4">
-      <Heading size="small">Authentication</Heading>
+      <Heading size="small" tag="h2">Authentication</Heading>
       <Text>Users or applications can authenticate with the Immich Api using one of the values listed below.</Text>
 
       <Card class="mt-2">
@@ -90,7 +90,7 @@
     </section>
 
     <section class="mt-4">
-      <Heading size="small">Open API</Heading>
+      <Heading size="small" tag="h2">Open API</Heading>
       <Text
         >Immich uses the <Code>nest-swagger</Code> library to automatically generate an Open API compatible JSON document.
         This document is the basis for this documentation, as well as the <Code>@immich/sdk</Code> TypeScript client, which
@@ -99,7 +99,7 @@
     </section>
 
     <section class="mt-4">
-      <Heading size="small">SDK</Heading>
+      <Heading size="small" tag="h2">SDK</Heading>
       <Text
         >For more information about the <Code>@immich/sdk</Code> package, see the <Link
           href="https://www.npmjs.com/package/@immich/sdk">project on npm</Link
@@ -108,7 +108,7 @@
     </section>
 
     <section class="mt-4">
-      <Heading size="small">SDK</Heading>
+      <Heading size="small" tag="h2">SDK</Heading>
       <Text>Immich</Text>
     </section>
   </PageContent>

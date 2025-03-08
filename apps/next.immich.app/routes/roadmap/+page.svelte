@@ -898,7 +898,7 @@
   <PageContent>
     <div class="p-4">
       <Stack class="text-center" gap={4}>
-        <Heading size="title">Roadmap</Heading>
+        <Heading size="title" tag="h1">Roadmap</Heading>
         <Text>A list of future plans and goals, as well as past achievements and milestones.</Text>
       </Stack>
       <div class="flex justify-around mt-8 w-full max-w-screen-md mx-auto">

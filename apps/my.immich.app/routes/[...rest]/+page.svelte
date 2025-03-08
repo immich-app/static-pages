@@ -50,7 +50,7 @@
   <Stack gap={8} class="min-h-[75vh]">
     <SupporterBadge effect="always">
       <Logo size="large" variant="icon" />
-      <Heading size="large" color="primary">My Immich</Heading>
+      <Heading size="large" color="primary" tag="h1">My Immich</Heading>
     </SupporterBadge>
     <Text>My Immich allows public links to link you to specific areas of your personal Immich instance.</Text>
 

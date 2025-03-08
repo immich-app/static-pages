@@ -11,7 +11,7 @@
 
   <PageContent class="mx-auto w-full max-w-screen-lg">
     <Stack>
-      <Heading size="title">About</Heading>
+      <Heading size="title" tag="h1">About</Heading>
       <Text>Meet the team</Text>
     </Stack>
   </PageContent>

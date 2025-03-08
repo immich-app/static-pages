@@ -24,7 +24,7 @@
   const { fromRef } = getOpenApi();
 </script>
 
-<Heading size="large" class="mb-6">{tag.name}</Heading>
+<Heading size="large" class="mb-6" tag="h1">{tag.name}</Heading>
 
 <div class="flex flex-col max-w-screen-lg">
   {#each tag.endpoints as endpoint, i}
@@ -32,7 +32,7 @@
       <hr class="my-8" />
     {/if}
     <a href="#{endpoint.operationId}" id={endpoint.operationId}>
-      <Heading size="medium">
+      <Heading size="medium" tag="h2">
         <span class="group flex gap-2 items-center justify-between">
           <span class="flex gap-2">
             <span class={methodColor[endpoint.method] ?? ''}>{endpoint.method}</span>
@@ -60,7 +60,7 @@
 
     <!-- <code>{JSON.stringify(endpoint)}</code> -->
     {#if endpoint.params.length > 0}
-      <Heading size="tiny" class="my-2">Request Params</Heading>
+      <Heading size="tiny" class="my-2" tag="h3">Request Params</Heading>
       <div class="bg-subtle rounded-xl text-sm">
         <div class="grid grid-cols-12 py-2 px-4 font-bold">
           <div class="col-span-3">Param</div>
@@ -89,7 +89,7 @@
     {/if}
 
     {#if endpoint.requestBody}
-      <Heading size="tiny" class="my-2 flex gap-2 items-center">
+      <Heading size="tiny" class="my-2 flex gap-2 items-center" tag="h3">
         <span>Request Body</span>
         <Text color="muted" size="small">
           (<Link href={getRefHref(endpoint.requestBody)}>
@@ -101,7 +101,7 @@
     {/if}
 
     {#if endpoint.queryParams.length > 0}
-      <Heading size="tiny" class="my-2">Query Parameters</Heading>
+      <Heading size="tiny" class="my-2" tag="h3">Query Parameters</Heading>
       <div class="bg-subtle rounded-xl text-sm">
         <div class="grid grid-cols-12 py-2 px-4 font-bold">
           <div class="col-span-3">Param</div>
@@ -134,7 +134,7 @@
         {@const response = endpoint.responses[0]}
         {@const ref = response.schema as ReferenceObject}
         {@const schema = fromRef(ref) as SchemaObject}
-        <Heading size="tiny" class="my-2 flex gap-2 items-center">
+        <Heading size="tiny" class="my-2 flex gap-2 items-center" tag="h3">
           <span>Response</span>
           <Text color="muted" size="small">
             (<Link href={getRefHref(ref)}>
@@ -144,7 +144,7 @@
         </Heading>
         <ApiSchema schema={fromRef(endpoint.responses[0].schema)} />
       {:else}
-        <Heading size="tiny" class="my-2">Response</Heading>
+        <Heading size="tiny" class="my-2" tag="h3">Response</Heading>
         <div class="px-4 flex gap-1">
           {#each endpoint.responses as response}
             <span>{response.status}</span>

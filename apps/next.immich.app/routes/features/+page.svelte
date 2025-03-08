@@ -261,7 +261,7 @@
   <PageContent class="mx-auto max-w-screen-lg">
     <Stack gap={8}>
       <Stack>
-        <Heading size="title">Features</Heading>
+        <Heading size="title" tag="h1">Features</Heading>
         <Text>Immich is packed with features!</Text>
       </Stack>
 

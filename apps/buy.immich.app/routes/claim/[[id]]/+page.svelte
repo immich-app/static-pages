@@ -43,7 +43,7 @@
   <Stack gap={8}>
     <section>
       <Stack>
-        <Heading size="giant" color="primary" class="uppercase">Claim your key</Heading>
+        <Heading size="giant" color="primary" class="uppercase" tag="h1">Claim your key</Heading>
         <Text size="large">
           If you previously supported Immich by sponsoring the project on GitHub, you are entitled to a free product
           key. Login below with your GitHub account to claim your key.

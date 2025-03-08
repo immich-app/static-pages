@@ -66,7 +66,7 @@
 <DefaultPageLayout>
   <Stack gap={4}>
     <section>
-      <Heading size="giant" color="primary" class="uppercase">Purchase Status</Heading>
+      <Heading size="giant" color="primary" class="uppercase" tag="h1">Purchase Status</Heading>
       <Text size="large">Processing your purchase</Text>
     </section>
 
