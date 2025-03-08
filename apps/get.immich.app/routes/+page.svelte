@@ -29,12 +29,12 @@
   <Stack gap={8}>
     <SupporterBadge effect="always">
       <Logo size="large" variant="icon" />
-      <Heading size="large" color="primary">Get Immich</Heading>
+      <Heading size="large" color="primary" tag="h1">Get Immich</Heading>
     </SupporterBadge>
 
     <Stack gap={2}>
       <div>
-        <Heading size="large">Mobile Apps</Heading>
+        <Heading size="large" tag="h2">Mobile Apps</Heading>
         <Text color="muted"
           >Download Immich app and start backing up your photos and videos securely to your own server</Text
         >
@@ -81,7 +81,7 @@
 
     <Stack gap={2}>
       <div>
-        <Heading size="large">Server</Heading>
+        <Heading size="large" tag="h2">Server</Heading>
         <Text color="muted">Download, setup, and run Immich on your own server</Text>
       </div>
 

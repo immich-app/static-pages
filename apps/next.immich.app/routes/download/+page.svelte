@@ -32,10 +32,10 @@
   </AppShellHeader>
 
   <PageContent class="mx-auto max-w-screen-lg">
-    <Heading size="title" class="mb-4">Download</Heading>
+    <Heading size="title" class="mb-4" tag="h1">Download</Heading>
 
     <div class="mb-4">
-      <Heading size="large">Server</Heading>
+      <Heading size="large" tag="h2">Server</Heading>
       <Text color="muted">Download, setup, and run Immich on your own server</Text>
     </div>
 
@@ -96,7 +96,7 @@
     </section>
 
     <div class="mt-8 mb-4">
-      <Heading size="large">Mobile Apps</Heading>
+      <Heading size="large" tag="h2">Mobile Apps</Heading>
       <Text color="muted"
         >Download Immich app and start backing up your photos and videos securely to your own server</Text
       >

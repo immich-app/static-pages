@@ -6,7 +6,7 @@
 </script>
 
 <Stack gap={8}>
-  <Heading size="large">Models</Heading>
+  <Heading size="large" tag="h1">Models</Heading>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
     {#each models as model}

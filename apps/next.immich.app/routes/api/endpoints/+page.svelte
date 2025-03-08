@@ -7,7 +7,7 @@
 </script>
 
 <Stack gap={8}>
-  <Heading size="large">API Endpoints</Heading>
+  <Heading size="large" tag="h1">API Endpoints</Heading>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
     {#each tags as tag}

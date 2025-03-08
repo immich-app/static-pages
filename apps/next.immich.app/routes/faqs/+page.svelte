@@ -11,7 +11,7 @@
 
   <PageContent class="mx-auto w-full max-w-screen-lg">
     <Stack>
-      <Heading size="title">Frequently Asked Questions</Heading>
+      <Heading size="title" tag="h1">Frequently Asked Questions</Heading>
     </Stack>
   </PageContent>
 </AppShell>

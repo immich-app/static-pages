@@ -12,7 +12,7 @@
   <Stack gap={4}>
     <SupporterBadge effect="always">
       <Logo size="large" variant="icon" />
-      <Heading size="large" color="primary">Purchase Immich</Heading>
+      <Heading size="large" color="primary" tag="h1">Purchase Immich</Heading>
     </SupporterBadge>
     <section>
       <div class="flex gap-4 justify-between flex-wrap lg:flex-nowrap">

@@ -13,7 +13,7 @@
   const model = $derived(data.model);
 </script>
 
-<Heading size="large" class="mb-4">
+<Heading size="large" class="mb-4" tag="h1">
   <a href="#{model.name}" id={model.name} class="scroll-m-8 flex gap-2">
     <span>{model.name}</span>
     <Text color="muted">[{model.type}]</Text>

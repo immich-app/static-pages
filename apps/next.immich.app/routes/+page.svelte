@@ -26,7 +26,7 @@
   <PageContent class="mx-auto w-full max-w-screen-lg">
     <VStack gap={8} class="mt-4 lg:mt-16 text-center">
       <Logo size="giant" variant="logo" class="border" />
-      <Heading size="title"
+      <Heading size="title" tag="h1"
         >Self-hosted <span class="text-primary">photo and<br class="hidden lg:block" /> video management</span> solution</Heading
       >
       <Text
@@ -51,7 +51,7 @@
       <img src={screenshot} alt="Immich application" />
 
       <hr class="border-t w-full max-w-screen-sm m-8" />
-      <Heading size="title">Download mobile app</Heading>
+      <Heading size="title" tag="h2">Download mobile app</Heading>
       <Text>Download Immich app and start backing up your photos and videos securely to your own server</Text>
       <div class="flex flex-col lg:flex-row">
         <Button href="" variant="ghost" class="p-0">
