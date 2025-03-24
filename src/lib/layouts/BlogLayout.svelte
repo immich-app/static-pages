@@ -1,9 +1,9 @@
 <script lang="ts">
   import '$lib/app.css';
-  import DocsHeader from '$lib/components/DocsHeader.svelte';
   import PageContent from '$lib/components/PageContent.svelte';
-  import { AppShell, AppShellHeader, AppShellSidebar, NavbarGroup, NavbarItem } from '@immich/ui';
+  import { NavbarGroup, NavbarItem } from '@immich/ui';
   import type { Snippet } from 'svelte';
+  import DocsLayout from './DocsLayout.svelte';
 
   interface Props {
     children?: Snippet;
@@ -12,12 +12,8 @@
   let { children }: Props = $props();
 </script>
 
-<AppShell>
-  <AppShellHeader>
-    <DocsHeader />
-  </AppShellHeader>
-
-  <AppShellSidebar>
+<DocsLayout>
+  {#snippet sidebar()}
     <div class="w-full md:w-[300px]">
       <div class="mt-4 mr-0 lg:mr-4">
         <NavbarGroup title="2024" />
@@ -36,9 +32,9 @@
         </div>
       </div>
     </div>
-  </AppShellSidebar>
+  {/snippet}
 
   <PageContent>
     {@render children?.()}
   </PageContent>
-</AppShell>
+</DocsLayout>

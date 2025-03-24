@@ -2,11 +2,9 @@
   import portainerIcon from '$lib/assets/img/portainer.svg';
   import truenasIcon from '$lib/assets/img/truenas-scale.svg';
   import unraidIcon from '$lib/assets/img/unraid.svg';
-  import DocsHeader from '$lib/components/DocsHeader.svelte';
   import PageContent from '$lib/components/PageContent.svelte';
+  import DocsLayout from '$lib/layouts/DocsLayout.svelte';
   import {
-    AppShell,
-    AppShellHeader,
     appStoreBadge,
     Button,
     Card,
@@ -26,11 +24,7 @@
   import { mdiAndroid, mdiDocker } from '@mdi/js';
 </script>
 
-<AppShell>
-  <AppShellHeader>
-    <DocsHeader />
-  </AppShellHeader>
-
+<DocsLayout>
   <PageContent class="mx-auto max-w-screen-lg">
     <Heading size="title" class="mb-4" tag="h1">Download</Heading>
 
@@ -140,4 +134,4 @@
       </Card>
     </div>
   </PageContent>
-</AppShell>
+</DocsLayout>

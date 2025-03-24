@@ -1,28 +1,13 @@
 <script lang="ts">
   import qrCode from '$lib/assets/img/app-qr-code-dark.svg';
   import screenshot from '$lib/assets/img/screenshot-dark.webp';
-  import DocsHeader from '$lib/components/DocsHeader.svelte';
   import PageContent from '$lib/components/PageContent.svelte';
-  import {
-    AppShell,
-    AppShellHeader,
-    appStoreBadge,
-    Button,
-    Heading,
-    Icon,
-    Logo,
-    playStoreBadge,
-    Text,
-    VStack,
-  } from '@immich/ui';
+  import DocsLayout from '$lib/layouts/DocsLayout.svelte';
+  import { appStoreBadge, Button, Heading, Icon, Logo, playStoreBadge, Text, VStack } from '@immich/ui';
   import { mdiOpenInNew } from '@mdi/js';
 </script>
 
-<AppShell>
-  <AppShellHeader>
-    <DocsHeader />
-  </AppShellHeader>
-
+<DocsLayout>
   <PageContent class="mx-auto w-full max-w-screen-lg">
     <VStack gap={8} class="mt-4 lg:mt-16 text-center">
       <Logo size="giant" variant="logo" class="border" />
@@ -64,4 +49,4 @@
       <img src={qrCode} alt="QRCode" class="h-36" />
     </VStack>
   </PageContent>
-</AppShell>
+</DocsLayout>

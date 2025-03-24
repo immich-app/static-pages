@@ -1,9 +1,9 @@
 <script lang="ts">
-  import DocsHeader from '$lib/components/DocsHeader.svelte';
   import PageContent from '$lib/components/PageContent.svelte';
+  import DocsLayout from '$lib/layouts/DocsLayout.svelte';
   import { getOpenApi } from '$lib/services/open-api.svelte';
   import { getIcon } from '$lib/utils/icons';
-  import { AppShell, AppShellHeader, AppShellSidebar, Button, Icon, NavbarGroup, NavbarItem } from '@immich/ui';
+  import { Button, Icon, NavbarGroup, NavbarItem } from '@immich/ui';
   import { mdiArrowLeft } from '@mdi/js';
   import type { Snippet } from 'svelte';
 
@@ -16,12 +16,8 @@
   const { tags } = getOpenApi();
 </script>
 
-<AppShell>
-  <AppShellHeader>
-    <DocsHeader />
-  </AppShellHeader>
-
-  <AppShellSidebar class="min-w-[300px]">
+<DocsLayout>
+  {#snippet sidebar()}
     <Button
       variant="ghost"
       color="secondary"
@@ -37,9 +33,9 @@
     {#each tags as tag}
       <NavbarItem title={tag.name} href={tag.href} icon={getIcon(tag.name)} variant="compact" />
     {/each}
-  </AppShellSidebar>
+  {/snippet}
 
   <PageContent>
     {@render children?.()}
   </PageContent>
-</AppShell>
+</DocsLayout>

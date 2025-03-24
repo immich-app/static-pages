@@ -1,19 +1,7 @@
 <script lang="ts">
-  import DocsHeader from '$lib/components/DocsHeader.svelte';
   import PageContent from '$lib/components/PageContent.svelte';
-  import {
-    AppShell,
-    AppShellHeader,
-    Card,
-    CardBody,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-    Heading,
-    Icon,
-    Stack,
-    Text,
-  } from '@immich/ui';
+  import DocsLayout from '$lib/layouts/DocsLayout.svelte';
+  import { Card, CardBody, CardDescription, CardHeader, CardTitle, Heading, Icon, Stack, Text } from '@immich/ui';
   import {
     mdiAccountCog,
     mdiAccountMultiple,
@@ -253,11 +241,7 @@
   ];
 </script>
 
-<AppShell>
-  <AppShellHeader>
-    <DocsHeader />
-  </AppShellHeader>
-
+<DocsLayout>
   <PageContent class="mx-auto max-w-screen-lg">
     <Stack gap={8}>
       <Stack>
@@ -282,4 +266,4 @@
       </Stack>
     </Stack>
   </PageContent>
-</AppShell>
+</DocsLayout>

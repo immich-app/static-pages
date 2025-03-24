@@ -1,9 +1,9 @@
 <script lang="ts">
-  import DocsHeader from '$lib/components/DocsHeader.svelte';
   import PageContent from '$lib/components/PageContent.svelte';
   import Timeline from '$lib/components/Timeline.svelte';
+  import DocsLayout from '$lib/layouts/DocsLayout.svelte';
   import type { TimelineItem } from '$lib/types';
-  import { AppShell, AppShellHeader, Heading, Stack, Text } from '@immich/ui';
+  import { Heading, Stack, Text } from '@immich/ui';
   import {
     mdiAccountGroup,
     mdiAccountGroupOutline,
@@ -890,11 +890,7 @@
   ];
 </script>
 
-<AppShell>
-  <AppShellHeader>
-    <DocsHeader />
-  </AppShellHeader>
-
+<DocsLayout>
   <PageContent>
     <div class="p-4">
       <Stack class="text-center" gap={4}>
@@ -906,4 +902,4 @@
       </div>
     </div>
   </PageContent>
-</AppShell>
+</DocsLayout>

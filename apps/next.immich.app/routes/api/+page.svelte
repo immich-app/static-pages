@@ -1,30 +1,12 @@
 <script lang="ts">
-  import DocsHeader from '$lib/components/DocsHeader.svelte';
   import PageContent from '$lib/components/PageContent.svelte';
-  import {
-    Alert,
-    AppShell,
-    AppShellHeader,
-    AppShellSidebar,
-    Card,
-    CardBody,
-    CardHeader,
-    Code,
-    Heading,
-    Link,
-    NavbarGroup,
-    NavbarItem,
-    Text,
-  } from '@immich/ui';
+  import DocsLayout from '$lib/layouts/DocsLayout.svelte';
+  import { Alert, Card, CardBody, CardHeader, Code, Heading, Link, NavbarGroup, NavbarItem, Text } from '@immich/ui';
   import { mdiCodeJson, mdiHomeOutline, mdiLightbulbOnOutline, mdiPencilRuler } from '@mdi/js';
 </script>
 
-<AppShell>
-  <AppShellHeader>
-    <DocsHeader />
-  </AppShellHeader>
-
-  <AppShellSidebar class="min-w-[250px]">
+<DocsLayout>
+  {#snippet sidebar()}
     <div class="mt-4 mr-0 lg:mr-4">
       <NavbarGroup title="API Documentation" />
     </div>
@@ -33,7 +15,7 @@
       <NavbarItem title="Endpoints" href="/api/endpoints" icon={mdiCodeJson} />
       <NavbarItem title="Models" href="/api/models" icon={mdiPencilRuler} />
     </div>
-  </AppShellSidebar>
+  {/snippet}
 
   <PageContent class="max-w-screen-lg">
     <Heading size="large" tag="h1">Welcome</Heading>
@@ -112,4 +94,4 @@
       <Text>Immich</Text>
     </section>
   </PageContent>
-</AppShell>
+</DocsLayout>
