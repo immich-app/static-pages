@@ -1,6 +1,7 @@
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import dotenv from 'dotenv';
+import { svelteMarkdownPreprocess } from './svelte-markdown-preprocess.js';
 
 dotenv.config();
 
@@ -10,13 +11,21 @@ process.env.PUBLIC_IMMICH_SPEC_URL = process.env.PUBLIC_IMMICH_SPEC_URL || 'http
 
 const app = process.env.IMMICH_APP || 'my.immich.app';
 
-console.log(`Building for "${app}"`);
-
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   // Consult https://kit.svelte.dev/docs/integrations#preprocessors
   // for more information about preprocessors
-  preprocess: vitePreprocess(),
+  // preprocess: vitePreprocess(),
+  extensions: ['.svelte', '.md'],
+  preprocess: [
+    svelteMarkdownPreprocess({
+      layouts: {
+        blog: '$lib/layouts/BlogLayout.svelte',
+        default: '$lib/layouts/DefaultPageLayout.svelte',
+      },
+    }),
+    vitePreprocess(),
+  ],
 
   kit: {
     adapter: adapter({
