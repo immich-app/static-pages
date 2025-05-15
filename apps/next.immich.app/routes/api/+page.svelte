@@ -24,7 +24,7 @@
     <DocsHeader />
   </AppShellHeader>
 
-  <AppShellSidebar class="min-w-[250px]" noBorder>
+  <AppShellSidebar class="min-w-[250px]">
     <div class="mt-4 mr-0 lg:mr-4">
       <NavbarGroup title="API Documentation" />
     </div>
