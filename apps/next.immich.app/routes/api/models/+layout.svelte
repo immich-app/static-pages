@@ -20,7 +20,7 @@
     <DocsHeader />
   </AppShellHeader>
 
-  <AppShellSidebar class="min-w-[300px]" noBorder>
+  <AppShellSidebar class="min-w-[300px]">
     <Button
       variant="ghost"
       color="secondary"

@@ -17,7 +17,7 @@
     <DocsHeader />
   </AppShellHeader>
 
-  <AppShellSidebar noBorder>
+  <AppShellSidebar>
     <div class="w-full md:w-[300px]">
       <div class="mt-4 mr-0 lg:mr-4">
         <NavbarGroup title="2024" />
