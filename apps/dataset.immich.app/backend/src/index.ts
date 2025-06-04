@@ -1,63 +1,49 @@
+import { MetadataSchema } from './metadata/metadata';
+
+function handleError(message: string, returnCode: number = 400): Response {
+	return new Response(
+		JSON.stringify({
+			success: false,
+			error: message,
+		}),
+		{ status: returnCode },
+	);
+}
+
 export default {
 	async fetch(request, env): Promise<Response> {
 		// only listen to /upload requests
 		if (!request.url.endsWith('/upload')) {
-			return new Response(
-				JSON.stringify({
-					success: false,
-					error: 'Not Found',
-				}),
-				{ status: 404 },
-			);
+			return handleError('404 not found', 404);
 		}
 
 		if (request.method != 'PUT') {
-			return new Response(
-				JSON.stringify({
-					success: false,
-					error: 'Method not allowed',
-				}),
-				{ status: 405 },
-			);
+			return handleError(`${request.method}: Method not allowed`, 405);
 		}
 
 		// extract multipart form data
 		const contentType = request.headers.get('content-type');
 		if (!contentType || !contentType.startsWith('multipart/form-data')) {
-			return new Response(
-				JSON.stringify({
-					success: false,
-					error: 'Invalid content type, expected multipart/form-data',
-				}),
-				{ status: 400 },
-			);
+			return handleError("Invalid content type, expected 'multipart/form-data'");
 		}
 
 		const formData = await request.formData();
 		const imageUpload = formData.get('file');
-		const metadata = formData.get('data');
+		const formMetadata = formData.get('data');
 
-		if (!imageUpload || !metadata) {
-			return new Response(
-				JSON.stringify({
-					success: false,
-					error: "Missing required fields: 'file' or 'data'",
-				}),
-				{ status: 400 },
-			);
+		if (!imageUpload || !formMetadata) {
+			return handleError("Missing required fields: 'file' or 'data'");
 		}
 
 		if ((imageUpload as File).size == 0) {
-			return new Response(
-				JSON.stringify({
-					success: false,
-					error: 'File is empty',
-				}),
-				{ status: 400 },
-			);
+			return handleError('Image file is empty, please upload a valid image');
 		}
 
-		// TODO: do some metadata validation on the file and required fields in jsonData
+		// type check metadata with zod
+		const metadata = JSON.parse(formMetadata as string);
+		if (!MetadataSchema.safeParse(formMetadata).success) {
+			return handleError('Invalid metadata format, please ensure it matches the required schema');
+		}
 
 		const fileExtension = (imageUpload as File).name.split('.').pop()?.toLowerCase();
 		const uploadID = crypto.randomUUID();
