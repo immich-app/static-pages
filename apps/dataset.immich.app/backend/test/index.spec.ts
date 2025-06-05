@@ -8,8 +8,9 @@ describe('Dataset upload API worker', () => {
 		formData.append(
 			'data',
 			JSON.stringify({
-				title: 'Test Image',
-				description: 'This is a test image.',
+				dataset: 'animal',
+				animalType: 'dog',
+				animalBreed: 'labrador',
 			}),
 		);
 
@@ -29,8 +30,9 @@ describe('Dataset upload API worker', () => {
 		formData.append(
 			'data',
 			JSON.stringify({
-				title: 'Test Image',
-				description: 'This is a test image.',
+				dataset: 'animal',
+				animalType: 'dog',
+				animalBreed: 'labrador',
 			}),
 		);
 
@@ -49,8 +51,9 @@ describe('Dataset upload API worker', () => {
 		formData.append(
 			'data',
 			JSON.stringify({
-				title: 'Test Image',
-				description: 'This is a test image.',
+				dataset: 'animal',
+				animalType: 'dog',
+				animalBreed: 'labrador',
 			}),
 		);
 
@@ -71,8 +74,9 @@ describe('Dataset upload API worker', () => {
 		formData.append(
 			'data',
 			JSON.stringify({
-				title: 'Test Image',
-				description: 'This is a test image.',
+				dataset: 'animal',
+				animalType: 'dog',
+				animalBreed: 'labrador',
 			}),
 		);
 
@@ -119,8 +123,9 @@ describe('Dataset upload API worker', () => {
 		formData.append(
 			'data',
 			JSON.stringify({
-				title: 'Test Image',
-				description: 'This is a test image.',
+				dataset: 'animal',
+				animalType: 'dog',
+				animalBreed: 'labrador',
 			}),
 		);
 
@@ -132,5 +137,47 @@ describe('Dataset upload API worker', () => {
 		);
 
 		expect(response.status).toBe(405);
+	});
+
+	it('rejects a metadata without dataset type', async () => {
+		const formData = new FormData();
+		formData.append('file', new Blob(['test1234'], { type: 'image/jpeg' }), 'test.jpg');
+		formData.append(
+			'data',
+			JSON.stringify({
+				animalType: 'dog',
+				animalBreed: 'labrador',
+			}),
+		);
+
+		const response = await SELF.fetch(
+			new Request('https://example.com/upload', {
+				method: 'PUT',
+				body: formData,
+			}),
+		);
+
+		expect(response.status).toBe(400);
+	});
+
+	it('rejects a metadata with invalid schema', async () => {
+		const formData = new FormData();
+		formData.append('file', new Blob(['test1234'], { type: 'image/jpeg' }), 'test.jpg');
+		formData.append(
+			'data',
+			JSON.stringify({
+				type: 'animal',
+				animalBreed: 'labrador',
+			}),
+		);
+
+		const response = await SELF.fetch(
+			new Request('https://example.com/upload', {
+				method: 'PUT',
+				body: formData,
+			}),
+		);
+
+		expect(response.status).toBe(400);
 	});
 });

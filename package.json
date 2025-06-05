@@ -41,6 +41,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@mdi/js": "^7.4.47"
+    "@mdi/js": "^7.4.47",
+    "exifreader": "^4.31.0"
   }
 }
