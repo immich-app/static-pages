@@ -1,4 +1,4 @@
-import { MetadataSchema } from './metadata/metadata';
+import { MetadataSchema } from './metadata';
 
 function handleError(message: string, returnCode: number = 400): Response {
 	return new Response(
@@ -41,8 +41,9 @@ export default {
 
 		// type check metadata with zod
 		const metadata = JSON.parse(formMetadata as string);
-		if (!MetadataSchema.safeParse(formMetadata).success) {
-			return handleError('Invalid metadata format, please ensure it matches the required schema');
+		const metadataValidation = MetadataSchema.safeParse(metadata);
+		if (!metadataValidation.success) {
+			return handleError(`Invalid metadata format, please ensure it matches the required schema: ${metadataValidation.error.message}`);
 		}
 
 		const fileExtension = (imageUpload as File).name.split('.').pop()?.toLowerCase();
