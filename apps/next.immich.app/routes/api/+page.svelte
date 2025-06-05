@@ -35,7 +35,7 @@
     </div>
   </AppShellSidebar>
 
-  <PageContent class="max-w-screen-lg">
+  <PageContent class="max-w-(--breakpoint-lg)">
     <Heading size="large" tag="h1">Welcome</Heading>
     <Text>This is documentation for the API that powers <Link href="https://immich.app">Immich</Link></Text>
 

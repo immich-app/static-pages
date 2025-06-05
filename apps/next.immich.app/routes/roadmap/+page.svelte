@@ -901,7 +901,7 @@
         <Heading size="title" tag="h1">Roadmap</Heading>
         <Text>A list of future plans and goals, as well as past achievements and milestones.</Text>
       </Stack>
-      <div class="flex justify-around mt-8 w-full max-w-screen-md mx-auto">
+      <div class="flex justify-around mt-8 w-full max-w-(--breakpoint-md) mx-auto">
         <Timeline items={[...roadmap, ...milestones]} />
       </div>
     </div>

@@ -23,7 +23,7 @@
     <DocsHeader />
   </AppShellHeader>
 
-  <PageContent class="mx-auto w-full max-w-screen-lg">
+  <PageContent class="mx-auto w-full max-w-(--breakpoint-lg)">
     <VStack gap={8} class="mt-4 lg:mt-16 text-center">
       <Logo size="giant" variant="logo" class="border" />
       <Heading size="title" tag="h1"
@@ -50,7 +50,7 @@
 
       <img src={screenshot} alt="Immich application" />
 
-      <hr class="border-t w-full max-w-screen-sm m-8" />
+      <hr class="border-t w-full max-w-(--breakpoint-sm) m-8" />
       <Heading size="title" tag="h2">Download mobile app</Heading>
       <Text>Download Immich app and start backing up your photos and videos securely to your own server</Text>
       <div class="flex flex-col lg:flex-row">

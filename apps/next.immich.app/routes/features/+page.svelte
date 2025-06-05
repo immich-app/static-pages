@@ -258,7 +258,7 @@
     <DocsHeader />
   </AppShellHeader>
 
-  <PageContent class="mx-auto max-w-screen-lg">
+  <PageContent class="mx-auto max-w-(--breakpoint-lg)">
     <Stack gap={8}>
       <Stack>
         <Heading size="title" tag="h1">Features</Heading>

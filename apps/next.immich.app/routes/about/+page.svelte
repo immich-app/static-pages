@@ -9,7 +9,7 @@
     <DocsHeader />
   </AppShellHeader>
 
-  <PageContent class="mx-auto w-full max-w-screen-lg">
+  <PageContent class="mx-auto w-full max-w-(--breakpoint-lg)">
     <Stack>
       <Heading size="title" tag="h1">About</Heading>
       <Text>Meet the team</Text>
