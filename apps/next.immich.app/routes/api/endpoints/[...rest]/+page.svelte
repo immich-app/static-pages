@@ -26,7 +26,7 @@
 
 <Heading size="large" class="mb-6" tag="h1">{tag.name}</Heading>
 
-<div class="flex flex-col max-w-screen-lg">
+<div class="flex flex-col max-w-(--breakpoint-lg)">
   {#each tag.endpoints as endpoint, i}
     {#if i > 0}
       <hr class="my-8" />

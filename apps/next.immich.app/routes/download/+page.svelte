@@ -31,7 +31,7 @@
     <DocsHeader />
   </AppShellHeader>
 
-  <PageContent class="mx-auto max-w-screen-lg">
+  <PageContent class="mx-auto max-w-(--breakpoint-lg)">
     <Heading size="title" class="mb-4" tag="h1">Download</Heading>
 
     <div class="mb-4">

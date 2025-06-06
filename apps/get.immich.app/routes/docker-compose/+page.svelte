@@ -91,7 +91,7 @@
 </script>
 
 <DefaultPageLayout>
-  <div class="h-full mx-auto max-w-screen-lg p-4">
+  <div class="h-full mx-auto max-w-(--breakpoint-lg) p-4">
     <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
       <div>
         <Heading size="large" tag="h1">Docker Compose</Heading>

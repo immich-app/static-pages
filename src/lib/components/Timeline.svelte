@@ -39,7 +39,7 @@
       <section
         class="bg-subtle border rounded-2xl flex w-full gap-2 p-4 md:ml-4 my-2 hover:bg-primary/10 transition-all"
       >
-        <div class="flex flex-col flex-grow justify-between gap-2">
+        <div class="flex flex-col grow justify-between gap-2">
           <div class="flex gap-2 items-center">
             {#if cardIcon === 'immich'}
               <Logo size="tiny" variant="icon" />
