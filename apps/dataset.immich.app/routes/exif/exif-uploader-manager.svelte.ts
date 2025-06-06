@@ -18,7 +18,7 @@ interface EXIFAsset {
   data: File;
   name: string;
   metadata: {
-    type: AssetType;
+    type?: AssetType;
     cameraMfg: string;
     cameraModel: string;
   };
@@ -30,6 +30,12 @@ class EXIFUploaderManager {
   assets = $state<EXIFAsset[]>([]);
   selection = $derived(this.assets.filter((a) => a.selected));
 
+  // Metadata for the selected assets
+  selectedMetadata = $state<EXIFAsset['metadata']>({
+    cameraMfg: '',
+    cameraModel: '',
+  });
+
   constructor() {
     this.assets = [];
   }
@@ -40,6 +46,7 @@ class EXIFUploaderManager {
     try {
       tags = await EXIFReader.load(asset, { async: true });
     } catch {
+      // it was an invalid image format so we skip it
       return;
     }
 
@@ -48,7 +55,6 @@ class EXIFUploaderManager {
       name: asset.name,
       id: crypto.randomUUID(),
       metadata: {
-        type: AssetType.Image,
         cameraMfg: tags['Make']?.description ?? '',
         cameraModel: tags['Model']?.description ?? '',
       },
@@ -58,8 +64,30 @@ class EXIFUploaderManager {
     this.assets.push(newAsset);
   }
 
+  private updateMetadataInputs() {
+    if (this.selection.length === 0) {
+      this.selectedMetadata = {
+        cameraMfg: '',
+        cameraModel: '',
+      };
+    } else {
+      const metadataKeys = Object.keys(this.selection[0].metadata) as (keyof EXIFAsset['metadata'])[];
+
+      for (const key of metadataKeys) {
+        const allSame = this.selection.every((a) => a.metadata[key] === this.selection[0].metadata[key]);
+
+        if (key === 'type') {
+          this.selectedMetadata[key] = allSame ? this.selection[0].metadata[key] : undefined;
+        } else {
+          this.selectedMetadata[key] = allSame ? this.selection[0].metadata[key] : '';
+        }
+      }
+    }
+  }
+
   toggleSelect(asset: EXIFAsset) {
     asset.selected = !asset.selected;
+    this.updateMetadataInputs();
   }
 
   selectAll() {
@@ -78,6 +106,8 @@ class EXIFUploaderManager {
     for (const asset of this.selection) {
       asset.metadata[metadataKey] = value;
     }
+
+    this.updateMetadataInputs();
   }
 }
 

@@ -7,13 +7,16 @@
     CardBody,
     CardHeader,
     CardTitle,
+    Checkbox,
     Field,
     Heading,
     HStack,
     Icon,
     Input,
     Logo,
-    Select,
+    Modal,
+    ModalBody,
+    ModalFooter,
     Stack,
     SupporterBadge,
     Text,
@@ -22,23 +25,51 @@
   import { AssetType, AssetTypeNames, exifUploaderManager } from './exif-uploader-manager.svelte';
   import { scale } from 'svelte/transition';
 
-  const onDragAndDropUpload = (files?: FileList | File[]) => {
-    // Handle the uploaded files here
-    console.log('Files uploaded:', files);
+  let modalOpen = $state(false);
 
+  const onDragAndDropUpload = (files?: FileList | File[]) => {
     for (const file of files || []) {
       // Add each file to the exif uploader manager
       exifUploaderManager.addAsset(file);
     }
   };
 
+  const showImagePreviewError = (assetId: string) => {
+    const errorElem = document.getElementById(`error-${assetId}`);
+    if (errorElem) errorElem.style = '';
+
+    const previewElem = document.getElementById(`preview-${assetId}`);
+    if (previewElem) previewElem.style.display = 'none';
+  };
+
+  const segmentedControlRoundedClass = (idx: number, total: number) => {
+    if (idx != 0 && idx != total - 1) {
+      return 'rounded-none';
+    }
+
+    if (idx === 0 && total > 1) {
+      return 'rounded-none rounded-l-lg ';
+    }
+
+    if (idx === total - 1 && total > 1) {
+      return 'rounded-none rounded-r-lg';
+    }
+  };
+
   const disabledMetadataEditing = $derived(exifUploaderManager.selection.length === 0);
+
+  const submitDisabled = $derived(
+    exifUploaderManager.assets.length === 0 ||
+      exifUploaderManager.assets.some(
+        (asset) => !asset.metadata.cameraMfg || !asset.metadata.cameraModel || !asset.metadata.type,
+      ),
+  );
 </script>
 
 <FullPageLayout size="full">
   <DragAndDropUpload onFiles={onDragAndDropUpload} />
 
-  <div class="z-0">
+  <div>
     <SupporterBadge effect="always">
       <Logo size="large" variant="icon" />
       <Heading size="large" color="primary" tag="h1">Contribute to EXIF Dataset</Heading>
@@ -52,10 +83,12 @@
           <CardHeader>
             <div class="flex justify-between">
               <CardTitle>Uploads</CardTitle>
-              <HStack gap={2}>
-                <Button onclick={() => exifUploaderManager.selectAll()} size="small">Select All</Button>
-                <Button onclick={() => exifUploaderManager.deselectAll()} size="small">Deselect All</Button>
-              </HStack>
+              {#if exifUploaderManager.assets.length > 0}
+                <HStack gap={2}>
+                  <Button onclick={() => exifUploaderManager.selectAll()} size="small">Select All</Button>
+                  <Button onclick={() => exifUploaderManager.deselectAll()} size="small">Deselect All</Button>
+                </HStack>
+              {/if}
             </div>
           </CardHeader>
           <CardBody>
@@ -76,7 +109,7 @@
                   >
                     {#if exifUploaderManager.selection.includes(asset)}
                       <div
-                        class="absolute top-2 right-2 z-10 bg-white rounded-full p-1 shadow light"
+                        class="absolute top-2 right-2 bg-white rounded-full p-1 shadow light"
                         transition:scale={{ duration: 100 }}
                       >
                         <Icon icon={mdiCheck} class="w-5 h-5 text-primary" />
@@ -90,13 +123,7 @@
                       loading="lazy"
                       id={`preview-${asset.id}`}
                       draggable="false"
-                      onerror={() => {
-                        const errorElem = document.getElementById(`error-${asset.id}`);
-                        if (errorElem) errorElem.style = '';
-
-                        const previewElem = document.getElementById(`preview-${asset.id}`);
-                        if (previewElem) previewElem.style.display = 'none';
-                      }}
+                      onerror={() => showImagePreviewError(asset.id)}
                     />
                     <!-- image loading error -->
                     <div
@@ -105,20 +132,22 @@
                       id={`error-${asset.id}`}
                     >
                       <Icon icon={mdiCameraOff} class="w-8 h-8 mb-2" />
-                      <Text class="text-center text-gray-50">This file cannot be viewed on the web.</Text>
+                      <Text class="text-center">This file cannot be viewed on the web.</Text>
                     </div>
 
                     <div class="gap-2 m-4">
                       <Text class="text-lg font-semibold text-ellipsis line-clamp-1 mb-2">{asset.name}</Text>
-                      <Text class="text-sm text-gray-200">
+                      <Text class="text-sm text-gray-700 dark:text-gray-200">
                         {asset.metadata.cameraMfg}
                       </Text>
-                      <Text class="text-sm text-gray-200">
+                      <Text class="text-sm text-gray-700 dark:text-gray-200">
                         {asset.metadata.cameraModel}
                       </Text>
-                      <Text class="text-sm text-white bg-red-400 p-1 mt-2 inline-block w-auto rounded">
-                        {AssetTypeNames[asset.metadata.type]}
-                      </Text>
+                      {#if asset.metadata.type}
+                        <Text class="text-sm text-white bg-neutral-500 p-1 mt-2 px-2 inline-block w-auto rounded">
+                          {AssetTypeNames[asset.metadata.type]}
+                        </Text>
+                      {/if}
                     </div>
                   </Card>
                 {/each}
@@ -135,19 +164,29 @@
           <CardBody>
             <Stack gap={4}>
               <Field label="Image Type" disabled={disabledMetadataEditing}>
-                <Select
-                  data={Object.keys(AssetTypeNames).map((key) => ({
-                    label: AssetTypeNames[key as keyof typeof AssetTypeNames],
-                    value: key,
-                  }))}
-                  onChange={(e) => exifUploaderManager.updateSelectedMetadata('type', e.value as AssetType)}
-                />
+                <HStack gap={0}>
+                  <!-- loop through all enum types and make a segmented control -->
+                  {#each Object.values(AssetType) as type, idx (type)}
+                    <Button
+                      color="primary"
+                      size="small"
+                      onclick={() => exifUploaderManager.updateSelectedMetadata('type', type)}
+                      disabled={disabledMetadataEditing}
+                      class={segmentedControlRoundedClass(idx, Object.values(AssetType).length) +
+                        ' ' +
+                        (exifUploaderManager.selectedMetadata.type === type ? 'bg-primary/80' : '')}
+                    >
+                      {AssetTypeNames[type]}
+                    </Button>
+                  {/each}
+                </HStack>
               </Field>
               <Field label="Camera Brand" disabled={disabledMetadataEditing}>
                 <Input
                   placeholder=""
                   onchange={(e) =>
                     exifUploaderManager.updateSelectedMetadata('cameraMfg', (e?.target as HTMLInputElement).value)}
+                  bind:value={exifUploaderManager.selectedMetadata.cameraMfg}
                 />
               </Field>
               <Field label="Camera Model" disabled={disabledMetadataEditing}>
@@ -155,21 +194,45 @@
                   placeholder=""
                   onchange={(e) =>
                     exifUploaderManager.updateSelectedMetadata('cameraModel', (e?.target as HTMLInputElement).value)}
+                  bind:value={exifUploaderManager.selectedMetadata.cameraModel}
                 />
               </Field>
             </Stack>
           </CardBody>
         </Card>
-        <Button
-          color="primary"
-          class="w-full mt-4"
-          onclick={() => console.log('Submit to Dataset')}
-          disabled={exifUploaderManager.assets.length === 0}
-        >
+        <Button color="primary" class="w-full mt-4 light" onclick={() => (modalOpen = true)} disabled={submitDisabled}>
           <Icon icon={mdiCheck} class="inline-block align-middle w-5 h-5 mr-2" />
           Submit to Dataset
         </Button>
       </div>
     </div>
   </section>
+  {#if modalOpen}
+    <Modal title="Dataset Agreement" size="medium" onClose={() => (modalOpen = false)}>
+      <ModalBody>
+        <Stack gap={4}>
+          <Field
+            label="Creative Commons 0"
+            description="I declare that I own full rights to this file and I hereby release it under the CCO license into the public domain."
+            required
+          >
+            <Checkbox />
+          </Field>
+          <Field
+            label="File Modification"
+            description="The file is manually copied from card/camera, without using any software like Nikon Transfer, and hasn't been modified in any way."
+            required
+          >
+            <Checkbox />
+          </Field>
+          <Field label="Contact Email" required>
+            <Input placeholder="contact@example.com" />
+          </Field>
+        </Stack>
+      </ModalBody>
+      <ModalFooter>
+        <Button onclick={() => (modalOpen = false)} shape="round">Submit Dataset</Button>
+      </ModalFooter>
+    </Modal>
+  {/if}
 </FullPageLayout>
