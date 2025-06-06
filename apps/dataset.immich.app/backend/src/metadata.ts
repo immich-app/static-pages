@@ -1,10 +1,18 @@
-import { z } from 'zod';
+import { IsIn, IsOptional, IsString } from 'class-validator';
 
-const EXIFDatasetMetadataSchema = z.object({
-	dataset: z.literal('exif'),
-	cameraMfg: z.string().optional(),
-	cameraModel: z.string().optional(),
-	captureType: z.enum(['single', 'burst', 'portrait']).optional(),
-});
+export class EXIFDatasetMetadataDto {
+	@IsIn(['exif'])
+	dataset!: 'exif';
 
-export const MetadataSchema = z.discriminatedUnion('dataset', [EXIFDatasetMetadataSchema]);
+	@IsOptional()
+	@IsString()
+	cameraMfg!: string;
+
+	@IsOptional()
+	@IsString()
+	cameraModel!: string;
+
+	@IsOptional()
+	@IsIn(['single', 'burst', 'portrait'])
+	captureType!: 'single' | 'burst' | 'portrait';
+}

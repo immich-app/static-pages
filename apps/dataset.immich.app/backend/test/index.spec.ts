@@ -8,9 +8,10 @@ describe('Dataset upload API worker', () => {
 		formData.append(
 			'data',
 			JSON.stringify({
-				dataset: 'animal',
-				animalType: 'dog',
-				animalBreed: 'labrador',
+				dataset: 'exif',
+				cameraMfg: 'canon',
+				cameraModel: 'eos 5D Mark IV',
+				captureType: 'single',
 			}),
 		);
 
@@ -30,9 +31,10 @@ describe('Dataset upload API worker', () => {
 		formData.append(
 			'data',
 			JSON.stringify({
-				dataset: 'animal',
-				animalType: 'dog',
-				animalBreed: 'labrador',
+				dataset: 'exif',
+				cameraMfg: 'canon',
+				cameraModel: 'eos 5D Mark IV',
+				captureType: 'single',
 			}),
 		);
 
@@ -51,9 +53,10 @@ describe('Dataset upload API worker', () => {
 		formData.append(
 			'data',
 			JSON.stringify({
-				dataset: 'animal',
-				animalType: 'dog',
-				animalBreed: 'labrador',
+				dataset: 'exif',
+				cameraMfg: 'canon',
+				cameraModel: 'eos 5D Mark IV',
+				captureType: 'single',
 			}),
 		);
 
@@ -74,9 +77,10 @@ describe('Dataset upload API worker', () => {
 		formData.append(
 			'data',
 			JSON.stringify({
-				dataset: 'animal',
-				animalType: 'dog',
-				animalBreed: 'labrador',
+				dataset: 'exif',
+				cameraMfg: 'canon',
+				cameraModel: 'eos 5D Mark IV',
+				captureType: 'single',
 			}),
 		);
 
@@ -123,9 +127,10 @@ describe('Dataset upload API worker', () => {
 		formData.append(
 			'data',
 			JSON.stringify({
-				dataset: 'animal',
-				animalType: 'dog',
-				animalBreed: 'labrador',
+				dataset: 'exif',
+				cameraMfg: 'canon',
+				cameraModel: 'eos 5D Mark IV',
+				captureType: 'single',
 			}),
 		);
 
@@ -136,7 +141,7 @@ describe('Dataset upload API worker', () => {
 			}),
 		);
 
-		expect(response.status).toBe(405);
+		expect(response.status).toBe(404);
 	});
 
 	it('rejects a metadata without dataset type', async () => {
@@ -145,8 +150,9 @@ describe('Dataset upload API worker', () => {
 		formData.append(
 			'data',
 			JSON.stringify({
-				animalType: 'dog',
-				animalBreed: 'labrador',
+				cameraMfg: 'canon',
+				cameraModel: 'eos 5D Mark IV',
+				captureType: 'single',
 			}),
 		);
 
