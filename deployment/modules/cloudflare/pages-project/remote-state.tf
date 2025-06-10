@@ -15,12 +15,3 @@ data "terraform_remote_state" "cloudflare_account" {
     schema_name = "prod_cloudflare_account"
   }
 }
-
-data "terraform_remote_state" "cloudflare_pages_project" {
-  backend = "pg"
-
-  config = {
-    conn_str    = var.tf_state_postgres_conn_str
-    schema_name = "cloudflare_pages_project_immich_app_${var.app_name}_${var.env}"
-  }
-}

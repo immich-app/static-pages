@@ -12,7 +12,6 @@ include {
 
 locals {
   env = get_env("TF_VAR_env")
-  stage = get_env("TF_VAR_stage")
   app_name = replace(get_env("TF_VAR_app_name"), "-", "_")
 }
 
@@ -21,12 +20,6 @@ remote_state {
 
   config = {
     conn_str = get_env("TF_VAR_tf_state_postgres_conn_str")
-    schema_name = "cloudflare_immich_app_${local.app_name}_${local.env}${local.stage}"
+    schema_name = "cloudflare_pages_project_immich_app_${local.app_name}_${local.env}"
   }
-}
-
-dependencies {
-  paths = [
-    "../pages-project",
-  ]
 }
