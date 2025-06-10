@@ -42,7 +42,7 @@ jobs:
           TF_VAR_dist_dir: ${{ github.workspace }}/dist
           TF_VAR_stage: pr-${{ github.event.number }}
           OP_SERVICE_ACCOUNT_TOKEN: ${{ matrix.environment == 'prod' && secrets.OP_TF_PROD_ENV || secrets.OP_TF_DEV_ENV }}
-        run: op run --env-file=".env" -- terragrunt run-all destroy -refresh=false --terragrunt-non-interactive
+        run: op run --env-file=".env" -- terragrunt run-all destroy -refresh=false --terragrunt-non-interactive --terragrunt-exclude-dir '**/pages-project/**' --parallelism 1
 
       - name: Comment
         uses: actions-cool/maintain-one-comment@4b2dbf086015f892dcb5e8c1106f5fccd6c1476b # v3
