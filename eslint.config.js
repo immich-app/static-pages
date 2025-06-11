@@ -28,6 +28,6 @@ export default [
     },
   },
   {
-    ignores: ['build/', '.svelte-kit/', 'dist/'],
+    ignores: ['build/', '.svelte-kit/', 'dist/', 'apps/**/backend/worker-configuration.d.ts'],
   },
 ];
