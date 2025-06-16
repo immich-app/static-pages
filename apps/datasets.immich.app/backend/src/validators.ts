@@ -1,5 +1,6 @@
-import { IsEmail, IsIn, IsString } from 'class-validator';
+import { IsEmail, IsIn, IsOptional, IsString } from 'class-validator';
 import { Dataset, ExifDatasetMetadata } from '../../types/metadata';
+import { AuthRequest } from '../../types/auth';
 
 export class ExifDatasetMetadataValidator extends ExifDatasetMetadata {
 	@IsString()
@@ -13,6 +14,10 @@ export class ExifDatasetMetadataValidator extends ExifDatasetMetadata {
 
 	@IsEmail()
 	uploaderEmail!: string;
+
+	@IsString()
+	@IsOptional()
+	otherCaptureType?: string;
 }
 
 export const DatasetMetadataValidatorMap = {
@@ -21,3 +26,8 @@ export const DatasetMetadataValidatorMap = {
 
 // Get the correct metadata class type from the map
 export type MetadataValidator<D extends Dataset> = InstanceType<(typeof DatasetMetadataValidatorMap)[D]>;
+
+export class AuthRequestValidator extends AuthRequest {
+	@IsString()
+	turnstileToken!: string;
+}

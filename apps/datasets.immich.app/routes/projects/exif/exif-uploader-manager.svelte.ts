@@ -1,6 +1,7 @@
 import EXIFReader from 'exifreader';
 import type { ExifDatasetMetadata } from '../../../types/metadata';
 import { mdiAccount, mdiCameraBurst, mdiImage, mdiPanoramaVariant, mdiPencil, mdiSphere } from '@mdi/js';
+import type { UploadableAssets } from '../../../types/upload-manager';
 
 export type AssetType = ExifDatasetMetadata['captureType'];
 export const AssetTypeNames: Record<AssetType, string> = {
@@ -29,7 +30,7 @@ interface EXIFAsset {
   selected: boolean;
 }
 
-class ExifUploaderManager {
+class ExifUploaderManager implements UploadableAssets {
   assets = $state<EXIFAsset[]>([]);
   selection = $derived(this.assets.filter((a) => a.selected));
 

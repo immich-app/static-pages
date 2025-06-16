@@ -1,7 +1,36 @@
 import { SELF } from 'cloudflare:test';
 import { describe, it, expect } from 'vitest';
 
-describe('Dataset upload API worker', () => {
+async function getJWTAuthHeader() {
+	const response = await SELF.fetch(
+		new Request('https://example.com/api/auth', {
+			method: 'POST',
+			body: JSON.stringify({ turnstileToken: 'TEST_TOKEN' }),
+		}),
+	);
+
+	const data = (await response.json()) as { token: string };
+	return `Bearer ${data.token}`;
+}
+
+describe('JWT Authentication', () => {
+	it('returns a valid JWT token', async () => {
+		const response = await SELF.fetch(
+			new Request('https://example.com/api/auth', {
+				method: 'POST',
+				body: JSON.stringify({ turnstileToken: 'TEST_TOKEN' }),
+			}),
+		);
+
+		const data = (await response.json()) as { token: string };
+
+		expect(response.status).toBe(200);
+		expect(data.token).toBeDefined();
+		expect(data.token).toMatch(/^[A-Za-z0-9-_.]+$/);
+	});
+});
+
+describe('EXIF Dataset upload API worker', () => {
 	it('responds with a successful upload', async () => {
 		const formData = new FormData();
 		formData.append('file', new Blob(['test1234'], { type: 'image/jpeg' }), 'test.jpg');
@@ -16,9 +45,12 @@ describe('Dataset upload API worker', () => {
 		);
 
 		const response = await SELF.fetch(
-			new Request('https://example.com/exif/upload', {
+			new Request('https://example.com/api/exif/upload', {
 				method: 'PUT',
 				body: formData,
+				headers: {
+					Authorization: await getJWTAuthHeader(),
+				},
 			}),
 		);
 
@@ -39,9 +71,12 @@ describe('Dataset upload API worker', () => {
 		);
 
 		const response = await SELF.fetch(
-			new Request('https://example.com/exif/upload', {
+			new Request('https://example.com/api/exif/upload', {
 				method: 'PUT',
 				body: formData,
+				headers: {
+					Authorization: await getJWTAuthHeader(),
+				},
 			}),
 		);
 
@@ -61,9 +96,12 @@ describe('Dataset upload API worker', () => {
 		);
 
 		const response = await SELF.fetch(
-			new Request('https://example.com/exif/upload', {
+			new Request('https://example.com/api/exif/upload', {
 				method: 'PUT',
 				body: formData,
+				headers: {
+					Authorization: await getJWTAuthHeader(),
+				},
 			}),
 		);
 
@@ -85,9 +123,12 @@ describe('Dataset upload API worker', () => {
 		);
 
 		const response = await SELF.fetch(
-			new Request('https://example.com/exif/upload', {
+			new Request('https://example.com/api/exif/upload', {
 				method: 'PUT',
 				body: formData,
+				headers: {
+					Authorization: await getJWTAuthHeader(),
+				},
 			}),
 		);
 
@@ -99,9 +140,12 @@ describe('Dataset upload API worker', () => {
 		formData.append('file', new Blob(['test1234'], { type: 'image/jpeg' }), 'test.jpg');
 
 		const response = await SELF.fetch(
-			new Request('https://example.com/exif/upload', {
+			new Request('https://example.com/api/exif/upload', {
 				method: 'PUT',
 				body: formData,
+				headers: {
+					Authorization: await getJWTAuthHeader(),
+				},
 			}),
 		);
 
@@ -112,9 +156,12 @@ describe('Dataset upload API worker', () => {
 		const formData = new FormData();
 
 		const response = await SELF.fetch(
-			new Request('https://example.com/exif/upload', {
+			new Request('https://example.com/api/exif/upload', {
 				method: 'PUT',
 				body: formData,
+				headers: {
+					Authorization: await getJWTAuthHeader(),
+				},
 			}),
 		);
 
@@ -135,9 +182,12 @@ describe('Dataset upload API worker', () => {
 		);
 
 		const response = await SELF.fetch(
-			new Request('https://example.com/exif/upload', {
+			new Request('https://example.com/api/exif/upload', {
 				method: 'POST',
 				body: formData,
+				headers: {
+					Authorization: await getJWTAuthHeader(),
+				},
 			}),
 		);
 
@@ -157,12 +207,38 @@ describe('Dataset upload API worker', () => {
 		);
 
 		const response = await SELF.fetch(
-			new Request('https://example.com/exif/upload', {
+			new Request('https://example.com/api/exif/upload', {
+				method: 'PUT',
+				body: formData,
+				headers: {
+					Authorization: await getJWTAuthHeader(),
+				},
+			}),
+		);
+
+		expect(response.status).toBe(400);
+	});
+
+	it('rejects with missing auth', async () => {
+		const formData = new FormData();
+		formData.append('file', new Blob(['test1234'], { type: 'image/jpeg' }), 'test.jpg');
+		formData.append(
+			'data',
+			JSON.stringify({
+				cameraMake: 'canon',
+				cameraModel: 'eos 5D Mark IV',
+				captureType: 'single',
+				uploaderEmail: 'test@example.com',
+			}),
+		);
+
+		const response = await SELF.fetch(
+			new Request('https://example.com/api/exif/upload', {
 				method: 'PUT',
 				body: formData,
 			}),
 		);
 
-		expect(response.status).toBe(400);
+		expect(response.status).toBe(401);
 	});
 });

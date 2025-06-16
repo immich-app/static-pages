@@ -1,15 +1,19 @@
 import { AutoRouter, IRequest } from 'itty-router';
 import { handleError, uploadAssetWithMetadata, validateAssetWithMetadata } from '../utils';
 import { Dataset } from '../../../types/metadata';
+import { withJWTAuth } from '../auth';
 
-export const exifRouter = AutoRouter<IRequest, [Env, ExecutionContext]>({ base: '/exif' });
+export const exifRouter = AutoRouter<IRequest, [Env, ExecutionContext]>({ base: '/api/exif' });
 
 // TODO:
 // 100MB size limit
 // Cloudflare turnstile: https://developers.cloudflare.com/turnstile/tutorials/implicit-vs-explicit-rendering/
 
-exifRouter.put('/upload', async (req, env) => {
-	const uploadID = crypto.randomUUID();
+exifRouter.put('/upload', withJWTAuth, async (req, env) => {
+	const uploadID = req.extras?.uploadID;
+	if (!uploadID) {
+		return handleError('Upload ID is required', 400);
+	}
 
 	try {
 		const { file, metadata } = await validateAssetWithMetadata(req, Dataset.Exif);
