@@ -214,5 +214,5 @@
 {/if}
 
 {#if modalOpen}
-  <UploadModal onClose={() => (modalOpen = false)} />
+  <UploadModal onClose={() => (modalOpen = false)} dataset={exifUploaderManager} datasetName="exif" />
 {/if}
