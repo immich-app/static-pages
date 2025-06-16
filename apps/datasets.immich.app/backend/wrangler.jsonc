@@ -34,7 +34,10 @@
 	 * Environment Variables
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
 	 */
-	"vars": { "CF_TURNSTILE_SECRET": "DEV_TOKEN" },
+	"vars": {
+		"CF_TURNSTILE_SECRET": "DEV_TURNSTILE_TOKEN",
+		"JWT_SECRET": "DEV_JWT_SECRET",
+	},
 
 	/**
 	 * Note: Use secrets to store sensitive data.
