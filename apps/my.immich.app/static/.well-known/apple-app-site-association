@@ -3,6 +3,10 @@
     "apps": [],
     "details": [
       {
+        "appIDs": [
+          "2F67MQ8R79.app.alextran.immich",
+          "65AMD2STXG.app.bwees.immich"
+        ],
         "appID": "2F67MQ8R79.app.alextran.immich",
         "components": [
           {
