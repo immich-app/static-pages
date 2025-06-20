@@ -1,0 +1,33 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "2F67MQ8R79.app.alextran.immich",
+        "components": [
+          {
+            "/": "/",
+            "comment": "Matches the root URL."
+          },
+          {
+            "#": "noapp",
+            "exclude": true,
+            "comment": "Don't open app if ?noapp is present in the URL."
+          },
+          {
+            "/": "/albums/*",
+            "comment": "Matches an album view URL."
+          },
+          {
+            "/": "/memories/*",
+            "comment": "Matches a memory view URL."
+          },
+          {
+            "/": "/photos/*",
+            "comment": "Matches a photo view URL."
+          }
+        ]
+      }
+    ]
+  }
+}
