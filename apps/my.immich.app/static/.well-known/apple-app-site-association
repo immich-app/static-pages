@@ -5,7 +5,11 @@
       {
         "appIDs": [
           "2F67MQ8R79.app.alextran.immich",
-          "65AMD2STXG.app.bwees.immich"
+          "2F67MQ8R79.app.alextran.immich.vdebug",
+          "2F67MQ8R79.app.alextran.immich.profile",
+          "65AMD2STXG.app.bwees.immich",
+          "65AMD2STXG.app.bwees.immich.vdebug",
+          "65AMD2STXG.app.bwees.immich.profile"
         ],
         "appID": "2F67MQ8R79.app.alextran.immich",
         "components": [
