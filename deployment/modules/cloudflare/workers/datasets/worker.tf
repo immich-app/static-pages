@@ -2,7 +2,7 @@ resource "cloudflare_workers_script" "api" {
   account_id           = var.cloudflare_account_id
   name                 = "datasets-api${local.resource_suffix}"
   content              = file("${var.dist_dir}/index.js")
-  compatability_date   = "2025-06-03"
+  compatibility_date   = "2025-06-03"
   module               = true
 
   secret_text_binding {
