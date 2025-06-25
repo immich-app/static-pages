@@ -9,6 +9,11 @@ resource "cloudflare_workers_script" "api" {
     text = data.terraform_remote_state.cloudflare_account.outputs.turnstile_default_invisible_secret
   }
 
+  secret_text_binding {
+    name = "JWT_SECRET"
+    text = random_password.jwt_secret.result
+  }
+
   r2_bucket_binding {
     name        = "IMAGE_UPLOADS"
     bucket_name = cloudflare_r2_bucket.uploads.name
@@ -29,6 +34,11 @@ resource "cloudflare_workers_route" "dataset_api_wildcard" {
   pattern     = "${module.domain.fqdn}/api/*"
   script_name = cloudflare_workers_script.api.name
   zone_id     = data.cloudflare_zone.immich_app.zone_id
+}
+
+resource "random_password" "jwt_secret" {
+  length           = 32
+  special          = true
 }
 
 module "domain" {
