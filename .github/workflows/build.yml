@@ -47,6 +47,8 @@ jobs:
         run: npm ci
 
       - name: Run build
+        env:
+          PUBLIC_CF_TURNSTILE_SITE: ${{ secrets.CF_TURNSTILE_DEFAULT_INVISIBLE_SITE_KEY }}
         run: npm run build
 
       - name: Upload build output
