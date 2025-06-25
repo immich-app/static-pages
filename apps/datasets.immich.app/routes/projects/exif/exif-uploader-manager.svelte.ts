@@ -94,12 +94,16 @@ class ExifUploaderManager implements UploadableAssets {
     for (const asset of this.assets) {
       asset.selected = true;
     }
+
+    this.updateMetadataInputs();
   }
 
   deselectAll() {
     for (const asset of this.assets) {
       asset.selected = false;
     }
+
+    this.updateMetadataInputs();
   }
 
   deleteSelected() {

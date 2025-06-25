@@ -13,6 +13,9 @@
     Icon,
     IconButton,
     Input,
+    Modal,
+    ModalBody,
+    ModalFooter,
     Select,
     Stack,
     Text,
@@ -21,7 +24,9 @@
   import { scale } from 'svelte/transition';
   import { AssetTypeIcons, AssetTypeNames, exifUploaderManager, type AssetType } from './exif-uploader-manager.svelte';
 
-  let modalOpen = $state(false);
+  let uploadModalShown = $state(false);
+  let uploadFailed = $state(false);
+
   let disabledMetadataEditing = $derived(exifUploaderManager.selection.length === 0);
   let assetTypeSelectState = $derived.by(() => {
     const type = exifUploaderManager.selectedMetadata.captureType;
@@ -40,6 +45,11 @@
 
     const previewElem = document.getElementById(`preview-${assetId}`);
     if (previewElem) previewElem.style.display = 'none';
+  };
+
+  const onUploadFailed = () => {
+    uploadModalShown = false;
+    uploadFailed = true;
   };
 </script>
 
@@ -166,7 +176,7 @@
               color="primary"
               class="mt-4 light"
               leadingIcon={mdiCheck}
-              onclick={() => (modalOpen = true)}
+              onclick={() => (uploadModalShown = true)}
               disabled={exifUploaderManager.submitDisabled}
             >
               Submit {exifUploaderManager.assets.length} asset(s) to dataset
@@ -213,6 +223,22 @@
   </section>
 {/if}
 
-{#if modalOpen}
-  <UploadModal onClose={() => (modalOpen = false)} dataset={exifUploaderManager} datasetName="exif" />
+{#if uploadModalShown}
+  <UploadModal
+    onClose={() => (uploadModalShown = false)}
+    dataset={exifUploaderManager}
+    onFailed={onUploadFailed}
+    datasetName="exif"
+  />
+{/if}
+
+{#if uploadFailed}
+  <Modal title="Upload failed" size="medium" open={uploadFailed} onClose={() => (uploadFailed = false)}>
+    <ModalBody>
+      <p>There was an error while trying to upload your dataset. Please try again later.</p>
+    </ModalBody>
+    <ModalFooter>
+      <Button onclick={() => (uploadFailed = false)} shape="round">Close</Button>
+    </ModalFooter>
+  </Modal>
 {/if}
