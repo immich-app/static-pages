@@ -56,6 +56,10 @@ export async function validateAssetWithMetadata<D extends Dataset>(
 		throw new Error('Image file is empty, please upload a valid image');
 	}
 
+	if (!(imageUpload as File).name) {
+		throw new Error('Upload filename is missing');
+	}
+
 	// type check metadata before upload
 	const metadataValidatorClass = DatasetMetadataValidatorMap[dataset];
 	const metadata = plainToClass(metadataValidatorClass, JSON.parse(formMetadata as string));
