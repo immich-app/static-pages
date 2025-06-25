@@ -30,7 +30,7 @@ authRouter.post('/', async (request, env) => {
 	const errors = await validate(authRequest, { whitelist: true, forbidNonWhitelisted: true });
 
 	if (errors.length > 0) {
-		throw new Error(`Invalid metadata format, please ensure it matches the required schema: ${JSON.stringify(errors)}`);
+		throw new Error(`Invalid token validation payload: ${JSON.stringify(errors)}`);
 	}
 
 	// dev environment
@@ -39,8 +39,7 @@ authRouter.post('/', async (request, env) => {
 	}
 
 	const ip = request.headers.get('CF-Connecting-IP');
-	const token = request.headers.get('Turnstile-Token');
-	if (!token || !ip) {
+	if (!ip) {
 		return handleError('Missing turnstile validation information');
 	}
 
@@ -48,7 +47,7 @@ authRouter.post('/', async (request, env) => {
 	// CF "/siteverify" API endpoint.
 	const formData = new FormData();
 	formData.append('secret', env.CF_TURNSTILE_SECRET);
-	formData.append('response', token);
+	formData.append('response', authRequest.turnstileToken);
 	formData.append('remoteip', ip);
 
 	const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
