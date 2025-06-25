@@ -3,20 +3,27 @@
   import { Turnstile } from 'svelte-turnstile';
   import { PUBLIC_CF_TURNSTILE_SITE, PUBLIC_DATASET_API_ENDPOINT } from '$env/static/public';
   import type { UploadableAssets } from '../../../apps/datasets.immich.app/types/upload-manager';
+  import Page from '../../../apps/datasets.immich.app/routes/+page.svelte';
 
   interface Props {
     onClose: () => void;
+    onFailed: () => void;
     dataset: UploadableAssets;
     datasetName: string;
   }
 
-  let { onClose, dataset, datasetName }: Props = $props();
+  let { onClose, onFailed, dataset, datasetName }: Props = $props();
 
   let email = $state('');
   let isUploading = $state(false);
   let isPreparing = $state(true);
   let unableToUpload = $state(false);
   let submitButtonText = $state('Preparing');
+
+  let uploadFailedDialogShown = $state(false);
+
+  let cc0Agreement = $state(false);
+  let fileModificationAgreement = $state(false);
 
   let authToken = $state<string | null>(null);
   let emailValid = $derived(email !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
@@ -69,13 +76,6 @@
       }),
     );
 
-    console.log(
-      JSON.stringify({
-        uploaderEmail: email,
-        ...asset.metadata,
-      }),
-    );
-
     const response = await fetch(PUBLIC_DATASET_API_ENDPOINT + '/' + datasetName + '/upload', {
       method: 'PUT',
       headers: {
@@ -110,16 +110,17 @@
       let uploadChunk = batch.map(async (asset) => uploadAsset(asset));
       let results = await Promise.all(uploadChunk);
       let successfulUploads = results.filter((result) => result).length;
-      // TODO: handle errors for failed assets?
       uploadedCount += successfulUploads;
       submitButtonText = `Uploading (${uploadedCount}/${dataset.assets.length})`;
     }
 
-    alert(`Successfully uploaded ${uploadedCount} out of ${dataset.assets.length} assets.`);
     isUploading = false;
 
-    // TODO: redirect to thank you page
-    // window.location.href = `/thank-you`;
+    if (uploadedCount != dataset.assets.length) {
+      onFailed();
+    } else {
+      window.location.href = `/thank-you?dataset=${datasetName}`;
+    }
   }
 </script>
 
@@ -131,14 +132,14 @@
         description="I declare that I own full rights to this file and I hereby release it under the CCO license into the public domain."
         required
       >
-        <Checkbox />
+        <Checkbox bind:checked={cc0Agreement} />
       </Field>
       <Field
         label="File Modification"
         description="The file is manually copied from card/camera, without using any software like Nikon Transfer, and hasn't been modified in any way."
         required
       >
-        <Checkbox />
+        <Checkbox bind:checked={fileModificationAgreement} />
       </Field>
       <Field label="Contact Email" invalid={!emailValid}>
         <Input placeholder="contact@example.com" bind:value={email} />
@@ -155,7 +156,7 @@
     <Button
       onclick={handleSubmit}
       shape="round"
-      disabled={unableToUpload || !emailValid}
+      disabled={unableToUpload || !emailValid || !cc0Agreement || !fileModificationAgreement}
       loading={isUploading || isPreparing}>{submitButtonText}</Button
     >
   </ModalFooter>
