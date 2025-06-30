@@ -19,8 +19,7 @@
   let unableToUpload = $state(false);
   let submitButtonText = $state('Preparing');
 
-  let cc0Agreement = $state(false);
-  let fileModificationAgreement = $state(false);
+  let uploadAgreement = $state(false);
 
   let authToken = $state<string | null>(null);
   let emailValid = $derived(email !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
@@ -132,7 +131,7 @@
       </span>
 
       <div class="flex gap-4">
-        <Checkbox bind:checked={fileModificationAgreement} />
+        <Checkbox bind:checked={uploadAgreement} />
         <span>I Agree</span>
       </div>
 
@@ -151,7 +150,7 @@
     <Button
       onclick={handleSubmit}
       shape="round"
-      disabled={unableToUpload || !emailValid || !cc0Agreement || !fileModificationAgreement}
+      disabled={unableToUpload || !emailValid || !uploadAgreement}
       loading={isUploading || isPreparing}
       class="w-full"
     >
