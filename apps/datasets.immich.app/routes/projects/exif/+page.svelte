@@ -20,7 +20,7 @@
     Stack,
     Text,
   } from '@immich/ui';
-  import { mdiCamera, mdiCameraOff, mdiCheck, mdiCloudUpload, mdiDomain, mdiHelp, mdiTrashCan } from '@mdi/js';
+  import { mdiCamera, mdiCameraOff, mdiCheck, mdiCloudUpload, mdiDomain, mdiHelp, mdiPlus, mdiTrashCan } from '@mdi/js';
   import { scale } from 'svelte/transition';
   import { AssetTypeIcons, AssetTypeNames, exifUploaderManager, type AssetType } from './exif-uploader-manager.svelte';
   import { shortcuts } from '$lib/actions/shortcut';
@@ -110,12 +110,14 @@
               <HStack gap={2}>
                 <Button onclick={() => exifUploaderManager.selectAll()} size="small">Select All</Button>
                 <Button onclick={() => exifUploaderManager.deselectAll()} size="small">Deselect All</Button>
-                <IconButton
+                <Button
                   onclick={() => exifUploaderManager.openFilePicker()}
-                  icon={mdiCloudUpload}
+                  leadingIcon={mdiPlus}
                   size="small"
                   aria-label="Upload"
-                />
+                >
+                  Add More
+                </Button>
                 {#if exifUploaderManager.selection.length > 0}
                   <div transition:scale={{ duration: 100 }}>
                     <IconButton
