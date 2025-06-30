@@ -23,9 +23,11 @@
   import { mdiCamera, mdiCameraOff, mdiCheck, mdiCloudUpload, mdiDomain, mdiHelp, mdiTrashCan } from '@mdi/js';
   import { scale } from 'svelte/transition';
   import { AssetTypeIcons, AssetTypeNames, exifUploaderManager, type AssetType } from './exif-uploader-manager.svelte';
+  import { shortcuts } from '$lib/actions/shortcut';
 
   let uploadModalShown = $state(false);
   let uploadFailed = $state(false);
+  let shiftHeld = $state(false);
 
   let disabledMetadataEditing = $derived(exifUploaderManager.selection.length === 0);
   let assetTypeSelectState = $derived.by(() => {
@@ -51,7 +53,29 @@
     uploadModalShown = false;
     uploadFailed = true;
   };
+
+  const onKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Shift') {
+      shiftHeld = true;
+    }
+  };
+
+  const onKeyUp = (event: KeyboardEvent) => {
+    if (event.key === 'Shift') {
+      shiftHeld = false;
+    }
+  };
 </script>
+
+<svelte:window
+  use:shortcuts={[
+    { shortcut: { key: 'a', meta: true }, onShortcut: () => exifUploaderManager.selectAll() },
+    { shortcut: { key: 'a', ctrl: true }, onShortcut: () => exifUploaderManager.selectAll() },
+    { shortcut: { key: 'Escape' }, onShortcut: () => exifUploaderManager.deselectAll() },
+  ]}
+  onkeydown={onKeyDown}
+  onkeyup={onKeyUp}
+/>
 
 <DragAndDropUpload onFiles={onDragAndDropUpload} />
 
@@ -116,7 +140,7 @@
                 class="flex flex-col items-center justify-between relative border-2 {selected
                   ? 'border-primary'
                   : 'dark:border-secondary'}"
-                onclick={() => exifUploaderManager.toggleSelect(asset)}
+                onclick={() => exifUploaderManager.toggleSelect(asset, shiftHeld)}
               >
                 {#if selected}
                   <div
