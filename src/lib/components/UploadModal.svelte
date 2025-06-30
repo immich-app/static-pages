@@ -127,20 +127,16 @@
 <Modal title="Dataset Agreement" size="medium" {onClose}>
   <ModalBody>
     <Stack gap={4}>
-      <div class="flex items-center justify-between gap-4">
-        <Checkbox bind:checked={cc0Agreement} />
-        <span>
-          I declare that I own full rights to this file and I hereby release it under the
-          <a href="https://creativecommons.org/public-domain/cc0/" target="_blank" class="text-primary">CC0 license</a>
-          into the public domain.
-        </span>
-      </div>
-      <div class="flex items-center justify-between gap-4">
+      <span>
+        I agree to release the uploaded assets under the
+        <a href="https://creativecommons.org/public-domain/cc0/" target="_blank" class="text-primary">CC0 license</a>
+        into the public domain. In addition, the files have not been modified in any way that would alter their original
+        content or metadata.
+      </span>
+
+      <div class="flex gap-4">
         <Checkbox bind:checked={fileModificationAgreement} />
-        <span>
-          The file is manually copied from card/camera, without using any software like Nikon Transfer, and hasn't been
-          modified in any way.
-        </span>
+        <span>I Agree</span>
       </div>
 
       <Field label="Contact Email" invalid={!emailValid}>
@@ -155,16 +151,14 @@
     />
   </ModalBody>
   <ModalFooter>
-    <HStack gap={2}>
-      <Button
-        onclick={handleSubmit}
-        shape="round"
-        disabled={unableToUpload || !emailValid || !cc0Agreement || !fileModificationAgreement}
-        loading={isUploading || isPreparing}
-      >
-        {submitButtonText}
-      </Button>
-      <Button onclick={onClose} shape="round" color="secondary">Cancel</Button>
-    </HStack>
+    <Button
+      onclick={handleSubmit}
+      shape="round"
+      disabled={unableToUpload || !emailValid || !cc0Agreement || !fileModificationAgreement}
+      loading={isUploading || isPreparing}
+      class="w-full"
+    >
+      {submitButtonText}
+    </Button>
   </ModalFooter>
 </Modal>
