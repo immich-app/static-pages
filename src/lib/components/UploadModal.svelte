@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button, Checkbox, Field, HelperText, Input, Modal, ModalBody, ModalFooter, Stack } from '@immich/ui';
+  import { Button, Checkbox, Field, HelperText, HStack, Input, Modal, ModalBody, ModalFooter, Stack } from '@immich/ui';
   import { Turnstile } from 'svelte-turnstile';
   import { PUBLIC_CF_TURNSTILE_SITE, PUBLIC_DATASET_API_ENDPOINT } from '$env/static/public';
   import type { UploadableAssets } from '../../../apps/datasets.immich.app/types/upload-manager';
@@ -127,20 +127,22 @@
 <Modal title="Dataset Agreement" size="medium" {onClose}>
   <ModalBody>
     <Stack gap={4}>
-      <Field
-        label="Creative Commons 0"
-        description="I declare that I own full rights to this file and I hereby release it under the CCO license into the public domain."
-        required
-      >
+      <div class="flex items-center justify-between gap-4">
         <Checkbox bind:checked={cc0Agreement} />
-      </Field>
-      <Field
-        label="File Modification"
-        description="The file is manually copied from card/camera, without using any software like Nikon Transfer, and hasn't been modified in any way."
-        required
-      >
+        <span>
+          I declare that I own full rights to this file and I hereby release it under the
+          <a href="https://creativecommons.org/public-domain/cc0/" target="_blank" class="text-primary">CC0 license</a>
+          into the public domain.
+        </span>
+      </div>
+      <div class="flex items-center justify-between gap-4">
         <Checkbox bind:checked={fileModificationAgreement} />
-      </Field>
+        <span>
+          The file is manually copied from card/camera, without using any software like Nikon Transfer, and hasn't been
+          modified in any way.
+        </span>
+      </div>
+
       <Field label="Contact Email" invalid={!emailValid}>
         <Input placeholder="contact@example.com" bind:value={email} />
         <HelperText>This will be used to contact you if there are any issues or questions about your upload</HelperText>
@@ -153,11 +155,16 @@
     />
   </ModalBody>
   <ModalFooter>
-    <Button
-      onclick={handleSubmit}
-      shape="round"
-      disabled={unableToUpload || !emailValid || !cc0Agreement || !fileModificationAgreement}
-      loading={isUploading || isPreparing}>{submitButtonText}</Button
-    >
+    <HStack gap={2}>
+      <Button
+        onclick={handleSubmit}
+        shape="round"
+        disabled={unableToUpload || !emailValid || !cc0Agreement || !fileModificationAgreement}
+        loading={isUploading || isPreparing}
+      >
+        {submitButtonText}
+      </Button>
+      <Button onclick={onClose} shape="round" color="secondary">Cancel</Button>
+    </HStack>
   </ModalFooter>
 </Modal>
