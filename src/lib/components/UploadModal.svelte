@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { Button, Checkbox, Field, HelperText, HStack, Input, Modal, ModalBody, ModalFooter, Stack } from '@immich/ui';
+  import { Button, Checkbox, Field, HelperText, Input, Modal, ModalBody, ModalFooter, Stack } from '@immich/ui';
   import { Turnstile } from 'svelte-turnstile';
   import { PUBLIC_CF_TURNSTILE_SITE, PUBLIC_DATASET_API_ENDPOINT } from '$env/static/public';
   import type { UploadableAssets } from '../../../apps/datasets.immich.app/types/upload-manager';
-  import Page from '../../../apps/datasets.immich.app/routes/+page.svelte';
 
   interface Props {
     onClose: () => void;
@@ -19,8 +18,6 @@
   let isPreparing = $state(true);
   let unableToUpload = $state(false);
   let submitButtonText = $state('Preparing');
-
-  let uploadFailedDialogShown = $state(false);
 
   let cc0Agreement = $state(false);
   let fileModificationAgreement = $state(false);
