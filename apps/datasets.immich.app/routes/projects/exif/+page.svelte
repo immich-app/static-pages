@@ -199,7 +199,7 @@
           <div class="flex justify-end">
             <Button
               color="primary"
-              class="mt-4 light"
+              class="mt-4 light w-full"
               leadingIcon={mdiCheck}
               onclick={() => (uploadModalShown = true)}
               disabled={exifUploaderManager.submitDisabled}
