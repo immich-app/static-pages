@@ -128,14 +128,15 @@
                 {/if}
 
                 <img
-                  src={URL.createObjectURL(asset.data)}
+                  src={URL.createObjectURL(asset.preview)}
                   alt={asset.name}
-                  class="w-full object-cover h-48"
+                  class="w-full h-48 object-cover"
                   loading="lazy"
                   id="preview-{asset.id}"
                   draggable="false"
                   onerror={() => showImagePreviewError(asset.id)}
                 />
+
                 <!-- image loading error -->
                 <div
                   style="display: none;"

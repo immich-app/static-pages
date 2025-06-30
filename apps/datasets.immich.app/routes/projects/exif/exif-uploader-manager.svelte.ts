@@ -22,8 +22,9 @@ export const AssetTypeIcons: Record<AssetType, string> = {
   other: mdiPencil,
 };
 
-interface EXIFAsset {
+export interface EXIFAsset {
   data: File;
+  preview: Blob;
   name: string;
   metadata: Partial<ExifDatasetMetadata>;
   id: string;
@@ -52,8 +53,19 @@ class ExifUploaderManager implements UploadableAssets {
       return;
     }
 
+    const previewBlob = await this.generatePreview(asset);
+    let preview: Blob;
+
+    // if the preview generation failed, use the original file as the preview
+    if (!previewBlob) {
+      preview = asset;
+    } else {
+      preview = previewBlob;
+    }
+
     const newAsset: EXIFAsset = {
       data: asset,
+      preview: preview,
       name: asset.name,
       id: crypto.randomUUID(),
       metadata: {
@@ -160,6 +172,22 @@ class ExifUploaderManager implements UploadableAssets {
     };
 
     input.click();
+  }
+
+  // efficient image preview generation
+  private async generatePreview(blob: Blob) {
+    const imageBitmap = await createImageBitmap(blob, { resizeWidth: 800 });
+    const canvas = document.createElement('canvas');
+    canvas.width = imageBitmap.width;
+    canvas.height = imageBitmap.height;
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) {
+      return null;
+    }
+
+    ctx.drawImage(imageBitmap, 0, 0);
+    return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.7));
   }
 }
 
