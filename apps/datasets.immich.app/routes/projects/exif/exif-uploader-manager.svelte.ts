@@ -83,12 +83,15 @@ class ExifUploaderManager implements UploadableAssets {
     if (this.selection.length === 0) {
       this.selectedMetadata = {};
     } else {
-      const metadataKeys = Object.keys(this.selection[0].metadata) as (keyof EXIFAsset['metadata'])[];
+      const metadataKeys = Array.from(
+        new Set(this.selection.flatMap((asset) => Object.keys(asset.metadata))),
+      ) as (keyof EXIFAsset['metadata'])[];
 
       for (const key of metadataKeys) {
         const allSame = this.selection.every((a) => a.metadata[key] === this.selection[0].metadata[key]);
-
+        console.log(`Checking metadata key: ${key}, all same: ${allSame}`);
         if (key === 'captureType') {
+          console.log('all same captureType:', allSame);
           this.selectedMetadata[key] = allSame ? this.selection[0].metadata[key] : undefined;
         } else {
           this.selectedMetadata[key] = allSame ? this.selection[0].metadata[key] : '';
@@ -97,8 +100,28 @@ class ExifUploaderManager implements UploadableAssets {
     }
   }
 
-  toggleSelect(asset: EXIFAsset) {
-    asset.selected = !asset.selected;
+  toggleSelect(asset: EXIFAsset, shiftHeld: boolean = false) {
+    // check if shift key is held
+    if (shiftHeld) {
+      // find the index of the asset in the assets array
+      const index = this.assets.indexOf(asset);
+      if (index === -1) return;
+
+      // find the last selected asset
+      const lastSelectedIndex = this.assets.findIndex((a) => a.selected);
+      if (lastSelectedIndex === -1) return;
+
+      // select all assets between the last selected and the current asset
+      const start = Math.min(index, lastSelectedIndex);
+      const end = Math.max(index, lastSelectedIndex);
+
+      for (let i = start; i <= end; i++) {
+        this.assets[i].selected = true;
+      }
+    } else {
+      asset.selected = !asset.selected;
+    }
+
     this.updateMetadataInputs();
   }
 
