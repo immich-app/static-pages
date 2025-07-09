@@ -6,7 +6,7 @@ on:
 jobs:
   check-approvals:
     name: Check for Team/Admin Review
-    uses: immich-app/devtools/.github/workflows/required-approval.yml@feat/github-security-hardening
+    uses: immich-app/devtools/.github/workflows/required-approval.yml@main
     permissions:
       pull-requests: read
       contents: read
