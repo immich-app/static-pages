@@ -15,7 +15,7 @@
     "format:fix": "prettier --write ."
   },
   "devDependencies": {
-    "@immich/ui": "^0.22.6",
+    "@immich/ui": "^0.22.7",
     "@sveltejs/adapter-static": "^3.0.6",
     "@sveltejs/kit": "^2.12.1",
     "@sveltejs/vite-plugin-svelte": "^5.0.2",
@@ -32,6 +32,7 @@
     "svelte": "^5.14.1",
     "svelte-check": "^4.1.1",
     "svelte-highlight": "^7.8.2",
+    "svelte-turnstile": "^0.11.0",
     "tailwindcss": "^4.1.8",
     "tslib": "^2.4.1",
     "typescript": "^5.7.2",
@@ -41,6 +42,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@mdi/js": "^7.4.47"
+    "@mdi/js": "^7.4.47",
+    "exifreader": "^4.31.0"
   }
 }
