@@ -18,7 +18,7 @@
     "@immich/ui": "^0.22.6",
     "@sveltejs/adapter-static": "^3.0.6",
     "@sveltejs/kit": "^2.12.1",
-    "@sveltejs/vite-plugin-svelte": "^5.0.2",
+    "@sveltejs/vite-plugin-svelte": "^6.0.0",
     "@tailwindcss/vite": "^4.1.8",
     "@types/eslint": "^9.0.0",
     "autoprefixer": "^10.4.19",
