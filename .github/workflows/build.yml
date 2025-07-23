@@ -12,8 +12,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  tofu_version: '1.7.1'
-  tg_version: '0.81.5'
+  tofu_version: '1.10.2'
+  tg_version: '0.83.0'
   ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
 
 jobs:
@@ -144,9 +144,6 @@ jobs:
 
       - name: Deploy All
         working-directory: ${{ github.workspace }}/deployment
-<<<<<<< HEAD
-        run: op run --env-file=".env" -- terragrunt run --all apply --terragrunt-non-interactive
-=======
         run: |
           INCLUDE_DIRS=""
           if [ "${{ env.has_backend }}" = "true" ]; then
@@ -158,7 +155,6 @@ jobs:
             --parallelism 1 \
             --queue-include-dir='**/!(workers)/**' \
             --queue-include-dir="$INCLUDE_DIRS"
->>>>>>> 98dccc6 (ci: deployment scripts)
 
       - name: Cloudflare Deploy Output
         id: deploy-output
