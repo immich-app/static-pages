@@ -4,8 +4,8 @@ on:
     types: [closed]
 
 env:
-  tofu_version: '1.7.1'
-  tg_version: '0.81.5'
+  tofu_version: '1.10.2'
+  tg_version: '0.83.0'
 
 jobs:
   deploy:
@@ -41,7 +41,7 @@ jobs:
           TF_VAR_dist_dir: ${{ github.workspace }}/dist
           TF_VAR_stage: pr-${{ github.event.number }}
           OP_SERVICE_ACCOUNT_TOKEN: ${{ matrix.environment == 'prod' && secrets.OP_TF_PROD_ENV || secrets.OP_TF_DEV_ENV }}
-        run: op run --env-file=".env" -- terragrunt run --all destroy -refresh=false --non-interactive --exclude-dir '**/pages-project' --parallelism 1
+        run: op run --env-file=".env" -- terragrunt run --all destroy --non-interactive --queue-exclude-dir '**/pages-project' -- -refresh=false -lock-timeout=5m
 
       - name: Comment
         uses: actions-cool/maintain-one-comment@4b2dbf086015f892dcb5e8c1106f5fccd6c1476b # v3
