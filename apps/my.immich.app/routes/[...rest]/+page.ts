@@ -5,11 +5,11 @@ import { StorageKey } from '$lib';
 export const ssr = false;
 
 export const load = (async ({ url }) => {
-  if (url.searchParams.has('instanceURL')) {
-    const instanceURL = url.searchParams.get('instanceURL');
+  if (url.searchParams.has('instanceUrl')) {
+    const instanceURL = url.searchParams.get('instanceUrl');
 
     // remove the instanceURL for the redirect
-    url.searchParams.delete('instanceURL');
+    url.searchParams.delete('instanceUrl');
     const strippedParams = url.searchParams.toString();
 
     redirect(302, `${instanceURL}${url.pathname}?${strippedParams}`);
