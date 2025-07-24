@@ -5,8 +5,10 @@ import { StorageKey } from '$lib';
 export const ssr = false;
 
 export const load = (async ({ url }) => {
-  const instanceUrl = localStorage.getItem(StorageKey.INSTANCE_URL) || '';
-  const pathAndParams = url.pathname + url.search;
+  const instanceUrl = url.searchParams.get('instanceUrl') || localStorage.getItem(StorageKey.INSTANCE_URL) || '';
+  url.searchParams.delete('instanceUrl');
+
+  const pathAndParams = url.pathname + '?' + url.searchParams.toString();
   const targetUrl = pathAndParams === '/' ? '' : pathAndParams;
 
   if (targetUrl && instanceUrl) {
