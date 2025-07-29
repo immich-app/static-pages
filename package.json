@@ -36,7 +36,7 @@
     "tslib": "^2.4.1",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.1",
-    "vite": "^6.0.3",
+    "vite": "^7.0.0",
     "vitest": "^3.0.0"
   },
   "type": "module",
