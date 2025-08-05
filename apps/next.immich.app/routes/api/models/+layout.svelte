@@ -1,7 +1,7 @@
 <script lang="ts">
   import DocsHeader from '$lib/components/DocsHeader.svelte';
   import PageContent from '$lib/components/PageContent.svelte';
-  import { getOpenApi } from '$lib/services/open-api.svelte';
+  import { getOpenApi } from '$lib/services/open-api';
   import { AppShell, AppShellHeader, AppShellSidebar, Button, Icon, NavbarGroup, NavbarItem } from '@immich/ui';
   import { mdiArrowLeft } from '@mdi/js';
   import type { Snippet } from 'svelte';
@@ -33,7 +33,7 @@
       Back
     </Button>
     <NavbarGroup title="Models" />
-    {#each models as model}
+    {#each models as model (model.href)}
       <NavbarItem title={model.name} href={model.href} variant="compact" />
     {/each}
   </AppShellSidebar>

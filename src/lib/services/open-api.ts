@@ -5,7 +5,7 @@ import type {
   ReferenceObject,
   RequestBodyObject,
   SchemaObject,
-} from '$lib/services/open-api';
+} from '$lib/services/open-api.d';
 
 export type ApiMethod = 'GET' | 'PUT' | 'POST' | 'DELETE' | 'OPTIONS' | 'HEAD' | 'PATCH';
 export type AuthenticationMethod = 'ApiKey' | 'Cookie' | 'Bearer';

@@ -9,7 +9,7 @@
 </script>
 
 <Stack gap={2}>
-  {#each items as item}
+  {#each items as item, i (i)}
     <code>{item}</code>
   {/each}
 </Stack>

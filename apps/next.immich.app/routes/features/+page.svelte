@@ -267,7 +267,7 @@
 
       <Stack gap={2}>
         <section class="grid auto-rows-fr grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {#each features as feature}
+          {#each features as feature, i (i)}
             <Card color="secondary" class="h-full">
               <CardHeader>
                 <CardTitle>{feature.title}</CardTitle>

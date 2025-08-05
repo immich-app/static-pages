@@ -1,8 +1,8 @@
 <script lang="ts">
   import '$lib/app.css';
   import ApiSchema from '$lib/components/ApiSchema.svelte';
-  import type { ReferenceObject, SchemaObject } from '$lib/services/open-api';
-  import { getOpenApi, getRefHref, getRefName, isRef, type ApiMethod } from '$lib/services/open-api.svelte';
+  import type { ReferenceObject, SchemaObject } from '$lib/services/open-api.d';
+  import { getOpenApi, getRefHref, getRefName, isRef, type ApiMethod } from '$lib/services/open-api';
   import { Code, Heading, Link, Text } from '@immich/ui';
   import { type PageData } from './$types';
 
@@ -27,7 +27,7 @@
 <Heading size="large" class="mb-6" tag="h1">{tag.name}</Heading>
 
 <div class="flex flex-col max-w-(--breakpoint-lg)">
-  {#each tag.endpoints as endpoint, i}
+  {#each tag.endpoints as endpoint, i (i)}
     {#if i > 0}
       <hr class="my-8" />
     {/if}
@@ -70,7 +70,7 @@
         </div>
         <hr />
         <div class="grid grid-cols-12 py-2 px-4">
-          {#each endpoint.params as param}
+          {#each endpoint.params as param, i (i)}
             <div class="col-span-3">
               <Code>{param.name}</Code>
             </div>
@@ -111,7 +111,7 @@
         </div>
         <hr class="border-b border" />
         <div class="grid grid-cols-12 py-2 px-4">
-          {#each endpoint.queryParams as param}
+          {#each endpoint.queryParams as param, i (i)}
             <div class="col-span-3">
               <Code>{param.name}</Code>
             </div>
@@ -146,7 +146,7 @@
       {:else}
         <Heading size="tiny" class="my-2" tag="h3">Response</Heading>
         <div class="px-4 flex gap-1">
-          {#each endpoint.responses as response}
+          {#each endpoint.responses as response, i (i)}
             <span>{response.status}</span>
             {#if response.status === 204 || !response.contentType}
               - No content

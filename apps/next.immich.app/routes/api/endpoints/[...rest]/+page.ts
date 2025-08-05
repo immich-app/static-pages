@@ -1,4 +1,4 @@
-import { getOpenApi } from '$lib/services/open-api.svelte';
+import { getOpenApi } from '$lib/services/open-api';
 import { redirect } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 

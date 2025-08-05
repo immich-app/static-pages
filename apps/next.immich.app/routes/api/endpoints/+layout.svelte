@@ -1,7 +1,7 @@
 <script lang="ts">
   import DocsHeader from '$lib/components/DocsHeader.svelte';
   import PageContent from '$lib/components/PageContent.svelte';
-  import { getOpenApi } from '$lib/services/open-api.svelte';
+  import { getOpenApi } from '$lib/services/open-api';
   import { getIcon } from '$lib/utils/icons';
   import { AppShell, AppShellHeader, AppShellSidebar, Button, Icon, NavbarGroup, NavbarItem } from '@immich/ui';
   import { mdiArrowLeft } from '@mdi/js';
@@ -34,7 +34,7 @@
       Back
     </Button>
     <NavbarGroup title="Endpoints" />
-    {#each tags as tag}
+    {#each tags as tag (tag.href)}
       <NavbarItem title={tag.name} href={tag.href} icon={getIcon(tag.name)} variant="compact" />
     {/each}
   </AppShellSidebar>

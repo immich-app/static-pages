@@ -1,5 +1,5 @@
 import { goto } from '$app/navigation';
-import { loadOpenApi } from '$lib/services/open-api.svelte';
+import { loadOpenApi } from '$lib/services/open-api';
 import type { LayoutLoad } from './$types';
 
 export const load = (async ({ fetch }) => {

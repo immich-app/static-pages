@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getOpenApi, getTagEndpointHref } from '$lib/services/open-api.svelte';
+  import { getOpenApi, getTagEndpointHref } from '$lib/services/open-api';
   import { getIcon } from '$lib/utils/icons';
   import { Card, CardBody, CardHeader, CardTitle, Heading, Icon, Link, Stack } from '@immich/ui';
 
@@ -10,7 +10,7 @@
   <Heading size="large" tag="h1">API Endpoints</Heading>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
-    {#each tags as tag}
+    {#each tags as tag (tag.href)}
       <Card color="secondary">
         <CardHeader>
           <CardTitle class="flex gap-2 items-center">
@@ -20,7 +20,7 @@
         </CardHeader>
         <CardBody>
           <Stack gap={1}>
-            {#each tag.endpoints as endpoint}
+            {#each tag.endpoints as endpoint (endpoint.name)}
               <Link href={getTagEndpointHref(tag, endpoint)} class="no-underline hover:underline"
                 >{endpoint.method} {endpoint.route}</Link
               >
