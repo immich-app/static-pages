@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { ReferenceObject } from '$lib/services/open-api';
-  import { getOpenApi, getRefHref, getRefName } from '$lib/services/open-api.svelte';
+  import type { ReferenceObject } from '$lib/services/open-api.d';
+  import { getOpenApi, getRefHref, getRefName } from '$lib/services/open-api';
   import { Link, Text } from '@immich/ui';
 
   type Props = {

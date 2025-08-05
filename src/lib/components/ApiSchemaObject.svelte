@@ -1,8 +1,8 @@
 <script lang="ts">
   import ApiSchemaArray from '$lib/components/ApiSchemaArray.svelte';
   import ApiSchemaRef from '$lib/components/ApiSchemaRef.svelte';
-  import type { SchemaObject } from '$lib/services/open-api';
-  import { isRef } from '$lib/services/open-api.svelte';
+  import type { SchemaObject } from '$lib/services/open-api.d';
+  import { isRef } from '$lib/services/open-api';
   import { Code } from '@immich/ui';
 
   type Props = {
@@ -23,7 +23,7 @@
       <div class="col-span-3">Description</div>
     </div>
     <hr class="border-b border" />
-    {#each Object.entries(schema.properties) as [name, property]}
+    {#each Object.entries(schema.properties) as [name, property], i (i)}
       <div class="grid grid-cols-12 py-2 px-4">
         <div class="col-span-3">
           <Code>{name}</Code>

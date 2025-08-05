@@ -3,8 +3,8 @@
   import ApiSchemaEnum from '$lib/components/ApiSchemaEnum.svelte';
   import ApiSchemaObject from '$lib/components/ApiSchemaObject.svelte';
   import ApiSchemaRef from '$lib/components/ApiSchemaRef.svelte';
-  import type { ReferenceObject, SchemaObject } from '$lib/services/open-api';
-  import { isRef } from '$lib/services/open-api.svelte';
+  import type { ReferenceObject, SchemaObject } from '$lib/services/open-api.d';
+  import { isRef } from '$lib/services/open-api';
   import { Code } from '@immich/ui';
 
   type Props = {

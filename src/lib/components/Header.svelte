@@ -29,7 +29,7 @@
   {@render children?.()}
 
   <HStack gap={0}>
-    {#each items as item}
+    {#each items as item, i (i)}
       <Button
         class="hidden md:flex"
         href={item.href}
@@ -64,7 +64,7 @@
   <div class="h-dvh w-dvw bg-light/80 text-dark fixed left-0">
     <nav class="w-full absolute bg-light text-dark overflow-y-hidden py-4 border-t">
       <div class="flex flex-col">
-        {#each items as item}
+        {#each items as item, i (i)}
           <NavbarItem href={item.href} title={item.title} />
         {/each}
       </div>

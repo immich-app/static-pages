@@ -32,7 +32,7 @@
 
           <Stack gap={8}>
             <Stack gap={1}>
-              {#each serverFeatures as feature}
+              {#each serverFeatures as feature, index (index)}
                 <div class="grid grid-cols-[36px_auto] items-center">
                   <Icon icon={mdiCheckCircleOutline} size="24" class="text-success" />
                   <Text>{feature}</Text>
@@ -59,7 +59,7 @@
 
           <Stack gap={8}>
             <Stack gap={1}>
-              {#each userFeatures as feature}
+              {#each userFeatures as feature, index (index)}
                 <div class="grid grid-cols-[36px_auto] items-center">
                   <Icon icon={mdiCheckCircleOutline} size="24" class="text-success" />
                   <Text>{feature}</Text>
