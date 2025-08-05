@@ -48,7 +48,7 @@
           <CardBody>
             <Stack gap={4}>
               <a href="https://get.immich.app/android">
-                <img class="h-24 mx-auto" alt="Get it on Google Play" src={playStoreBadge} />
+                <img class="h-16 mx-auto" alt="Get it on Google Play" src={playStoreBadge} />
               </a>
               <a href="https://get.immich.app/fdroid">
                 <img class="h-16 mx-auto rounded-xl border border-dark" alt="Get it on F-Droid" src={fdroidBadge} />
