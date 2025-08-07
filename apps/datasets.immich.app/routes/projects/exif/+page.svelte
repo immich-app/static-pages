@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { shortcuts } from '$lib/actions/shortcut';
   import DragAndDropUpload from '$lib/components/DragAndDropUpload.svelte';
   import UploadModal from '$lib/components/UploadModal.svelte';
   import {
@@ -23,7 +24,6 @@
   import { mdiCamera, mdiCameraOff, mdiCheck, mdiCloudUpload, mdiDomain, mdiHelp, mdiPlus, mdiTrashCan } from '@mdi/js';
   import { scale } from 'svelte/transition';
   import { AssetTypeIcons, AssetTypeNames, exifUploaderManager, type AssetType } from './exif-uploader-manager.svelte';
-  import { shortcuts } from '$lib/actions/shortcut';
 
   let uploadModalShown = $state(false);
   let uploadFailed = $state(false);
@@ -260,7 +260,7 @@
 {/if}
 
 {#if uploadFailed}
-  <Modal title="Upload failed" size="medium" open={uploadFailed} onClose={() => (uploadFailed = false)}>
+  <Modal title="Upload failed" size="medium" onClose={() => (uploadFailed = false)}>
     <ModalBody>
       <p>There was an error while trying to upload your dataset. Please try again later.</p>
     </ModalBody>
