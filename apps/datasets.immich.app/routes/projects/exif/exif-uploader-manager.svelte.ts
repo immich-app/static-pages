@@ -96,9 +96,7 @@ class ExifUploaderManager implements UploadableAssets {
 
       for (const key of metadataKeys) {
         const allSame = this.selection.every((a) => a.metadata[key] === this.selection[0].metadata[key]);
-        console.log(`Checking metadata key: ${key}, all same: ${allSame}`);
         if (key === 'captureType') {
-          console.log('all same captureType:', allSame);
           this.selectedMetadata[key] = allSame ? this.selection[0].metadata[key] : undefined;
         } else {
           this.selectedMetadata[key] = allSame ? this.selection[0].metadata[key] : '';
