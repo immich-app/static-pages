@@ -51,15 +51,27 @@
     if (previewElem) previewElem.style.display = 'none';
   };
 
-  const onUploadFailed = (failedIds: string[]) => {
-    uploadModalShown = false;
+  const doUpload = async () => {
+    const uploadResult = await modalManager.show(UploadModal, {
+      dataset: exifUploaderManager,
+      datasetName: 'exif',
+    });
+
+    if (uploadResult.cancelled) {
+      return;
+    }
+
+    if (uploadResult.failedIds.length === 0) {
+      window.location.href = `/thank-you?dataset=exif`;
+      return;
+    }
 
     // remove the failed assets from the manager
-    for (const assetId of failedIds) {
+    for (const assetId of uploadResult.failedIds) {
       exifUploaderManager.deleteById(assetId);
     }
 
-    modalManager.show(UploadErrorModal);
+    await modalManager.show(UploadErrorModal);
   };
 
   const onKeyDown = (event: KeyboardEvent) => {
@@ -211,7 +223,7 @@
               color="primary"
               class="mt-4 light w-full"
               leadingIcon={mdiCheck}
-              onclick={() => (uploadModalShown = true)}
+              onclick={doUpload}
               disabled={exifUploaderManager.submitDisabled}
             >
               Submit {exifUploaderManager.assets.length} asset(s) to dataset
@@ -256,13 +268,4 @@
       </Card>
     </div>
   </section>
-{/if}
-
-{#if uploadModalShown}
-  <UploadModal
-    onClose={() => (uploadModalShown = false)}
-    dataset={exifUploaderManager}
-    onFailed={onUploadFailed}
-    datasetName="exif"
-  />
 {/if}
