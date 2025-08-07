@@ -1,6 +1,7 @@
 <script lang="ts">
   import { shortcuts } from '$lib/actions/shortcut';
   import DragAndDropUpload from '$lib/components/DragAndDropUpload.svelte';
+  import UploadErrorModal from '$lib/components/UploadErrorModal.svelte';
   import UploadModal from '$lib/components/UploadModal.svelte';
   import {
     Button,
@@ -14,9 +15,7 @@
     Icon,
     IconButton,
     Input,
-    Modal,
-    ModalBody,
-    ModalFooter,
+    modalManager,
     Select,
     Stack,
     Text,
@@ -26,7 +25,6 @@
   import { AssetTypeIcons, AssetTypeNames, exifUploaderManager, type AssetType } from './exif-uploader-manager.svelte';
 
   let uploadModalShown = $state(false);
-  let uploadFailed = $state(false);
   let shiftHeld = $state(false);
 
   let disabledMetadataEditing = $derived(exifUploaderManager.selection.length === 0);
@@ -53,9 +51,15 @@
     if (previewElem) previewElem.style.display = 'none';
   };
 
-  const onUploadFailed = () => {
+  const onUploadFailed = (failedIds: string[]) => {
     uploadModalShown = false;
-    uploadFailed = true;
+
+    // remove the failed assets from the manager
+    for (const assetId of failedIds) {
+      exifUploaderManager.deleteById(assetId);
+    }
+
+    modalManager.show(UploadErrorModal);
   };
 
   const onKeyDown = (event: KeyboardEvent) => {
@@ -261,15 +265,4 @@
     onFailed={onUploadFailed}
     datasetName="exif"
   />
-{/if}
-
-{#if uploadFailed}
-  <Modal title="Upload failed" size="medium" onClose={() => (uploadFailed = false)}>
-    <ModalBody>
-      <p>There was an error while trying to upload your dataset. Please try again later.</p>
-    </ModalBody>
-    <ModalFooter>
-      <Button onclick={() => (uploadFailed = false)} shape="round">Close</Button>
-    </ModalFooter>
-  </Modal>
 {/if}

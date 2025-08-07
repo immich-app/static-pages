@@ -6,9 +6,6 @@ import { handleError, uploadAssetWithMetadata, validateAssetWithMetadata } from 
 
 export const exifRouter = AutoRouter<IRequest, [Env, ExecutionContext]>({ base: '/api/exif' });
 
-// TODO:
-// 100MB size limit
-
 exifRouter.put('/upload', withJWTAuth, async (req, env) => {
   try {
     const { file, metadata } = await validateAssetWithMetadata(req, Dataset.Exif);
@@ -17,6 +14,12 @@ exifRouter.put('/upload', withJWTAuth, async (req, env) => {
     }
 
     await uploadAssetWithMetadata(env, file, metadata, Dataset.Exif);
+
+    // 50% chance of success for demonstration purposes
+    const isSuccess = Math.random() > 0.5;
+    if (!isSuccess) {
+      throw new Error('Simulated upload failure for demonstration purposes');
+    }
 
     return new Response(
       JSON.stringify({
