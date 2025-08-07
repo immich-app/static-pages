@@ -5,13 +5,12 @@
   import type { UploadableAssets } from '../../../apps/datasets.immich.app/types/upload-manager';
 
   interface Props {
-    onClose: () => void;
-    onFailed: (failedIds: string[]) => void;
+    onClose: (event: { cancelled: boolean; failedIds: string[] }) => void;
     dataset: UploadableAssets;
     datasetName: string;
   }
 
-  let { onClose, onFailed, dataset, datasetName }: Props = $props();
+  let { onClose, dataset, datasetName }: Props = $props();
 
   let email = $state('');
   let isUploading = $state(false);
@@ -118,15 +117,11 @@
 
     isUploading = false;
 
-    if (failedIds.length > 0) {
-      onFailed(failedIds);
-    } else {
-      window.location.href = `/thank-you?dataset=${datasetName}`;
-    }
+    onClose({ cancelled: false, failedIds });
   }
 </script>
 
-<Modal title="Dataset Agreement" size="medium" {onClose}>
+<Modal title="Dataset Agreement" size="medium" onClose={() => onClose({ cancelled: true, failedIds: [] })}>
   <ModalBody>
     <Stack gap={4}>
       <span>

@@ -15,12 +15,6 @@ exifRouter.put('/upload', withJWTAuth, async (req, env) => {
 
     await uploadAssetWithMetadata(env, file, metadata, Dataset.Exif);
 
-    // 50% chance of success for demonstration purposes
-    const isSuccess = Math.random() > 0.5;
-    if (!isSuccess) {
-      throw new Error('Simulated upload failure for demonstration purposes');
-    }
-
     return new Response(
       JSON.stringify({
         success: true,
