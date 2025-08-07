@@ -86,7 +86,6 @@ export async function withJWTAuth(request: IRequest, env: Env) {
       authID: verifiedToken.payload.sub,
     };
   } catch (error) {
-    console.log('Token verification failed: ', error);
     return handleError('Invalid or expired token', 401);
   }
 }
