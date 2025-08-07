@@ -154,6 +154,12 @@ class ExifUploaderManager implements UploadableAssets {
     this.validateUploads();
   }
 
+  deleteById(assetId: string) {
+    this.assets = this.assets.filter((asset) => asset.metadata.assetId !== assetId);
+    this.updateMetadataInputs();
+    this.validateUploads();
+  }
+
   updateSelectedMetadata<K extends keyof EXIFAsset['metadata']>(metadataKey: K, value: EXIFAsset['metadata'][K]) {
     for (const asset of this.selection) {
       // empy string values should be set to undefined

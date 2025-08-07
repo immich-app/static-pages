@@ -6,7 +6,7 @@
 
   interface Props {
     onClose: () => void;
-    onFailed: () => void;
+    onFailed: (failedIds: string[]) => void;
     dataset: UploadableAssets;
     datasetName: string;
   }
@@ -61,7 +61,9 @@
     return batches;
   }
 
-  async function uploadAsset(asset: UploadableAssets['assets'][number]) {
+  async function uploadAsset(
+    asset: UploadableAssets['assets'][number],
+  ): Promise<{ success: boolean; asset: UploadableAssets['assets'][number] }> {
     const formData = new FormData();
     formData.append('file', asset.data);
     formData.append(
@@ -82,10 +84,10 @@
 
     if (!response.ok) {
       console.error(`Failed to upload asset ${asset.name}:`, await response.text());
-      return false;
+      return { success: false, asset };
     }
 
-    return true;
+    return { success: true, asset };
   }
 
   async function handleSubmit() {
@@ -100,6 +102,7 @@
 
     // Handle the submission logic here
     let batches = buildUploadBatches(dataset.assets);
+    let failedIds: string[] = [];
     let uploadedCount = 0;
 
     for (const batch of batches) {
@@ -107,13 +110,16 @@
       let results = await Promise.all(uploadChunk);
       let successfulUploads = results.filter((result) => result).length;
       uploadedCount += successfulUploads;
+
+      failedIds.push(...results.filter((result) => !result.success).map((result) => result.asset.metadata.assetId!));
+
       submitButtonText = `Uploading (${uploadedCount}/${dataset.assets.length})`;
     }
 
     isUploading = false;
 
-    if (uploadedCount != dataset.assets.length) {
-      onFailed();
+    if (failedIds.length > 0) {
+      onFailed(failedIds);
     } else {
       window.location.href = `/thank-you?dataset=${datasetName}`;
     }
