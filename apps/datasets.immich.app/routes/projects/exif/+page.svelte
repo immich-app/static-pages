@@ -24,7 +24,6 @@
   import { scale } from 'svelte/transition';
   import { AssetTypeIcons, AssetTypeNames, exifUploaderManager, type AssetType } from './exif-uploader-manager.svelte';
 
-  let uploadModalShown = $state(false);
   let shiftHeld = $state(false);
 
   let disabledMetadataEditing = $derived(exifUploaderManager.selection.length === 0);
