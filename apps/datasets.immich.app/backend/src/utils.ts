@@ -1,7 +1,7 @@
 import { plainToClass } from 'class-transformer';
-import { DatasetMetadataValidatorMap } from './validators';
 import { validate } from 'class-validator';
 import { Dataset, MetadataType } from '../../types/metadata';
+import { DatasetMetadataValidatorMap } from './validators';
 
 export function handleError(message: string, returnCode: number = 400): Response {
   return new Response(
@@ -15,17 +15,17 @@ export function handleError(message: string, returnCode: number = 400): Response
 
 export async function uploadAssetWithMetadata<D extends Dataset>(
   env: Env,
-  uploadID: string,
   assetFile: File,
   metadata: MetadataType<D>,
   dataset: D,
 ) {
+  const assetId = metadata.assetId;
   const fileExtension = assetFile.name.split('.').pop()?.toLowerCase();
-  const metadataName = `info-${uploadID}.json`;
+  const metadataName = `info-${assetId}.json`;
 
   // only tack on the file extension if it exists
   // we will have to infer extension during processing if not provided
-  const imageName = `image-${uploadID}${fileExtension ? `.${fileExtension}` : ''}`;
+  const imageName = `image-${assetId}${fileExtension ? `.${fileExtension}` : ''}`;
 
   // upload image to R2
   await env.IMAGE_UPLOADS.put(`datasets/${dataset}/${imageName}`, assetFile);

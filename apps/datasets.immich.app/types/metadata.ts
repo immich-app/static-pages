@@ -4,13 +4,14 @@ export enum Dataset {
 
 class BaseMetadata {
   uploaderEmail!: string;
+  originalFilename!: string;
+  assetId!: string;
 }
 
 export class ExifDatasetMetadata extends BaseMetadata {
   cameraMake!: string;
   cameraModel!: string;
   captureType!: 'single' | 'burst' | 'portrait' | 'panorama' | 'spherical' | 'other';
-  otherCaptureType?: string;
 }
 
 type DatasetMetadataMap = {

@@ -37,7 +37,11 @@
 
   const onDragAndDropUpload = (files?: FileList | File[]) => {
     for (const file of files || []) {
-      exifUploaderManager.addAsset(file);
+      try {
+        exifUploaderManager.addAsset(file);
+      } catch (error) {
+        console.error('Failed to add asset:', error);
+      }
     }
   };
 
@@ -135,7 +139,7 @@
         </CardHeader>
         <CardBody>
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {#each exifUploaderManager.assets as asset (asset.id)}
+            {#each exifUploaderManager.assets as asset (asset.metadata.assetId)}
               {@const selected = exifUploaderManager.selection.includes(asset)}
               <Card
                 color={selected ? 'primary' : 'secondary'}
@@ -158,16 +162,16 @@
                   alt={asset.name}
                   class="w-full h-48 object-cover"
                   loading="lazy"
-                  id="preview-{asset.id}"
+                  id="preview-{asset.metadata.assetId}"
                   draggable="false"
-                  onerror={() => showImagePreviewError(asset.id)}
+                  onerror={() => showImagePreviewError(asset.metadata.assetId!)}
                 />
 
                 <!-- image loading error -->
                 <div
                   style="display: none;"
                   class="flex flex-col items-center justify-center p-4 bg-neutral-900/10 w-full h-48"
-                  id={`error-${asset.id}`}
+                  id={`error-${asset.metadata.assetId}`}
                 >
                   <Icon icon={mdiCameraOff} class="w-8 h-8 mb-2" />
                   <Text class="text-center">This file cannot be viewed on the web.</Text>

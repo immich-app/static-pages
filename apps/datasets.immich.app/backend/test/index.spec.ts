@@ -1,5 +1,5 @@
 import { SELF } from 'cloudflare:test';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 async function getJWTAuthHeader() {
   const response = await SELF.fetch(
@@ -41,6 +41,8 @@ describe('EXIF Dataset upload API worker', () => {
         cameraModel: 'eos 5D Mark IV',
         captureType: 'single',
         uploaderEmail: 'test@example.com',
+        originalFilename: 'test.jpg',
+        assetId: crypto.randomUUID(),
       }),
     );
 
@@ -67,6 +69,8 @@ describe('EXIF Dataset upload API worker', () => {
         cameraModel: 'eos 5D Mark IV',
         captureType: 'single',
         uploaderEmail: 'test@example.com',
+        originalFilename: 'test.jpg',
+        assetId: crypto.randomUUID(),
       }),
     );
 
@@ -92,6 +96,8 @@ describe('EXIF Dataset upload API worker', () => {
         cameraModel: 'eos 5D Mark IV',
         captureType: 'single',
         uploaderEmail: 'test@example.com',
+        originalFilename: 'test.jpg',
+        assetId: crypto.randomUUID(),
       }),
     );
 
@@ -119,6 +125,8 @@ describe('EXIF Dataset upload API worker', () => {
         cameraModel: 'eos 5D Mark IV',
         captureType: 'single',
         uploaderEmail: 'test@example.com',
+        originalFilename: 'test.jpg',
+        assetId: crypto.randomUUID(),
       }),
     );
 
@@ -178,6 +186,8 @@ describe('EXIF Dataset upload API worker', () => {
         cameraModel: 'eos 5D Mark IV',
         captureType: 'single',
         uploaderEmail: 'test@example.com',
+        originalFilename: 'test.jpg',
+        assetId: crypto.randomUUID(),
       }),
     );
 
@@ -203,6 +213,8 @@ describe('EXIF Dataset upload API worker', () => {
         type: 'animal',
         animalBreed: 'labrador',
         uploaderEmail: 'test@example.com',
+        originalFilename: 'test.jpg',
+        assetId: crypto.randomUUID(),
       }),
     );
 
@@ -229,6 +241,8 @@ describe('EXIF Dataset upload API worker', () => {
         cameraModel: 'eos 5D Mark IV',
         captureType: 'single',
         uploaderEmail: 'test@example.com',
+        originalFilename: 'test.jpg',
+        assetId: crypto.randomUUID(),
       }),
     );
 
@@ -240,5 +254,59 @@ describe('EXIF Dataset upload API worker', () => {
     );
 
     expect(response.status).toBe(401);
+  });
+
+  it('rejects missing assetId', async () => {
+    const formData = new FormData();
+    formData.append('file', new Blob(['test1234'], { type: 'image/jpeg' }), 'test.jpg');
+    formData.append(
+      'data',
+      JSON.stringify({
+        cameraMake: 'canon',
+        cameraModel: 'eos 5D Mark IV',
+        captureType: 'single',
+        uploaderEmail: 'test@example.com',
+        originalFilename: 'test.jpg',
+      }),
+    );
+
+    const response = await SELF.fetch(
+      new Request('https://example.com/api/exif/upload', {
+        method: 'PUT',
+        body: formData,
+        headers: {
+          Authorization: await getJWTAuthHeader(),
+        },
+      }),
+    );
+
+    expect(response.status).toBe(400);
+  });
+
+  it('rejects missing original filename', async () => {
+    const formData = new FormData();
+    formData.append('file', new Blob(['test1234'], { type: 'image/jpeg' }), 'test.jpg');
+    formData.append(
+      'data',
+      JSON.stringify({
+        cameraMake: 'canon',
+        cameraModel: 'eos 5D Mark IV',
+        captureType: 'single',
+        uploaderEmail: 'test@example.com',
+        assetId: crypto.randomUUID(),
+      }),
+    );
+
+    const response = await SELF.fetch(
+      new Request('https://example.com/api/exif/upload', {
+        method: 'PUT',
+        body: formData,
+        headers: {
+          Authorization: await getJWTAuthHeader(),
+        },
+      }),
+    );
+
+    expect(response.status).toBe(400);
   });
 });
