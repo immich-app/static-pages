@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { PUBLIC_CF_TURNSTILE_SITE, PUBLIC_DATASET_API_ENDPOINT } from '$env/static/public';
   import { Button, Checkbox, Field, HelperText, Input, Modal, ModalBody, ModalFooter, Stack } from '@immich/ui';
   import { Turnstile } from 'svelte-turnstile';
-  import { PUBLIC_CF_TURNSTILE_SITE, PUBLIC_DATASET_API_ENDPOINT } from '$env/static/public';
   import type { UploadableAssets } from '../../../apps/datasets.immich.app/types/upload-manager';
 
   interface Props {
@@ -53,7 +53,7 @@
     submitButtonText = `Unable to upload`;
   }
 
-  function buildUploadBatches(assets: UploadableAssets['assets'], batchSize: number = 5) {
+  function buildUploadBatches(assets: UploadableAssets['assets'], batchSize: number = 2) {
     const batches = [];
     for (let i = 0; i < assets.length; i += batchSize) {
       batches.push(assets.slice(i, i + batchSize));

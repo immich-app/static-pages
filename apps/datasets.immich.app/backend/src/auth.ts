@@ -83,7 +83,7 @@ export async function withJWTAuth(request: IRequest, env: Env) {
     }
 
     request.extras = {
-      uploadID: verifiedToken.payload.sub,
+      authID: verifiedToken.payload.sub,
     };
   } catch (error) {
     console.log('Token verification failed: ', error);

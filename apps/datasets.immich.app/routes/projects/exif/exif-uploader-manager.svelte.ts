@@ -1,6 +1,6 @@
+import { mdiAccount, mdiCameraBurst, mdiImage, mdiPanoramaVariant, mdiPencil, mdiSphere } from '@mdi/js';
 import EXIFReader from 'exifreader';
 import type { ExifDatasetMetadata } from '../../../types/metadata';
-import { mdiAccount, mdiCameraBurst, mdiImage, mdiPanoramaVariant, mdiPencil, mdiSphere } from '@mdi/js';
 import type { UploadableAssets } from '../../../types/upload-manager';
 
 export type AssetType = ExifDatasetMetadata['captureType'];
@@ -27,9 +27,10 @@ export interface EXIFAsset {
   preview: Blob;
   name: string;
   metadata: Partial<ExifDatasetMetadata>;
-  id: string;
   selected: boolean;
 }
+
+const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB
 
 class ExifUploaderManager implements UploadableAssets {
   assets = $state<EXIFAsset[]>([]);
@@ -46,11 +47,14 @@ class ExifUploaderManager implements UploadableAssets {
   async addAsset(asset: File) {
     let tags: EXIFReader.Tags;
 
+    if (asset.size > MAX_FILE_SIZE) {
+      throw new Error(`File size exceeds ${MAX_FILE_SIZE / (1024 * 1024)}MB limit`);
+    }
+
     try {
       tags = await EXIFReader.load(asset, { async: true });
     } catch {
-      // it was an invalid image format so we skip it
-      return;
+      throw new Error('Invalid Image file, please upload a valid image.');
     }
 
     const previewBlob = await this.generatePreview(asset);
@@ -63,14 +67,17 @@ class ExifUploaderManager implements UploadableAssets {
       preview = previewBlob;
     }
 
+    const id = crypto.randomUUID();
+
     const newAsset: EXIFAsset = {
       data: asset,
       preview: preview,
       name: asset.name,
-      id: crypto.randomUUID(),
       metadata: {
         cameraMake: tags['Make']?.description,
         cameraModel: tags['Model']?.description,
+        originalFilename: asset.name,
+        assetId: id,
       },
       selected: false,
     };

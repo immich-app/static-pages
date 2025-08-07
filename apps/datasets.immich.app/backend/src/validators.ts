@@ -1,8 +1,14 @@
-import { IsEmail, IsIn, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsIn, IsString, IsUUID } from 'class-validator';
 import { AuthRequest } from '../../types/auth';
 import { Dataset, ExifDatasetMetadata } from '../../types/metadata';
 
 export class ExifDatasetMetadataValidator extends ExifDatasetMetadata {
+  @IsString()
+  originalFilename!: string;
+
+  @IsUUID()
+  assetId!: string;
+
   @IsString()
   cameraMake!: string;
 
@@ -14,10 +20,6 @@ export class ExifDatasetMetadataValidator extends ExifDatasetMetadata {
 
   @IsEmail()
   uploaderEmail!: string;
-
-  @IsString()
-  @IsOptional()
-  otherCaptureType?: string;
 }
 
 export const DatasetMetadataValidatorMap = {
