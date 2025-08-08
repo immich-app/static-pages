@@ -12,16 +12,21 @@ export type AuthenticationMethod = 'ApiKey' | 'Cookie' | 'Bearer';
 
 type Linkable<T> = T & { href: string; name: string };
 type ApiModel = Linkable<SchemaObject>;
-type ApiEndpointTag = Linkable<{ endpoints: ApiEndpoint[] }>;
+export type ApiEndpointTag = Linkable<{ endpoints: ApiEndpoint[] }>;
 type ApiEndpoint = {
   name: string;
   method: ApiMethod;
   route: string;
   operationId?: string;
   description?: string;
+  deprecated?: boolean;
+  adminRoute?: boolean;
+  sharedLinkRoute?: boolean;
+  publicRoute?: boolean;
   summary?: string;
   tags: string[];
   authentication: AuthenticationMethod[];
+  permission?: string;
   params: ParameterObject[];
   queryParams: ParameterObject[];
   requestBody?: ReferenceObject;
@@ -47,10 +52,19 @@ const getModelHref = (model: string) => `/api/models/${model}`;
 const getTagHref = (tag: string) => `/api/endpoints/${asSlug(tag)}`;
 
 export const getTagEndpointHref = (tag: ApiEndpointTag, endpoint: ApiEndpoint) =>
-  `${getTagHref(tag.name)}#${endpoint.operationId}`;
+  `${getTagHref(tag.name)}/${endpoint.operationId}`;
 export const getRefName = (ref: ReferenceObject) => ref.$ref.replace('#/components/schemas/', '');
 export const getRefHref = (ref: ReferenceObject) => getModelHref(getRefName(ref));
 export const isRef = (ref: unknown): ref is ReferenceObject => ref instanceof Object && '$ref' in ref;
+
+const methodColor: Partial<Record<ApiMethod, string>> = {
+  GET: 'text-success',
+  POST: 'text-info',
+  PUT: 'text-warning',
+  DELETE: 'text-danger',
+};
+export const getEndpointColor = (endpoint: ApiEndpoint) =>
+  endpoint.deprecated ? '' : (methodColor[endpoint.method] ?? '');
 
 type ParseOptions = {
   getModelHref: (name: string) => string;
@@ -60,6 +74,7 @@ type ParseOptions = {
 export const parseSpec = (spec: OpenAPIObject, { getModelHref, getTagHref }: ParseOptions) => {
   const modelsMap: Record<string, ApiModel> = {};
   for (const [name, schema] of Object.entries(spec.components?.schemas ?? {})) {
+    // top level schemas are not references
     const model = schema as ApiModel;
     model.name = name;
     model.href = getModelHref(name);
@@ -76,12 +91,14 @@ export const parseSpec = (spec: OpenAPIObject, { getModelHref, getTagHref }: Par
       options: methods.options,
       head: methods.head,
       patch: methods.patch,
+      trace: methods.trace,
     })) {
       if (!item) {
         continue;
       }
 
-      const { description, operationId, security, summary, tags } = item;
+      const { description: descriptionRaw, operationId, security, summary, tags } = item;
+      const description = descriptionRaw?.replaceAll(/`/g, "'");
 
       if (!operationId) {
         console.log('Skipping route without an operationId', { route });
@@ -131,6 +148,13 @@ export const parseSpec = (spec: OpenAPIObject, { getModelHref, getTagHref }: Par
         name: operationId || 'unknown',
         authentication: authentication.filter(Boolean),
         responses,
+        permission: item['x-immich-permission'],
+        deprecated: item.deprecated,
+        adminRoute: item['x-immich-admin-only'] ?? false,
+        sharedLinkRoute: item.parameters?.some(
+          (param) => 'in' in param && param.in === 'query' && (param.name === 'key' || param.name === 'slug'),
+        ),
+        publicRoute: (item.security || [])?.length === 0,
         requestBody: isRef(bodyRef) ? bodyRef : undefined,
         method: method.toUpperCase() as ApiMethod,
         route,
@@ -140,7 +164,7 @@ export const parseSpec = (spec: OpenAPIObject, { getModelHref, getTagHref }: Par
         tags: tags ?? [],
         description,
         summary,
-      } as ApiEndpoint;
+      };
     }
   }
 
@@ -165,15 +189,15 @@ export const parseSpec = (spec: OpenAPIObject, { getModelHref, getTagHref }: Par
 
   return {
     info: spec.info,
-    modelsMap,
+    // modelsMap,
     models: Object.keys(modelsMap)
       .toSorted()
       .map((model) => modelsMap[model]),
-    endpointsMap,
+    // endpointsMap,
     endpoints: Object.keys(endpointsMap)
       .toSorted()
       .map((endpoint) => endpointsMap[endpoint]),
-    tagsMap,
+    // tagsMap,
     tags: Object.keys(tagsMap)
       .toSorted()
       .map((tag) => tagsMap[tag]),
