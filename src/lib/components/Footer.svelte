@@ -3,6 +3,7 @@
   import {
     mdiAndroid,
     mdiApple,
+    mdiCubeOutline,
     mdiGithub,
     mdiKey,
     mdiMessageOutline,
@@ -94,6 +95,12 @@
             <HStack>
               <Icon icon={mdiWeb} size="1.5em" />
               <Text>My Immich</Text>
+            </HStack>
+          </Link>
+          <Link href="https://api.immich.app" target="_blank" rel="noopener noreferrer">
+            <HStack>
+              <Icon icon={mdiCubeOutline} size="1.5em" />
+              <Text>Immich API</Text>
             </HStack>
           </Link>
         </Stack>

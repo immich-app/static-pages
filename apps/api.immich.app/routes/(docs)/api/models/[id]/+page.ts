@@ -2,7 +2,8 @@ import { getOpenApi } from '$lib/services/open-api';
 import { redirect } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 
-export const load = (({ url }) => {
+export const load = (async ({ url, parent }) => {
+  await parent();
   const { models } = getOpenApi();
   const model = models.find((model) => model.href === url.pathname);
   if (!model) {

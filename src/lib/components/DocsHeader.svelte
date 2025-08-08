@@ -8,7 +8,7 @@
     { title: 'Features', href: '/features' },
     { title: 'Roadmap', href: '/roadmap' },
     { title: 'Docs', href: 'https://immich.app/' },
-    { title: 'API', href: '/api' },
+    { title: 'API', href: 'https://api.immich.app/' },
     // { title: 'Blog', href: '/blog' },
     // { title: 'FAQs', href: '/faqs' },
   ]}

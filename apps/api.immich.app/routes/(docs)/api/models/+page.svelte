@@ -1,13 +1,12 @@
 <script lang="ts">
+  import ApiPageContent from '$lib/components/ApiPageContent.svelte';
   import { getOpenApi } from '$lib/services/open-api';
-  import { Card, CardTitle, Heading, Stack } from '@immich/ui';
+  import { Card, CardTitle } from '@immich/ui';
 
   const { models } = getOpenApi();
 </script>
 
-<Stack gap={8}>
-  <Heading size="large" tag="h1">Models</Heading>
-
+<ApiPageContent title="API Models" description="An overview of all the available API models">
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
     {#each models as model (model.href)}
       <a href={model.href}>
@@ -17,4 +16,4 @@
       </a>
     {/each}
   </div>
-</Stack>
+</ApiPageContent>

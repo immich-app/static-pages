@@ -76,6 +76,7 @@ export interface OperationObject {
   deprecated?: boolean;
   security?: SecurityRequirementObject[];
   servers?: ServerObject[];
+  'x-immich-permission'?: string;
 }
 export interface ExternalDocumentationObject {
   description?: string;

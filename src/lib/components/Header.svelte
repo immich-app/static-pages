@@ -29,13 +29,13 @@
   {@render children?.()}
 
   <HStack gap={0}>
-    {#each items as item, i (i)}
+    {#each items as item (item.href)}
       <Button
         class="hidden md:flex"
         href={item.href}
         shape="round"
         variant={item.variant ?? 'ghost'}
-        color={(item.color ?? isActive(item.href)) ? 'primary' : 'secondary'}>{item.title}</Button
+        color={item.color ?? (isActive(item.href) ? 'primary' : 'secondary')}>{item.title}</Button
       >
     {/each}
     <ThemeSwitcher size="large" />

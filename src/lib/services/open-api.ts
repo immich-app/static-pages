@@ -12,7 +12,7 @@ export type AuthenticationMethod = 'ApiKey' | 'Cookie' | 'Bearer';
 
 type Linkable<T> = T & { href: string; name: string };
 type ApiModel = Linkable<SchemaObject>;
-type ApiEndpointTag = Linkable<{ endpoints: ApiEndpoint[] }>;
+export type ApiEndpointTag = Linkable<{ endpoints: ApiEndpoint[] }>;
 type ApiEndpoint = {
   name: string;
   method: ApiMethod;
@@ -22,6 +22,7 @@ type ApiEndpoint = {
   summary?: string;
   tags: string[];
   authentication: AuthenticationMethod[];
+  permission?: string;
   params: ParameterObject[];
   queryParams: ParameterObject[];
   requestBody?: ReferenceObject;
@@ -47,10 +48,18 @@ const getModelHref = (model: string) => `/api/models/${model}`;
 const getTagHref = (tag: string) => `/api/endpoints/${asSlug(tag)}`;
 
 export const getTagEndpointHref = (tag: ApiEndpointTag, endpoint: ApiEndpoint) =>
-  `${getTagHref(tag.name)}#${endpoint.operationId}`;
+  `${getTagHref(tag.name)}/${endpoint.operationId}`;
 export const getRefName = (ref: ReferenceObject) => ref.$ref.replace('#/components/schemas/', '');
 export const getRefHref = (ref: ReferenceObject) => getModelHref(getRefName(ref));
 export const isRef = (ref: unknown): ref is ReferenceObject => ref instanceof Object && '$ref' in ref;
+
+const methodColor: Partial<Record<ApiMethod, string>> = {
+  GET: 'text-success',
+  POST: 'text-info',
+  PUT: 'text-warning',
+  DELETE: 'text-danger',
+};
+export const getMethodColor = (method: ApiMethod) => methodColor[method] ?? '';
 
 type ParseOptions = {
   getModelHref: (name: string) => string;
@@ -131,6 +140,7 @@ export const parseSpec = (spec: OpenAPIObject, { getModelHref, getTagHref }: Par
         name: operationId || 'unknown',
         authentication: authentication.filter(Boolean),
         responses,
+        permission: item['x-immich-permission'],
         requestBody: isRef(bodyRef) ? bodyRef : undefined,
         method: method.toUpperCase() as ApiMethod,
         route,

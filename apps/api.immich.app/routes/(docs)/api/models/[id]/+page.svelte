@@ -1,5 +1,4 @@
 <script lang="ts">
-  import '$lib/app.css';
   import ApiSchema from '$lib/components/ApiSchema.svelte';
   import { Heading, Text } from '@immich/ui';
   import type { PageData } from './$types';
