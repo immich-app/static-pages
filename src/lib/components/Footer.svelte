@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Card, Heading, HStack, Icon, Link, Stack, Text, ThemeSwitcher, VStack } from '@immich/ui';
-  import { mdiKey, mdiOfficeBuildingOutline, mdiServerOutline, mdiShoppingOutline } from '@mdi/js';
+  import { mdiCubeOutline, mdiKey, mdiOfficeBuildingOutline, mdiServerOutline, mdiShoppingOutline } from '@mdi/js';
   import { siAndroid, siApple, siDiscord, siGithub, siImmich, siReddit } from 'simple-icons';
 </script>
 
@@ -84,6 +84,12 @@
             <HStack>
               <Icon icon={siImmich} size="1.5em" />
               <Text>My Immich</Text>
+            </HStack>
+          </Link>
+          <Link href="https://api.immich.app" target="_blank" rel="noopener noreferrer">
+            <HStack>
+              <Icon icon={mdiCubeOutline} size="1.5em" />
+              <Text>Immich API</Text>
             </HStack>
           </Link>
         </Stack>

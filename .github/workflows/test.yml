@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app_name: [my, buy, get, next]
+        name: ['api', 'next', 'my', 'buy', 'get']
 
     steps:
       - name: Checkout code

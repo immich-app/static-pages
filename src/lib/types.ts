@@ -5,6 +5,7 @@ export type HeaderItem = {
   href: string;
   color?: Color;
   variant?: 'outline' | 'ghost' | 'filled';
+  show?: 'always';
 };
 
 export type TimelineItem = {
