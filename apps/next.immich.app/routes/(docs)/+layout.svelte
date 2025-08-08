@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { beforeNavigate } from '$app/navigation';
   import { page } from '$app/state';
   import Header from '$lib/components/Header.svelte';
   import PageContent from '$lib/components/PageContent.svelte';
   import { getOpenApi } from '$lib/services/open-api';
+  import { ApiPage } from '$lib/utils/api';
   import { getIcon } from '$lib/utils/icons';
   import { AppShell, AppShellHeader, AppShellSidebar, NavbarGroup, NavbarItem } from '@immich/ui';
   import {
@@ -22,6 +24,7 @@
     mdiTagMultipleOutline,
   } from '@mdi/js';
   import type { Snippet } from 'svelte';
+  import { MediaQuery } from 'svelte/reactivity';
 
   type Props = {
     children?: Snippet;
@@ -30,27 +33,41 @@
   const { children }: Props = $props();
 
   const { tags } = getOpenApi();
+
+  const sidebar = new MediaQuery(`min-width: 850px`);
+  let open = $derived(sidebar.current);
+
+  beforeNavigate(() => {
+    if (!sidebar.current) {
+      open = false;
+    }
+  });
 </script>
 
 <AppShell>
   <AppShellHeader>
-    <Header items={[]} />
+    <Header onToggleSidebar={() => (open = !open)} />
   </AppShellHeader>
 
-  <AppShellSidebar>
+  <AppShellSidebar bind:open>
     <div class="mt-8 pe-6 flex flex-col gap-4">
       <div>
-        <NavbarItem title="Introduction" href="/introduction" icon={mdiNoteOutline} activeIcon={mdiNote} />
-        <NavbarItem title="Getting Started" href="/getting-started" icon={mdiCompassOutline} activeIcon={mdiCompass} />
-        <NavbarItem title="Authorization" href="/authorization" icon={mdiSecurity} />
-        <NavbarItem title="Permissions" href="/permissions" icon={mdiLockOutline} activeIcon={mdiLock} />
+        <NavbarItem title="Introduction" href={ApiPage.Introduction} icon={mdiNoteOutline} activeIcon={mdiNote} />
+        <NavbarItem
+          title="Getting Started"
+          href={ApiPage.GettingStarted}
+          icon={mdiCompassOutline}
+          activeIcon={mdiCompass}
+        />
+        <NavbarItem title="Authentication" href={ApiPage.Authentication} icon={mdiSecurity} />
+        <NavbarItem title="Permissions" href={ApiPage.Permissions} icon={mdiLockOutline} activeIcon={mdiLock} />
         <NavbarItem
           title="Playground"
-          href="/playground"
+          href={ApiPage.Playground}
           icon={mdiLightningBoltOutline}
           activeIcon={mdiLightningBolt}
         />
-        <NavbarItem title="SDK" href="/sdk" icon={mdiCubeOutline} activeIcon={mdiCube} />
+        <NavbarItem title="SDK" href={ApiPage.Sdk} icon={mdiCubeOutline} activeIcon={mdiCube} />
         <NavbarItem
           title="Endpoints"
           href="/api/endpoints"

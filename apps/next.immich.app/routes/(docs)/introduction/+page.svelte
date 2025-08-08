@@ -4,18 +4,13 @@
 </script>
 
 <ApiPageContent
-  title="Getting Started"
-  description="Learn how to authorize your requests to the Immich API"
+  title="Introduction"
+  description="The API that powers Immich"
   nextSteps={[
-    { href: '/authorization', title: 'Learn about Authorization' },
-    { href: '/permissions', title: 'Learn about Permissions' },
+    { href: '/getting-started', title: 'Getting started' },
+    { href: '/authentication', title: 'Learn about Authentication' },
   ]}
 >
-  <Text>
-    The Immich API uses token-based authentication. To access protected resources, you need to include a valid API key
-    in your requests.
-  </Text>
-
   <Text
     >Immich API is the REST application programming interface that allows developers to interact with the Immich server
     programmatically. Direct API access enables developers to build 3rd party integrations, features, tools, and apps.

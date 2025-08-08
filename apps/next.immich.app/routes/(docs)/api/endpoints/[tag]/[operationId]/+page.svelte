@@ -1,7 +1,12 @@
 <script lang="ts">
+  import ApiAdminRouteBadge from '$lib/components/ApiAdminRouteBadge.svelte';
+  import ApiDeprecatedBadge from '$lib/components/ApiDeprecatedBadge.svelte';
+  import ApiPermission from '$lib/components/ApiPermission.svelte';
+  import ApiPublicRouteBadge from '$lib/components/ApiPublicRouteBadge.svelte';
   import ApiSchema from '$lib/components/ApiSchema.svelte';
+  import ApiSharedLinkRouteBadge from '$lib/components/ApiSharedLinkRouteBadge.svelte';
   import LinkableHeading from '$lib/components/LinkableHeading.svelte';
-  import { getMethodColor, getOpenApi, isRef } from '$lib/services/open-api';
+  import { getEndpointColor, getOpenApi, isRef } from '$lib/services/open-api';
   import { Card, CardBody, Code, Heading, Stack, Text } from '@immich/ui';
   import { type PageData } from './$types';
 
@@ -20,9 +25,9 @@
   <section>
     <div class="flex flex-col gap-2">
       <Heading size="large" tag="h1">
-        <span class="group flex items-center gap-1">
+        <span class="group flex items-center gap-1 {endpoint.deprecated ? 'text-gray-500 italic' : ''}">
           <span class="flex gap-2">
-            <span class={getMethodColor(endpoint.method)}>{endpoint.method}</span>
+            <span class={getEndpointColor(endpoint)}>{endpoint.method}</span>
             <span>{endpoint.route}</span>
           </span>
         </span>
@@ -30,31 +35,33 @@
       {#if endpoint.description}
         <Text color="muted" fontWeight="bold">{endpoint.description}</Text>
       {/if}
+      <div>
+        {#if endpoint.deprecated}
+          <span>
+            <ApiDeprecatedBadge />
+          </span>
+        {/if}
+
+        {#if endpoint.adminRoute}
+          <ApiAdminRouteBadge />
+        {/if}
+
+        {#if endpoint.sharedLinkRoute}
+          <ApiAdminRouteBadge />
+          <ApiSharedLinkRouteBadge />
+        {/if}
+
+        {#if endpoint.publicRoute}
+          <ApiPublicRouteBadge />
+        {/if}
+
+        {#if endpoint.permission}
+          <ApiPermission value={endpoint.permission} />
+        {/if}
+      </div>
     </div>
     <hr class="mt-4 border border-subtle" />
   </section>
-
-  <Stack gap={2}>
-    <a href="#authentication" class="group">
-      <LinkableHeading tag="h2" href="#authentication">Authentication</LinkableHeading>
-    </a>
-    <section class="flex gap-1">
-      {#each endpoint.authentication as auth (auth)}
-        <Text class="px-2 y-1 rounded-full bg-primary text-light">{auth}</Text>
-      {/each}
-    </section>
-  </Stack>
-
-  {#if endpoint.permission}
-    <Stack gap={2}>
-      <LinkableHeading tag="h2" href="#permission">Permission</LinkableHeading>
-      <Text
-        >This endpoint requires the <Code color="primary" variant="filled" size="tiny" class="py-1"
-          >{endpoint.permission}</Code
-        > permission.</Text
-      >
-    </Stack>
-  {/if}
 
   {#if endpoint.queryParams.length > 0}
     <section class="flex flex-col gap-2">

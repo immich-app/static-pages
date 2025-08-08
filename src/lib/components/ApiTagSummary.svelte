@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getMethodColor, type ApiEndpointTag } from '$lib/services/open-api';
+  import { getEndpointColor, type ApiEndpointTag } from '$lib/services/open-api';
   import { Button, Card, CardTitle, Heading, Text } from '@immich/ui';
 
   type Props = {
@@ -14,7 +14,6 @@
     <a href={tag.href}>{tag.name}</a>
   </Heading>
   <Card color="secondary">
-    <hr />
     {#each tag.endpoints as endpoint, i (i)}
       <Button
         href="{tag.href}/{endpoint.operationId}"
@@ -26,16 +25,16 @@
       >
         <div class="flex flex-col w-full">
           <CardTitle>
-            <span class="group flex gap-2 justify-between">
+            <span class="group flex gap-2 justify-between {endpoint.deprecated ? 'text-gray-500 italic' : ''}">
               <span class="flex gap-2">
-                <span class={getMethodColor(endpoint.method)}>{endpoint.method}</span>
+                <span class={getEndpointColor(endpoint)}>{endpoint.method}</span>
                 <span>{endpoint.route}</span>
               </span>
-              <span class="text-muted">{endpoint.operationId}</span>
+              <span class="text-muted hidden md:inline-block">{endpoint.operationId}</span>
             </span>
           </CardTitle>
           {#if endpoint.description}
-            <Text color="muted">{endpoint.description}</Text>
+            <Text color="muted" class="truncate">{endpoint.description}</Text>
           {/if}
         </div>
       </Button>

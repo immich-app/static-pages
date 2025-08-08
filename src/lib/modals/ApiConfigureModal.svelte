@@ -56,12 +56,11 @@
   <ModalBody>
     <form autocomplete="off" novalidate id="configure-form" {onsubmit}>
       <Stack gap={4}>
+        <Text>Connecting to an Immich API makes it possible to see live responses for some endpoints.</Text>
+
         <Field label="Server URL">
           <Input bind:value={apiUrl} autocomplete="off" />
         </Field>
-        <div class="flex justify-end">
-          <Button color="primary" variant="ghost" size="small" onclick={handleTest}>Test connection</Button>
-        </div>
 
         {#if connected}
           <Text size="tiny" color="success" class="pt-2">Connected!</Text>
@@ -70,8 +69,11 @@
         <Field label="API Key">
           <Input bind:value={apiKey} autocomplete="off" />
         </Field>
-        <div class="flex justify-end">
-          <Button color="primary" variant="ghost" size="small" onclick={handleTest}>Test key</Button>
+
+        <hr class="my-1 border border-gray-500" />
+
+        <div class="flex gap-2">
+          <Button fullWidth color="secondary" size="small" onclick={handleTest}>Test Connection</Button>
         </div>
 
         <Text class="pb-4"
