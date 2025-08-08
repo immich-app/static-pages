@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app_name: [my, buy, get, next]
+        app_name: [my, buy, get, next, datasets]
 
     steps:
       - name: Checkout code
@@ -49,3 +49,19 @@ jobs:
       - name: Run unit tests
         run: npm test
         if: ${{ !cancelled() }}
+
+      - name: Check for app backend
+        id: check-backend
+        run: |
+          if [ -d "apps/${{ matrix.app_name }}.immich.app/backend" ]; then
+            echo "has_backend=true" >> $GITHUB_ENV
+          else
+            echo "has_backend=false" >> $GITHUB_ENV
+          fi
+
+      - name: Test backend
+        if: ${{ env.has_backend == 'true' }}
+        working-directory: 'apps/${{ matrix.app_name }}.immich.app/backend'
+        run: |
+          npm ci
+          npm test
