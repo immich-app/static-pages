@@ -14,7 +14,7 @@
 
 <AppShell>
   <AppShellHeader>
-    <Header items={[]} />
+    <Header />
   </AppShellHeader>
 
   <PageContent class="max-w-(--breakpoint-lg) w-full mx-auto">
