@@ -15,7 +15,7 @@
     "format:fix": "prettier --write ."
   },
   "devDependencies": {
-    "@immich/ui": "^0.23.0",
+    "@immich/ui": "^0.24.1",
     "@sveltejs/adapter-static": "^3.0.6",
     "@sveltejs/kit": "^2.26.1",
     "@sveltejs/vite-plugin-svelte": "^6.0.0",
@@ -41,7 +41,8 @@
   },
   "type": "module",
   "dependencies": {
-    "@mdi/js": "^7.4.47"
+    "@mdi/js": "^7.4.47",
+    "simple-icons": "^15.9.0"
   },
   "volta": {
     "node": "22.18.0"
