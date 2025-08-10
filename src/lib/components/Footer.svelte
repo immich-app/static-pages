@@ -1,17 +1,7 @@
 <script lang="ts">
   import { Card, Heading, HStack, Icon, Link, Stack, Text, ThemeSwitcher, VStack } from '@immich/ui';
-  import {
-    mdiAndroid,
-    mdiApple,
-    mdiGithub,
-    mdiKey,
-    mdiMessageOutline,
-    mdiOfficeBuildingOutline,
-    mdiReddit,
-    mdiServerOutline,
-    mdiShoppingOutline,
-    mdiWeb,
-  } from '@mdi/js';
+  import { mdiKey, mdiOfficeBuildingOutline, mdiServerOutline, mdiShoppingOutline } from '@mdi/js';
+  import { siAndroid, siApple, siDiscord, siGithub, siImmich, siReddit } from 'simple-icons';
 </script>
 
 <div class="bg-dark/10 rounded-t-3xl mt-16 p-8">
@@ -22,19 +12,19 @@
           <Heading size="tiny">Social</Heading>
           <Link href="https://github.com/immich-app/immich" target="_blank" rel="noopener noreferrer">
             <HStack>
-              <Icon icon={mdiGithub} size="1.5em" />
+              <Icon icon={siGithub} size="1.5em" />
               <Text>GitHub</Text>
             </HStack>
           </Link>
           <Link href="https://discord.immich.app/" target="_blank" rel="noopener noreferrer">
             <HStack>
-              <Icon icon={mdiMessageOutline} size="1.5em" />
+              <Icon icon={siDiscord} size="1.5em" />
               <Text>Discord</Text>
             </HStack>
           </Link>
           <Link href="https://www.reddit.com/r/immich/" target="_blank" rel="noopener noreferrer">
             <HStack>
-              <Icon icon={mdiReddit} size="1.5em" />
+              <Icon icon={siReddit.path} size="1.5em" />
               <Text>Reddit</Text>
             </HStack>
           </Link>
@@ -48,13 +38,13 @@
             rel="noopener noreferrer"
           >
             <HStack>
-              <Icon icon={mdiAndroid} size="1.5em" />
+              <Icon icon={siAndroid.path} size="1.5em" />
               <Text>Android</Text>
             </HStack>
           </Link>
           <Link href="https://apps.apple.com/us/app/immich/id1613945652" target="_blank" rel="noopener noreferrer">
             <HStack>
-              <Icon icon={mdiApple} size="1.5em" />
+              <Icon icon={siApple.path} size="1.5em" />
               <Text>iOS</Text>
             </HStack>
           </Link>
@@ -86,13 +76,13 @@
           <Heading size="tiny">Sites</Heading>
           <Link href="https://immich.app" target="_blank" rel="noopener noreferrer">
             <HStack>
-              <Icon icon={mdiWeb} size="1.5em" />
+              <Icon icon={siImmich} size="1.5em" />
               <Text>Documentation</Text>
             </HStack>
           </Link>
           <Link href="https://my.immich.app" target="_blank" rel="noopener noreferrer">
             <HStack>
-              <Icon icon={mdiWeb} size="1.5em" />
+              <Icon icon={siImmich} size="1.5em" />
               <Text>My Immich</Text>
             </HStack>
           </Link>
