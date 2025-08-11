@@ -43,11 +43,8 @@
   "type": "module",
   "dependencies": {
     "@mdi/js": "^7.4.47",
-<<<<<<< HEAD
-    "simple-icons": "^15.9.0"
-=======
+    "simple-icons": "^15.9.0",
     "exifreader": "^4.31.0"
->>>>>>> 27c52bc (feat: add datasets app)
   },
   "volta": {
     "node": "22.18.0"
