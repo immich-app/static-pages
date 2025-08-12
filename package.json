@@ -32,6 +32,7 @@
     "svelte": "^5.14.1",
     "svelte-check": "^4.1.1",
     "svelte-highlight": "^7.8.2",
+    "svelte-turnstile": "^0.11.0",
     "tailwindcss": "^4.1.8",
     "tslib": "^2.4.1",
     "typescript": "^5.7.2",
@@ -42,6 +43,8 @@
   "type": "module",
   "dependencies": {
     "@mdi/js": "^7.4.47",
+    "exifreader": "^4.31.0",
+    "p-limit": "^6.2.0",
     "simple-icons": "^15.9.0"
   },
   "volta": {

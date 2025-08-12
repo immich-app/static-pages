@@ -1,8 +1,8 @@
 import js from '@eslint/js';
-import ts from 'typescript-eslint';
-import svelte from 'eslint-plugin-svelte';
 import prettier from 'eslint-config-prettier';
+import svelte from 'eslint-plugin-svelte';
 import globals from 'globals';
+import ts from 'typescript-eslint';
 
 /** @type {import('eslint').Linter.FlatConfig[]} */
 export default [
@@ -20,7 +20,7 @@ export default [
     },
   },
   {
-    files: ['**/*.svelte'],
+    files: ['**/*.svelte', '**/*.svelte.ts'],
     languageOptions: {
       parserOptions: {
         parser: ts.parser,
@@ -28,6 +28,6 @@ export default [
     },
   },
   {
-    ignores: ['build/', '.svelte-kit/', 'dist/'],
+    ignores: ['build/', '.svelte-kit/', 'dist/', 'apps/**/backend/worker-configuration.d.ts'],
   },
 ];
