@@ -15,23 +15,24 @@ export function handleError(message: string, returnCode: number = 400): Response
 
 export async function uploadAssetWithMetadata<D extends Dataset>(
   env: Env,
+  uploaderId: string,
   assetFile: File,
   metadata: MetadataType<D>,
   dataset: D,
 ) {
   const assetId = metadata.assetId;
   const fileExtension = assetFile.name.split('.').pop()?.toLowerCase();
-  const metadataName = `info-${assetId}.json`;
+  const metadataName = `${assetId}-info.json`;
 
   // only tack on the file extension if it exists
   // we will have to infer extension during processing if not provided
-  const imageName = `image-${assetId}${fileExtension ? `.${fileExtension}` : ''}`;
+  const imageName = `${assetId}-image${fileExtension ? `.${fileExtension}` : ''}`;
 
   // upload image to R2
-  await env.IMAGE_UPLOADS.put(`datasets/${dataset}/${imageName}`, assetFile);
+  await env.IMAGE_UPLOADS.put(`datasets/${dataset}/${uploaderId}/${imageName}`, assetFile);
 
   // upload json payload to R2
-  await env.IMAGE_UPLOADS.put(`datasets/${dataset}/${metadataName}`, JSON.stringify(metadata));
+  await env.IMAGE_UPLOADS.put(`datasets/${dataset}/${uploaderId}/${metadataName}`, JSON.stringify(metadata));
 }
 
 export async function validateAssetWithMetadata<D extends Dataset>(

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { PUBLIC_CF_TURNSTILE_SITE, PUBLIC_DATASET_API_ENDPOINT } from '$env/static/public';
   import { Button, Checkbox, Field, HelperText, Input, Modal, ModalBody, ModalFooter, Stack } from '@immich/ui';
+  import pLimit from 'p-limit';
   import { Turnstile } from 'svelte-turnstile';
   import type { UploadableAssets } from '../../../apps/datasets.immich.app/types/upload-manager';
 
@@ -100,23 +101,27 @@
     }
 
     // Handle the submission logic here
-    let batches = buildUploadBatches(dataset.assets);
     let failedIds: string[] = [];
     let uploadedCount = 0;
 
-    for (const batch of batches) {
-      let uploadChunk = batch.map(async (asset) => uploadAsset(asset));
-      let results = await Promise.all(uploadChunk);
-      let successfulUploads = results.filter((result) => result).length;
-      uploadedCount += successfulUploads;
+    // 5 concurrent uploads
+    const limit = pLimit(5);
 
-      failedIds.push(...results.filter((result) => !result.success).map((result) => result.asset.metadata.assetId!));
+    let uploads = dataset.assets.map(async (asset) =>
+      limit(async () => {
+        const result = await uploadAsset(asset);
+        if (result.success) {
+          uploadedCount += 1;
+          submitButtonText = `Uploading (${uploadedCount}/${dataset.assets.length})`;
+        } else {
+          failedIds.push(asset.metadata.assetId!);
+        }
+      }),
+    );
 
-      submitButtonText = `Uploading (${uploadedCount}/${dataset.assets.length})`;
-    }
+    await Promise.all(uploads);
 
     isUploading = false;
-
     onClose({ cancelled: false, failedIds });
   }
 </script>

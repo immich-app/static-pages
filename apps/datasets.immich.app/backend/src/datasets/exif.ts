@@ -13,7 +13,8 @@ exifRouter.put('/upload', withJWTAuth, async (req, env) => {
       return handleError(`File size exceeds ${MAX_FILE_SIZE / (1024 * 1024)}MB limit`, 413);
     }
 
-    await uploadAssetWithMetadata(env, file, metadata, Dataset.Exif);
+    const uploadId = req.extras?.authID;
+    await uploadAssetWithMetadata(env, uploadId, file, metadata, Dataset.Exif);
 
     return new Response(
       JSON.stringify({
