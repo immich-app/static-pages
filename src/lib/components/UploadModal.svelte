@@ -53,14 +53,6 @@
     submitButtonText = `Unable to upload`;
   }
 
-  function buildUploadBatches(assets: UploadableAssets['assets'], batchSize: number = 5) {
-    const batches = [];
-    for (let i = 0; i < assets.length; i += batchSize) {
-      batches.push(assets.slice(i, i + batchSize));
-    }
-    return batches;
-  }
-
   async function uploadAsset(
     asset: UploadableAssets['assets'][number],
   ): Promise<{ success: boolean; asset: UploadableAssets['assets'][number] }> {
