@@ -1,23 +1,34 @@
 <script lang="ts">
+  import { beforeNavigate } from '$app/navigation';
   import '$lib/app.css';
-  import DocsHeader from '$lib/components/DocsHeader.svelte';
+  import Header from '$lib/components/Header.svelte';
   import PageContent from '$lib/components/PageContent.svelte';
   import { AppShell, AppShellHeader, AppShellSidebar, NavbarGroup, NavbarItem } from '@immich/ui';
   import type { Snippet } from 'svelte';
+  import { MediaQuery } from 'svelte/reactivity';
 
   interface Props {
     children?: Snippet;
   }
 
   let { children }: Props = $props();
+
+  const sidebar = new MediaQuery(`min-width: 850px`);
+  let open = $derived(sidebar.current);
+
+  beforeNavigate(() => {
+    if (!sidebar.current) {
+      open = false;
+    }
+  });
 </script>
 
 <AppShell>
   <AppShellHeader>
-    <DocsHeader />
+    <Header onToggleSidebar={() => (open = !open)} />
   </AppShellHeader>
 
-  <AppShellSidebar>
+  <AppShellSidebar bind:open>
     <div class="w-full md:w-[300px]">
       <div class="mt-4 mr-0 lg:mr-4">
         <NavbarGroup title="2024" />

@@ -28,6 +28,7 @@ export default [
     },
   },
   {
-    ignores: ['build/', '.svelte-kit/', 'dist/', 'apps/**/backend/worker-configuration.d.ts'],
+    // idk why svelte.ts files are not being parsed correctly
+    ignores: ['build/', '.svelte-kit/', 'dist/', 'apps/**/backend/worker-configuration.d.ts', '**/*.svelte.ts'],
   },
 ];

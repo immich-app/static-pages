@@ -15,12 +15,13 @@
     "format:fix": "prettier --write ."
   },
   "devDependencies": {
-    "@immich/ui": "^0.24.1",
+    "@immich/ui": "^0.24.2",
     "@sveltejs/adapter-static": "^3.0.6",
     "@sveltejs/kit": "^2.26.1",
     "@sveltejs/vite-plugin-svelte": "^6.0.0",
     "@tailwindcss/vite": "^4.1.11",
     "@types/eslint": "^9.0.0",
+    "@types/node": "^24.3.0",
     "autoprefixer": "^10.4.19",
     "dotenv": "^17.0.0",
     "eslint": "^9.17.0",
@@ -31,7 +32,7 @@
     "prettier-plugin-svelte": "^3.3.2",
     "svelte": "^5.14.1",
     "svelte-check": "^4.1.1",
-    "svelte-highlight": "^7.8.2",
+    "svelte-highlight": "^7.8.3",
     "svelte-turnstile": "^0.11.0",
     "tailwindcss": "^4.1.8",
     "tslib": "^2.4.1",
