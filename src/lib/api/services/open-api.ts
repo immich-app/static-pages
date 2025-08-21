@@ -24,7 +24,7 @@ export type ApiEndpoint = {
   name: string;
   method: ApiMethod;
   route: string;
-  operationId?: string;
+  operationId: string;
   description?: string;
   deprecated?: boolean;
   adminRoute?: boolean;
