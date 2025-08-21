@@ -14,7 +14,6 @@
 >
   <Text>
     Most of the <Link href={ApiPage.Endpoints}>endpoints</Link> require a specific permission to access. You can find the
-    required permission for each endpoint on the <Link href={ApiPage.Endpoints}>endpoints</Link> overview page, as well as
-    each endpoint's detail page.
+    required permission for each endpoint in each endpoint's detail page, towards the top.
   </Text>
 </ApiPageContent>
