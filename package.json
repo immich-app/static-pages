@@ -46,7 +46,7 @@
     "@mdi/js": "^7.4.47",
     "bits-ui": "^2.9.4",
     "exifreader": "^4.31.0",
-    "p-limit": "^6.2.0",
+    "p-limit": "^7.0.0",
     "simple-icons": "^15.9.0"
   },
   "volta": {
