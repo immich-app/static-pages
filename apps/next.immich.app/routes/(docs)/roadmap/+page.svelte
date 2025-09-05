@@ -13,6 +13,7 @@
     mdiBookSearchOutline,
     mdiCakeVariant,
     mdiCameraBurst,
+    mdiCast,
     mdiChartBoxMultipleOutline,
     mdiCheckAll,
     mdiCheckboxMarked,
@@ -74,6 +75,7 @@
     mdiStarOutline,
     mdiTableKey,
     mdiTag,
+    mdiTagFaces,
     mdiTagMultiple,
     mdiText,
     mdiThemeLightDark,
@@ -84,6 +86,10 @@
   } from '@mdi/js';
 
   const releases = {
+    'v1.135.0': new Date(2025, 5, 18),
+    'v1.133.0': new Date(2025, 4, 21),
+    'v1.130.0': new Date(2025, 2, 25),
+    'v1.127.0': new Date(2025, 1, 26),
     'v1.122.0': new Date(2024, 11, 5),
     'v1.120.0': new Date(2024, 10, 6),
     'v1.114.0': new Date(2024, 8, 6),
@@ -193,14 +199,6 @@
     },
     {
       done: false,
-      icon: mdiTableKey,
-      iconColor: 'gray',
-      title: 'Fine grained access controls',
-      description: 'Granular access controls for users and api keys',
-      getDateLabel: () => 'Planned for 2025',
-    },
-    {
-      done: false,
       icon: mdiImageEdit,
       iconColor: 'rebeccapurple',
       title: 'Basic editor',
@@ -213,14 +211,6 @@
       iconColor: 'indianred',
       title: 'Stable release',
       description: 'Immich goes stable',
-      getDateLabel: () => 'Planned for early 2025',
-    },
-    {
-      done: false,
-      icon: mdiLockOutline,
-      iconColor: 'sandybrown',
-      title: 'Private/locked photos',
-      description: 'Private assets with extra protections',
       getDateLabel: () => 'Planned for 2025',
     },
     {
@@ -242,6 +232,56 @@
   ];
 
   const milestones: TimelineItem[] = [
+    {
+      icon: mdiStar,
+      iconColor: 'gold',
+      title: '70,000 Stars',
+      description: 'Reached 70K Stars on GitHub!',
+      getDateLabel: withLanguage(new Date(2025, 6, 9)),
+    },
+    withRelease({
+      icon: mdiTableKey,
+      iconColor: 'gray',
+      title: 'Fine grained access controls',
+      description: 'Granular access controls for api keys',
+      release: 'v1.135.0',
+    }),
+    withRelease({
+      icon: mdiCast,
+      iconColor: 'aqua',
+      title: 'Google Cast (web and mobile)',
+      description: 'Cast assets to Google Cast/Chromecast compatible devices',
+      release: 'v1.135.0',
+    }),
+    withRelease({
+      icon: mdiLockOutline,
+      iconColor: 'sandybrown',
+      title: 'Private/locked photos',
+      description: 'Private assets with extra protections',
+      release: 'v1.133.0',
+    }),
+    withRelease({
+      icon: mdiFolderMultiple,
+      iconColor: 'brown',
+      title: 'Folders view in the mobile app',
+      description: 'Browse your photos and videos in their folder structure inside the mobile app',
+      release: 'v1.130.0',
+    }),
+    {
+      icon: mdiStar,
+      iconColor: 'gold',
+      title: '60,000 Stars',
+      description: 'Reached 60K Stars on GitHub!',
+      getDateLabel: withLanguage(new Date(2025, 2, 4)),
+    },
+    withRelease({
+      icon: mdiTagFaces,
+      iconColor: 'teal',
+      title: 'Manual face tagging',
+      description:
+        'Manually tag or remove faces in photos and videos, even when automatic detection misses or misidentifies them.',
+      release: 'v1.127.0',
+    }),
     withRelease({
       icon: mdiLinkEdit,
       iconColor: 'crimson',
@@ -259,8 +299,8 @@
     withRelease({
       icon: mdiDatabaseOutline,
       iconColor: 'brown',
-      title: 'Automatic database backups',
-      description: 'Database backups are now integrated into the Immich server',
+      title: 'Automatic database dumps',
+      description: 'Database dumps are now integrated into the Immich server',
       release: 'v1.120.0',
     }),
     {
@@ -293,7 +333,7 @@
     withRelease({
       icon: mdiFolderMultiple,
       iconColor: 'brown',
-      title: 'Folders',
+      title: 'Folders view',
       description: 'Browse your photos and videos in their folder structure',
       release: 'v1.113.0',
     }),

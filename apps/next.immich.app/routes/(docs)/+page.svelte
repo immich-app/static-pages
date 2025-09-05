@@ -1,13 +1,15 @@
 <script lang="ts">
+  import { Constants } from '$lib';
   import qrCode from '$lib/assets/img/app-qr-code-dark.svg';
   import screenshot from '$lib/assets/img/screenshot-dark.webp';
   import { appStoreBadge, Button, Heading, Icon, Logo, playStoreBadge, Text, VStack } from '@immich/ui';
   import { mdiOpenInNew } from '@mdi/js';
+  import { siDiscord } from 'simple-icons';
 </script>
 
 <VStack gap={8} class="mt-4 lg:mt-16 text-center">
   <Logo size="giant" variant="logo" class="border" />
-  <Heading size="title" tag="h1"
+  <Heading size="title" tag="h1" fontWeight="extra-bold"
     >Self-hosted <span class="text-primary">photo and<br class="hidden lg:block" /> video management</span> solution</Heading
   >
   <Text
@@ -18,13 +20,13 @@
   <div class="flex flex-col gap-4">
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
       <Button size="large" href="/download">Download</Button>
-      <Button size="large" href="https://demo.immich.app/" color="secondary">
+      <Button size="large" href={Constants.Sites.Demo} color="secondary">
         <span>Open Demo</span>
         <Icon icon={mdiOpenInNew} />
       </Button>
     </div>
     <div class="flex justify-center">
-      <Button size="large" variant="ghost">Join our Discord</Button>
+      <Button size="large" variant="ghost" leadingIcon={siDiscord.path}>Join our Discord</Button>
     </div>
   </div>
 
@@ -33,12 +35,12 @@
   <hr class="border-t w-full max-w-(--breakpoint-sm) m-8" />
   <Heading size="title" tag="h2">Download mobile app</Heading>
   <Text>Download Immich app and start backing up your photos and videos securely to your own server</Text>
-  <div class="flex flex-col lg:flex-row">
-    <Button href="" variant="ghost" class="p-0">
-      <img src={playStoreBadge} alt="Playstore Badge" class="h-24" />
+  <div class="flex flex-col lg:flex-row gap-4">
+    <Button href={Constants.Get.Android} target="_blank" rel="noopener noreferrer" variant="ghost" class="p-0">
+      <img src={playStoreBadge} alt="Playstore Badge" class="h-16" />
     </Button>
-    <Button href="" variant="ghost" class="p-0">
-      <img src={appStoreBadge} alt="Playstore Badge" class="h-24 p-[16px]" />
+    <Button href={Constants.Get.iOS} target="_blank" rel="noopener noreferrer" variant="ghost" class="p-0">
+      <img src={appStoreBadge} alt="AppStore Badge" class="h-16" />
     </Button>
   </div>
   <img src={qrCode} alt="QRCode" class="h-36" />

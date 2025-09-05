@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Constants } from '$lib';
   import portainerIcon from '$lib/assets/img/portainer.svg';
   import truenasIcon from '$lib/assets/img/truenas-scale.svg';
   import unraidIcon from '$lib/assets/img/unraid.svg';
@@ -55,7 +56,6 @@
       <Button fullWidth href="https://immich.app/docs/install/portainer">View Instructions</Button>
     </CardFooter>
   </Card>
-
   <Card color="secondary" class="h-full">
     <CardHeader>
       <CardTitle>Unraid</CardTitle>
@@ -97,16 +97,16 @@
     </CardHeader>
     <CardBody>
       <Stack gap={4}>
-        <a href="https://get.immich.app/android">
-          <img class="h-24 mx-auto" alt="Get it on Google Play" src={playStoreBadge} />
+        <a href={Constants.Get.Android}>
+          <img class="h-16 mx-auto" alt="Get it on Google Play" src={playStoreBadge} />
         </a>
-        <a href="https://get.immich.app/fdroid">
+        <a href={Constants.Get.FDroid}>
           <img class="h-16 mx-auto rounded-xl border border-dark" alt="Get it on F-Droid" src={fdroidBadge} />
         </a>
         <Button
-          class="h-16 mx-auto mt-4 dark:bg-black dark:text-white"
+          class="h-16 mx-auto dark:bg-black dark:text-white"
           size="giant"
-          href="https://github.com/immich-app/immich/releases/latest"
+          href={Constants.Get.GithubRelease}
           color="secondary"
         >
           <Icon icon={mdiAndroid} size="2em" />
@@ -121,7 +121,7 @@
       <CardTitle>iOS</CardTitle>
     </CardHeader>
     <CardBody>
-      <a href="https://get.immich.app/ios">
+      <a href={Constants.Get.iOS}>
         <img class="h-16 mt-4 mx-auto" alt="Download on the App Store" src={appStoreBadge} />
       </a>
     </CardBody>

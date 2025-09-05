@@ -193,7 +193,7 @@
                 </div>
 
                 <div class="gap-2 m-4">
-                  <Text size="large" class="font-semibold text-ellipsis line-clamp-1 mb-2">{asset.name}</Text>
+                  <Text size="large" fontWeight="semi-bold" class="text-ellipsis line-clamp-1 mb-2">{asset.name}</Text>
 
                   <Text size="medium" color={asset.metadata.captureType ? 'primary' : 'danger'}>
                     <Icon

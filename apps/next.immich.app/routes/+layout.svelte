@@ -2,6 +2,7 @@
   import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/state';
   import '$lib/app.css';
+  import { initializeTheme } from '@immich/ui';
   import { onMount, type Snippet } from 'svelte';
 
   interface Props {
@@ -9,6 +10,8 @@
   }
 
   let { children }: Props = $props();
+
+  initializeTheme({ selector: 'body' });
 
   let pathname = '';
   onMount(() => {
