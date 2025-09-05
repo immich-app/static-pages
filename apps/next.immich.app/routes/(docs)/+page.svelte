@@ -2,9 +2,16 @@
   import { Constants } from '$lib';
   import qrCode from '$lib/assets/img/app-qr-code-dark.svg';
   import screenshot from '$lib/assets/img/screenshot-dark.webp';
-  import { appStoreBadge, Button, Heading, Icon, Logo, playStoreBadge, Text, VStack } from '@immich/ui';
-  import { mdiOpenInNew } from '@mdi/js';
-  import { siDiscord } from 'simple-icons';
+  import { appStoreBadge, Button, Heading, Icon, Link, Logo, playStoreBadge, Text, VStack } from '@immich/ui';
+  import { mdiKeyOutline, mdiOpenInNew, mdiShoppingOutline } from '@mdi/js';
+  import { siDiscord, siGithub, siWeblate } from 'simple-icons';
+
+  const supportItems = [
+    { href: Constants.Sites.Buy, text: 'Buy Immich', icon: mdiKeyOutline },
+    { href: Constants.Sites.Store, text: 'Buy Merch', icon: mdiShoppingOutline },
+    { href: Constants.Socials.Github, text: 'View on GitHub', icon: siGithub.path },
+    { href: Constants.Socials.Weblate, text: 'Translate on Weblate', icon: siWeblate.path },
+  ];
 </script>
 
 <VStack gap={8} class="mt-4 lg:mt-16 text-center">
@@ -44,4 +51,20 @@
     </Button>
   </div>
   <img src={qrCode} alt="QRCode" class="h-36" />
+
+  <hr class="border-t w-full max-w-(--breakpoint-sm) m-8" />
+  <Heading size="title" tag="h2">Support the project</Heading>
+  <Text
+    >Support Immich by purchasing a <Link href={Constants.Sites.Buy}>product key</Link>, <Link
+      href={Constants.Sites.Buy}>merch</Link
+    >, or contributing on <Link href={Constants.Sites.Buy}>GitHub</Link> or
+    <Link href={Constants.Sites.Buy}>Weblate</Link></Text
+  >
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {#each supportItems as action, i (i)}
+      <Button href={action.href} size="giant" variant="outline" color="secondary" class="p-6" leadingIcon={action.icon}>
+        {action.text}
+      </Button>
+    {/each}
+  </div>
 </VStack>
