@@ -1,9 +1,10 @@
 <script lang="ts">
   import { beforeNavigate } from '$app/navigation';
+  import { Constants } from '$lib';
   import Header from '$lib/components/Header.svelte';
   import PageContent from '$lib/components/PageContent.svelte';
   import type { HeaderItem } from '$lib/types';
-  import { AppShell, AppShellHeader, AppShellSidebar, Heading, NavbarItem, Stack, Text } from '@immich/ui';
+  import { AppShell, AppShellHeader, AppShellSidebar, NavbarItem } from '@immich/ui';
   import { type Snippet } from 'svelte';
   import { MediaQuery } from 'svelte/reactivity';
 
@@ -26,8 +27,8 @@
     { title: 'Download', href: '/download', variant: 'filled', color: 'primary' },
     { title: 'Features', href: '/features' },
     { title: 'Roadmap', href: '/roadmap' },
-    { title: 'Docs', href: 'https://immich.app/' },
-    { title: 'API', href: 'https://api.immich.app/' },
+    { title: 'Docs', href: Constants.Sites.Docs },
+    { title: 'API', href: Constants.Sites.Api },
   ];
 </script>
 
@@ -45,10 +46,6 @@
   </AppShellSidebar>
 
   <PageContent class="mx-auto w-full max-w-(--breakpoint-lg)">
-    {@render children?.()};
-    <Stack>
-      <Heading size="title" tag="h1">About</Heading>
-      <Text>Meet the team</Text>
-    </Stack>
+    {@render children?.()}
   </PageContent>
 </AppShell>

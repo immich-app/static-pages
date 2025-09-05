@@ -1,6 +1,7 @@
 <script lang="ts">
   import ApiPageContent from '$lib/api/components/ApiPageContent.svelte';
   import CodeBlock from '$lib/components/CodeBlock.svelte';
+  import { Constants } from '$lib';
   import { ApiPage } from '$lib/utils/api';
   import { Code, Heading, Link, Text } from '@immich/ui';
   import { bash } from 'svelte-highlight/languages';
@@ -17,7 +18,7 @@ init({ baseUrl: "https://demo.immich.app/api", apiKey: API_KEY });`;
   title="@immich/sdk"
   description="Learn about the auto-generated SDK"
   nextSteps={[
-    { href: 'https://www.npmjs.com/package/@immich/sdk', title: 'View on npm' },
+    { href: Constants.Npm.Sdk, title: 'View on npm' },
     { href: ApiPage.Endpoints, title: 'View API endpoints' },
   ]}
 >
@@ -25,8 +26,8 @@ init({ baseUrl: "https://demo.immich.app/api", apiKey: API_KEY });`;
     >There are lots of tools to auto-generate software development kits (SDK) from <Link
       href="https://swagger.io/specification/">OpenAPI Specification</Link
     > documents. Immich uses <Link href="https://github.com/oazapfts/oazapfts">oazapfts</Link> to generate a TypeScript SDK,
-    and publishes it to <Link href="https://www.npmjs.com/">npm</Link> as <Link
-      href="https://www.npmjs.com/package/@immich/sdk">@immich/sdk</Link
+    and publishes it to <Link href="https://www.npmjs.com/">npm</Link> as <Link href={Constants.Npm.Sdk}
+      >@immich/sdk</Link
     >.
   </Text>
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Constants } from '$lib';
   import stackedBlocksUrl from '$lib/assets/img/stacked-blocks.svg';
   import Header from '$lib/components/Header.svelte';
   import PageContent from '$lib/components/PageContent.svelte';
@@ -36,7 +37,8 @@
 
       <div class="flex flex-col gap-2">
         <Heading size="giant" tag="h2">Not a developer?</Heading>
-        <Text color="muted">Learn more about Immich at <Link href="https://immich.app/">https://immich.app/</Link></Text
+        <Text color="muted"
+          >Learn more about Immich at <Link href={Constants.Sites.Docs}>{Constants.Sites.Docs}</Link></Text
         >
       </div>
       <Button
