@@ -12,6 +12,7 @@ export const Constants = {
     Github: 'https://github.com/immich-app/immich',
     Discord: 'https://discord.immich.app/',
     Reddit: 'https://apps.apple.com/us/app/immich/id1613945652',
+    Weblate: 'https://hosted.weblate.org/projects/immich/immich/',
   },
   Get: {
     iOS: 'https://get.immich.app/ios',
