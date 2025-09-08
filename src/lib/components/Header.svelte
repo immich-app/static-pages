@@ -3,7 +3,7 @@
   import { commandPaletteManager } from '$lib/services/command-palette-manager.svelte';
   import type { HeaderItem } from '$lib/types';
   import { Button, HStack, IconButton, Input, Logo, ThemeSwitcher } from '@immich/ui';
-  import { mdiMagnify, mdiMenu, mdiSlashForwardBox } from '@mdi/js';
+  import { mdiMagnify, mdiMenu, mdiOpenInNew, mdiSlashForwardBox } from '@mdi/js';
 
   type Props = {
     items?: HeaderItem[];
@@ -42,7 +42,11 @@
         href={item.href}
         shape="round"
         variant={item.variant ?? 'ghost'}
-        color={item.color ?? (isActive(item.href) ? 'primary' : 'secondary')}>{item.title}</Button
+        leadingIcon={(item.icon as { path?: string })?.path ?? (item.icon as string)}
+        trailingIcon={item.external ? mdiOpenInNew : undefined}
+        color={item.color ?? (isActive(item.href) ? 'primary' : 'secondary')}
+        target={item.external ? '_blank' : undefined}
+        rel={item.external ? 'noopener noreferrer' : undefined}>{item.title}</Button
       >
     {/each}
     {#if commandPaletteManager.isEnabled}
