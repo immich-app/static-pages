@@ -48,9 +48,11 @@
           </CardHeader>
           <CardBody>
             <Stack gap={4}>
+              <!-- eslint-disable svelte/no-navigation-without-resolve -->
               <a href={Constants.Get.Android}>
                 <img class="h-24 mx-auto" alt="Get it on Google Play" src={playStoreBadge} />
               </a>
+              <!-- eslint-disable svelte/no-navigation-without-resolve -->
               <a href={Constants.Get.FDroid}>
                 <img class="h-16 mx-auto rounded-xl border border-dark" alt="Get it on F-Droid" src={fdroidBadge} />
               </a>
@@ -72,6 +74,7 @@
             <CardTitle>iOS</CardTitle>
           </CardHeader>
           <CardBody>
+            <!-- eslint-disable svelte/no-navigation-without-resolve -->
             <a href={Constants.Get.iOS}>
               <img class="h-16 mt-4 mx-auto" alt="Download on the App Store" src={appStoreBadge} />
             </a>

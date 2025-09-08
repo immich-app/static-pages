@@ -1,5 +1,6 @@
 <script lang="ts">
   import { beforeNavigate } from '$app/navigation';
+  import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import PageContent from '$lib/components/PageContent.svelte';
   import {
@@ -63,7 +64,7 @@
             onclick={() => (isOpen = !isOpen)}
             class="md:hidden"
           />
-          <a href="/" class="flex gap-2 text-4xl">
+          <a href={resolve('/')} class="flex gap-2 text-4xl">
             <Logo variant="inline" />
           </a>
         </div>

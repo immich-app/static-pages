@@ -1,3 +1,4 @@
+import type { Pathname } from '$app/types';
 import { PUBLIC_IMMICH_SPEC_URL } from '$env/static/public';
 import type {
   OpenAPIObject,
@@ -12,7 +13,7 @@ export type ApiMethod = 'GET' | 'PUT' | 'POST' | 'DELETE' | 'OPTIONS' | 'HEAD' |
 export type AuthenticationMethod = 'ApiKey' | 'Cookie' | 'Bearer';
 
 type Linkable<T> = T & {
-  href: string;
+  href: Pathname;
   name: string;
   previous?: Linkable<T>;
   next?: Linkable<T>;
@@ -53,8 +54,8 @@ const isParameterObject =
     (param as ParameterObject).in === type;
 
 const asSlug = (tag: string) => tag.toLowerCase().replace(/\s/g, '-');
-const getModelHref = (model: string) => `${ApiPage.Models}/${model}`;
-const getTagHref = (tag: string) => `${ApiPage.Endpoints}/${asSlug(tag)}`;
+const getModelHref = (model: string) => `${ApiPage.Models}/${model}` as Pathname;
+const getTagHref = (tag: string) => `${ApiPage.Endpoints}/${asSlug(tag)}` as Pathname;
 
 export const getRefName = (ref: ReferenceObject) => ref.$ref.replace('#/components/schemas/', '');
 export const getRefHref = (ref: ReferenceObject) => getModelHref(getRefName(ref));
@@ -178,7 +179,7 @@ export const parseSpec = (spec: OpenAPIObject) => {
         };
       }
 
-      const endpointHref = `${tagsMap[tag].href}/${item.operationId}`;
+      const endpointHref = `${tagsMap[tag].href}/${item.operationId}` as Pathname;
       tagsMap[tag].endpoints.push({ ...item, href: endpointHref });
     }
   }

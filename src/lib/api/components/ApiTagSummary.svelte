@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import { getEndpointColor, type ApiEndpointTag } from '$lib/api/services/open-api';
   import { Button, Card, CardTitle, Heading, Text } from '@immich/ui';
 
@@ -11,7 +12,7 @@
 
 <div>
   <Heading class="flex gap-2 py-4 items-center">
-    <a href={tag.href}>{tag.name}</a>
+    <a href={resolve(tag.href)}>{tag.name}</a>
   </Heading>
   <Card color="secondary">
     {#each tag.endpoints as endpoint, i (i)}
