@@ -1,19 +1,27 @@
 <script lang="ts">
   import { beforeNavigate } from '$app/navigation';
   import { page } from '$app/state';
-  import { Constants } from '$lib';
   import PageContent from '$lib/components/PageContent.svelte';
   import {
     AppShell,
     AppShellHeader,
     AppShellSidebar,
     Button,
+    Constants,
     IconButton,
     Logo,
     NavbarItem,
     ThemeSwitcher,
   } from '@immich/ui';
-  import { mdiMenu, mdiOpenInNew } from '@mdi/js';
+  import {
+    mdiChartGantt,
+    mdiKeyOutline,
+    mdiMenu,
+    mdiOpenInNew,
+    mdiPartyPopper,
+    mdiScriptTextOutline,
+    mdiShoppingOutline,
+  } from '@mdi/js';
   import { siGithub } from 'simple-icons';
   import { type Snippet } from 'svelte';
   import { MediaQuery } from 'svelte/reactivity';
@@ -61,37 +69,27 @@
         </div>
 
         <div class="hidden lg:flex gap-1 place-items-center">
-          <Button href={Constants.Sites.Buy} color="primary" target="_blank" rel="noopener noreferrer"
-            >Buy Immich</Button
-          >
+          <Button href={Constants.Sites.Buy} color="primary" external>Buy Immich</Button>
           <Button href="/features" variant="ghost" color={withActiveColor('/features')}>Features</Button>
-          <Button href="/roadmap" variant="ghost" color={withActiveColor('/roadmap')}>Roadmap</Button>
-          <Button
-            trailingIcon={mdiOpenInNew}
-            href={Constants.Sites.Docs}
-            color="secondary"
-            target="_blank"
-            rel="noopener noreferrer"
-            variant="ghost"
-          >
+          <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Store} color="secondary" variant="ghost" external>
+            Merch
+          </Button>
+          <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Docs} color="secondary" variant="ghost" external>
             Docs
           </Button>
           <Button
             leadingIcon={siGithub.path}
             trailingIcon={mdiOpenInNew}
             href={Constants.Socials.Github}
-            color={withActiveColor(Constants.Socials.Github) ? 'primary' : 'secondary'}
-            target="_blank"
-            rel="noopener noreferrer"
+            color="secondary"
             variant="ghost"
+            external
           >
             GitHub
           </Button>
         </div>
         <div class="flex place-items-center gap-2 justify-end">
-          <Button href={Constants.Sites.Buy} color="primary" target="_blank" rel="noopener noreferrer" class="lg:hidden"
-            >Buy Immich</Button
-          >
+          <Button href={Constants.Sites.Buy} color="primary" external class="lg:hidden">Buy Immich</Button>
           <ThemeSwitcher />
         </div>
       </nav>
@@ -100,12 +98,12 @@
 
   <AppShellSidebar bind:open>
     <div class="my-4">
-      <NavbarItem title="Buy Immich" href={Constants.Sites.Buy} />
-      <NavbarItem title="Features" href="/features" />
-      <NavbarItem title="Roadmap" href="/roadmap" />
-      <NavbarItem title="Docs" href={Constants.Sites.Docs} />
-      <NavbarItem title="API" href={Constants.Sites.Api} />
-      <NavbarItem title="GitHub" href={Constants.Socials.Github} />
+      <NavbarItem title="Documentation" href={Constants.Sites.Docs} external icon={mdiScriptTextOutline} />
+      <NavbarItem title="Features" href="/features" icon={mdiPartyPopper} />
+      <NavbarItem title="Project Roadmap" href="/roadmap" icon={mdiChartGantt} />
+      <NavbarItem title="View on Github" href={Constants.Socials.Github} external icon={siGithub.path} />
+      <NavbarItem title="Buy Immich" href={Constants.Sites.Buy} external icon={mdiKeyOutline} />
+      <NavbarItem title="Buy Merch" href={Constants.Sites.Store} external icon={mdiShoppingOutline} />
     </div>
   </AppShellSidebar>
 

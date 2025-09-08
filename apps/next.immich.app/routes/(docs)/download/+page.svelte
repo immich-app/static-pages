@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { Constants } from '$lib';
   import portainerIcon from '$lib/assets/img/portainer.svg';
   import truenasIcon from '$lib/assets/img/truenas-scale.svg';
   import unraidIcon from '$lib/assets/img/unraid.svg';
@@ -12,6 +11,7 @@
     CardFooter,
     CardHeader,
     CardTitle,
+    Constants,
     fdroidBadge,
     Heading,
     Icon,

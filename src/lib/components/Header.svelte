@@ -1,8 +1,7 @@
 <script lang="ts">
   import { page } from '$app/state';
-  import { commandPaletteManager } from '$lib/services/command-palette-manager.svelte';
   import type { HeaderItem } from '$lib/types';
-  import { Button, HStack, IconButton, Input, Logo, ThemeSwitcher } from '@immich/ui';
+  import { Button, commandPaletteManager, HStack, IconButton, Input, Logo, ThemeSwitcher } from '@immich/ui';
   import { mdiMagnify, mdiMenu, mdiOpenInNew, mdiSlashForwardBox } from '@mdi/js';
 
   type Props = {

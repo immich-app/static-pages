@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Constants } from '$lib';
+  import { Constants } from '@immich/ui';
   import qrCode from '$lib/assets/img/app-qr-code-dark.svg';
   import screenshot from '$lib/assets/img/screenshot-dark.webp';
   import { appStoreBadge, Button, Heading, Icon, Link, Logo, playStoreBadge, Text, VStack } from '@immich/ui';
@@ -43,10 +43,10 @@
   <Heading size="title" tag="h2">Download mobile app</Heading>
   <Text>Download Immich app and start backing up your photos and videos securely to your own server</Text>
   <div class="flex flex-col lg:flex-row gap-4">
-    <Button href={Constants.Get.Android} target="_blank" rel="noopener noreferrer" variant="ghost" class="p-0">
+    <Button href={Constants.Get.Android} external variant="ghost" class="p-0">
       <img src={playStoreBadge} alt="Playstore Badge" class="h-16" />
     </Button>
-    <Button href={Constants.Get.iOS} target="_blank" rel="noopener noreferrer" variant="ghost" class="p-0">
+    <Button href={Constants.Get.iOS} external variant="ghost" class="p-0">
       <img src={appStoreBadge} alt="AppStore Badge" class="h-16" />
     </Button>
   </div>
