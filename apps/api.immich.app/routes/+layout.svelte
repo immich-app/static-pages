@@ -3,10 +3,17 @@
   import { page } from '$app/state';
   import { getOpenApi } from '$lib/api/services/open-api';
   import '$lib/app.css';
-  import CommandPalette from '$lib/components/CommandPalette.svelte';
-  import { commandPaletteManager } from '$lib/services/command-palette-manager.svelte';
   import { ApiPage } from '$lib/utils/api';
-  import { initializeTheme, onThemeChange, Theme, theme } from '@immich/ui';
+  import {
+    asText,
+    CommandPalette,
+    commandPaletteManager,
+    initializeTheme,
+    onThemeChange,
+    siteCommands,
+    Theme,
+    theme,
+  } from '@immich/ui';
   import { mdiApi, mdiScriptText, mdiSend, mdiTag, mdiTagMultiple } from '@mdi/js';
   import { onMount, type Snippet } from 'svelte';
 
@@ -39,14 +46,6 @@
   const handleToggleTheme = () => {
     theme.value = theme.value === Theme.Dark ? Theme.Light : Theme.Dark;
     onThemeChange();
-  };
-
-  const asText = (...items: unknown[]) => {
-    return items
-      .filter((item) => item !== undefined && item !== null)
-      .map((items) => String(items))
-      .join('|')
-      .toLowerCase();
   };
 
   const { tags, models } = getOpenApi();
@@ -145,7 +144,7 @@
       {
         title: 'Toggle theme',
         description: 'Toggle between light and dark theme',
-        onclick: () => handleToggleTheme(),
+        action: () => handleToggleTheme(),
         text: asText('theme', 'toggle', 'dark', 'light'),
       },
     ].map((item) => ({
@@ -155,6 +154,8 @@
       ...item,
     })),
   );
+
+  commandPaletteManager.addCommands(siteCommands);
 
   commandPaletteManager.enable();
 </script>

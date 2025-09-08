@@ -1,7 +1,7 @@
 <script lang="ts">
   import { browser } from '$app/environment';
   import type { TimelineItem } from '$lib/types';
-  import { Icon, Logo, Text } from '@immich/ui';
+  import { Icon, Link, Logo, Text } from '@immich/ui';
   import { mdiCheckboxBlankCircle, mdiCheckboxMarkedCircle } from '@mdi/js';
 
   type Props = {
@@ -55,9 +55,9 @@
         <div class="flex flex-col justify-between place-items-end">
           <span class="text-primary">
             {#if item.link}
-              <a href={item.link.url} target="_blank" rel="noopener">
+              <Link href={item.link.url} external underline={false}>
                 [{item.link.text}]
-              </a>
+              </Link>
             {/if}
           </span>
           <div class="md:hidden text-sm text-right">{dateLabel}</div>

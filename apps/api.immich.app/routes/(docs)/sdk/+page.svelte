@@ -1,9 +1,8 @@
 <script lang="ts">
   import ApiPageContent from '$lib/api/components/ApiPageContent.svelte';
   import CodeBlock from '$lib/components/CodeBlock.svelte';
-  import { Constants } from '$lib';
   import { ApiPage } from '$lib/utils/api';
-  import { Code, Heading, Link, Text } from '@immich/ui';
+  import { Code, Constants, Heading, Link, Text } from '@immich/ui';
   import { bash } from 'svelte-highlight/languages';
   import typescript from 'svelte-highlight/languages/typescript';
 
