@@ -15,7 +15,7 @@
 </script>
 
 <VStack gap={8} class="mt-4 lg:mt-16 text-center">
-  <Logo size="giant" variant="logo" class="border" />
+  <Logo size="giant" variant="stacked-futo" />
   <Heading size="title" tag="h1" fontWeight="extra-bold"
     >Self-hosted <span class="text-primary">photo and<br class="hidden lg:block" /> video management</span> solution</Heading
   >
@@ -62,7 +62,7 @@
   >
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     {#each supportItems as action, i (i)}
-      <Button href={action.href} size="giant" variant="outline" color="secondary" class="p-6" leadingIcon={action.icon}>
+      <Button href={action.href} size="large" variant="outline" color="secondary" leadingIcon={action.icon}>
         {action.text}
       </Button>
     {/each}
