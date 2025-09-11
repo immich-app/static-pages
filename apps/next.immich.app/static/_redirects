@@ -1,2 +1,3 @@
 /milestones /roadmap 307
 /docs/* https://docs.immich.app/:splat 307
+/archived-versions.json https://docs.immich.app/archived-versions.json 307
