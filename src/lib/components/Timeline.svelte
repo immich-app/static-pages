@@ -11,7 +11,7 @@
   const { items }: Props = $props();
 </script>
 
-<ul class="flex flex-col pl-4">
+<ul class="flex flex-col pl-4 -z-1">
   {#each items as item, index (index)}
     {@const isFirst = index === 0}
     {@const isLast = index === items.length - 1}
@@ -32,7 +32,7 @@
         ></div>
       </div>
       <div
-        class="z-10 flex items-center bg-primary border-2 border-light border-solid rounded-full text-light relative top-[50%] left-[-3px] translate-y-[-50%] translate-x-[-50%] w-6 h-6 shadow-lg"
+        class="flex items-center bg-primary border-2 border-light border-solid rounded-full text-light relative top-[50%] left-[-3px] translate-y-[-50%] translate-x-[-50%] w-6 h-6 shadow-lg"
       >
         <Icon icon={timelineIcon} size="1em" class="h-6 w-6" />
       </div>

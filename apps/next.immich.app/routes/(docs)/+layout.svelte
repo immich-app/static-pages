@@ -16,10 +16,10 @@
   } from '@immich/ui';
   import {
     mdiChartGantt,
+    mdiDownload,
     mdiKeyOutline,
     mdiMenu,
     mdiOpenInNew,
-    mdiPartyPopper,
     mdiScriptTextOutline,
     mdiShoppingOutline,
   } from '@mdi/js';
@@ -71,7 +71,7 @@
 
         <div class="hidden lg:flex gap-1 place-items-center">
           <Button href={Constants.Sites.Buy} color="primary" external>Buy Immich</Button>
-          <Button href="/features" variant="ghost" color={withActiveColor('/features')}>Features</Button>
+          <Button href="/roadmap" variant="ghost" color={withActiveColor('/roadmap')}>Roadmap</Button>
           <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Store} color="secondary" variant="ghost" external>
             Merch
           </Button>
@@ -98,9 +98,9 @@
   </AppShellHeader>
 
   <AppShellSidebar bind:open>
-    <div class="my-4">
+    <div class="my-4 me-4">
       <NavbarItem title="Documentation" href={Constants.Sites.Docs} external icon={mdiScriptTextOutline} />
-      <NavbarItem title="Features" href="/features" icon={mdiPartyPopper} />
+      <NavbarItem title="Download" href="/download" icon={mdiDownload} />
       <NavbarItem title="Project Roadmap" href="/roadmap" icon={mdiChartGantt} />
       <NavbarItem title="View on Github" href={Constants.Socials.Github} external icon={siGithub.path} />
       <NavbarItem title="Buy Immich" href={Constants.Sites.Buy} external icon={mdiKeyOutline} />
