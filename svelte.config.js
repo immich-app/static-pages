@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 process.env.PUBLIC_IMMICH_PAY_HOST = process.env.PUBLIC_IMMICH_PAY_HOST || 'https://pay.futo.org';
+process.env.PUBLIC_IMMICH_ENV = process.env.PUBLIC_IMMICH_ENV || 'production';
 process.env.PUBLIC_IMMICH_SPEC_URL =
   process.env.PUBLIC_IMMICH_SPEC_URL || 'https://main.preview.immich.app/openapi.json';
 

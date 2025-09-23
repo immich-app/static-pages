@@ -38,8 +38,8 @@
   ascent-override: 100%;
 }
 
-:root {
-  font-family: 'Overpass', sans-serif;
+.text-muted {
+  @apply text-gray-600 dark:text-gray-400;
 }
 
 :root.dark,

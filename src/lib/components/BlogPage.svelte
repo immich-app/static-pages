@@ -1,0 +1,38 @@
+<script lang="ts">
+  import type { BlogPost } from '$lib/blog';
+  import { Heading, Icon, Link, Stack, Text } from '@immich/ui';
+  import { mdiChevronRight } from '@mdi/js';
+  import { DateTime } from 'luxon';
+  import type { Snippet } from 'svelte';
+
+  type Props = {
+    post: BlogPost;
+    children?: Snippet;
+  };
+
+  let { post, children }: Props = $props();
+  let { title, publishedAt, authors } = $derived(post);
+</script>
+
+<Stack gap={8} class="text-lg">
+  <ul class="flex gap-1 place-items-center text-muted">
+    <li class="flex place-items-center">
+      <Link href="/blog" underline={false}><span class="hover:underline">Blog</span></Link>
+      <Icon icon={mdiChevronRight} size="1rem" />
+    </li>
+    <li>{title}</li>
+  </ul>
+
+  <section>
+    <Heading tag="h1" size="title">
+      {#if post.isDraft}[Draft]{/if}
+      {post.title}
+    </Heading>
+    <div class="flex gap-2">
+      <Text color="muted" variant="italic">{publishedAt.toLocaleString(DateTime.DATE_FULL)}</Text>
+      <Text color="muted">— {authors.join(', ')}</Text>
+    </div>
+  </section>
+
+  {@render children?.()}
+</Stack>

@@ -11,7 +11,7 @@
   const { items }: Props = $props();
 </script>
 
-<ul class="flex flex-col pl-4 -z-1">
+<ul class="flex flex-col pl-4">
   {#each items as item, index (index)}
     {@const isFirst = index === 0}
     {@const isLast = index === items.length - 1}
@@ -24,7 +24,7 @@
       <div class="md:flex justify-start w-36 mr-8 items-center dark:text-immich-dark-primary text-primary hidden">
         {dateLabel}
       </div>
-      <div class={`${isFirst && 'relative top-[50%]'} ${isLast && 'relative bottom-[50%]'}`}>
+      <div class="{isFirst && 'relative top-[50%]'} {isLast && 'relative bottom-[50%]'} -z-1">
         <div
           class={`h-full border-solid border-4 border-immich-primary dark:border-immich-dark-primary ${
             isFirst && 'rounded rounded-t-full'
@@ -32,7 +32,7 @@
         ></div>
       </div>
       <div
-        class="flex items-center bg-primary border-2 border-light border-solid rounded-full text-light relative top-[50%] left-[-3px] translate-y-[-50%] translate-x-[-50%] w-6 h-6 shadow-lg"
+        class="flex items-center bg-primary border-2 border-light border-solid rounded-full text-light relative top-[50%] left-[-3px] translate-y-[-50%] translate-x-[-50%] w-6 h-6 shadow-lg -z-1"
       >
         <Icon icon={timelineIcon} size="1em" class="h-6 w-6" />
       </div>
