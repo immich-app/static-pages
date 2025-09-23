@@ -2,8 +2,8 @@
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import type { HeaderItem } from '$lib/types';
-  import { Button, commandPaletteManager, HStack, IconButton, Input, Logo, ThemeSwitcher } from '@immich/ui';
-  import { mdiMagnify, mdiMenu, mdiOpenInNew, mdiSlashForwardBox } from '@mdi/js';
+  import { Button, commandPaletteManager, HStack, Icon, IconButton, Logo, Text, ThemeSwitcher } from '@immich/ui';
+  import { mdiMagnify, mdiMenu, mdiOpenInNew } from '@mdi/js';
 
   type Props = {
     items?: HeaderItem[];
@@ -50,14 +50,15 @@
       >
     {/each}
     {#if commandPaletteManager.isEnabled}
-      <div class="hidden lg:flex max-w-40 place-items-center p-1">
-        <Input
-          onfocus={() => commandPaletteManager.open()}
-          leadingIcon={mdiMagnify}
-          placeholder="Search..."
-          class="py-2 px-2 rounded-full bg-subtle! border"
-          trailingIcon={mdiSlashForwardBox}
-        />
+      <div class="hidden place-items-center lg:flex">
+        <button
+          onclick={() => commandPaletteManager.open()}
+          class="border-light flex cursor-pointer place-items-center gap-2 rounded-2xl bg-gray-200 px-4 py-2 text-sm dark:bg-neutral-700"
+        >
+          <Icon icon={mdiMagnify} size="1.25rem" />
+          <Text>Search</Text>
+          <span class="rounded-lg bg-white px-2 py-0.5 dark:bg-neutral-900">/</span>
+        </button>
       </div>
       <IconButton
         icon={mdiMagnify}
