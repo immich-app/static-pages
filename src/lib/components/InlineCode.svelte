@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Code } from '@immich/ui';
   import type { Snippet } from 'svelte';
 
   type Props = {
@@ -8,6 +9,4 @@
   let { children }: Props = $props();
 </script>
 
-<div class="max-w-2xl mx-auto">
-  {@render children?.()}
-</div>
+<Code variant="filled" class="px-2 py-1" color="primary">{@render children?.()}</Code>

@@ -26,6 +26,53 @@
 <Heading size="title" class="mb-4" tag="h1">Download</Heading>
 
 <div class="mb-4">
+  <Heading size="large" tag="h2">Mobile Apps</Heading>
+  <Text color="muted">Download Immich app and start backing up your photos and videos securely to your own server</Text>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 l gap-4 mb-8">
+  <Card color="secondary">
+    <CardHeader>
+      <CardTitle>Android</CardTitle>
+    </CardHeader>
+    <CardBody>
+      <Stack gap={4}>
+        <!-- eslint-disable svelte/no-navigation-without-resolve -->
+        <a href={Constants.Get.Android}>
+          <img class="h-16 mx-auto" alt="Get it on Google Play" src={playStoreBadge} />
+        </a>
+        <!-- eslint-disable svelte/no-navigation-without-resolve -->
+        <a href={Constants.Get.FDroid}>
+          <img class="h-16 mx-auto rounded-xl border border-dark" alt="Get it on F-Droid" src={fdroidBadge} />
+        </a>
+        <Button
+          class="light h-16 mx-auto border"
+          size="giant"
+          variant="filled"
+          href={Constants.Get.GithubRelease}
+          color="secondary"
+        >
+          <Icon icon={mdiAndroid} size="2em" />
+          <Text>Download APK</Text>
+        </Button>
+      </Stack>
+    </CardBody>
+  </Card>
+
+  <Card color="secondary">
+    <CardHeader>
+      <CardTitle>iOS</CardTitle>
+    </CardHeader>
+    <CardBody>
+      <!-- eslint-disable svelte/no-navigation-without-resolve -->
+      <a href={Constants.Get.iOS}>
+        <img class="h-16 mt-4 mx-auto" alt="Download on the App Store" src={appStoreBadge} />
+      </a>
+    </CardBody>
+  </Card>
+</div>
+
+<div class="mb-4">
   <Heading size="large" tag="h2">Server</Heading>
   <Text color="muted">Download, setup, and run Immich on your own server</Text>
 </div>
@@ -84,49 +131,3 @@
     </CardFooter>
   </Card>
 </section>
-
-<div class="mt-8 mb-4">
-  <Heading size="large" tag="h2">Mobile Apps</Heading>
-  <Text color="muted">Download Immich app and start backing up your photos and videos securely to your own server</Text>
-</div>
-
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 l gap-4">
-  <Card color="secondary">
-    <CardHeader>
-      <CardTitle>Android</CardTitle>
-    </CardHeader>
-    <CardBody>
-      <Stack gap={4}>
-        <!-- eslint-disable svelte/no-navigation-without-resolve -->
-        <a href={Constants.Get.Android}>
-          <img class="h-16 mx-auto" alt="Get it on Google Play" src={playStoreBadge} />
-        </a>
-        <!-- eslint-disable svelte/no-navigation-without-resolve -->
-        <a href={Constants.Get.FDroid}>
-          <img class="h-16 mx-auto rounded-xl border border-dark" alt="Get it on F-Droid" src={fdroidBadge} />
-        </a>
-        <Button
-          class="h-16 mx-auto dark:bg-black dark:text-white"
-          size="giant"
-          href={Constants.Get.GithubRelease}
-          color="secondary"
-        >
-          <Icon icon={mdiAndroid} size="2em" />
-          <Text>Download APK</Text>
-        </Button>
-      </Stack>
-    </CardBody>
-  </Card>
-
-  <Card color="secondary">
-    <CardHeader>
-      <CardTitle>iOS</CardTitle>
-    </CardHeader>
-    <CardBody>
-      <!-- eslint-disable svelte/no-navigation-without-resolve -->
-      <a href={Constants.Get.iOS}>
-        <img class="h-16 mt-4 mx-auto" alt="Download on the App Store" src={appStoreBadge} />
-      </a>
-    </CardBody>
-  </Card>
-</div>

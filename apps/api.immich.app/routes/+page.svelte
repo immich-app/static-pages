@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { Constants } from '$lib';
   import stackedBlocksUrl from '$lib/assets/img/stacked-blocks.svg';
   import Header from '$lib/components/Header.svelte';
   import PageContent from '$lib/components/PageContent.svelte';
-  import { AppShell, AppShellHeader, Button, Heading, Link, Logo, Text, VStack } from '@immich/ui';
+  import { AppShell, AppShellHeader, Button, Constants, Heading, Link, Logo, Text, VStack } from '@immich/ui';
   import { mdiCubeOutline, mdiOpenInNew } from '@mdi/js';
 </script>
 

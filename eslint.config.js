@@ -26,6 +26,10 @@ export default [
         parser: ts.parser,
       },
     },
+
+    rules: {
+      'svelte/no-navigation-without-resolve': 'off',
+    },
   },
   {
     // idk why svelte.ts files are not being parsed correctly

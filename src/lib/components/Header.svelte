@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import type { HeaderItem } from '$lib/types';
   import { Button, commandPaletteManager, HStack, Icon, IconButton, Logo, Text, ThemeSwitcher } from '@immich/ui';
@@ -30,7 +29,7 @@
         class="md:hidden"
       />
     {/if}
-    <a href={resolve('/')} class="flex gap-2 text-4xl">
+    <a href="/" class="flex gap-2 text-4xl">
       <Logo variant="inline" />
     </a>
   </div>

@@ -1,5 +1,4 @@
 import { goto } from '$app/navigation';
-import { resolve } from '$app/paths';
 import { loadOpenApi } from '$lib/api/services/open-api';
 import type { LayoutLoad } from './$types';
 
@@ -10,6 +9,7 @@ export const load = (async ({ fetch }) => {
     await loadOpenApi(fetch);
   } catch (error) {
     console.log('Failed to load open-api specification', error);
-    await goto(resolve('/'));
+    // eslint-disable-next-line svelte/no-navigation-without-resolve
+    await goto('/');
   }
 }) satisfies LayoutLoad;
