@@ -21,12 +21,12 @@
     {@const cardIcon = item.icon}
 
     <li class="flex min-h-24 {done ? '' : 'italic'}">
-      <div class="md:flex justify-start w-36 mr-8 items-center dark:text-immich-dark-primary text-primary hidden">
+      <div class="md:flex justify-start w-36 mr-8 items-center text-primary hidden">
         {dateLabel}
       </div>
-      <div class="{isFirst && 'relative top-[50%]'} {isLast && 'relative bottom-[50%]'} -z-1">
+      <div class="{isFirst && 'relative top-[50%]'} {isLast && 'relative bottom-[50%]'} -z-2">
         <div
-          class={`h-full border-solid border-4 border-immich-primary dark:border-immich-dark-primary ${
+          class={`h-full border-solid border-4 border-primary ${
             isFirst && 'rounded rounded-t-full'
           } ${isLast && 'rounded rounded-b-full'}`}
         ></div>
