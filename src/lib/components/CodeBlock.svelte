@@ -2,19 +2,19 @@
   import { Card, IconButton, theme, Theme } from '@immich/ui';
   import { mdiCheckCircle, mdiContentCopy } from '@mdi/js';
   import { Highlight, LineNumbers } from 'svelte-highlight';
-  import type { LanguageType } from 'svelte-highlight/languages';
+  import { typescript, type LanguageType } from 'svelte-highlight/languages';
   import vsLight from 'svelte-highlight/styles/vs';
   import vsDark from 'svelte-highlight/styles/vs2015';
 
   type Props = {
     code: string;
-    language: LanguageType<string>;
+    language?: LanguageType<string>;
     lineNumbers?: boolean;
     lightTheme?: string;
     darkTheme?: string;
   };
 
-  const { code, language, lineNumbers, lightTheme = vsLight, darkTheme = vsDark }: Props = $props();
+  let { code, language = typescript, lineNumbers, lightTheme = vsLight, darkTheme = vsDark }: Props = $props();
 
   let copied = $state(false);
   let canCopy = $derived<boolean>(!!(navigator.clipboard && globalThis.ClipboardItem));
@@ -36,7 +36,7 @@
 </svelte:head>
 
 <Card class="relative">
-  <div>
+  <div class="text-sm">
     {#if canCopy}
       <span class="absolute top-2 right-2 cursor-pointer">
         <IconButton

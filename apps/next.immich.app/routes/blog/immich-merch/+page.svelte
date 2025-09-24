@@ -34,9 +34,4 @@
   <hr />
 
   <Text>We hope you like the merch and Mich, now, back to building more features!</Text>
-
-  <section class="flex flex-col gap-2">
-    <Text>Cheers,</Text>
-    <Text>The Immich Team</Text>
-  </section>
 </BlogPage>

@@ -12,11 +12,18 @@ export type BlogPost = {
 
 export const Posts = {
   ImmichUi: {
-    title: 'Immich publishes a Svelte component library',
+    title: 'New Svelte component library',
     description: 'Learn more about the Svelte component library that is powering this and other Immich websites.',
-    publishedAt: DateTime.fromObject({ year: 2025, month: 9, day: 30 }),
+    publishedAt: DateTime.fromObject({ year: 2025, month: 9, day: 25 }),
     authors: ['Jason Rasmussen'],
     url: '/blog/immich-ui',
+  },
+  NewSyncImplementation: {
+    title: 'Sync v2',
+    description: 'Learn how Immich developed a better way to synchronize data with the mobile app.',
+    publishedAt: DateTime.fromObject({ year: 2025, month: 9, day: 24 }),
+    authors: ['Jason Rasmussen'],
+    url: '/blog/sync-v2',
   },
   CursedKnowledge: {
     title: 'Cursed knowledge',
@@ -27,7 +34,7 @@ export const Posts = {
     url: '/blog/cursed-knowledge',
   },
   ImmichApi: {
-    title: 'Immich publishes new API documentation',
+    title: 'New API documentation',
     description: 'The Immich API documentation has been moved to a new home.',
     publishedAt: DateTime.fromObject({ year: 2025, month: 9, day: 23 }),
     authors: ['Jason Rasmussen'],
