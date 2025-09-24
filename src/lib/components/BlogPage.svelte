@@ -8,13 +8,14 @@
   type Props = {
     post: BlogPost;
     children?: Snippet;
+    postScript?: Snippet;
   };
 
-  let { post, children }: Props = $props();
+  let { post, children, postScript }: Props = $props();
   let { title, publishedAt, authors } = $derived(post);
 </script>
 
-<Stack gap={8} class="text-lg">
+<Stack gap={6} class="text-lg">
   <ul class="flex gap-1 place-items-center text-muted">
     <li class="flex place-items-center">
       <Link href="/blog" underline={false}><span class="hover:underline">Blog</span></Link>
@@ -35,4 +36,14 @@
   </section>
 
   {@render children?.()}
+
+  <section>
+    <Text>Cheers,</Text>
+    <Text>The Immich Team</Text>
+  </section>
+
+  {#if postScript}
+    <hr />
+    {@render postScript?.()}
+  {/if}
 </Stack>

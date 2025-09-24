@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Posts } from '$lib/blog';
   import BlogPage from '$lib/components/BlogPage.svelte';
+  import List from '$lib/components/List.svelte';
   import { Heading, Link, Text } from '@immich/ui';
 </script>
 
@@ -26,14 +27,14 @@
       >FUTO loved Immich and wanted to see if we'd consider working with them to take the project to the next level. In
       short, FUTO offered to:</Text
     >
-    <ul class="list-disc ps-6">
+    <List>
       <li>Pay the core team to work on Immich full-time</li>
       <li>Let us keep full autonomy about the project's direction and leadership</li>
       <li>Continue to license Immich under AGPL</li>
       <li>Keep Immich's development direction with no paywalled features</li>
       <li>Keep Immich “built for the people” (no ads, data mining/selling, or alternative motives)</li>
       <li>Provide us with financial, technical, legal, and administrative support</li>
-    </ul>
+    </List>
   </section>
 
   <Text
@@ -55,76 +56,73 @@
     >.
   </Text>
 
-  <section class="flex flex-col gap-2">
-    <Text>Cheers,</Text>
-    <Text>The Immich Team</Text>
-  </section>
+  {#snippet postScript()}
+    <Heading tag="h2" size="giant">FAQs</Heading>
 
-  <hr />
+    <section class="flex flex-col gap-2">
+      <Heading tag="h3">What is FUTO?</Heading>
+      <Link href="https://futo.org/what-is-futo/" external>https://futo.org/what-is-futo/</Link>
+    </section>
 
-  <Heading tag="h2" size="giant">FAQs</Heading>
+    <section class="flex flex-col gap-2">
+      <Heading tag="h3">Will the license change?</Heading>
+      <Text>No. Immich will continue to be licensed under AGPL without a CLA.</Text>
+    </section>
 
-  <section class="flex flex-col gap-2">
-    <Heading tag="h3">What is FUTO?</Heading>
-    <Link href="https://futo.org/what-is-futo/" external>https://futo.org/what-is-futo/</Link>
-  </section>
+    <section class="flex flex-col gap-2">
+      <Heading tag="h3">Will Immich continue to be free?</Heading>
+      <Text>Yes. The Immich source code will remain freely available under the AGPL license.</Text>
+    </section>
 
-  <section class="flex flex-col gap-2">
-    <Heading tag="h3">Will the license change?</Heading>
-    <Text>No. Immich will continue to be licensed under AGPL without a CLA.</Text>
-  </section>
+    <section class="flex flex-col gap-2">
+      <Heading tag="h3">Is Immich getting VC funding?</Heading>
+      <Text>
+        No. Venture capital implies investment in a business, often with the expectation of a future payout (exit plan).
+        Immich is neither a business that can be acquired nor comes with a money-making exit plan.
+      </Text>
+    </section>
 
-  <section class="flex flex-col gap-2">
-    <Heading tag="h3">Will Immich continue to be free?</Heading>
-    <Text>Yes. The Immich source code will remain freely available under the AGPL license.</Text>
-  </section>
+    <section class="flex flex-col gap-2">
+      <Heading tag="h3"
+        >I am currently supporting Immich through GitHub sponsors. What will happen to my donation?</Heading
+      >
+      <Text>
+        Effective immediately, all donations to the Immich organization will be canceled. In the future, we will offer
+        an optional, modest payment option instead. Thank you to everyone who donated to help us get this far!
+      </Text>
+    </section>
 
-  <section class="flex flex-col gap-2">
-    <Heading tag="h3">Is Immich getting VC funding?</Heading>
-    <Text>
-      No. Venture capital implies investment in a business, often with the expectation of a future payout (exit plan).
-      Immich is neither a business that can be acquired nor comes with a money-making exit plan.
-    </Text>
-  </section>
+    <section class="flex flex-col gap-2">
+      <Heading tag="h3">How is funding sustainable?</Heading>
+      <Text>
+        Immich and FUTO believe a sustainable future requires a model that does not rely on users-as-a-product. To this
+        end, FUTO advocates that users pay for good, open software. In keeping with this model, we will adopt a purchase
+        price. This means we no longer accept donations, but — <em
+          >without limiting features for those who do not pay</em
+        >
+        — we will soon allow you to purchase Immich through a modest payment. We encourage you to pay for the high-quality
+        software you use to foster a healthy software culture where developers build great applications without hidden motives
+        for their users.
+      </Text>
+    </section>
 
-  <section class="flex flex-col gap-2">
-    <Heading tag="h3"
-      >I am currently supporting Immich through GitHub sponsors. What will happen to my donation?</Heading
-    >
-    <Text>
-      Effective immediately, all donations to the Immich organization will be canceled. In the future, we will offer an
-      optional, modest payment option instead. Thank you to everyone who donated to help us get this far!
-    </Text>
-  </section>
+    <section class="flex flex-col gap-2">
+      <Heading tag="h3">When does this change take effect?</Heading>
+      <Text>This change takes effect immediately.</Text>
+    </section>
 
-  <section class="flex flex-col gap-2">
-    <Heading tag="h3">How is funding sustainable?</Heading>
-    <Text>
-      Immich and FUTO believe a sustainable future requires a model that does not rely on users-as-a-product. To this
-      end, FUTO advocates that users pay for good, open software. In keeping with this model, we will adopt a purchase
-      price. This means we no longer accept donations, but — <em>without limiting features for those who do not pay</em>
-      — we will soon allow you to purchase Immich through a modest payment. We encourage you to pay for the high-quality
-      software you use to foster a healthy software culture where developers build great applications without hidden motives
-      for their users.
-    </Text>
-  </section>
-
-  <section class="flex flex-col gap-2">
-    <Heading tag="h3">When does this change take effect?</Heading>
-    <Text>This change takes effect immediately.</Text>
-  </section>
-
-  <section class="flex flex-col gap-2">
-    <Heading tag="h3">What will change?</Heading>
-    <Text>The following things will change as Immich joins FUTO:</Text>
-    <ul class="list-disc ps-6">
-      <li>The brand, logo, and other Immich trademarks will be transferred to FUTO.</li>
-      <li>We will stop all donations to the project.</li>
-      <li>The core team can now dedicate our full attention to Immich</li>
-      <li>
-        Before the end of the year, we plan to have a roadmap for what it will take to get Immich to a stable release.
-      </li>
-      <li>Bugs will be squashed, and features will be delivered faster.</li>
-    </ul>
-  </section>
+    <section class="flex flex-col gap-2">
+      <Heading tag="h3">What will change?</Heading>
+      <Text>The following things will change as Immich joins FUTO:</Text>
+      <List>
+        <li>The brand, logo, and other Immich trademarks will be transferred to FUTO.</li>
+        <li>We will stop all donations to the project.</li>
+        <li>The core team can now dedicate our full attention to Immich</li>
+        <li>
+          Before the end of the year, we plan to have a roadmap for what it will take to get Immich to a stable release.
+        </li>
+        <li>Bugs will be squashed, and features will be delivered faster.</li>
+      </List>
+    </section>
+  {/snippet}
 </BlogPage>

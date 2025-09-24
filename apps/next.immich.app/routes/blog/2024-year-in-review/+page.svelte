@@ -6,6 +6,7 @@
   import newLogo from '$lib/assets/blog/new-logo.webp';
   import { Posts } from '$lib/blog';
   import BlogPage from '$lib/components/BlogPage.svelte';
+  import List from '$lib/components/List.svelte';
   import { Button, Constants, Heading, Link, Text } from '@immich/ui';
 </script>
 
@@ -43,7 +44,7 @@
   <section class="flex flex-col gap-2">
     <Heading tag="h2" size="large">Milestones</Heading>
 
-    <ul class="list-disc ps-6">
+    <List>
       <li>
         <Text>A new logo from the community contest</Text>
         <img src={newLogo} alt="New logo from the community contest" class="p-4" />
@@ -80,12 +81,12 @@
       <li>Alternative machine learning URL switching</li>
       <li>Supporter Badge / <Link href="https://buy.immich.app/" external>buy.immich.app</Link></li>
       <li>and more</li>
-    </ul>
+    </List>
   </section>
 
   <section class="flex flex-col gap-2">
     <Heading tag="h2" size="large">Fun Statistics</Heading>
-    <ul class="list-disc ps-6">
+    <List>
       <li>Over 30k stars were added to Immich's sky on GitHub ⭐ [editor's note: Jan 16, 23940]</li>
       <li>Going from MIT to AGPLv3 License</li>
       <li>Over 900 awesome people from the community helped make Immich a better software.</li>
@@ -94,18 +95,18 @@
       <li>Alex got his 150-day comment streak on Reddit.</li>
       <li>As shy as an infant, the project managed to get a lot more screentime from many YouTubers</li>
       <li>Coming down from 12 breaking changes in 2023 to 8 breaking changes released in 2024</li>
-    </ul>
+    </List>
   </section>
 
   <section class="flex flex-col gap-2">
     <Heading tag="h2" size="large">Next Year</Heading>
-    <ul class="list-disc ps-6">
+    <List>
       <li>A stable release is our top priority, and we are pushing hard to have it ready by Q1 of 2025.</li>
       <li>
         After the stable release is out, we have a series of cool features in mind that we want to add to the
         application, such as (in no particular order)
       </li>
-      <ul class="list-disc ps-6">
+      <List>
         <li>Proper SemVer :P</li>
         <li>Workflows/Automation</li>
         <li>Plugin system</li>
@@ -113,13 +114,13 @@
         <li>Pet Detection</li>
         <li>Federation</li>
         <li>and more</li>
-      </ul>
+      </List>
       <li>
         We want to offer additional mechanisms and services built directly into Immich to help you with your 3-2-1
         backup strategy. This will make self-hosting Immich even easier while allowing you to maintain peace of mind
         when dealing with your most precious memories.
       </li>
-    </ul>
+    </List>
   </section>
 
   <Text

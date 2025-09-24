@@ -2,6 +2,7 @@
   import { Posts } from '$lib/blog';
   import BlogPage from '$lib/components/BlogPage.svelte';
   import InlineCode from '$lib/components/InlineCode.svelte';
+  import List from '$lib/components/List.svelte';
   import { Button, Constants, Heading, Link, Text } from '@immich/ui';
   import { mdiOpenInNew } from '@mdi/js';
 </script>
@@ -72,54 +73,50 @@
     >Starting with release <InlineCode>v1.109.0</InlineCode> you can use your purchased product key to activate Immich.</Text
   >
 
-  <section class="flex flex-col gap-2">
-    <Text>Cheers! 🎉</Text>
-    <Text>Immich team</Text>
-  </section>
+  {#snippet postScript()}
+    <Heading tag="h2" size="large">FAQ</Heading>
 
-  <hr />
+    <div class="flex flex-col gap-2">
+      <Heading tag="h3">1. Where can I purchase a product key?</Heading>
+      <Text>
+        There are several places where you can purchase the product key from:
+        <List>
+          <li><Link href="https://buy.immich.app" external>https://buy.immich.app</Link></li>
+          <li><Link href="https://pay.futo.org" external>https://pay.futo.org/</Link></li>
+          <li>or directly from the app.</li>
+        </List>
+      </Text>
+    </div>
 
-  <Heading tag="h2" size="large">FAQ</Heading>
+    <div class="flex flex-col gap-2">
+      <Heading tag="h3">2. Do I need both <i>Individual</i> and <i>Server</i> product keys?</Heading>
+      <Text
+        >No, if you are the admin and the sole user, or your instance has less than a total of 4 users, you can buy the
+        <b>Individual</b> product key for each user.</Text
+      >
+      <Text>
+        If your instance has more than 4 users, it is more cost-effective to buy the <b>Server</b> product key, which will
+        include all the users on your instance.
+      </Text>
+    </div>
 
-  <div class="flex flex-col gap-2">
-    <Heading tag="h3">1. Where can I purchase a product key?</Heading>
-    <Text>
-      There are several places where you can purchase the product key from:
-      <ul class="list-disc ml-6">
-        <li><Link href="https://buy.immich.app" external>https://buy.immich.app</Link></li>
-        <li><Link href="https://pay.futo.org" external>https://pay.futo.org/</Link></li>
-        <li>or directly from the app.</li>
-      </ul>
-    </Text>
-  </div>
+    <div class="flex flex-col gap-2">
+      <Heading tag="h3">3. What do I do if I don't pay?</Heading>
+      <Text>You can continue using Immich without any restriction.</Text>
+    </div>
 
-  <div class="flex flex-col gap-2">
-    <Heading tag="h3">2. Do I need both <i>Individual</i> and <i>Server</i> product keys?</Heading>
-    <Text
-      >No, if you are the admin and the sole user, or your instance has less than a total of 4 users, you can buy the
-      <b>Individual</b> product key for each user.</Text
-    >
-    <Text>
-      If your instance has more than 4 users, it is more cost-effective to buy the <b>Server</b> product key, which will
-      include all the users on your instance.
-    </Text>
-  </div>
+    <div class="flex flex-col gap-2">
+      <Heading tag="h3">4. Will there be any paywalled features?</Heading>
+      <Text>No, there will never be any paywalled features.</Text>
+    </div>
 
-  <div class="flex flex-col gap-2">
-    <Heading tag="h3">3. What do I do if I don't pay?</Heading>
-    <Text>You can continue using Immich without any restriction.</Text>
-  </div>
-
-  <div class="flex flex-col gap-2">
-    <Heading tag="h3">4. Will there be any paywalled features?</Heading>
-    <Text>No, there will never be any paywalled features.</Text>
-  </div>
-
-  <div class="flex flex-col gap-2">
-    <Heading tag="h3">5. Where can I get support regarding payment issues?</Heading>
-    <Text>
-      You can email us at <InlineCode>billing@futo.org</InlineCode> with your <InlineCode>orderId</InlineCode> and your email
-      address. Or, you can reach out to us on our <Link href={Constants.Socials.Discord} external>Discord</Link>.
-    </Text>
-  </div>
+    <div class="flex flex-col gap-2">
+      <Heading tag="h3">5. Where can I get support regarding payment issues?</Heading>
+      <Text>
+        You can email us at <InlineCode>billing@futo.org</InlineCode> with your <InlineCode>orderId</InlineCode> and your
+        email address. Or, you can reach out to us on our <Link href={Constants.Socials.Discord} external>Discord</Link
+        >.
+      </Text>
+    </div>
+  {/snippet}
 </BlogPage>

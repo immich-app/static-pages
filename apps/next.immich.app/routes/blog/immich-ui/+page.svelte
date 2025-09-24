@@ -2,6 +2,7 @@
   import { Posts } from '$lib/blog';
   import BlogPage from '$lib/components/BlogPage.svelte';
   import InlineCode from '$lib/components/InlineCode.svelte';
+  import List from '$lib/components/List.svelte';
   import { Button, Constants, Heading, Link, Text } from '@immich/ui';
   import { siGithub } from 'simple-icons';
 </script>
@@ -47,17 +48,17 @@
   <section class="flex flex-col gap-2">
     <Heading tag="h2" size="large">Motivation</Heading>
     <Text>There were a few motivating factors behind the decision to create this library:</Text>
-    <ul class="list-disc ms-6">
+    <List>
       <li>
         Consistency — the need for a consistent design across Immich websites was a major factor. Especially as we
         started to publish micro sites, such as:
-        <ul class="list-disc ms-6">
+        <List>
           {#each [Constants.Sites.Buy, Constants.Sites.My, Constants.Sites.Get] as site (site)}
             <li>
               <Link href={site} external>{site}</Link>
             </li>
           {/each}
-        </ul>
+        </List>
       </li>
       <li>
         Decoupling — a lof of code in the Immich web application was tightly coupled to specific usages. Pulling the
@@ -75,7 +76,7 @@
           >Variant</InlineCode
         > properties.
       </li>
-    </ul>
+    </List>
   </section>
 
   <section class="flex flex-col gap-2">

@@ -2,6 +2,7 @@
   import { Posts } from '$lib/blog';
   import BlogPage from '$lib/components/BlogPage.svelte';
   import InlineCode from '$lib/components/InlineCode.svelte';
+  import List from '$lib/components/List.svelte';
   import { Heading, Link, Text } from '@immich/ui';
 </script>
 
@@ -20,7 +21,7 @@
       2023.
     </Text>
 
-    <ul class="list-disc ps-6">
+    <List>
       <li>Public shared links</li>
       <li>Favorites page</li>
       <li>Immich turned 1</li>
@@ -59,12 +60,12 @@
       <li>Shared album activity and comments</li>
       <li>CLI v2</li>
       <li>Down to 5 containers (from 8)</li>
-    </ul>
+    </List>
   </section>
 
   <section class="flex flex-col gap-2">
     <Heading tag="h2" size="giant">Fun Statistics</Heading>
-    <ul class="list-disc ps-6">
+    <List>
       <li>
         We have gone from the release version <InlineCode>1.41.0</InlineCode> to <InlineCode>1.90.0</InlineCode> at the time
         of writing. On average, we see a release every 7 days.
@@ -91,7 +92,7 @@
       <li>Immich is making around $1200/month on average from donations. (Thank you all so much!)</li>
       <li>There are over 4,500 members on the Discord server.</li>
       <li>We have over 22,000 stars on the main GitHub repository, gaining 15,000 stars since January 2023.</li>
-    </ul>
+    </List>
   </section>
 
   <Text>
