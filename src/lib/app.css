@@ -5,19 +5,9 @@
 
 @custom-variant dark (&:where(.dark, .dark *):not(.light));
 
-@theme inline {
-  --color-immich-primary: rgb(var(--immich-primary));
-
-  --color-immich-dark-primary: rgb(var(--immich-dark-primary));
-}
-
 @theme {
   --font-immich-title: Snowburst One, cursive;
   --font-immich-mono: Overpass Mono, monospace;
-
-  --spacing-18: 4.5rem;
-
-  --breakpoint-tall: 800px;
 }
 
 @layer base {
