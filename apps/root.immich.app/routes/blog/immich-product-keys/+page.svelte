@@ -1,9 +1,8 @@
 <script lang="ts">
   import { Posts } from '$lib/blog';
   import BlogPage from '$lib/components/BlogPage.svelte';
-  import InlineCode from '$lib/components/InlineCode.svelte';
   import List from '$lib/components/List.svelte';
-  import { Button, Constants, Heading, Link, Text } from '@immich/ui';
+  import { Button, Code, Constants, Heading, Link, Text } from '@immich/ui';
   import { mdiOpenInNew } from '@mdi/js';
 </script>
 
@@ -69,9 +68,7 @@
     >
   </section>
 
-  <Text
-    >Starting with release <InlineCode>v1.109.0</InlineCode> you can use your purchased product key to activate Immich.</Text
-  >
+  <Text>Starting with release <Code>v1.109.0</Code> you can use your purchased product key to activate Immich.</Text>
 
   {#snippet postScript()}
     <Heading tag="h2" size="large">FAQ</Heading>
@@ -113,9 +110,8 @@
     <div class="flex flex-col gap-2">
       <Heading tag="h3">5. Where can I get support regarding payment issues?</Heading>
       <Text>
-        You can email us at <InlineCode>billing@futo.org</InlineCode> with your <InlineCode>orderId</InlineCode> and your
-        email address. Or, you can reach out to us on our <Link href={Constants.Socials.Discord} external>Discord</Link
-        >.
+        You can email us at <Code>billing@futo.org</Code> with your <Code>orderId</Code> and your email address. Or, you
+        can reach out to us on our <Link href={Constants.Socials.Discord} external>Discord</Link>.
       </Text>
     </div>
   {/snippet}

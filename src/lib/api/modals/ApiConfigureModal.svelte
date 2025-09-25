@@ -61,16 +61,14 @@
         {#if playgroundManager.connected}
           <div class="flex gap-1 items-center">
             <Text>
-              Connected to <Code variant="filled" class="p-1" color="primary">{playgroundManager.serverUrl}</Code>
+              Connected to <Code>{playgroundManager.serverUrl}</Code>
             </Text>
           </div>
 
           {#if playgroundManager.serverVersion}
             <div class="flex gap-1 items-center">
               <Text>
-                Server version <Code variant="filled" class="p-1" color="primary"
-                  >{playgroundManager.serverVersion.value}</Code
-                >
+                Server version <Code>{playgroundManager.serverVersion.value}</Code>
               </Text>
             </div>
           {/if}

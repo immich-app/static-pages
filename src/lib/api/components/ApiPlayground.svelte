@@ -2,7 +2,21 @@
   import { type ApiEndpoint } from '$lib/api/services/open-api';
   import { playgroundManager } from '$lib/api/services/playground-manager.svelte';
   import CodeBlock from '$lib/components/CodeBlock.svelte';
-  import { Button, Code, Field, Input, Label, Select, Stack, Text } from '@immich/ui';
+  import {
+    Button,
+    Code,
+    Field,
+    Heading,
+    Icon,
+    IconButton,
+    Input,
+    Label,
+    Select,
+    Stack,
+    Text,
+    Textarea,
+  } from '@immich/ui';
+  import { mdiCog, mdiLightningBolt } from '@mdi/js';
   import { json } from 'svelte-highlight/languages';
 
   type Response = {
@@ -48,49 +62,60 @@
   };
 </script>
 
-{#if playgroundManager.connected}
-  <div class="flex flex-col gap-4">
-    <div class="flex gap-2">
-      <div class="max-w-32">
-        <Field label="Method">
-          <Select bind:value={selectedMethod} data={httpMethods} class="mt-1.5" />
-        </Field>
-      </div>
-      <div class="w-full">
+<section class="flex flex-col gap-2">
+  <div class="flex justify-between place-items-center gap-2">
+    <Heading size="small" tag="h2" class="flex items-center gap-1">
+      Live Response
+      <Icon icon={mdiLightningBolt} size="1.5rem" class="text-yellow-600 dark:text-yellow-400" />
+    </Heading>
+    <IconButton
+      onclick={() => playgroundManager.configure()}
+      color="secondary"
+      variant="outline"
+      icon={mdiCog}
+      aria-label="Edit"
+    />
+  </div>
+
+  {#if playgroundManager.connected}
+    <div class="flex flex-col gap-4">
+      <div class="flex gap-2 place-items-center">
+        <div class="max-w-64">
+          <Field label="Method">
+            <Select bind:value={selectedMethod} data={httpMethods} />
+          </Field>
+        </div>
         <Field label="Url">
           <Input bind:value={requestUrl} />
         </Field>
       </div>
+      {#if selectedMethod.value !== 'GET'}
+        <Field label="Request">
+          <Textarea id="request-body" aria-labelledby="request-body-label" bind:value={requestBody} rows={8} grow />
+        </Field>
+      {/if}
     </div>
-    {#if selectedMethod.value !== 'GET'}
-      <div class="w-full flex flex-col gap-1">
-        <Label id="request-body-label" for="request-body">Request</Label>
-        <textarea
-          id="request-body"
-          aria-labelledby="request-body-label"
-          bind:value={requestBody}
-          rows={8}
-          class="border border-subtle p-2 bg-subtle rounded-2xl"
-        ></textarea>
+
+    <div class="flex gap-2">
+      <Button color="secondary" fullWidth onclick={handleSend}>Execute</Button>
+    </div>
+
+    {#if response}
+      <div class="flex flex-col gap-2">
+        <Label>
+          Response - <Code color={response.ok ? 'success' : 'danger'} variant="outline">{response.status}</Code>
+        </Label>
+        <CodeBlock language={json} code={response.body} />
       </div>
     {/if}
-  </div>
 
-  <div>
-    <Button color="secondary" fullWidth onclick={handleSend}>Execute</Button>
-  </div>
-
-  {#if response}
-    <div class="flex flex-col gap-2">
-      <Label>Response - <Code class="p-1" color={response.ok ? 'success' : 'danger'}>{response.status}</Code></Label>
-      <CodeBlock language={json} code={response.body} />
-    </div>
+    <div class="w-full lg:w-1/2"></div>
+  {:else}
+    <Stack gap={4}>
+      <Text color="muted">Connect to a demo server, or your own, to try this endpoint.</Text>
+      <div class="w-full lg:w-1/2">
+        <Button size="small" color="secondary" onclick={() => playgroundManager.configure()}>Connect</Button>
+      </div>
+    </Stack>
   {/if}
-{:else}
-  <Stack gap={4}>
-    <Text color="muted">Connect to a demo server, or your own, to try this endpoint.</Text>
-    <div class="w-full lg:w-1/2">
-      <Button size="small" color="secondary" onclick={() => playgroundManager.configure()}>Connect</Button>
-    </div>
-  </Stack>
-{/if}
+</section>

@@ -2,8 +2,7 @@
   import { Posts } from '$lib/blog';
   import BlogPage from '$lib/components/BlogPage.svelte';
   import GithubReference from '$lib/components/GithubReference.svelte';
-  import InlineCode from '$lib/components/InlineCode.svelte';
-  import { Button, Constants, Text } from '@immich/ui';
+  import { Button, Code, Constants, Text } from '@immich/ui';
   import { mdiOpenInNew } from '@mdi/js';
 </script>
 
@@ -42,8 +41,8 @@
 
   <Text>
     It is also worth mentioning that some of the cursed knowledge is now "legacy". Some of the issues, like the
-    Cloudflare <InlineCode>Fetch</InlineCode> behavior is <i>less cursed</i> because the setting that enabled this behavior
-    now has a different default, and it is much more difficult to enable it unknowingly.
+    Cloudflare <Code>Fetch</Code> behavior is <i>less cursed</i> because the setting that enabled this behavior now has a
+    different default, and it is much more difficult to enable it unknowingly.
   </Text>
 
   <Text>

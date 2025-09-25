@@ -10,7 +10,7 @@
   import { getEndpointColor, getOpenApi, isRef } from '$lib/api/services/open-api';
   import LinkableHeading from '$lib/components/LinkableHeading.svelte';
   import { Button, Heading, Icon, Stack, Text } from '@immich/ui';
-  import { mdiArrowLeft, mdiArrowRight, mdiLightningBolt } from '@mdi/js';
+  import { mdiArrowLeft, mdiArrowRight } from '@mdi/js';
   import { type PageData } from './$types';
 
   type Props = {
@@ -113,14 +113,7 @@
     </section>
   {/if}
 
-  <section class="flex flex-col gap-2">
-    <!-- <hr class="border border-subtle my-4" /> -->
-    <Heading size="small" tag="h2" class="flex items-center gap-1">
-      Live Response
-      <Icon icon={mdiLightningBolt} size="1.5rem" class="text-yellow-600 dark:text-yellow-400" />
-    </Heading>
-    <ApiPlayground {endpoint} />
-  </section>
+  <ApiPlayground {endpoint} />
 
   <Stack gap={4}>
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">

@@ -1,9 +1,8 @@
 <script>
   import { Posts } from '$lib/blog';
   import BlogPage from '$lib/components/BlogPage.svelte';
-  import InlineCode from '$lib/components/InlineCode.svelte';
   import List from '$lib/components/List.svelte';
-  import { Heading, Link, Text } from '@immich/ui';
+  import { Code, Heading, Link, Text } from '@immich/ui';
 </script>
 
 <BlogPage post={Posts.YearInReview2023}>
@@ -67,11 +66,11 @@
     <Heading tag="h2" size="giant">Fun Statistics</Heading>
     <List>
       <li>
-        We have gone from the release version <InlineCode>1.41.0</InlineCode> to <InlineCode>1.90.0</InlineCode> at the time
-        of writing. On average, we see a release every 7 days.
+        We have gone from the release version <Code>1.41.0</Code> to <Code>1.90.0</Code> at the time of writing. On average,
+        we see a release every 7 days.
       </li>
       <li>
-        According to GitHub's metrics, the <InlineCode>immich-server</InlineCode> container image has been pulled almost
+        According to GitHub's metrics, the <Code>immich-server</Code> container image has been pulled almost
         <i>4 million</i> times.
       </li>
       <li>

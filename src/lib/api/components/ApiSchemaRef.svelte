@@ -13,7 +13,7 @@
 </script>
 
 {#if fromRef(ref)}
-  <span class="py-1 px-2 dark:bg-pink-900 dark:text-pink-50 bg-pink-200 text-muted rounded-lg">
+  <span class="py-1 px-2 dark:bg-pink-900 dark:text-pink-50 bg-pink-200 rounded-lg">
     <Link href={getRefHref(ref)}>{getRefName(ref)}</Link>
   </span>
 {:else}
