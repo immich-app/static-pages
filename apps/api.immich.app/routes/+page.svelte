@@ -42,7 +42,7 @@
       </div>
       <Button
         size="large"
-        href="https://next.immich.app/"
+        href={Constants.Sites.Docs}
         target="_blank"
         color="secondary"
         shape="round"

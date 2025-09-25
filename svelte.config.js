@@ -6,8 +6,7 @@ dotenv.config();
 
 process.env.PUBLIC_IMMICH_PAY_HOST = process.env.PUBLIC_IMMICH_PAY_HOST || 'https://pay.futo.org';
 process.env.PUBLIC_IMMICH_ENV = process.env.PUBLIC_IMMICH_ENV || 'production';
-process.env.PUBLIC_IMMICH_SPEC_URL =
-  process.env.PUBLIC_IMMICH_SPEC_URL || 'https://main.preview.immich.app/openapi.json';
+process.env.PUBLIC_IMMICH_SPEC_URL = process.env.PUBLIC_IMMICH_SPEC_URL || 'https://docs.immich.app/openapi.json';
 
 process.env.PUBLIC_CF_TURNSTILE_SITE = process.env.PUBLIC_CF_TURNSTILE_SITE || '1x00000000000000000000BB';
 process.env.PUBLIC_DATASET_API_ENDPOINT = process.env.PUBLIC_DATASET_API_ENDPOINT || '/api';
