@@ -91,7 +91,6 @@
         </div>
 
         <div class="hidden lg:flex gap-1 place-items-center">
-          <Button href={Constants.Sites.Buy} color="primary" external>Buy Immich</Button>
           <Button href="/blog" variant="ghost" color={withActiveColor('/blog')}>Blog</Button>
           <Button href="/roadmap" variant="ghost" color={withActiveColor('/roadmap')}>Roadmap</Button>
           <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Store} color="secondary" variant="ghost" external>
@@ -112,7 +111,7 @@
           </Button>
         </div>
         <div class="flex place-items-center gap-2 justify-end">
-          <Button href={Constants.Sites.Buy} color="primary" external class="lg:hidden">Buy Immich</Button>
+          <Button href={Constants.Sites.Buy} color="primary" external>Buy Immich</Button>
           <ThemeSwitcher />
         </div>
       </nav>
