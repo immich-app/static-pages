@@ -27,13 +27,15 @@
   <div class="flex flex-col gap-4">
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
       <Button size="large" href="/download">Download</Button>
-      <Button size="large" href={Constants.Sites.Demo} color="secondary">
+      <Button size="large" href={Constants.Sites.Demo} external color="secondary">
         <span>Open Demo</span>
         <Icon icon={mdiOpenInNew} />
       </Button>
     </div>
     <div class="flex justify-center">
-      <Button size="large" variant="ghost" leadingIcon={siDiscord.path}>Join our Discord</Button>
+      <Button href={Constants.Socials.Discord} external size="large" variant="ghost" leadingIcon={siDiscord.path}
+        >Join our Discord</Button
+      >
     </div>
   </div>
 
