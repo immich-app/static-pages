@@ -80,9 +80,9 @@
       <li>
         We were guests on two podcasts:
         <ul class="list-decimal ps-6">
-          <li><Link href="https://selfhosted.show/110" external>Self-hosted</Link></li>
+          <li><Link href="https://selfhosted.show/110">Self-hosted</Link></li>
           <li>
-            <Link href="https://www.theverge.com/23938533/self-hosting-local-first-software-vergecast" external
+            <Link href="https://www.theverge.com/23938533/self-hosting-local-first-software-vergecast"
               >The Vergecast</Link
             >
           </li>

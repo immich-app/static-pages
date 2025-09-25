@@ -27,4 +27,4 @@
   let { href, text } = $derived(getLink(org, repo, number));
 </script>
 
-<Link {href} external>{text}</Link>
+<Link {href}>{text}</Link>

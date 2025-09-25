@@ -93,10 +93,10 @@
         <div class="hidden lg:flex gap-1 place-items-center">
           <Button href="/blog" variant="ghost" color={withActiveColor('/blog')}>Blog</Button>
           <Button href="/roadmap" variant="ghost" color={withActiveColor('/roadmap')}>Roadmap</Button>
-          <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Store} color="secondary" variant="ghost" external>
+          <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Store} color="secondary" variant="ghost">
             Merch
           </Button>
-          <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Docs} color="secondary" variant="ghost" external>
+          <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Docs} color="secondary" variant="ghost">
             Docs
           </Button>
           <Button
@@ -105,13 +105,12 @@
             href={Constants.Socials.Github}
             color="secondary"
             variant="ghost"
-            external
           >
             GitHub
           </Button>
         </div>
         <div class="flex place-items-center gap-2 justify-end">
-          <Button href={Constants.Sites.Buy} color="primary" external>Buy Immich</Button>
+          <Button href={Constants.Sites.Buy} color="primary">Buy Immich</Button>
           <ThemeSwitcher />
         </div>
       </nav>
@@ -120,12 +119,12 @@
 
   <AppShellSidebar bind:open>
     <div class="my-4 me-4">
-      <NavbarItem title="Documentation" href={Constants.Sites.Docs} external icon={mdiScriptTextOutline} />
+      <NavbarItem title="Documentation" href={Constants.Sites.Docs} icon={mdiScriptTextOutline} />
       <NavbarItem title="Blog" href="/blog" icon={mdiPostOutline} />
       <NavbarItem title="Roadmap" href="/roadmap" icon={mdiChartGantt} />
       <NavbarItem title="Download" href="/download" icon={mdiDownload} />
-      <NavbarItem title="Merch" href={Constants.Sites.Store} external icon={mdiShoppingOutline} />
-      <NavbarItem title="Github" href={Constants.Socials.Github} external icon={siGithub.path} />
+      <NavbarItem title="Merch" href={Constants.Sites.Store} icon={mdiShoppingOutline} />
+      <NavbarItem title="Github" href={Constants.Socials.Github} icon={siGithub.path} />
     </div>
   </AppShellSidebar>
 

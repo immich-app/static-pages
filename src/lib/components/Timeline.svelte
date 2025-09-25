@@ -55,7 +55,7 @@
         <div class="flex flex-col justify-between place-items-end">
           <span class="text-primary">
             {#if item.link}
-              <Link href={item.link.url} external underline={false}>
+              <Link href={item.link.url} underline={false}>
                 [{item.link.text}]
               </Link>
             {/if}

@@ -93,7 +93,7 @@
     <Text
       >Reading from PostgreSQL in chunks was easy enough. Having just migrated to Kysely from TypeORM, we were already
       seeing massive improvements with regard to speed and memory usage in other parts of the application as we migrated
-      queries to use the <Link href="https://kysely-org.github.io/kysely-apidoc/interfaces/Streamable.html" external>
+      queries to use the <Link href="https://kysely-org.github.io/kysely-apidoc/interfaces/Streamable.html">
         streaming
       </Link> interface (see <GithubReference number={16600} />, <GithubReference number={16666} />, <GithubReference
         number={16700}
@@ -121,8 +121,7 @@
   <Text>
     This enabled streaming from the database to the Node.js process, but the server still needed to send the data across
     the network in chunks. This was initially problematic as JSON is not a streamable format. We discussed a variety of
-    protocols, but eventually decided to use the <Link href="https://jsonlines.org/" external>JSON Lines</Link> format for
-    simplicity.
+    protocols, but eventually decided to use the <Link href="https://jsonlines.org/">JSON Lines</Link> format for simplicity.
   </Text>
 
   <section class="flex flex-col gap-2">
@@ -218,7 +217,7 @@
     <Text>
       Per the <Link
         href="https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html#name-uuidv7-layout-and-bit-order"
-        external>specification</Link
+        >specification</Link
       >, the first 48 bits of the ID are a timestamp, with millisecond precision. This means that we can use the <Code
         >UUIDv7</Code
       >
@@ -338,7 +337,7 @@
       to stay away from using triggers, mostly because they can be hard to reason about, and are a real pain to track
       and test. However, internally, we developed <Link
         href="https://github.com/immich-app/immich/tree/main/server/src/sql-tools"
-        external>some tooling around schema tracking</Link
+        >some tooling around schema tracking</Link
       > that we extended to include triggers and functions, and this has made it much more manageable.
     </Text>
   </section>

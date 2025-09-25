@@ -24,24 +24,21 @@
   </Text>
 
   <hr />
-  <Button href="https://ui.immich.app/" external color="secondary">View the project</Button>
+  <Button href="https://ui.immich.app/" color="secondary">View the project</Button>
   <hr />
 
   <section class="flex flex-col gap-2">
     <Heading tag="h2" size="large">Technology</Heading>
     <Text>
-      The library is built using <Link href="https://tailwindcss.com/" external>Tailwind CSS</Link>, and <Link
-        href="https://svelte.dev/"
-        external>Svelte</Link
+      The library is built using <Link href="https://tailwindcss.com/">Tailwind CSS</Link>, and <Link
+        href="https://svelte.dev/">Svelte</Link
       >
       .</Text
     >
   </section>
 
   <hr />
-  <Button href="https://github.com/immich-app/ui" external color="secondary" leadingIcon={siGithub}
-    >View on GitHub</Button
-  >
+  <Button href="https://github.com/immich-app/ui" color="secondary" leadingIcon={siGithub}>View on GitHub</Button>
   <hr />
 
   <section class="flex flex-col gap-2">
@@ -54,7 +51,7 @@
         <List>
           {#each [Constants.Sites.Buy, Constants.Sites.My, Constants.Sites.Get] as site (site)}
             <li>
-              <Link href={site} external>{site}</Link>
+              <Link href={site}>{site}</Link>
             </li>
           {/each}
         </List>
@@ -87,11 +84,9 @@
 
   <Text>
     Even though I would say the library is incomplete, it has already been a huge win for the team. We recently launched <Link
-      href="https://datasets.immich.app/"
-      external>https://datasets.immich.app/</Link
+      href="https://datasets.immich.app/">https://datasets.immich.app/</Link
     >, which was built by an intern using the component library, and it looks great! We also just launched <Link
-      href="https://api.immich.app/"
-      external>https://api.immich.app/</Link
+      href="https://api.immich.app/">https://api.immich.app/</Link
     >, and it similarly looks great and is consistent with our other sites.
   </Text>
 </BlogPage>

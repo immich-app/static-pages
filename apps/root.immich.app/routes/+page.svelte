@@ -27,13 +27,13 @@
   <div class="flex flex-col gap-4">
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
       <Button size="large" href="/download">Download</Button>
-      <Button size="large" href={Constants.Sites.Demo} external color="secondary">
+      <Button size="large" href={Constants.Sites.Demo} color="secondary">
         <span>Open Demo</span>
         <Icon icon={mdiOpenInNew} />
       </Button>
     </div>
     <div class="flex justify-center">
-      <Button href={Constants.Socials.Discord} external size="large" variant="ghost" leadingIcon={siDiscord.path}
+      <Button href={Constants.Socials.Discord} size="large" variant="ghost" leadingIcon={siDiscord.path}
         >Join our Discord</Button
       >
     </div>
@@ -45,10 +45,10 @@
   <Heading size="title" tag="h2">Download mobile app</Heading>
   <Text>Download Immich app and start backing up your photos and videos securely to your own server</Text>
   <div class="flex flex-col lg:flex-row gap-4">
-    <Button href={Constants.Get.Android} external variant="ghost" class="p-0">
+    <Button href={Constants.Get.Android} variant="ghost" class="p-0">
       <img src={playStoreBadge} alt="Playstore Badge" class="h-16" />
     </Button>
-    <Button href={Constants.Get.iOS} external variant="ghost" class="p-0">
+    <Button href={Constants.Get.iOS} variant="ghost" class="p-0">
       <img src={appStoreBadge} alt="AppStore Badge" class="h-16" />
     </Button>
   </div>

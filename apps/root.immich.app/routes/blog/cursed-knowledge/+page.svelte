@@ -15,7 +15,7 @@
   </Text>
 
   <hr />
-  <Button href={Constants.Pages.CursedKnowledge} external trailingIcon={mdiOpenInNew} color="secondary"
+  <Button href={Constants.Pages.CursedKnowledge} trailingIcon={mdiOpenInNew} color="secondary"
     >View Cursed Knowledge</Button
   >
   <hr />

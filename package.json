@@ -15,7 +15,7 @@
     "format:fix": "prettier --write ."
   },
   "devDependencies": {
-    "@immich/ui": "^0.31.1",
+    "@immich/ui": "^0.31.2",
     "@sveltejs/adapter-static": "^3.0.9",
     "@sveltejs/kit": "^2.37.1",
     "@sveltejs/vite-plugin-svelte": "^6.1.4",

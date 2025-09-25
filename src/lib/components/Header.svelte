@@ -1,7 +1,17 @@
 <script lang="ts">
   import { page } from '$app/state';
   import type { HeaderItem } from '$lib/types';
-  import { Button, commandPaletteManager, HStack, Icon, IconButton, Logo, Text, ThemeSwitcher } from '@immich/ui';
+  import {
+    Button,
+    commandPaletteManager,
+    HStack,
+    Icon,
+    IconButton,
+    isExternalLink,
+    Logo,
+    Text,
+    ThemeSwitcher,
+  } from '@immich/ui';
   import { mdiMagnify, mdiMenu, mdiOpenInNew } from '@mdi/js';
 
   type Props = {
@@ -42,10 +52,8 @@
         shape="round"
         variant={item.variant ?? 'ghost'}
         leadingIcon={(item.icon as { path?: string })?.path ?? (item.icon as string)}
-        trailingIcon={item.external ? mdiOpenInNew : undefined}
-        color={item.color ?? (isActive(item.href) ? 'primary' : 'secondary')}
-        target={item.external ? '_blank' : undefined}
-        rel={item.external ? 'noopener noreferrer' : undefined}>{item.title}</Button
+        trailingIcon={isExternalLink(item.href) ? mdiOpenInNew : undefined}
+        color={item.color ?? (isActive(item.href) ? 'primary' : 'secondary')}>{item.title}</Button
       >
     {/each}
     {#if commandPaletteManager.isEnabled}

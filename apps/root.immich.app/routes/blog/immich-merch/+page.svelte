@@ -10,7 +10,7 @@
   <Text>Hello everybody,</Text>
   <Text
     >We would like to introduce you to Mich, our mascot, as well as our merch store! Immich merch has been highly
-    requested by the community, so now it's here! Grab your swag at <Link href={Constants.Sites.Store} external
+    requested by the community, so now it's here! Grab your swag at <Link href={Constants.Sites.Store}
       >{Constants.Sites.Store}</Link
     > and let us know what your favorite design is!</Text
   >
@@ -30,7 +30,7 @@
   </section>
 
   <hr />
-  <Button href={Constants.Sites.Store} external color="secondary" trailingIcon={mdiOpenInNew}>View Store</Button>
+  <Button href={Constants.Sites.Store} color="secondary" trailingIcon={mdiOpenInNew}>View Store</Button>
   <hr />
 
   <Text>We hope you like the merch and Mich, now, back to building more features!</Text>
