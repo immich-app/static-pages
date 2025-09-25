@@ -24,7 +24,7 @@
       To give a little bit of background on how the old implementation came to be, it's worth noting that the mobile app
       has changed a lot since it was originally built in 2022. Over time, a lot has changed, and, prior to recent
       discussions around <InlineCode>v2</InlineCode>, the team had never formally discussed a solution to the problem.
-      Thus, the current state, as you would expect, was problematic, in a few, crucial ways:
+      Thus the current state, as you would expect, was problematic in a few crucial ways:
     </Text>
     <List>
       <li>
@@ -46,10 +46,10 @@
   </section>
 
   <Text>
-    In short, the previous implementation has a lot of limitations, which continue to plague users, especially those
-    with large libraries (100,000+ assets). From the user's perspective, the app takes a long time to open, a long time
-    to load the main timeline, results in a significant drop in FPS while the synchronization process is running,
-    increases battery drain, and all while potentially not even being able to complete the sync at all.
+    In short, the previous implementation has a lot of limitations which continue to plague users, especially those with
+    large libraries (100,000+ assets). From the user's perspective, the app takes a long time to open, a long time to
+    load the main timeline, results in a significant drop in FPS while the synchronization process is running, increases
+    battery drain, and all while potentially not even being able to complete the sync at all.
   </Text>
 
   <section class="flex flex-col gap-2">
@@ -122,8 +122,8 @@
   <Text>
     This enabled streaming from the database to the Node.js process, but the server still needed to send the data across
     the network in chunks. This was initially problematic as JSON is not a streamable format. We discussed a variety of
-    protocols, but eventually decided to just use the <Link href="https://jsonlines.org/" external>JSON Lines</Link> format
-    for simplicity.
+    protocols, but eventually decided to use the <Link href="https://jsonlines.org/" external>JSON Lines</Link> format for
+    simplicity.
   </Text>
 
   <section class="flex flex-col gap-2">
@@ -202,7 +202,8 @@
         we left off
       </li>
       <li>
-        <b>Bulk updates</b> &mdash; the query needed be able to handle batches of records getting updated in the same transaction
+        <b>Bulk updates</b> &mdash; the query needed to be able to handle batches of records getting updated in the same
+        transaction
       </li>
     </List>
   </section>
@@ -334,22 +335,14 @@
   </section>
 
   <section class="flex flex-col gap-2">
-    <Heading tag="h4">Database triggers</Heading>
-    <Text>
-      A trigger can run before or after a row or transaction updates or deletes a set of data. Previously, we had tried
-      to stay away from using triggers, mostly because they can be hard to reason about, and are a real pain to track
-      and test. However, internally, we developed some tooling around schema tracking that we extended to include
-      triggers and functions, and this has made it much more manageable.
-    </Text>
-  </section>
-
-  <section class="flex flex-col gap-2">
     <Heading tag="h4">Triggers as Code</Heading>
     <Text>
       A trigger can run before or after a row or transaction updates or deletes a set of data. Previously, we had tried
       to stay away from using triggers, mostly because they can be hard to reason about, and are a real pain to track
-      and test. However, internally, we developed <Link href="https://github.com/immich-app/immich/tree/main/server/src/sql-tools" external>some tooling around schema tracking</Link> that we extended to include
-      triggers and functions, and this has made it much more manageable.
+      and test. However, internally, we developed <Link
+        href="https://github.com/immich-app/immich/tree/main/server/src/sql-tools"
+        external>some tooling around schema tracking</Link
+      > that we extended to include triggers and functions, and this has made it much more manageable.
     </Text>
   </section>
 
@@ -413,9 +406,9 @@ class AssetTable {
   </section>
 
   <Text
-    >With this tooling, which automatically generates migrations, tracks drift, and provides reusable building
-    blocks for common database operations, we were able to streamline our development process regarding audit tables.
-    Also, we were able to design a robust system to test these triggers and functions.</Text
+    >With this tooling, which automatically generates migrations, tracks drift, and provides reusable building blocks
+    for common database operations, we were able to streamline our development process regarding audit tables. Also, we
+    were able to design a robust system to test these triggers and functions.</Text
   >
 
   <section class="flex flex-col gap-2">
