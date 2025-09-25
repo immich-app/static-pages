@@ -196,9 +196,9 @@
   <section class="flex flex-col gap-2">
     <Text>There were some details that were important to get right as we were implementing this, such as:</Text>
     <List>
-      <li><b>Deterministic</b> &mdash; the query needed to be resumable in a predictable manner</li>
+      <li><b>Determinism</b> &mdash; the query needed to be resumable in a predictable manner</li>
       <li>
-        <b>Fast</b> &mdash; the query needed to have an index that would allow us to index into the result set right where
+        <b>Speed</b> &mdash; the query needed to have an index that would allow us to index into the result set right where
         we left off
       </li>
       <li>
@@ -348,7 +348,7 @@
     <Text>
       A trigger can run before or after a row or transaction updates or deletes a set of data. Previously, we had tried
       to stay away from using triggers, mostly because they can be hard to reason about, and are a real pain to track
-      and test. However, internally, we developed some tooling around schema tracking that we extended to include
+      and test. However, internally, we developed <Link href="https://github.com/immich-app/immich/tree/main/server/src/sql-tools" external>some tooling around schema tracking</Link> that we extended to include
       triggers and functions, and this has made it much more manageable.
     </Text>
   </section>
@@ -413,7 +413,7 @@ class AssetTable {
   </section>
 
   <Text
-    >With this tooling, which would automatically generating migrations, track drift, and provided resuable building
+    >With this tooling, which automatically generates migrations, tracks drift, and provides reusable building
     blocks for common database operations, we were able to streamline our development process regarding audit tables.
     Also, we were able to design a robust system to test these triggers and functions.</Text
   >
@@ -471,7 +471,7 @@ class AssetTable {
   </section>
 
   <section class="flex flex-col gap-2">
-    <Text>Currently, we have 185 tests, that run in about 10 seconds.</Text>
+    <Text>Currently, we have 185 medium tests, that run in about 10 seconds.</Text>
     <img src={mediumTests} alt="185 medium tests running in 11 seconds" class="rounded-2xl" />
   </section>
 
