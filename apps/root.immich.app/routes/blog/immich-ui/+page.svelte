@@ -1,9 +1,8 @@
 <script>
   import { Posts } from '$lib/blog';
   import BlogPage from '$lib/components/BlogPage.svelte';
-  import InlineCode from '$lib/components/InlineCode.svelte';
   import List from '$lib/components/List.svelte';
-  import { Button, Constants, Heading, Link, Text } from '@immich/ui';
+  import { Button, Code, Constants, Heading, Link, Text } from '@immich/ui';
   import { siGithub } from 'simple-icons';
 </script>
 
@@ -72,9 +71,7 @@
       </li>
       <li>
         Standardization — the components in the new library are able to more easily follow and adhere to common patterns
-        and interfaces, like the current <InlineCode>Size</InlineCode>, <InlineCode>Color</InlineCode>, and <InlineCode
-          >Variant</InlineCode
-        > properties.
+        and interfaces, like the current <Code>Size</Code>, <Code>Color</Code>, and <Code>Variant</Code> properties.
       </li>
     </List>
   </section>

@@ -1,8 +1,7 @@
 <script lang="ts">
   import { Posts } from '$lib/blog';
   import BlogPage from '$lib/components/BlogPage.svelte';
-  import InlineCode from '$lib/components/InlineCode.svelte';
-  import { Button, Constants, Link, Text } from '@immich/ui';
+  import { Button, Code, Constants, Link, Text } from '@immich/ui';
   import { mdiOpenInNew } from '@mdi/js';
 </script>
 
@@ -23,7 +22,7 @@
 
   <Text
     >The new website has more details about Authentication, Authorization, API key permissions, request and response
-    formats, and a command palette (press <InlineCode>/</InlineCode>) to easily locate endpoints and pages.
+    formats, and a command palette (press <Code>/</Code>) to easily locate endpoints and pages.
   </Text>
 
   <Text

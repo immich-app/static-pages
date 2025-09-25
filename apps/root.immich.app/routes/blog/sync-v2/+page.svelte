@@ -1,12 +1,11 @@
 <script>
+  import mediumTests from '$lib/assets/blog/medium-tests.webp';
   import { Posts } from '$lib/blog';
   import BlogPage from '$lib/components/BlogPage.svelte';
   import CodeBlock from '$lib/components/CodeBlock.svelte';
   import GithubReference from '$lib/components/GithubReference.svelte';
-  import InlineCode from '$lib/components/InlineCode.svelte';
   import List from '$lib/components/List.svelte';
-  import { Heading, Link, Text } from '@immich/ui';
-  import mediumTests from '$lib/assets/blog/medium-tests.webp';
+  import { Code, Heading, Link, Text } from '@immich/ui';
   import { dart, json } from 'svelte-highlight/languages';
 </script>
 
@@ -23,8 +22,8 @@
     <Text>
       To give a little bit of background on how the old implementation came to be, it's worth noting that the mobile app
       has changed a lot since it was originally built in 2022. Over time, a lot has changed, and, prior to recent
-      discussions around <InlineCode>v2</InlineCode>, the team had never formally discussed a solution to the problem.
-      Thus the current state, as you would expect, was problematic in a few crucial ways:
+      discussions around <Code>v2</Code>, the team had never formally discussed a solution to the problem. Thus the
+      current state, as you would expect, was problematic in a few crucial ways:
     </Text>
     <List>
       <li>
@@ -146,9 +145,9 @@
   </section>
 
   <Text
-    >The <InlineCode>Content-Type</InlineCode> header just needs to be changed from <InlineCode
-      >application/json</InlineCode
-    > to <InlineCode>application/jsonlines+json</InlineCode>.</Text
+    >The <Code>Content-Type</Code> header just needs to be changed from <Code>application/json</Code> to <Code
+      >application/jsonlines+json</Code
+    >.</Text
   >
 
   <section class="flex flex-col gap-2">
@@ -209,10 +208,9 @@
   </section>
 
   <Text>
-    Initially we started using a simple <InlineCode>updatedAt</InlineCode> timestamp column, but that ended up being problematic
-    if you had multiple records updated in the same millisecond. Eventually, we transitioned to <InlineCode
-      >UUIDv7</InlineCode
-    > IDs, which are inherently unique while also being time-based.
+    Initially we started using a simple <Code>updatedAt</Code> timestamp column, but that ended up being problematic if you
+    had multiple records updated in the same millisecond. Eventually, we transitioned to <Code>UUIDv7</Code> IDs, which are
+    inherently unique while also being time-based.
   </Text>
 
   <section class="flex flex-col gap-2">
@@ -221,8 +219,8 @@
       Per the <Link
         href="https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html#name-uuidv7-layout-and-bit-order"
         external>specification</Link
-      >, the first 48 bits of the ID are a timestamp, with millisecond precision. This means that we can use the <InlineCode
-        >UUIDv7</InlineCode
+      >, the first 48 bits of the ID are a timestamp, with millisecond precision. This means that we can use the <Code
+        >UUIDv7</Code
       >
       as a reliable, unique, and fast index for our queries. We can easily query for all records with an ID greater than
       the last acknowledged ID, and be guaranteed that we will get all records that were created or updated after that point
@@ -231,8 +229,7 @@
   </section>
 
   <section class="flex flex-col gap-2">
-    <Text>Here is what the final query looks like, using the <InlineCode>UUIDv7</InlineCode> ID as the checkpoint:</Text
-    >
+    <Text>Here is what the final query looks like, using the <Code>UUIDv7</Code> ID as the checkpoint:</Text>
     <CodeBlock
       code={`return this.db
   .selectFrom('album')
@@ -269,9 +266,9 @@
   </section>
 
   <Text
-    >The <InlineCode>ack</InlineCode> token can be <InlineCode>POST</InlineCode>-ed back to the server, after the data
-    has been persisted to SQLite, client-side. The <InlineCode>type</InlineCode> and <InlineCode>data</InlineCode> fields
-    are versioned domain-transfer-objects, which enable the mobile app to safely deserialize the data.
+    >The <Code>ack</Code> token can be <Code>POST</Code>-ed back to the server, after the data has been persisted to
+    SQLite, client-side. The <Code>type</Code> and <Code>data</Code> fields are versioned domain-transfer-objects, which
+    enable the mobile app to safely deserialize the data.
   </Text>
 
   <section class="flex flex-col gap-2">
@@ -281,7 +278,7 @@
       Acknowledgements are heavily connected to the idea of checkpoints, which are essentially an acknowledgement that is
       connected to a specific table. More specifically, a specific <i>query</i>. It turns out that, because of sharing,
       there are a few situations where we actually need to track the sync progress in two or more different ways for the
-      same table, such as the <InlineCode>asset</InlineCode> table.
+      same table, such as the <Code>asset</Code> table.
     </Text>
   </section>
 
@@ -308,20 +305,20 @@
   />
 
   <Text
-    >As you can see a checkpoint is tied to a specific session and <InlineCode>SyncEntityType</InlineCode>. The <InlineCode
-      >SyncEntityType</InlineCode
+    >As you can see a checkpoint is tied to a specific session and <Code>SyncEntityType</Code>. The <Code
+      >SyncEntityType</Code
     > represents a specific database query. Examples include:</Text
   >
 
   <List>
-    <li><InlineCode>AuthUserV1</InlineCode></li>
-    <li><InlineCode>UserV1</InlineCode></li>
-    <li><InlineCode>UserDeleteV1</InlineCode></li>
-    <li><InlineCode>AssetV1</InlineCode></li>
-    <li><InlineCode>AssetDeleteV1</InlineCode></li>
-    <li><InlineCode>AssetExifV1</InlineCode></li>
-    <li><InlineCode>AlbumV1</InlineCode></li>
-    <li><InlineCode>AlbumDeleteV1</InlineCode></li>
+    <li><Code>AuthUserV1</Code></li>
+    <li><Code>UserV1</Code></li>
+    <li><Code>UserDeleteV1</Code></li>
+    <li><Code>AssetV1</Code></li>
+    <li><Code>AssetDeleteV1</Code></li>
+    <li><Code>AssetExifV1</Code></li>
+    <li><Code>AlbumV1</Code></li>
+    <li><Code>AlbumDeleteV1</Code></li>
     <li>etc.</li>
   </List>
 
@@ -373,7 +370,7 @@ export const UpdatedAtTrigger = (name: string) =>
   </section>
 
   <section class="flex flex-col gap-2">
-    <Text>With those blocks, here is what it took to track deletes on the <InlineCode>asset</InlineCode> table.</Text>
+    <Text>With those blocks, here is what it took to track deletes on the <Code>asset</Code> table.</Text>
     <CodeBlock
       code={`const asset_delete_audit = registerFunction({
   name: 'asset_delete_audit',

@@ -1,10 +1,8 @@
 <script lang="ts">
   import ApiPageContent from '$lib/api/components/ApiPageContent.svelte';
-  import CodeBlock from '$lib/components/CodeBlock.svelte';
   import { ApiPage } from '$lib/utils/api';
-  import { Code, Constants, Heading, Link, Text } from '@immich/ui';
+  import { Code, CodeBlock, Constants, Heading, Link, Text } from '@immich/ui';
   import { bash } from 'svelte-highlight/languages';
-  import typescript from 'svelte-highlight/languages/typescript';
 
   const code = `import { getAllAlbums, getMyUser, init } from "@immich/sdk";
 
@@ -39,9 +37,9 @@ init({ baseUrl: "https://demo.immich.app/api", apiKey: API_KEY });`;
   <section class="flex flex-col gap-2">
     <Heading tag="h3">Usage</Heading>
     <Text
-      >To initialize the SDK, call <Code variant="filled" class="p-1">init</Code> with an API key. Once initialized, import
-      typed methods, which use the <Code variant="filled" class="p-1">operationId</Code> from the specification.</Text
+      >To initialize the SDK, call <Code>init</Code> with an API key. Once initialized, import typed methods, which use the
+      <Code>operationId</Code> from the specification.</Text
     >
-    <CodeBlock {code} language={typescript} />
+    <CodeBlock {code} />
   </section>
 </ApiPageContent>

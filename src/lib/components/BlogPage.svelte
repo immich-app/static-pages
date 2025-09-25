@@ -24,7 +24,7 @@
     <li>{title}</li>
   </ul>
 
-  <section>
+  <section class="flex flex-col gap-2">
     <Heading tag="h1" size="title">
       {#if post.isDraft}[Draft]{/if}
       {post.title}

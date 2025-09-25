@@ -2,8 +2,9 @@
   import ApiPageContent from '$lib/api/components/ApiPageContent.svelte';
   import ApiPermission from '$lib/api/components/ApiPermission.svelte';
   import { ApiPage } from '$lib/utils/api';
-  import { Alert, Card, CardBody, CardHeader, Code, Heading, Link, Text } from '@immich/ui';
+  import { Alert, Card, CardBody, CardHeader, Code, CodeBlock, Heading, Link, Text } from '@immich/ui';
   import { mdiLightbulbOnOutline } from '@mdi/js';
+  import { plaintext } from 'svelte-highlight/languages';
 </script>
 
 <ApiPageContent
@@ -88,35 +89,26 @@
     </Card>
   </section>
 
+  <Alert color="success" icon={mdiLightbulbOnOutline} class="mt-4">
+    <Text
+      >User-scoped api keys can be created in <Link href="https://my.immich.app/user-settings?isOpen=api-keys"
+        >user settings</Link
+      >
+    </Text>
+  </Alert>
+
   <section class="flex flex-col gap-2">
     <Heading tag="h2">API Keys</Heading>
+
     <Text>
-      In order to authenticate a request with an API key, you need to include the <Code color="info"
-        >x-immich-api-key</Code
-      > header in your request.
+      In order to authenticate a request with an API key, you need to include the <Code>x-immich-api-key</Code> header in
+      your request.
     </Text>
+    <CodeBlock code="x-immich-api-key: <apiKey>" language={plaintext} />
 
-    <Alert color="success" icon={mdiLightbulbOnOutline} class="mt-4">
-      <Text
-        >User-scoped api keys can be created in <Link href="https://my.immich.app/user-settings?isOpen=api-keys"
-          >user settings</Link
-        >
-      </Text>
-    </Alert>
-
-    <Card color="secondary" class="mt-2">
-      <CardBody>
-        <Code>x-immich-api-key: &lt;apiKey&gt;</Code>
-      </CardBody>
-    </Card>
     <Text class="pt-4">
-      Alternatively, you can also include the API key by using the <Code color="info">apiKey</Code> query parameter in your
-      request.
+      Alternatively, you can also include the API key by using the <Code>apiKey</Code> query parameter in your request.
     </Text>
-    <Card color="secondary" class="mt-2">
-      <CardBody>
-        <Code>https://demo.immich.app/api/assets?apiKey=&lt;apiKey&gt;</Code>
-      </CardBody>
-    </Card>
+    <CodeBlock code="https://demo.immich.app/api/assets?apiKey=<apiKey>" language={plaintext} />
   </section>
 </ApiPageContent>

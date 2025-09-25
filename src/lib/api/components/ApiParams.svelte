@@ -1,7 +1,7 @@
 <script lang="ts">
   import ApiSchemaType from '$lib/api/components/ApiSchemaType.svelte';
   import type { ParameterObject } from '$lib/api/services/open-api.d';
-  import { Card, Code } from '@immich/ui';
+  import { Card } from '@immich/ui';
 
   type Props = {
     params: ParameterObject[];
@@ -20,7 +20,7 @@
   {#each params as param, i (i)}
     <div class="grid grid-cols-12 py-2 px-4">
       <div class="col-span-3">
-        <Code>{param.name}</Code>
+        <code>{param.name}</code>
       </div>
       <div class="col-span-3">
         {#if param.schema}
@@ -29,9 +29,8 @@
       </div>
       <div class="col-span-3">
         {#if param.required}
-          <span
-            class="py-1 px-2 dark:bg-red-900 dark:text-red-50 bg-red-200 text-muted rounded-lg"
-            title="Param is required">Required</span
+          <span class="py-1 px-2 dark:bg-red-900 dark:text-red-50 bg-red-200 rounded-lg" title="Param is required"
+            >Required</span
           >
         {/if}
       </div>
