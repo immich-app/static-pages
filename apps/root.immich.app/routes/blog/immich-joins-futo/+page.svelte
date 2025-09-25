@@ -6,7 +6,7 @@
 </script>
 
 <BlogPage post={Posts.ImmichJoinsFuto}>
-  <Text fontWeight="bold">Immich is joining <Link href="https://futo.org/" external>FUTO</Link>!</Text>
+  <Text fontWeight="bold">Immich is joining <Link href="https://futo.org/">FUTO</Link>!</Text>
 
   <Text
     >Since the beginning of this adventure, my goal has always been to create a better world for my children. Memories
@@ -49,11 +49,8 @@
 
   <Text>
     If you have more questions, we'll host a Q&A live stream on May 9th at 3PM UTC (10AM CST). <Link
-      href="https://www.live-ask.com/event/01HWP2SB99A1K8EXFBDKZ5Z9CF"
-      external>You can ask questions here</Link
-    >, and the stream will be live <Link href="https://youtube.com/live/cwz2iZwYpgg" external
-      >here on our YouTube channel</Link
-    >.
+      href="https://www.live-ask.com/event/01HWP2SB99A1K8EXFBDKZ5Z9CF">You can ask questions here</Link
+    >, and the stream will be live <Link href="https://youtube.com/live/cwz2iZwYpgg">here on our YouTube channel</Link>.
   </Text>
 
   {#snippet postScript()}
@@ -61,7 +58,7 @@
 
     <section class="flex flex-col gap-2">
       <Heading tag="h3">What is FUTO?</Heading>
-      <Link href="https://futo.org/what-is-futo/" external>https://futo.org/what-is-futo/</Link>
+      <Link href="https://futo.org/what-is-futo/">https://futo.org/what-is-futo/</Link>
     </section>
 
     <section class="flex flex-col gap-2">

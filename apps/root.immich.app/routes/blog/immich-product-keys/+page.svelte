@@ -34,7 +34,7 @@
 
   <hr />
 
-  <Button href={Constants.Sites.Buy} external color="secondary" trailingIcon={mdiOpenInNew}>Purchase Immich</Button>
+  <Button href={Constants.Sites.Buy} color="secondary" trailingIcon={mdiOpenInNew}>Purchase Immich</Button>
 
   <hr />
 
@@ -78,8 +78,8 @@
       <Text>
         There are several places where you can purchase the product key from:
         <List>
-          <li><Link href="https://buy.immich.app" external>https://buy.immich.app</Link></li>
-          <li><Link href="https://pay.futo.org" external>https://pay.futo.org/</Link></li>
+          <li><Link href="https://buy.immich.app">https://buy.immich.app</Link></li>
+          <li><Link href="https://pay.futo.org">https://pay.futo.org/</Link></li>
           <li>or directly from the app.</li>
         </List>
       </Text>
@@ -111,7 +111,7 @@
       <Heading tag="h3">5. Where can I get support regarding payment issues?</Heading>
       <Text>
         You can email us at <Code>billing@futo.org</Code> with your <Code>orderId</Code> and your email address. Or, you
-        can reach out to us on our <Link href={Constants.Socials.Discord} external>Discord</Link>.
+        can reach out to us on our <Link href={Constants.Socials.Discord}>Discord</Link>.
       </Text>
     </div>
   {/snippet}

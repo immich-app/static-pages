@@ -20,7 +20,7 @@
   <Text
     >Since the first day I posted the <Link
       href="https://www.reddit.com/r/selfhosted/comments/si5lp6/i_am_building_a_selfhosted_alternative_version_of/"
-      external>video prototype</Link
+      >video prototype</Link
     > on the <Link href="https://www.reddit.com/r/selfhosted">selfhosted</Link> subreddit, Immich has been on a journey.
     I still remember the project’s early days and loved seeing those first issues open on GitHub. How exciting it has been
     to build something useful for so many people. I am grateful for the compassionate community as well as the feedback and
@@ -79,7 +79,7 @@
         <img src={networkSwitching} alt="Network switching on mobile" class="p-4" />
       </li>
       <li>Alternative machine learning URL switching</li>
-      <li>Supporter Badge / <Link href="https://buy.immich.app/" external>buy.immich.app</Link></li>
+      <li>Supporter Badge / <Link href="https://buy.immich.app/">buy.immich.app</Link></li>
       <li>and more</li>
     </List>
   </section>
@@ -124,23 +124,18 @@
   </section>
 
   <Text
-    >Finally, the team will attend <Link href="https://fosdem.org/2025" external>FOSDEM 2025</Link> in Brussels, Belgium,
-    on February 1st and 2nd. If you are around, stop by and say “hi.” We will have a stand there on Sunday (02-02), and we
-    also registered for a lightning talk session. We're looking forward to seeing some of you there!</Text
+    >Finally, the team will attend <Link href="https://fosdem.org/2025">FOSDEM 2025</Link> in Brussels, Belgium, on February
+    1st and 2nd. If you are around, stop by and say “hi.” We will have a stand there on Sunday (02-02), and we also registered
+    for a lightning talk session. We're looking forward to seeing some of you there!</Text
   >
 
   <Text
-    >As always, if you find the project helpful, you can support us at <Link href={Constants.Sites.Buy} external
+    >As always, if you find the project helpful, you can support us at <Link href={Constants.Sites.Buy}
       >https://buy.immich.app/</Link
     ></Text
   >
 
   <hr />
-  <Button href={Constants.Sites.Buy} external color="secondary">Purchase Immich</Button>
+  <Button href={Constants.Sites.Buy} color="secondary">Purchase Immich</Button>
   <hr />
-
-  <section class="flex flex-col gap-2">
-    <Text>Have a happy holiday! 🎊</Text>
-    <Text>Immich Team</Text>
-  </section>
 </BlogPage>
