@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app_name: ['api', 'next', 'my', 'buy', 'get', 'datasets']
+        app_name: ['api', 'root', 'my', 'buy', 'get', 'datasets']
 
     steps:
       - name: Checkout code
@@ -96,7 +96,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app_name: ['api', 'next', 'my', 'buy', 'get', 'datasets']
+        app_name: ['api', 'root', 'my', 'buy', 'get', 'datasets']
     env:
       TF_VAR_app_name: ${{ matrix.app_name }}
       TF_VAR_stage: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || '' }}
