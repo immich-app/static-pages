@@ -10,9 +10,8 @@
   <Text>Hello everybody,</Text>
   <Text
     >We would like to introduce you to Mich, our mascot, as well as our merch store! Immich merch has been highly
-    requested by the community, so now it's here! Grab your swag at <Link href={Constants.Sites.Store}
-      >{Constants.Sites.Store}</Link
-    > and let us know what your favorite design is!</Text
+    requested by the community, so now it's here! Grab your swag at <Link href={Constants.Sites.Store} /> and let us know
+    what your favorite design is!</Text
   >
 
   <hr />

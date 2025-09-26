@@ -32,9 +32,9 @@
             device. We do not have access to this data, nor do we transmit or store it on any of our servers.
           </Text>
           <Text>
-            <strong>Purchase Information:</strong> When you make a purchase within the <Link href={Constants.Sites.Buy}
-              >{Constants.Sites.Buy}</Link
-            >, we collect the following information for tax calculation purposes:
+            <strong>Purchase Information:</strong> When you make a purchase within the <Link
+              href={Constants.Sites.Buy}
+            />, we collect the following information for tax calculation purposes:
           </Text>
           <List>
             <li>Country of origin</li>

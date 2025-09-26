@@ -79,7 +79,7 @@
         <img src={networkSwitching} alt="Network switching on mobile" class="p-4" />
       </li>
       <li>Alternative machine learning URL switching</li>
-      <li>Supporter Badge / <Link href="https://buy.immich.app/">buy.immich.app</Link></li>
+      <li>Supporter Badge / <Link href="https://buy.immich.app/" /></li>
       <li>and more</li>
     </List>
   </section>
