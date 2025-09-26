@@ -12,9 +12,17 @@
   };
 
   let { post, children, postScript }: Props = $props();
-  let { title, publishedAt, authors } = $derived(post);
+  let { title, publishedAt, authors, description } = $derived(post);
 </script>
 
+<svelte:head>
+  <title>{title} | Immich Blog</title>
+  <meta name="description" content={description} />
+  <meta property="og:title" content={`${title} | Immich Blog`} />
+  <meta property="og:description" content={description} />
+  <meta name="twitter:title" content={`${title} | Immich Blog`} />
+  <meta name="twitter:description" content={description} />
+</svelte:head>
 <Stack gap={6} class="text-lg">
   <ul class="flex gap-1 place-items-center text-muted">
     <li class="flex place-items-center">
