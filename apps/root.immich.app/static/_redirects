@@ -2,3 +2,4 @@
 /docs/* https://docs.immich.app/:splat 307
 /archived-versions.json https://docs.immich.app/archived-versions.json 307
 /privacy-policy https://docs.immich.app/privacy-policy 307
+/errors https://docs.immich.app/errors 307
