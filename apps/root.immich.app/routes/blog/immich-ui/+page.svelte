@@ -18,9 +18,8 @@
   <Text
     >The library is published to npm under the Immich organization at <Link
       href="https://www.npmjs.com/package/@immich/ui">@immich/ui</Link
-    >. You can view the current set of components and a handful of examples at <Link href="https://ui.immich.app/"
-      >https://ui.immich.app/</Link
-    >. At time of writing there are over 30 components, with more being added all the time.
+    >. You can view the current set of components and a handful of examples at <Link href="https://ui.immich.app/" />.
+    At time of writing there are over 30 components, with more being added all the time.
   </Text>
 
   <hr />
@@ -50,9 +49,7 @@
         started to publish micro sites, such as:
         <List>
           {#each [Constants.Sites.Buy, Constants.Sites.My, Constants.Sites.Get] as site (site)}
-            <li>
-              <Link href={site}>{site}</Link>
-            </li>
+            <li><Link href={site} /></li>
           {/each}
         </List>
       </li>
@@ -84,9 +81,9 @@
 
   <Text>
     Even though I would say the library is incomplete, it has already been a huge win for the team. We recently launched <Link
-      href="https://datasets.immich.app/">https://datasets.immich.app/</Link
-    >, which was built by an intern using the component library, and it looks great! We also just launched <Link
-      href="https://api.immich.app/">https://api.immich.app/</Link
-    >, and it similarly looks great and is consistent with our other sites.
+      href="https://datasets.immich.app/"
+    />, which was built by an intern using the component library, and it looks great! We also just launched <Link
+      href="https://api.immich.app/"
+    />, and it similarly looks great and is consistent with our other sites.
   </Text>
 </BlogPage>

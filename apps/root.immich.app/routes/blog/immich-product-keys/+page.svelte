@@ -78,8 +78,8 @@
       <Text>
         There are several places where you can purchase the product key from:
         <List>
-          <li><Link href="https://buy.immich.app">https://buy.immich.app</Link></li>
-          <li><Link href="https://pay.futo.org">https://pay.futo.org/</Link></li>
+          <li><Link href="https://buy.immich.app" /></li>
+          <li><Link href="https://pay.futo.org" /></li>
           <li>or directly from the app.</li>
         </List>
       </Text>
