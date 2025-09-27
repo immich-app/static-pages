@@ -180,7 +180,7 @@ class PlaygroundManager {
   }
 
   async connectToDemo(proxy?: boolean) {
-    const demoUrl = proxy ? '/api' : 'https://demo.immich.app/';
+    const demoUrl = this.normalize(proxy ? '/api' : 'https://demo.immich.app/');
     this.serverUrl = demoUrl;
     this.connect();
     const demoLogin = { email: 'demo@immich.app', password: 'demo' };
