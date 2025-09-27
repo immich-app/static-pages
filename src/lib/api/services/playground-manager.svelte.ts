@@ -24,7 +24,7 @@ const createApiKey = async (apiUrl: string, accessToken: string) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-session-token': accessToken,
+      'x-immich-session-token': accessToken,
     },
     body: JSON.stringify({ name: 'api.immich.app', permissions: ['all'] }),
   });
