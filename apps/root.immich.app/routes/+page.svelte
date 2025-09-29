@@ -14,7 +14,9 @@
   ];
 </script>
 
-<VStack gap={8} class="mt-4 lg:mt-16 text-center">
+<!-- Background logo with blur effect -->
+
+<VStack gap={8} class="mt-4 lg:mt-16 text-center relative">
   <Logo size="giant" variant="stacked-futo" />
   <Heading size="title" tag="h1" fontWeight="extra-bold"
     >Self-hosted <span class="text-primary">photo and<br class="hidden lg:block" /> video management</span> solution</Heading
@@ -39,9 +41,15 @@
     </div>
   </div>
 
-  <img src={screenshot} alt="Immich application" />
+  <div class="relative">
+    <img src={screenshot} alt="Immich application" />
+    <div class="-top-[55%] -left-[25%] h-[200%] w-[150%] absolute -z-10 overflow-visible">
+      <Logo size="giant" class="h-full w-full mb-2 antialiased z-10 blur-3xl opacity-20" />
+      <div class="w-full h-full absolute left-0 top-0 backdrop-blur-3xl bg-immich-bg/40 dark:bg-transparent"></div>
+    </div>
+  </div>
 
-  <hr class="border-t w-full max-w-(--breakpoint-sm) m-8" />
+  <hr class="border-t w-full max-w-(--breakpoint-sm) m-2" />
   <Heading size="title" tag="h2">Download mobile app</Heading>
   <Text>Download Immich app and start backing up your photos and videos securely to your own server</Text>
   <div class="flex flex-col lg:flex-row gap-4">
