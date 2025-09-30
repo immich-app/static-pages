@@ -21,7 +21,7 @@
   <Heading size="title" tag="h1" fontWeight="extra-bold"
     >Self-hosted <span class="text-primary">photo and<br class="hidden lg:block" /> video management</span> solution</Heading
   >
-  <Text
+  <Text size="large"
     >Easily back up, organize, and manage your photos on your own server. Immich helps you<br class="hidden lg:block" />
     browse, search and organize your photos and videos with ease, without sacrificing your privacy.</Text
   >
@@ -51,7 +51,7 @@
 
   <hr class="border-t w-full max-w-(--breakpoint-sm) m-2" />
   <Heading size="title" tag="h2">Download mobile app</Heading>
-  <Text>Download Immich app and start backing up your photos and videos securely to your own server</Text>
+  <Text size="large">Download Immich app and start backing up your photos and videos securely to your own server</Text>
   <div class="flex flex-col lg:flex-row gap-4">
     <Button href={Constants.Get.Android} variant="ghost" class="p-0">
       <img src={playStoreBadge} alt="Playstore Badge" class="h-16" />
@@ -60,11 +60,11 @@
       <img src={appStoreBadge} alt="AppStore Badge" class="h-16" />
     </Button>
   </div>
-  <img src={qrCode} alt="QRCode" class="h-36" />
+  <img src={qrCode} alt="QRCode" class="h-36 rounded-xl" />
 
   <hr class="border-t w-full max-w-(--breakpoint-sm) m-8" />
   <Heading size="title" tag="h2">Support the project</Heading>
-  <Text
+  <Text size="large"
     >Support Immich by purchasing a <Link href={Constants.Sites.Buy}>product key</Link>, <Link
       href={Constants.Sites.Buy}>merch</Link
     >, or contributing on <Link href={Constants.Sites.Buy}>GitHub</Link> or

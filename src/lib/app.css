@@ -50,4 +50,12 @@ html {
 
 body {
   margin: 0;
+  font-family:
+    'Overpass',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
 }
