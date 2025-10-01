@@ -41,9 +41,9 @@
 
   <div class="relative -z-10">
     <img src={screenshot} alt="Immich application" />
-    <div class="-top-[55%] -left-[25%] h-[200%] w-[150%] absolute -z-10 overflow-visible">
-      <Logo size="giant" class="h-full w-full mb-2 antialiased z-10 blur-3xl opacity-15" />
-      <div class="w-full h-full absolute left-0 top-0 backdrop-blur-3xl bg-immich-bg/40 dark:bg-transparent"></div>
+    <div class="-top-[55%] left-0 h-[200%] w-full absolute -z-10 overflow-visible">
+      <Logo size="giant" class="h-full w-full mb-2 antialiased z-10 blur-3xl opacity-20" />
+      <div class="w-full h-full absolute left-0 top-0 backdrop-blur-xl bg-immich-bg/90 dark:bg-transparent"></div>
     </div>
   </div>
 
