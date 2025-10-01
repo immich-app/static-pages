@@ -13,7 +13,7 @@
 
 <div {...restProps} class="flex flex-col h-full mx-auto">
   <div class="grow {className ? className : ''}">
-    <div class="w-full h-full px-4 py-10 sm:px-20 lg:p-10">
+    <div class="w-full h-full p-4 md:p-6 lg:p-8">
       {@render children?.()}
     </div>
   </div>

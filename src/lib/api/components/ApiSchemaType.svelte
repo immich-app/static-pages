@@ -15,7 +15,7 @@
 
   const { fromRef } = getOpenApi();
 
-  const badgeClasses = 'py-1 px-2 rounded-lg';
+  const badgeClasses = 'py-1 px-2 rounded-lg text-sm';
   const Colors = {
     Pink: 'dark:bg-pink-900 dark:text-pink-50 bg-pink-200',
     Green: 'dark:bg-green-900 dark:text-green-50 bg-green-200',

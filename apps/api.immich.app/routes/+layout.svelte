@@ -96,7 +96,7 @@
         text: asText('introduction'),
       },
       {
-        title: 'Getting Started',
+        title: 'Getting started',
         description: 'Learn how to get started with Immich API',
         href: ApiPage.GettingStarted,
         text: asText('getting', 'started'),

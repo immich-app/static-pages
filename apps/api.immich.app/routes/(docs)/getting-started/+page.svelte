@@ -7,7 +7,7 @@
 </script>
 
 <ApiPageContent
-  title="Getting Started"
+  title="Getting started"
   description="Learn how to authorize your requests to the Immich API"
   nextSteps={[
     { href: ApiPage.Authentication, title: 'Learn about Authentication' },

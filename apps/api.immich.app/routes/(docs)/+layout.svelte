@@ -52,7 +52,7 @@
       <div>
         <NavbarItem title="Introduction" href={ApiPage.Introduction} icon={mdiNoteOutline} activeIcon={mdiNote} />
         <NavbarItem
-          title="Getting Started"
+          title="Getting started"
           href={ApiPage.GettingStarted}
           icon={mdiCompassOutline}
           activeIcon={mdiCompass}
