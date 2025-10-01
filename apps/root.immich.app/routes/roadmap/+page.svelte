@@ -86,6 +86,8 @@
   } from '@mdi/js';
 
   const releases = {
+    'v2.0.0': new Date(2025, 9, 1),
+    'v1.141.1': new Date(2025, 8, 8),
     'v1.135.0': new Date(2025, 5, 18),
     'v1.133.0': new Date(2025, 4, 21),
     'v1.130.0': new Date(2025, 2, 25),
@@ -207,22 +209,6 @@
     },
     {
       done: false,
-      icon: mdiRocketLaunch,
-      iconColor: 'indianred',
-      title: 'Stable release',
-      description: 'Immich goes stable',
-      getDateLabel: () => 'Planned for 2025',
-    },
-    {
-      done: false,
-      icon: mdiCloudUploadOutline,
-      iconColor: 'cornflowerblue',
-      title: 'Better background backups',
-      description: 'Rework background backups to be more reliable',
-      getDateLabel: () => 'Planned for 2025',
-    },
-    {
-      done: false,
       icon: mdiCameraBurst,
       iconColor: 'rebeccapurple',
       title: 'Auto stacking',
@@ -232,6 +218,20 @@
   ];
 
   const milestones: TimelineItem[] = [
+    withRelease({
+      icon: mdiRocketLaunch,
+      iconColor: 'indianred',
+      title: 'Stable release',
+      description: 'Immich goes stable with v2.0.0',
+      release: 'v2.0.0',
+    }),
+    withRelease({
+      icon: mdiCloudUploadOutline,
+      iconColor: 'cornflowerblue',
+      title: 'Better background backups',
+      description: 'Rework background backups to be more reliable',
+      release: 'v1.141.1',
+    }),
     {
       icon: mdiStar,
       iconColor: 'gold',
