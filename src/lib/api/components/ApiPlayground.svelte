@@ -79,12 +79,10 @@
 
   {#if playgroundManager.connected}
     <div class="flex flex-col gap-4">
-      <div class="flex gap-2 place-items-center">
-        <div class="max-w-64">
-          <Field label="Method">
-            <Select bind:value={selectedMethod} data={httpMethods} />
-          </Field>
-        </div>
+      <div class="flex flex-col gap-2 md:place-items-center">
+        <Field label="Method">
+          <Select bind:value={selectedMethod} data={httpMethods} />
+        </Field>
         <Field label="Url">
           <Input bind:value={requestUrl} />
         </Field>
