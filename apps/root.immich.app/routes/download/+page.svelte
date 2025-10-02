@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { siteMetadata } from '$lib';
   import portainerIcon from '$lib/assets/img/portainer.svg';
   import truenasIcon from '$lib/assets/img/truenas-scale.svg';
   import unraidIcon from '$lib/assets/img/unraid.svg';
@@ -17,17 +18,25 @@
     Icon,
     Link,
     playStoreBadge,
+    SiteMetadata,
     Stack,
     Text,
   } from '@immich/ui';
   import { mdiAndroid, mdiDocker } from '@mdi/js';
+
+  const pageMetadata = {
+    title: 'Download',
+    description: 'Download Immich app and start backing up your photos and videos securely to your own server',
+  };
 </script>
 
-<Heading size="title" class="mb-4" tag="h1">Download</Heading>
+<SiteMetadata site={siteMetadata} page={pageMetadata} />
+
+<Heading size="title" class="mb-4" tag="h1">{pageMetadata.title}</Heading>
 
 <div class="mb-4">
   <Heading size="large" tag="h2">Mobile Apps</Heading>
-  <Text color="muted">Download Immich app and start backing up your photos and videos securely to your own server</Text>
+  <Text color="muted">{pageMetadata.description}</Text>
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 l gap-4 mb-8">

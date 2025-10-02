@@ -1,8 +1,20 @@
 <script lang="ts">
-  import { Constants } from '@immich/ui';
+  import { siteMetadata } from '$lib';
   import qrCode from '$lib/assets/img/app-qr-code-dark.svg';
   import screenshot from '$lib/assets/img/screenshot-dark.webp';
-  import { appStoreBadge, Button, Heading, Icon, Link, Logo, playStoreBadge, Text, VStack } from '@immich/ui';
+  import {
+    appStoreBadge,
+    Button,
+    Constants,
+    Heading,
+    Icon,
+    Link,
+    Logo,
+    playStoreBadge,
+    SiteMetadata,
+    Text,
+    VStack,
+  } from '@immich/ui';
   import { mdiKeyOutline, mdiOpenInNew, mdiShoppingOutline } from '@mdi/js';
   import { siDiscord, siGithub, siWeblate } from 'simple-icons';
 
@@ -13,6 +25,8 @@
     { href: Constants.Socials.Weblate, text: 'Translate on Weblate', icon: siWeblate.path },
   ];
 </script>
+
+<SiteMetadata site={siteMetadata} />
 
 <VStack gap={8} class="mt-4 lg:mt-16 text-center">
   <Logo size="giant" variant="stacked-futo" />

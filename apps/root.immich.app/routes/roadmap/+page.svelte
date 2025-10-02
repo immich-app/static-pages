@@ -1,7 +1,8 @@
 <script lang="ts">
+  import { siteMetadata } from '$lib';
   import Timeline from '$lib/components/Timeline.svelte';
   import type { TimelineItem } from '$lib/types';
-  import { Heading, Stack, Text } from '@immich/ui';
+  import { Heading, SiteMetadata, Stack, Text } from '@immich/ui';
   import {
     mdiAccountGroup,
     mdiAccountGroupOutline,
@@ -926,12 +927,19 @@
       getDateLabel: withLanguage(new Date(2022, 1, 3)),
     },
   ];
+
+  const pageMetadata = {
+    title: 'Roadmap',
+    description: 'A list of future plans and goals, as well as past achievements and milestones.',
+  };
 </script>
+
+<SiteMetadata site={siteMetadata} page={pageMetadata} />
 
 <div class="p-4">
   <Stack class="text-center" gap={4}>
     <Heading size="title" tag="h1">Roadmap</Heading>
-    <Text>A list of future plans and goals, as well as past achievements and milestones.</Text>
+    <Text>{pageMetadata.description}</Text>
   </Stack>
   <div class="flex justify-around mt-8 w-full max-w-(--breakpoint-md) mx-auto">
     <Timeline items={[...roadmap, ...milestones]} />
