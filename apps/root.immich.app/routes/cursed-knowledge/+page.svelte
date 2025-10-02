@@ -1,28 +1,29 @@
 <script lang="ts">
+  import { siteMetadata } from '$lib';
   import Timeline from '$lib/components/Timeline.svelte';
   import type { TimelineItem } from '$lib/types';
-  import { Heading, Stack, Text } from '@immich/ui';
+  import { Heading, SiteMetadata, Stack, Text } from '@immich/ui';
   import {
+    mdiAccountOutline,
     mdiBug,
     mdiCalendarToday,
-    mdiCrosshairsOff,
+    mdiClockOutline,
+    mdiCloudKeyOutline,
+    mdiCodeJson,
     mdiCrop,
+    mdiCrosshairsOff,
     mdiDatabase,
     mdiLeadPencil,
     mdiLockOff,
     mdiLockOutline,
     mdiMicrosoftWindows,
+    mdiRegex,
+    mdiRestart,
     mdiSecurity,
     mdiSpeedometerSlow,
     mdiTrashCan,
     mdiWeb,
     mdiWrap,
-    mdiCloudKeyOutline,
-    mdiRegex,
-    mdiCodeJson,
-    mdiClockOutline,
-    mdiAccountOutline,
-    mdiRestart,
   } from '@mdi/js';
 
   const withLanguage = (date: Date) => (language: string) => date.toLocaleDateString(language);
@@ -251,12 +252,19 @@
       date: new Date(2023, 1, 23),
     },
   ];
+
+  const pageMetadata = {
+    title: 'Cursed Knowledge',
+    description: 'Cursed knowledge we have learned as a result of building Immich that we wish we never knew.',
+  };
 </script>
+
+<SiteMetadata site={siteMetadata} page={pageMetadata} />
 
 <div class="p-4">
   <Stack class="text-center" gap={4}>
-    <Heading size="title" tag="h1">Cursed Knowledge</Heading>
-    <Text>Cursed knowledge we have learned as a result of building Immich that we wish we never knew.</Text>
+    <Heading size="title" tag="h1">{pageMetadata.title}</Heading>
+    <Text>{pageMetadata.description}</Text>
   </Stack>
   <div class="flex justify-around mt-8 w-full max-w-(--breakpoint-md) mx-auto">
     <Timeline

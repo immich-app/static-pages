@@ -1,6 +1,7 @@
 <script lang="ts">
+  import { blogMetadata } from '$lib';
   import type { BlogPost } from '$lib/blog';
-  import { Heading, Icon, Link, Stack, Text } from '@immich/ui';
+  import { Heading, Icon, Link, SiteMetadata, Stack, Text } from '@immich/ui';
   import { mdiChevronRight } from '@mdi/js';
   import { DateTime } from 'luxon';
   import type { Snippet } from 'svelte';
@@ -15,14 +16,8 @@
   let { title, publishedAt, authors, description } = $derived(post);
 </script>
 
-<svelte:head>
-  <title>{title} | Immich Blog</title>
-  <meta name="description" content={description} />
-  <meta property="og:title" content={`${title} | Immich Blog`} />
-  <meta property="og:description" content={description} />
-  <meta name="twitter:title" content={`${title} | Immich Blog`} />
-  <meta name="twitter:description" content={description} />
-</svelte:head>
+<SiteMetadata site={blogMetadata} page={{ title, description }} />
+
 <Stack gap={6} class="text-lg">
   <ul class="flex gap-1 place-items-center text-muted">
     <li class="flex place-items-center">

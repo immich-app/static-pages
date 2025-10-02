@@ -1,17 +1,12 @@
 <script lang="ts">
+  import { blogMetadata } from '$lib';
   import { posts } from '$lib/blog';
-  import { Card, CardBody, CardHeader, CardTitle, Heading, Stack, Text } from '@immich/ui';
+  import { Card, CardBody, CardHeader, CardTitle, Heading, SiteMetadata, Stack, Text } from '@immich/ui';
   import { DateTime } from 'luxon';
 </script>
 
-<svelte:head>
-  <title>Immich Blog</title>
-  <meta name="description" content="Latest updates, announcements, and stories from the Immich team." />
-  <meta property="og:title" content="Immich Blog" />
-  <meta property="og:description" content="Latest updates, announcements, and stories from the Immich team." />
-  <meta name="twitter:title" content="Immich Blog" />
-  <meta name="twitter:description" content="Latest updates, announcements, and stories from the Immich team." />
-</svelte:head>
+<SiteMetadata site={blogMetadata} />
+
 <Stack gap={8}>
   <section class="flex flex-col gap-2">
     <Heading size="title" tag="h1" fontWeight="bold">Blog</Heading>

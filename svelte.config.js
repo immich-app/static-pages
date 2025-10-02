@@ -13,6 +13,10 @@ process.env.PUBLIC_DATASET_API_ENDPOINT = process.env.PUBLIC_DATASET_API_ENDPOIN
 
 const app = process.env.IMMICH_APP || 'my.immich.app';
 
+process.env.PUBLIC_IMMICH_HOSTNAME ??= app;
+
+const prerenderApps = ['root.immich.app'];
+
 console.log(`Building for "${app}"`);
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -23,7 +27,7 @@ const config = {
 
   kit: {
     adapter: adapter({
-      fallback: 'index.html',
+      fallback: prerenderApps.includes(app) ? undefined : 'index.html',
     }),
     files: {
       routes: `./apps/${app}/routes`,

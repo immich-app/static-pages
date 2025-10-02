@@ -1,16 +1,22 @@
 <script lang="ts">
+  import { siteMetadata } from '$lib';
   import List from '$lib/components/List.svelte';
-  import { Card, CardBody, Constants, Container, Heading, Link, Stack, Text } from '@immich/ui';
+  import { Card, CardBody, Constants, Container, Heading, Link, SiteMetadata, Stack, Text } from '@immich/ui';
+
+  const pageMetadata = {
+    title: 'Privacy Policy',
+    description:
+      'Welcome to Immich. We are committed to respecting your privacy. This Privacy Policy sets out how we collect, use, and share information when you use our Immich app.',
+  };
 </script>
+
+<SiteMetadata site={siteMetadata} page={pageMetadata} />
 
 <Container size="medium" center>
   <section class="flex flex-col gap-2">
-    <Heading tag="h1" size="title">Privacy Policy</Heading>
+    <Heading tag="h1" size="title">{pageMetadata.title}</Heading>
     <Text color="muted">Last updated: July 31st 2024</Text>
-    <Text>
-      Welcome to Immich. We are committed to respecting your privacy. This Privacy Policy sets out how we collect, use,
-      and share information when you use our Immich app.
-    </Text>
+    <Text>{pageMetadata.description}</Text>
   </section>
 
   <Card color="secondary" class="mt-8">

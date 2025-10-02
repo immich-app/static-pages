@@ -1,5 +1,17 @@
 <script lang="ts">
-  import { Card, CardBody, CardDescription, CardHeader, CardTitle, Heading, Icon, Stack, Text } from '@immich/ui';
+  import { siteMetadata } from '$lib';
+  import {
+    Card,
+    CardBody,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+    Heading,
+    Icon,
+    SiteMetadata,
+    Stack,
+    Text,
+  } from '@immich/ui';
   import {
     mdiAccountCog,
     mdiAccountMultiple,
@@ -237,12 +249,19 @@
       icon: mdiFileOutline,
     },
   ];
+
+  const pageMetadata = {
+    title: 'Features',
+    description: 'Immich is packed with features!',
+  };
 </script>
+
+<SiteMetadata site={siteMetadata} page={pageMetadata} />
 
 <Stack gap={8}>
   <Stack>
-    <Heading size="title" tag="h1">Features</Heading>
-    <Text>Immich is packed with features!</Text>
+    <Heading size="title" tag="h1">{pageMetadata.title}</Heading>
+    <Text>{pageMetadata.description}</Text>
   </Stack>
 
   <Stack gap={2}>
