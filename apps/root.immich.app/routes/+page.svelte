@@ -78,9 +78,9 @@
   <Heading size="title" tag="h2">Support the project</Heading>
   <Text size="large"
     >Support Immich by purchasing a <Link href={Constants.Sites.Buy}>product key</Link>, <Link
-      href={Constants.Sites.Buy}>merch</Link
-    >, or contributing on <Link href={Constants.Sites.Buy}>GitHub</Link> or
-    <Link href={Constants.Sites.Buy}>Weblate</Link></Text
+      href={Constants.Sites.Store}>merch</Link
+    >, or contributing on <Link href={Constants.Socials.Github}>GitHub</Link> or
+    <Link href={Constants.Socials.Weblate}>Weblate</Link></Text
   >
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     {#each supportItems as action, i (i)}
