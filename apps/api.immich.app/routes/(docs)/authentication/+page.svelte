@@ -101,10 +101,9 @@
     <Heading tag="h2">API Keys</Heading>
 
     <Text>
-      In order to authenticate a request with an API key, you need to include the <Code>x-immich-api-key</Code> header in
-      your request.
+      In order to authenticate a request with an API key, you need to include the <Code>x-api-key</Code> header in your request.
     </Text>
-    <CodeBlock code="x-immich-api-key: <apiKey>" language={plaintext} />
+    <CodeBlock code="x-api-key: <apiKey>" language={plaintext} />
 
     <Text class="pt-4">
       Alternatively, you can also include the API key by using the <Code>apiKey</Code> query parameter in your request.
