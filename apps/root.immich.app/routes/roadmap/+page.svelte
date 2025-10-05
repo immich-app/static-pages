@@ -219,6 +219,13 @@
   ];
 
   const milestones: TimelineItem[] = [
+    {
+      icon: mdiStar,
+      iconColor: 'gold',
+      title: '80,000 Stars',
+      description: 'Reached 80K Stars on GitHub!',
+      getDateLabel: withLanguage(new Date(2025, 9, 5)),
+    },
     withRelease({
       icon: mdiRocketLaunch,
       iconColor: 'indianred',
