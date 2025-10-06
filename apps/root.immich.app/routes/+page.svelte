@@ -4,7 +4,6 @@
   import screenshotLight from '$lib/assets/img/screenshot-light.webp';
   import qrCodeDark from '$lib/assets/img/app-qr-code-dark.svg';
   import qrCodeLight from '$lib/assets/img/app-qr-code-light.svg';
-  import { theme, Theme } from '$lib/services/theme';
   import { onMount } from 'svelte';
 
   import {
@@ -81,9 +80,7 @@
   <hr class="border-t w-full max-w-(--breakpoint-sm) m-2" />
   <Heading size="title" tag="h2">Download mobile app</Heading>
 
-  <Text size="large">
-    Download Immich app and start backing up your photos and videos securely to your own server
-  </Text>
+  <Text size="large">Download Immich app and start backing up your photos and videos securely to your own server</Text>
 
   <div class="flex flex-col lg:flex-row gap-4">
     <Button href={Constants.Get.Android} variant="ghost" class="p-0">
