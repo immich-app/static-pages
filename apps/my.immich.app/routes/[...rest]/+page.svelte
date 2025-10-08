@@ -32,6 +32,11 @@
 
   const handleSubmit = (event: SubmitEvent) => {
     event.preventDefault();
+    if (!URL.canParse(instanceUrl)) {
+      saved = false;
+      console.error(`'${instanceUrl}' is not a valid URL`);
+      return;
+    }
 
     localStorage.setItem(StorageKey.INSTANCE_URL, instanceUrl);
     if (targetUrl && instanceUrl) {
