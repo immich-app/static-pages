@@ -18,4 +18,8 @@ export default defineConfig({
     },
     allowedHosts: true,
   },
+  test: {
+    include: ['src/**/*.{test,spec}.{js,ts}'],
+    environment: 'node',
+  },
 });

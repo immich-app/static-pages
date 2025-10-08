@@ -1,6 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import { StorageKey } from '$lib';
+import { mergeInstanceUrl, shouldRedirect } from '$lib/utils/url';
 
 export const ssr = false;
 
@@ -8,15 +9,20 @@ export const load = (async ({ url }) => {
   const instanceUrl = url.searchParams.get('instanceUrl') || localStorage.getItem(StorageKey.INSTANCE_URL) || '';
   url.searchParams.delete('instanceUrl');
 
-  const pathAndParams = url.pathname + '?' + url.searchParams.toString();
-  const targetUrl = pathAndParams === '/' ? '' : pathAndParams;
-
-  if (targetUrl && instanceUrl) {
-    redirect(302, new URL(pathAndParams, instanceUrl));
+  if (instanceUrl === '') {
+    return { instanceUrl };
   }
 
-  return {
-    instanceUrl,
-    targetUrl,
-  };
+  if (!URL.canParse(instanceUrl)) {
+    console.error(`Invalid instance URL '${instanceUrl}'`);
+    return { instanceUrl };
+  }
+
+  const targetUrl = mergeInstanceUrl(url, instanceUrl);
+
+  if (shouldRedirect(url)) {
+    redirect(302, targetUrl);
+  }
+
+  return { instanceUrl, targetUrl };
 }) satisfies PageLoad;
