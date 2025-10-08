@@ -4,6 +4,7 @@
   import screenshotLight from '$lib/assets/img/screenshot-light.webp';
   import qrCodeDark from '$lib/assets/img/app-qr-code-dark.svg';
   import qrCodeLight from '$lib/assets/img/app-qr-code-light.svg';
+  import ThemedImage from '$lib/components/ThemedImage.svelte';
   import { onMount } from 'svelte';
 
   import {
@@ -68,8 +69,7 @@
   </div>
 
   <div class="relative -z-10">
-    <img src={screenshotLight} alt="Immich application" class="dark:hidden" />
-    <img src={screenshotDark} alt="Immich application" class="hidden dark:block" />
+    <ThemedImage lightSrc={screenshotLight} darkSrc={screenshotDark} alt="Immich application" />
 
     <div class="-top-[55%] left-0 h-[200%] w-full absolute -z-10 overflow-visible">
       <Logo size="giant" class="h-full w-full mb-2 antialiased z-10 blur-3xl opacity-20" />
@@ -91,8 +91,7 @@
     </Button>
   </div>
 
-  <img src={qrCodeLight} alt="QRCode" class="h-36 rounded-xl dark:hidden" />
-  <img src={qrCodeDark} alt="QRCode" class="h-36 rounded-xl hidden dark:block" />
+  <ThemedImage lightSrc={qrCodeLight} darkSrc={qrCodeDark} alt="QRCode" className="h-36 rounded-xl" />
 
   <hr class="border-t w-full max-w-(--breakpoint-sm) m-8" />
   <Heading size="title" tag="h2">Support the project</Heading>
