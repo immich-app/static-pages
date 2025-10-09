@@ -14,6 +14,14 @@ export type BlogPost = {
 };
 
 export const Posts = {
+  StableRelease: {
+    id: '0199ca17-0cf1-768e-83f8-3049b22212ec',
+    title: 'Stable release',
+    description: 'Read about the Immich v2.0.0 stable release and what it means for you.',
+    publishedAt: DateTime.fromObject({ year: 2025, month: 10, day: 9 }),
+    authors: ['Alex Tran', 'Jason Rasmussen', 'Zack Pollard'],
+    url: '/blog/stable-release',
+  },
   ImmichUi: {
     id: '0199bf43-cfec-769c-95a8-2ff1c9774fb0',
     title: 'New Svelte component library',
