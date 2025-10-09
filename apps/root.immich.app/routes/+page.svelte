@@ -4,7 +4,6 @@
   import screenshotLight from '$lib/assets/img/screenshot-light.webp';
   import qrCodeDark from '$lib/assets/img/app-qr-code-dark.svg';
   import qrCodeLight from '$lib/assets/img/app-qr-code-light.svg';
-  import ThemedImage from '$lib/components/ThemedImage.svelte';
   import { onMount } from 'svelte';
 
   import {
@@ -19,6 +18,7 @@
     SiteMetadata,
     Text,
     VStack,
+    theme,
   } from '@immich/ui';
   import { mdiKeyOutline, mdiOpenInNew, mdiShoppingOutline } from '@mdi/js';
   import { siDiscord, siGithub, siWeblate } from 'simple-icons';
@@ -30,10 +30,17 @@
     { href: Constants.Socials.Weblate, text: 'Translate on Weblate', icon: siWeblate.path },
   ];
 
-  let showLogo = false;
+  let mounted = $state(false);
+  const effectiveTheme = $derived(mounted ? theme.value : 'light');
+  const isDark = $derived(String(effectiveTheme).toLowerCase() === 'dark');
 
+  const screenSrc = $derived(isDark ? screenshotDark : screenshotLight);
+  const qrSrc = $derived(isDark ? qrCodeDark : qrCodeLight);
+
+  let showLogo = $state(false);
   onMount(() => {
     showLogo = true;
+    mounted = true;
   });
 </script>
 
@@ -69,7 +76,7 @@
   </div>
 
   <div class="relative -z-10">
-    <ThemedImage lightSrc={screenshotLight} darkSrc={screenshotDark} alt="Immich application" />
+    <img src={screenSrc} alt="Immich application" />
 
     <div class="-top-[55%] left-0 h-[200%] w-full absolute -z-10 overflow-visible">
       <Logo size="giant" class="h-full w-full mb-2 antialiased z-10 blur-3xl opacity-20" />
@@ -91,7 +98,7 @@
     </Button>
   </div>
 
-  <ThemedImage lightSrc={qrCodeLight} darkSrc={qrCodeDark} alt="QRCode" className="h-36 rounded-xl" />
+  <img src={qrSrc} alt="QRCode" class="h-36 rounded-xl" />
 
   <hr class="border-t w-full max-w-(--breakpoint-sm) m-8" />
   <Heading size="title" tag="h2">Support the project</Heading>
