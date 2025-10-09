@@ -4,9 +4,17 @@ import { describe, it, expect } from 'vitest';
 describe('URL utils', () => {
   describe('mergeInstanceUrl', () => {
     it('should merge hosts', () => {
-      const currentUrl = new URL('https://my.immich.app');
+      const currentUrl = new URL('https://my.immich.app/foo');
 
-      expect(mergeInstanceUrl(currentUrl, 'https://demo.immich.app').toString()).toEqual('https://demo.immich.app/');
+      expect(mergeInstanceUrl(currentUrl, 'https://demo.immich.app').toString()).toEqual('https://demo.immich.app/foo');
+    });
+
+    it('should merge hosts with trailing slash in instance URL', () => {
+      const currentUrl = new URL('https://my.immich.app/foo');
+
+      expect(mergeInstanceUrl(currentUrl, 'https://demo.immich.app/').toString()).toEqual(
+        'https://demo.immich.app/foo',
+      );
     });
 
     it('should merge hosts with paths', () => {
