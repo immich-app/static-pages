@@ -32,10 +32,9 @@
 
   let mounted = $state(false);
   const effectiveTheme = $derived(mounted ? theme.value : 'light');
-  const isDark = $derived(String(effectiveTheme).toLowerCase() === 'dark');
 
-  const screenSrc = $derived(isDark ? screenshotDark : screenshotLight);
-  const qrSrc = $derived(isDark ? qrCodeDark : qrCodeLight);
+  const screenSrc = $derived(effectiveTheme === 'dark' ? screenshotDark : screenshotLight);
+  const qrSrc = $derived(effectiveTheme === 'dark' ? qrCodeDark : qrCodeLight);
 
   let showLogo = $state(false);
   onMount(() => {
