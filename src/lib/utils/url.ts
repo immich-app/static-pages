@@ -1,6 +1,12 @@
 export const mergeInstanceUrl = ({ pathname, searchParams }: URL, instanceUrl: string) => {
   const targetUrl = new URL(instanceUrl);
-  targetUrl.pathname += pathname === '/' ? '' : pathname;
+
+  if (targetUrl.pathname.endsWith('/')) {
+    targetUrl.pathname += pathname.slice(1);
+  } else {
+    targetUrl.pathname += pathname;
+  }
+
   searchParams.forEach((v, k) => targetUrl.searchParams.append(k, v));
 
   return targetUrl;
