@@ -60,7 +60,7 @@
       <div class="hidden place-items-center lg:flex">
         <button
           onclick={() => commandPaletteManager.open()}
-          class="border-light flex cursor-pointer place-items-center gap-2 rounded-2xl bg-gray-200 px-4 py-2 text-sm dark:bg-neutral-700"
+          class="border-light flex cursor-pointer place-items-center gap-2 rounded-full bg-gray-200 px-4 py-2 text-sm dark:bg-neutral-700"
         >
           <Icon icon={mdiMagnify} size="1.25rem" />
           <Text>Search</Text>
