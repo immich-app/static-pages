@@ -33,7 +33,6 @@
   const items: Item[] = [
     {
       icon: mdiClockOutline,
-      iconColor: 'gray',
       title: 'setTimeout is cursed',
       description:
         'The setTimeout method in JavaScript is cursed when used with small values because the implementation may or may not actually wait the specified time.',
@@ -45,7 +44,6 @@
     },
     {
       icon: mdiAccountOutline,
-      iconColor: '#DAB1DA',
       title: 'PostgreSQL USER is cursed',
       description:
         'The USER keyword in PostgreSQL is cursed because you can select from it like a table, which leads to confusion if you have a table name user as well.',
@@ -57,7 +55,6 @@
     },
     {
       icon: mdiRestart,
-      iconColor: '#8395e3',
       title: 'PostgreSQL RESET is cursed',
       description:
         'PostgreSQL RESET is cursed because it is impossible to RESET a PostgreSQL extension parameter if the extension has been uninstalled.',
@@ -69,7 +66,6 @@
     },
     {
       icon: mdiRegex,
-      iconColor: 'purple',
       title: 'Zitadel Actions are cursed',
       description:
         "Zitadel is cursed because its custom scripting feature is executed with a JS engine that doesn't support regex named capture groups.",
@@ -81,7 +77,6 @@
     },
     {
       icon: mdiCloudKeyOutline,
-      iconColor: '#0078d4',
       title: 'Entra is cursed',
       description:
         "Microsoft Entra supports PKCE, but doesn't include it in its OpenID discovery document. This leads to clients thinking PKCE isn't available.",
@@ -93,7 +88,6 @@
     },
     {
       icon: mdiCrop,
-      iconColor: 'tomato',
       title: 'Image dimensions in EXIF metadata are cursed',
       description:
         'The dimensions in EXIF metadata can be different from the actual dimensions of the image, causing issues with cropping and resizing.',
@@ -105,7 +99,6 @@
     },
     {
       icon: mdiCodeJson,
-      iconColor: 'yellow',
       title: 'YAML whitespace is cursed',
       description: 'YAML whitespaces are often handled in unintuitive ways.',
       link: {
@@ -116,7 +109,6 @@
     },
     {
       icon: mdiMicrosoftWindows,
-      iconColor: '#357EC7',
       title: 'Hidden files in Windows are cursed',
       description:
         'Hidden files in Windows cannot be opened with the "w" flag. That, combined with SMB option "hide dot files" leads to a lot of confusion.',
@@ -128,7 +120,6 @@
     },
     {
       icon: mdiWrap,
-      iconColor: 'gray',
       title: 'Carriage returns in bash scripts are cursed',
       description:
         'Git can be configured to automatically convert LF to CRLF on checkout and CRLF breaks bash scripts.',
@@ -140,7 +131,6 @@
     },
     {
       icon: mdiLockOff,
-      iconColor: 'red',
       title: 'Fetch inside Cloudflare Workers is cursed',
       description:
         'Fetch requests in Cloudflare Workers use http by default, even if you explicitly specify https, which can often cause redirect loops.',
@@ -152,7 +142,6 @@
     },
     {
       icon: mdiCrosshairsOff,
-      iconColor: 'gray',
       title: 'GPS sharing on mobile is cursed',
       description:
         'Some phones will silently strip GPS data from images when apps without location permission try to access them.',
@@ -164,7 +153,6 @@
     },
     {
       icon: mdiLeadPencil,
-      iconColor: 'gold',
       title: 'PostgreSQL NOTIFY is cursed',
       description:
         'PostgreSQL does everything in a transaction, including NOTIFY. This means using the socket.io postgres-adapter writes to WAL every 5 seconds.',
@@ -173,7 +161,6 @@
     },
     {
       icon: mdiWeb,
-      iconColor: 'lightskyblue',
       title: 'npm scripts are cursed',
       description:
         'npm scripts make a http call to the npm registry each time they run, which means they are a terrible way to execute a health check.',
@@ -182,7 +169,6 @@
     },
     {
       icon: mdiSpeedometerSlow,
-      iconColor: 'brown',
       title: '50 extra packages are cursed',
       description:
         'There is a user in the JavaScript community who goes around adding "backwards compatibility" to projects. They do this by adding 50 extra package dependencies to your project, which are maintained by them.',
@@ -191,7 +177,6 @@
     },
     {
       icon: mdiLockOutline,
-      iconColor: 'gold',
       title: 'Long passwords are cursed',
       description:
         'The bcrypt implementation only uses the first 72 bytes of a string. Any characters after that are ignored.',
@@ -200,7 +185,6 @@
     },
     {
       icon: mdiCalendarToday,
-      iconColor: 'greenyellow',
       title: 'JavaScript Date objects are cursed',
       description: 'JavaScript date objects are 1 indexed for years and days, but 0 indexed for months.',
       link: { url: 'https://github.com/immich-app/immich/pull/6787', text: '#6787' },
@@ -208,7 +192,6 @@
     },
     {
       icon: mdiBug,
-      iconColor: 'green',
       title: 'ESM imports are cursed',
       description:
         'Prior to Node.js v20.8 using --experimental-vm-modules in a CommonJS project that imported an ES module that imported a CommonJS modules would create a segfault and crash Node.js',
@@ -220,7 +203,6 @@
     },
     {
       icon: mdiDatabase,
-      iconColor: 'gray',
       title: 'PostgreSQL parameters are cursed',
       description: `PostgresSQL has a limit of ${Number(65535).toLocaleString()} parameters, so bulk inserts can fail with large datasets.`,
       link: {
@@ -231,7 +213,6 @@
     },
     {
       icon: mdiSecurity,
-      iconColor: 'gold',
       title: 'Secure contexts are cursed',
       description: `Some web features like the clipboard API only work in "secure contexts" (ie. https or localhost)`,
       link: {
@@ -242,7 +223,6 @@
     },
     {
       icon: mdiTrashCan,
-      iconColor: 'gray',
       title: 'TypeORM deletes are cursed',
       description: `The remove implementation in TypeORM mutates the input, deleting the id property from the original object.`,
       link: {
@@ -261,16 +241,14 @@
 
 <SiteMetadata site={siteMetadata} page={pageMetadata} />
 
-<div class="p-4">
-  <Stack class="text-center" gap={4}>
-    <Heading size="title" tag="h1">{pageMetadata.title}</Heading>
-    <Text>{pageMetadata.description}</Text>
-  </Stack>
-  <div class="flex justify-around mt-8 w-full max-w-(--breakpoint-md) mx-auto">
-    <Timeline
-      items={items
-        .sort((a, b) => b.date.getTime() - a.date.getTime())
-        .map((item) => ({ ...item, getDateLabel: withLanguage(item.date) }))}
-    />
-  </div>
+<Stack class="text-center" gap={4}>
+  <Heading size="title" tag="h1">{pageMetadata.title}</Heading>
+  <Text>{pageMetadata.description}</Text>
+</Stack>
+<div class="flex justify-around mt-8 w-full max-w-(--breakpoint-md) mx-auto">
+  <Timeline
+    items={items
+      .sort((a, b) => b.date.getTime() - a.date.getTime())
+      .map((item) => ({ ...item, getDateLabel: withLanguage(item.date) }))}
+  />
 </div>
