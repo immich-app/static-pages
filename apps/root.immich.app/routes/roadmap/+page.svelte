@@ -45,6 +45,7 @@
     mdiImageAlbum,
     mdiImageEdit,
     mdiImageMultipleOutline,
+    mdiImagePlusOutline,
     mdiImageSearch,
     mdiKeyboardSettingsOutline,
     mdiLicense,
@@ -59,6 +60,7 @@
     mdiMonitor,
     mdiMotionPlayOutline,
     mdiMovieOpenPlayOutline,
+    mdiOcr,
     mdiPalette,
     mdiPanVertical,
     mdiPartyPopper,
@@ -66,6 +68,7 @@
     mdiRaw,
     mdiRocketLaunch,
     mdiRotate360,
+    mdiRotateLeft,
     mdiScaleBalance,
     mdiSecurity,
     mdiServer,
@@ -81,6 +84,7 @@
     mdiText,
     mdiThemeLightDark,
     mdiTrashCanOutline,
+    mdiUploadMultipleOutline,
     mdiVectorCombine,
     mdiVideo,
     mdiWeb,
@@ -170,17 +174,14 @@
 
   const withLanguage = (date: Date) => (language: string) => date.toLocaleDateString(language);
 
-  type Base = { icon: string; iconColor?: string; title: string; description: string };
-  const withRelease = ({
-    icon,
-    iconColor,
-    title,
-    description,
-    release: version,
-  }: Base & { release: ReleaseVersion }) => {
+  type Base = {
+    icon: string;
+    title: string;
+    description: string;
+  };
+  const releaseItem = ({ icon, title, description, release: version }: Base & { release: ReleaseVersion }) => {
     return {
       icon,
-      iconColor: iconColor ?? 'gray',
       title,
       description,
       link: {
@@ -191,744 +192,657 @@
     };
   };
 
+  const starMilestone = (count: number, date: Date) => ({
+    icon: mdiStar,
+    iconClass: 'text-warning',
+    title: `${count.toLocaleString()} Stars`,
+    description: `Reached ${count / 1000}K Stars on GitHub!`,
+    getDateLabel: withLanguage(date),
+  });
+
   const roadmap: TimelineItem[] = [
     {
-      done: false,
+      icon: mdiShareAll,
+      title: 'Better sharing',
+      description: 'Improve sharing capabilities, especially around facial recognition data',
+    },
+    {
+      icon: mdiAccountGroupOutline,
+      title: 'User groups',
+      description: 'Manage groups of users and share albums with a group',
+    },
+    {
       icon: mdiFlash,
-      iconColor: 'gold',
       title: 'Workflows',
       description: 'Automate tasks with workflows',
-      getDateLabel: () => 'Planned for 2025',
     },
     {
-      done: false,
       icon: mdiImageEdit,
-      iconColor: 'rebeccapurple',
       title: 'Basic editor',
       description: 'Basic photo editing capabilities',
-      getDateLabel: () => 'Planned for 2025',
     },
     {
-      done: false,
-      icon: mdiCameraBurst,
-      iconColor: 'rebeccapurple',
-      title: 'Auto stacking',
-      description: 'Auto stack burst photos',
-      getDateLabel: () => 'Planned for 2025',
+      icon: mdiRotateLeft,
+      title: 'Rotation',
+      description: 'Rotate an image 90, 180, or 270 degrees',
     },
-  ];
+    {
+      icon: mdiUploadMultipleOutline,
+      title: 'Chunked uploads',
+      description: 'Upload large files in smaller chunks to improve reliability',
+    },
+    {
+      icon: mdiOcr,
+      title: 'Optical character recognition (OCR)',
+      description: 'Use machine learning to extract text from images and make it searchable',
+    },
+    {
+      icon: mdiCameraBurst,
+      title: 'Automatic stacking',
+      description: 'Automatically stack burst photos',
+    },
+    {
+      icon: mdiImagePlusOutline,
+      title: 'Smart albums',
+      description: 'Automatically create albums based on rules',
+    },
+  ].map((item) => ({
+    ...item,
+    done: false,
+    iconClass: 'text-muted',
+    getDateLabel: () => 'Soon™',
+  }));
 
   const milestones: TimelineItem[] = [
-    {
-      icon: mdiStar,
-      iconColor: 'gold',
-      title: '80,000 Stars',
-      description: 'Reached 80K Stars on GitHub!',
-      getDateLabel: withLanguage(new Date(2025, 9, 5)),
-    },
-    withRelease({
+    starMilestone(80_000, new Date(2025, 9, 5)),
+    releaseItem({
       icon: mdiRocketLaunch,
-      iconColor: 'indianred',
       title: 'Stable release',
       description: 'Immich goes stable with v2.0.0',
       release: 'v2.0.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiCloudUploadOutline,
-      iconColor: 'cornflowerblue',
       title: 'Better background backups',
       description: 'Rework background backups to be more reliable',
       release: 'v1.141.1',
     }),
-    {
-      icon: mdiStar,
-      iconColor: 'gold',
-      title: '70,000 Stars',
-      description: 'Reached 70K Stars on GitHub!',
-      getDateLabel: withLanguage(new Date(2025, 6, 9)),
-    },
-    withRelease({
+    starMilestone(70000, new Date(2025, 6, 9)),
+    releaseItem({
       icon: mdiTableKey,
-      iconColor: 'gray',
       title: 'Fine grained access controls',
       description: 'Granular access controls for api keys',
       release: 'v1.135.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiCast,
-      iconColor: 'aqua',
       title: 'Google Cast (web and mobile)',
       description: 'Cast assets to Google Cast/Chromecast compatible devices',
       release: 'v1.135.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiLockOutline,
-      iconColor: 'sandybrown',
       title: 'Private/locked photos',
       description: 'Private assets with extra protections',
       release: 'v1.133.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiFolderMultiple,
-      iconColor: 'brown',
       title: 'Folders view in the mobile app',
       description: 'Browse your photos and videos in their folder structure inside the mobile app',
       release: 'v1.130.0',
     }),
-    {
-      icon: mdiStar,
-      iconColor: 'gold',
-      title: '60,000 Stars',
-      description: 'Reached 60K Stars on GitHub!',
-      getDateLabel: withLanguage(new Date(2025, 2, 4)),
-    },
-    withRelease({
+    starMilestone(60000, new Date(2025, 2, 4)),
+    releaseItem({
       icon: mdiTagFaces,
-      iconColor: 'teal',
       title: 'Manual face tagging',
       description:
         'Manually tag or remove faces in photos and videos, even when automatic detection misses or misidentifies them.',
       release: 'v1.127.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiLinkEdit,
-      iconColor: 'crimson',
       title: 'Automatic URL switching',
       description: 'The mobile app now supports automatic switching between different server URLs',
       release: 'v1.122.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiMovieOpenPlayOutline,
-      iconColor: 'darksalmon',
       title: 'Native video player',
       description: 'HDR videos are now fully supported using the Immich native video player',
       release: 'v1.122.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiDatabaseOutline,
-      iconColor: 'brown',
       title: 'Automatic database dumps',
       description: 'Database dumps are now integrated into the Immich server',
       release: 'v1.120.0',
     }),
-    {
-      icon: mdiStar,
-      iconColor: 'gold',
-      title: '50,000 Stars',
-      description: 'Reached 50K Stars on GitHub!',
-      getDateLabel: withLanguage(new Date(2024, 10, 1)),
-    },
-    withRelease({
+    starMilestone(50000, new Date(2024, 10, 1)),
+    releaseItem({
       icon: mdiFaceRecognition,
       title: 'Metadata Face Import',
       description: 'Read face metadata in Digikam format during import',
       release: 'v1.114.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiTagMultiple,
-      iconColor: 'orange',
       title: 'Tags',
       description: 'Tag your photos and videos',
       release: 'v1.113.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiFolderSync,
-      iconColor: 'green',
       title: 'Album sync (mobile)',
       description: 'Sync or mirror an album from your phone to the Immich server',
       release: 'v1.113.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiFolderMultiple,
-      iconColor: 'brown',
       title: 'Folders view',
       description: 'Browse your photos and videos in their folder structure',
       release: 'v1.113.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiPalette,
       title: 'Theming (mobile)',
       description: 'Pick a primary color for the mobile app',
       release: 'v1.112.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiStarOutline,
-      iconColor: 'gold',
       title: 'Star rating',
       description: 'Rate your photos and videos',
       release: 'v1.112.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiCrop,
-      iconColor: 'royalblue',
       title: 'Editor (mobile)',
       description: 'Crop and rotate on mobile',
       release: 'v1.111.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiMap,
-      iconColor: 'green',
       title: 'Deploy tiles.immich.cloud',
       description: 'Dedicated tile server for Immich',
       release: 'v1.111.0',
     }),
-    {
-      icon: mdiStar,
-      iconColor: 'gold',
-      title: '40,000 Stars',
-      description: 'Reached 40K Stars on GitHub!',
-      getDateLabel: withLanguage(new Date(2024, 6, 21)),
-    },
-    withRelease({
+    starMilestone(40000, new Date(2024, 6, 21)),
+    releaseItem({
       icon: mdiShare,
       title: 'Deploy my.immich.app',
       description: 'Url router for immich links',
       release: 'v1.109.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiLicense,
-      iconColor: 'gold',
       title: 'Supporter Badge',
       description: 'The option to buy Immich to support its development!',
       release: 'v1.109.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiHistory,
       title: 'Versioned documentation',
       description: 'View documentation as it was at the time of past releases',
       release: 'v1.106.1',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiWeb,
-      iconColor: 'royalblue',
       title: 'Web translations',
       description: 'Translate the web application to multiple languages',
       release: 'v1.106.1',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiContentDuplicate,
       title: 'Similar image detection',
       description: "Detect duplicate assets that aren't exactly identical",
       release: 'v1.106.1',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiVectorCombine,
       title: 'Container consolidation',
       description:
         'The microservices container can be run as a worker within the server image, allowing us to remove it from the default stack.',
       release: 'v1.106.1',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiPencil,
-      iconColor: 'saddlebrown',
       title: 'Read-write external libraries',
       description: 'Edit, update, and delete files in external libraries',
       release: 'v1.104.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiEmailOutline,
-      iconColor: 'crimson',
       title: 'Email notifications',
       description: 'Send emails for important events',
       release: 'v1.104.0',
     }),
     {
       icon: mdiHandshakeOutline,
-      iconColor: 'magenta',
       title: 'Immich joins FUTO!',
       description: 'Joined Futo and Immich core team goes full-time',
       getDateLabel: withLanguage(new Date(2024, 4, 1)),
     },
-    withRelease({
+    releaseItem({
       icon: mdiEyeOutline,
-      iconColor: 'darkslategray',
       title: 'Read-only albums',
       description: 'Share albums with other users as read-only',
       release: 'v1.103.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiBookmark,
-      iconColor: 'orangered',
       title: 'Permanent URLs (Web)',
       description: 'Assets on the web now have permanent URLs',
       release: 'v1.103.0',
     }),
-    withRelease({
-      icon: mdiStar,
-      iconColor: 'gold',
-      title: '30,000 Stars',
-      description: 'Reached 30K Stars on GitHub!',
-      release: 'v1.102.0',
-    }),
-    withRelease({
+    starMilestone(30000, new Date(2024, 2, 20)),
+    releaseItem({
       icon: mdiChartBoxMultipleOutline,
-      iconColor: 'mediumvioletred',
       title: 'OpenTelemetry metrics',
       description: 'OpenTelemetry metrics for local evaluation and advanced debugging',
       release: 'v1.99.0',
     }),
-    withRelease({
+    releaseItem({
       icon: 'immich',
       title: 'New logo',
       description: 'Immich got its new logo',
       release: 'v1.98.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiMagnifyScan,
       title: 'Search enhancement with advanced filters',
       description: 'Advanced search with filters by date, location and more',
       release: 'v1.95.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiScaleBalance,
-      iconColor: 'gold',
       title: 'AGPL License',
       description: 'Immich switches to AGPLv3 license',
       release: 'v1.95.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiEyeRefreshOutline,
       title: 'Library watching',
       description: 'Automatically import files in external libraries when the operating system detects changes.',
       release: 'v1.94.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiExpansionCard,
-      iconColor: 'green',
       title: 'GPU acceleration for machine-learning',
       description: 'Hardware acceleration support for Nvidia and Intel devices through CUDA and OpenVINO.',
       release: 'v1.94.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiAccountGroupOutline,
-      iconColor: 'gray',
       title: '250 unique contributors',
       description: '250 amazing people contributed to Immich',
       release: 'v1.93.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiMatrix,
       title: 'Search improvement with pgvecto.rs',
       description: 'Moved the search from typesense to pgvecto.rs',
       release: 'v1.91.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiPencil,
-      iconColor: 'saddlebrown',
       title: 'Edit metadata',
       description: "Edit a photo or video's date, time, hours, timezone, and GPS information",
       release: 'v1.90.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiVectorCombine,
       title: 'Container consolidation',
       description:
         'The serving of the web app is merged into the server image, allowing us to remove two containers from the stack.',
       release: 'v1.88.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiBash,
-      iconColor: 'gray',
       title: 'CLI v2',
       description: 'Version 2 of the Immich CLI is released, replacing the legacy v1 CLI.',
       release: 'v1.88.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiForum,
-      iconColor: 'dodgerblue',
       title: 'Activity',
       description: 'Comment a photo or a video in a shared album',
       release: 'v1.84.0',
     }),
-    withRelease({
-      icon: mdiStar,
-      iconColor: 'gold',
-      title: '20,000 Stars',
-      description: 'Reached 20K Stars on GitHub!',
-      release: 'v1.83.0',
-    }),
-    withRelease({
+    starMilestone(20000, new Date(2023, 9, 28)),
+    releaseItem({
       icon: mdiCameraBurst,
-      iconColor: 'rebeccapurple',
       title: 'Stack assets',
       description: 'Manual asset stacking for grouping and hiding related assets in the main timeline.',
       release: 'v1.83.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiPalette,
-      iconColor: 'magenta',
       title: 'Custom theme',
       description: 'Apply your custom CSS for modifying fonts, colors, and styles in the web application.',
       release: 'v1.83.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiTrashCanOutline,
-      iconColor: 'brown',
       title: 'Trash feature',
       description: 'Trash, restore from trash, and automatically empty the recycle bin after 30 days.',
       release: 'v1.82.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiBookSearchOutline,
       title: 'External libraries',
       description: 'Automatically import media into Immich based on imports paths and ignore patterns.',
       release: 'v1.79.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiMap,
-      iconColor: 'darksalmon',
       title: 'Map view (mobile)',
       description: 'Heat map implementation in the mobile app.',
       release: 'v1.76.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiFile,
-      iconColor: 'lightblue',
       title: 'Configuration file',
       description: 'Auto-configure an Immich installation via a configuration file.',
       release: 'v1.75.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiMonitor,
-      iconColor: 'darkcyan',
       title: 'Slideshow mode (web)',
       description: 'Start a full-screen slideshow from an Album on the web.',
       release: 'v1.75.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiServer,
-      iconColor: 'lightskyblue',
       title: 'Hardware transcoding',
       description: 'Support hardware acceleration (QuickSync, VAAPI, and Nvidia) for video transcoding.',
       release: 'v1.72.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiImageAlbum,
-      iconColor: 'olivedrab',
       title: 'View albums via time buckets',
       description: 'Upgrade albums to use time buckets, an optimized virtual viewport.',
       release: 'v1.72.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiImageAlbum,
-      iconColor: 'olivedrab',
       title: 'Album description',
       description: 'Save an album description.',
       release: 'v1.72.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiRotate360,
       title: '360° Photos (web)',
       description: 'View 360° Photos on the web.',
       release: 'v1.71.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiMotionPlayOutline,
       title: 'Android motion photos',
       description: 'Add support for Android Motion Photos.',
       release: 'v1.69.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiFaceManOutline,
-      iconColor: 'mistyrose',
       title: 'Show/hide faces',
       description: 'Add the options to show or hide faces.',
       release: 'v1.68.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiMerge,
-      iconColor: 'forestgreen',
       title: 'Merge faces',
       description: 'Add the ability to merge multiple faces together.',
       release: 'v1.67.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiImage,
-      iconColor: 'rebeccapurple',
       title: 'Feature photo',
       description: 'Add the option to change the feature photo for a person.',
       release: 'v1.66.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiKeyboardSettingsOutline,
-      iconColor: 'darkslategray',
       title: 'Multi-select via SHIFT',
       description: 'Add the option to multi-select while holding SHIFT.',
       release: 'v1.66.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiImageMultipleOutline,
-      iconColor: 'rebeccapurple',
       title: 'Memories (mobile)',
       description: 'View "On this day..." memories in the mobile app.',
       release: 'v1.65.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiFaceMan,
-      iconColor: 'mistyrose',
       title: 'Facial recognition (mobile)',
       description: 'View detected faces in the mobile app.',
       release: 'v1.63.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiImageMultipleOutline,
-      iconColor: 'rebeccapurple',
       title: 'Memories (web)',
       description: 'View pictures taken in past years on this day on the web.',
       release: 'v1.61.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiCollage,
-      iconColor: 'deeppink',
       title: 'Justified layout (web)',
       description: 'Implement justified layout (collage) on the web.',
       release: 'v1.61.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiRaw,
       title: 'RAW file formats',
       description: 'Support for RAW file formats.',
       release: 'v1.61.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiShareAll,
-      iconColor: 'darkturquoise',
       title: 'Partner sharing (mobile)',
       description: 'View shared partner photos in the mobile app.',
       release: 'v1.58.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiFile,
-      iconColor: 'lightblue',
       title: 'XMP sidecar',
       description: 'Attach XMP sidecar files to assets.',
       release: 'v1.58.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiFolder,
-      iconColor: 'brown',
       title: 'Custom storage label',
       description: 'Replace the user UUID in the storage template with a custom label.',
       release: 'v1.57.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiShareCircle,
       title: 'Partner sharing',
       description: 'Share your entire collection with another user.',
       release: 'v1.56.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiFaceMan,
-      iconColor: 'mistyrose',
       title: 'Facial recognition',
       description: 'Detect faces in pictures and cluster them together as people, which can be named.',
       release: 'v1.56.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiMap,
-      iconColor: 'darksalmon',
       title: 'Map view (web)',
       description: 'View a global map, with clusters of photos based on corresponding GPS data.',
       release: 'v1.55.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiDevices,
-      iconColor: 'slategray',
       title: 'Manage auth devices',
       description: 'Manage logged-in devices and revoke access from User Settings.',
       release: 'v1.55.0',
     }),
-    withRelease({
-      icon: mdiStar,
-      iconColor: 'gold',
-      title: '10,000 Stars',
-      description: 'Reached 10K stars on GitHub!',
-      release: 'v1.54.0',
-    }),
-    withRelease({
+    starMilestone(10000, new Date(2023, 3, 18)),
+    releaseItem({
       icon: mdiText,
       title: 'Asset descriptions',
       description: 'Save an asset description',
       release: 'v1.54.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiArchiveOutline,
       title: 'Archiving',
       description: 'Remove assets from the main timeline by archiving them.',
       release: 'v1.54.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiDevices,
-      iconColor: 'slategray',
       title: 'Responsive web app',
       description: 'Optimize the web app for small screen.',
       release: 'v1.54.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiFileSearch,
-      iconColor: 'brown',
       title: 'Search by metadata',
       description: 'Search images by filename, description, tagged people, make, model, and other metadata.',
       release: 'v1.52.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiImageSearch,
-      iconColor: 'rebeccapurple',
       title: 'CLIP search',
       description: 'Search images with free-form text like "Sunset at the beach".',
       release: 'v1.51.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiMagnify,
-      iconColor: 'lightblue',
       title: 'Explore page',
       description: 'View tagged places, object, and people.',
       release: 'v1.51.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiAppleIos,
       title: 'iOS background uploads',
       description: 'Automatically backup pictures in the background on iOS.',
       release: 'v1.48.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiMotionPlayOutline,
       title: 'Auto-Link live photos',
       description: 'Automatically link live photos, even when uploaded as separate files.',
       release: 'v1.48.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiMaterialDesign,
-      iconColor: 'blue',
       title: 'Material design 3 (mobile)',
       description: 'Upgrade the mobile app to Material Design 3.',
       release: 'v1.47.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiHeart,
-      iconColor: 'red',
       title: 'Favorites (mobile)',
       description: 'Show favorites on the mobile app.',
       release: 'v1.46.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiCakeVariant,
-      iconColor: 'deeppink',
       title: 'Immich turns 1',
       description: 'Immich is officially one year old.',
       release: 'v1.43.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiHeart,
-      iconColor: 'red',
       title: 'Favorites page (web)',
       description: 'Favorite and view favorites on the web.',
       release: 'v1.43.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiShareCircle,
       title: 'Public share links',
       description: 'Share photos and albums publicly via a shared link.',
       release: 'v1.41.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiFolder,
-      iconColor: 'lightblue',
       title: 'User-defined storage structure',
       description: 'Support custom storage structures.',
       release: 'v1.39.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiMotionPlayOutline,
       title: 'iOS live photos',
       description: 'Backup and display iOS Live Photos.',
       release: 'v1.36.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiSecurity,
-      iconColor: 'green',
       title: 'OAuth integration',
       description: 'Support OAuth2 and OIDC capable identity providers.',
       release: 'v1.36.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiWeb,
-      iconColor: 'royalblue',
       title: 'Documentation site',
       description: 'Release an official documentation website.',
       release: 'v1.33.1',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiThemeLightDark,
-      iconColor: 'slategray',
       title: 'Dark mode (web)',
       description: 'Dark mode on the web.',
       release: 'v1.32.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiPanVertical,
       title: 'Virtual scrollbar (web)',
       description: 'View the main timeline with a virtual scrollbar, allowing to jump to any point in time, instantly.',
       release: 'v1.27.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiCheckAll,
-      iconColor: 'green',
       title: 'Checksum duplication check',
       description: 'Enforce per user sha1 checksum uniqueness.',
       release: 'v1.27.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiAndroid,
-      iconColor: 'greenyellow',
       title: 'Android background backup',
       description: 'Automatic backup in the background on Android.',
       release: 'v1.24.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiAccountGroup,
-      iconColor: 'gray',
       title: 'Admin portal',
       description: 'Manage users and admin settings from the web.',
       release: 'v1.10.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiShareCircle,
       title: 'Album sharing',
       description: 'Share albums with other users.',
       release: 'v1.7.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiTag,
-      iconColor: 'coral',
       title: 'Image tagging',
       description: 'Tag images with custom values.',
       release: 'v1.7.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiImage,
-      iconColor: 'rebeccapurple',
       title: 'View exif',
       description: 'View metadata about assets.',
       release: 'v1.3.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiCheckboxMarked,
-      iconColor: 'green',
       title: 'Multi select',
       description: 'Select and execute actions on multiple assets at the same time.',
       release: 'v1.2.0',
     }),
-    withRelease({
+    releaseItem({
       icon: mdiVideo,
-      iconColor: 'slategray',
       title: 'Video player',
       description: 'Play videos in the web and on mobile.',
       release: 'v1.2.0',
     }),
     {
       icon: mdiPartyPopper,
-      iconColor: 'deeppink',
       title: 'First commit',
       description: 'First commit on GitHub, Immich is born.',
       getDateLabel: withLanguage(new Date(2022, 1, 3)),
@@ -943,12 +857,10 @@
 
 <SiteMetadata site={siteMetadata} page={pageMetadata} />
 
-<div class="p-4">
-  <Stack class="text-center" gap={4}>
-    <Heading size="title" tag="h1">Roadmap</Heading>
-    <Text>{pageMetadata.description}</Text>
-  </Stack>
-  <div class="flex justify-around mt-8 w-full max-w-(--breakpoint-md) mx-auto">
-    <Timeline items={[...roadmap, ...milestones]} />
-  </div>
+<Stack class="text-center" gap={4}>
+  <Heading size="title" tag="h1">Roadmap</Heading>
+  <Text>{pageMetadata.description}</Text>
+</Stack>
+<div class="flex justify-around mt-8 w-full max-w-(--breakpoint-md) mx-auto">
+  <Timeline items={[...roadmap, ...milestones]} />
 </div>

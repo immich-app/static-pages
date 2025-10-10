@@ -12,7 +12,7 @@ export type HeaderItem = {
 
 export type TimelineItem = {
   icon: string;
-  iconColor: string;
+  iconClass?: string;
   title: string;
   description?: string;
   link?: { url: string; text: string };
