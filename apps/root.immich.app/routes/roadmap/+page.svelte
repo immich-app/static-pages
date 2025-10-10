@@ -7,6 +7,7 @@
     mdiAccountGroup,
     mdiAccountGroupOutline,
     mdiAndroid,
+    mdiApi,
     mdiAppleIos,
     mdiArchiveOutline,
     mdiBash,
@@ -24,6 +25,7 @@
     mdiCrop,
     mdiDatabaseOutline,
     mdiDevices,
+    mdiDisc,
     mdiEmailOutline,
     mdiExpansionCard,
     mdiEyeOutline,
@@ -255,6 +257,25 @@
 
   const milestones: TimelineItem[] = [
     starMilestone(80_000, new Date(2025, 9, 5)),
+    releaseItem({
+      icon: mdiDisc,
+      title: 'Retro DVD & stealth merch',
+      description:
+        'Launched a demo DVD that comes pre-installed with Immich v2, as well as a new lineup of stealth merch',
+      release: 'v2.0.0',
+    }),
+    releaseItem({
+      icon: mdiApi,
+      title: 'New API documentation',
+      description: 'Launched a dedicated website for API documentation: https://api.imimch.app/',
+      release: 'v2.0.0',
+    }),
+    releaseItem({
+      icon: mdiWeb,
+      title: 'New homepage',
+      description: 'Launched a new version of our website: https://imimch.app/',
+      release: 'v2.0.0',
+    }),
     releaseItem({
       icon: mdiRocketLaunch,
       title: 'Stable release',
