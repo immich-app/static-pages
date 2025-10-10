@@ -18,7 +18,7 @@
 
 <SiteMetadata site={blogMetadata} page={{ title, description }} />
 
-<Stack gap={6} class="text-lg">
+<Stack gap={2}>
   <ul class="flex gap-1 place-items-center text-muted">
     <li class="flex place-items-center">
       <Link href="/blog" underline={false}><span class="hover:underline">Blog</span></Link>
@@ -27,26 +27,22 @@
     <li>{title}</li>
   </ul>
 
-  <section class="flex flex-col gap-2">
-    <Heading tag="h1" size="title">
-      {#if post.isDraft}[Draft]{/if}
-      {post.title}
-    </Heading>
-    <div class="flex gap-2">
-      <Text color="muted" variant="italic">{publishedAt.toLocaleString(DateTime.DATE_FULL)}</Text>
-      <Text color="muted">— {authors.join(', ')}</Text>
-    </div>
-  </section>
+  <Heading tag="h1" size="title" class="mt-6">
+    {#if post.isDraft}[Draft]{/if}
+    {post.title}
+  </Heading>
+
+  <div class="flex gap-2 mb-2">
+    <Text color="muted" variant="italic">{publishedAt.toLocaleString(DateTime.DATE_FULL)}</Text>
+    <Text color="muted">— {authors.join(', ')}</Text>
+  </div>
 
   {@render children?.()}
 
-  <section>
-    <Text>Cheers,</Text>
-    <Text>The Immich Team</Text>
-  </section>
-
-  {#if postScript}
-    <hr />
-    {@render postScript?.()}
-  {/if}
+  <Text size="large" class="mt-4">Cheers,<br />The Immich Team</Text>
 </Stack>
+
+{#if postScript}
+  <hr />
+  {@render postScript?.()}
+{/if}
