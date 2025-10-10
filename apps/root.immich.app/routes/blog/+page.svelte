@@ -7,12 +7,10 @@
 
 <SiteMetadata site={blogMetadata} />
 
-<Stack gap={8}>
-  <section class="flex flex-col gap-2">
-    <Heading size="title" tag="h1" fontWeight="bold">Blog</Heading>
-    <Text color="muted">{posts.length} posts</Text>
-  </section>
+<Heading size="title" tag="h1" fontWeight="bold" class="mb-1">Blog</Heading>
+<Text color="muted" class="mb-8">{blogMetadata.description}</Text>
 
+<Stack gap={6}>
   {#each posts as post (post.url)}
     <a href={post.url} class="group">
       <Card color="secondary">
