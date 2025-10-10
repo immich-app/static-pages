@@ -6,6 +6,12 @@
 
   const serverFeatures = ['For the whole server', 'Lifetime purchase', 'Supporter status'];
   const userFeatures = ['For an individual', 'Lifetime purchase', 'Supporter status'];
+  const retroDiskFeatures = [
+    'Physical retro disk',
+    'Celebrates Immich 2.0',
+    'Server or Individual key',
+    'Key sent via email',
+  ];
 </script>
 
 <FullPageLayout size="medium">
@@ -15,61 +21,109 @@
       <Heading size="large" color="primary" tag="h1">Purchase Immich</Heading>
     </SupporterBadge>
     <section>
-      <div class="flex gap-4 justify-between flex-wrap lg:flex-nowrap">
-        <!-- SERVER -->
+      <Stack gap={4}>
+        <!-- RETRO DISK -->
         <div
           class="flex flex-col gap-4 border border-gray-300 dark:border-gray-800 w-full p-4 md:p-8 rounded-2xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20 transition-all"
         >
-          <div class="hidden md:flex flex-col gap-1 text-primary">
-            <Icon icon={mdiServer} size="56" />
-            <Text fontWeight="bold" size="large">Server</Text>
+          <div class="flex flex-col sm:flex-row gap-4 sm:items-start">
+            <div class="flex-shrink-0 w-full sm:w-32 md:w-48">
+              <img
+                src="https://imgproxy.fourthwall.com/DuRc1wOto_bXVrM-sqTsf17VxnxBXUFEQ5F_PT6sphQ/w:1920/sm:1/enc/CqJpqXXfIjg43qs5/dYp-7fXLhSxgi23i/vXvGKj_Wr12gyskx/XpH5YYXnecOLkEZD/Df2Y8QRXm5WNGa0M/tTxj3yhuyZNfwLfh/HIAL4muGjJJgH77a/m4-0PI8wYVzKDLfL/aKzTzjksdRXbrDIs/C3FH6IfFkB64QwBV/I4q06GTK8g4kyH_x/R_0WQk6JhX0eicl8/yzswcthmPd9IwLY-/daD-bA"
+                alt="Immich Retro Disk"
+                class="w-full aspect-square object-cover rounded-lg"
+              />
+            </div>
+
+            <div class="flex-1 flex flex-col sm:flex-row gap-4 sm:justify-between sm:min-w-0">
+              <div class="flex flex-col gap-2 sm:min-w-0 sm:flex-1">
+                <Text fontWeight="bold" size="large" class="text-primary">Retro Disk</Text>
+                <Stack gap={1}>
+                  {#each retroDiskFeatures as feature, index (index)}
+                    <div class="grid grid-cols-[36px_auto] items-center">
+                      <Icon icon={mdiCheckCircleOutline} size="24" class="text-success" />
+                      <Text>{feature}</Text>
+                    </div>
+                  {/each}
+                </Stack>
+              </div>
+
+              <div class="flex flex-col sm:items-end sm:justify-start sm:flex-shrink-0">
+                <Heading size="giant" class="text-6xl sm:whitespace-nowrap">$25</Heading>
+                <Text class="sm:whitespace-nowrap">+ shipping</Text>
+              </div>
+            </div>
           </div>
 
-          <Stack gap={0}>
-            <Heading size="giant" class="text-6xl">$100</Heading>
-            <Text>per server</Text>
-          </Stack>
+          <Button href="https://immich.store/products/immich-retro" fullWidth size="large">Select</Button>
+        </div>
 
-          <Stack gap={8}>
-            <Stack gap={1}>
-              {#each serverFeatures as feature, index (index)}
-                <div class="grid grid-cols-[36px_auto] items-center">
-                  <Icon icon={mdiCheckCircleOutline} size="24" class="text-success" />
-                  <Text>{feature}</Text>
+        <div class="flex gap-4 justify-between flex-wrap lg:flex-nowrap">
+          <!-- SERVER -->
+          <div
+            class="flex flex-col gap-4 border border-gray-300 dark:border-gray-800 w-full p-4 md:p-8 rounded-2xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20 transition-all"
+          >
+            <div class="flex flex-col sm:flex-row gap-4 sm:items-start lg:flex-col lg:items-start">
+              <div class="flex-shrink-0 w-full sm:w-32 md:w-48 lg:w-full">
+                <div class="flex flex-col gap-1 text-primary items-start">
+                  <Icon icon={mdiServer} size="56" />
+                  <Text fontWeight="bold" size="large">Server</Text>
                 </div>
-              {/each}
-            </Stack>
+              </div>
+
+              <div class="flex-1 flex flex-col sm:flex-row gap-4 sm:justify-between sm:min-w-0 lg:flex-col lg:gap-8">
+                <Stack gap={1} class="sm:flex-1 sm:min-w-0">
+                  {#each serverFeatures as feature, index (index)}
+                    <div class="grid grid-cols-[36px_auto] items-center">
+                      <Icon icon={mdiCheckCircleOutline} size="24" class="text-success" />
+                      <Text>{feature}</Text>
+                    </div>
+                  {/each}
+                </Stack>
+
+                <div class="flex flex-col sm:items-end sm:justify-start sm:flex-shrink-0 lg:items-start">
+                  <Heading size="giant" class="text-6xl sm:whitespace-nowrap">$100</Heading>
+                  <Text class="sm:whitespace-nowrap">per server</Text>
+                </div>
+              </div>
+            </div>
+
             <Button href={getCallbackUrl(ImmichLicense.Server)} fullWidth size="large">Select</Button>
-          </Stack>
-        </div>
-
-        <!-- INDIVIDUAL -->
-        <div
-          class="flex flex-col gap-4 border border-gray-300 dark:border-gray-800 w-full p-4 md:p-8 rounded-2xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20 transition-all"
-        >
-          <div class="hidden md:flex flex-col gap-1 text-primary">
-            <Icon icon={mdiAccount} size="56" />
-            <Text fontWeight="bold" size="large">Individual</Text>
           </div>
 
-          <Stack gap={0}>
-            <Heading size="giant" class="text-6xl">$25</Heading>
-            <Text>per user</Text>
-          </Stack>
-
-          <Stack gap={8}>
-            <Stack gap={1}>
-              {#each userFeatures as feature, index (index)}
-                <div class="grid grid-cols-[36px_auto] items-center">
-                  <Icon icon={mdiCheckCircleOutline} size="24" class="text-success" />
-                  <Text>{feature}</Text>
+          <!-- INDIVIDUAL -->
+          <div
+            class="flex flex-col gap-4 border border-gray-300 dark:border-gray-800 w-full p-4 md:p-8 rounded-2xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20 transition-all"
+          >
+            <div class="flex flex-col sm:flex-row gap-4 sm:items-start lg:flex-col lg:items-start">
+              <div class="flex-shrink-0 w-full sm:w-32 md:w-48 lg:w-full">
+                <div class="flex flex-col gap-1 text-primary items-start">
+                  <Icon icon={mdiAccount} size="56" />
+                  <Text fontWeight="bold" size="large">Individual</Text>
                 </div>
-              {/each}
-            </Stack>
+              </div>
+
+              <div class="flex-1 flex flex-col sm:flex-row gap-4 sm:justify-between sm:min-w-0 lg:flex-col lg:gap-8">
+                <Stack gap={1} class="sm:flex-1 sm:min-w-0">
+                  {#each userFeatures as feature, index (index)}
+                    <div class="grid grid-cols-[36px_auto] items-center">
+                      <Icon icon={mdiCheckCircleOutline} size="24" class="text-success" />
+                      <Text>{feature}</Text>
+                    </div>
+                  {/each}
+                </Stack>
+
+                <div class="flex flex-col sm:items-end sm:justify-start sm:flex-shrink-0 lg:items-start">
+                  <Heading size="giant" class="text-6xl sm:whitespace-nowrap">$25</Heading>
+                  <Text class="sm:whitespace-nowrap">per user</Text>
+                </div>
+              </div>
+            </div>
+
             <Button href={getCallbackUrl(ImmichLicense.Individual)} fullWidth size="large">Select</Button>
-          </Stack>
+          </div>
         </div>
-      </div>
+      </Stack>
     </section>
 
     <Stack gap={4}>
@@ -82,8 +136,8 @@
         developers and to create a privacy-respecting ecosystem with real alternatives to exploitative cloud services.
       </Text>
       <Text>
-        As we’re committed not to add paywalls, this purchase will not grant you any additional features in Immich. We
-        rely on users like you to support Immich’s ongoing development.
+        As we're committed not to add paywalls, this purchase will not grant you any additional features in Immich. We
+        rely on users like you to support Immich's ongoing development.
       </Text>
     </Stack>
   </Stack>
