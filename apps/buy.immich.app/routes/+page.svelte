@@ -7,10 +7,9 @@
   const serverFeatures = ['For the whole server', 'Lifetime purchase', 'Supporter status'];
   const userFeatures = ['For an individual', 'Lifetime purchase', 'Supporter status'];
   const retroDiskFeatures = [
-    'Physical retro disk',
-    'Celebrates Immich 2.0',
-    'Server or Individual key',
-    'Key sent via email',
+    'Physical DVD with artwork',
+    'Bootable Immich Instance',
+    'Purchasable with Server or Individual Key',
   ];
 </script>
 
@@ -22,22 +21,23 @@
     </SupporterBadge>
     <section>
       <Stack gap={4}>
-        <!-- RETRO DISK -->
         <div
-          class="flex flex-col gap-4 border border-gray-300 dark:border-gray-800 w-full p-4 md:p-8 rounded-2xl bg-gray-100 dark:bg-gray-900 hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20 transition-all"
+          class="gradiant-bg dark:bg-gray-900 border border-gray-300 dark:border-gray-800 rounded-2xl w-full hover:bg-immich-primary/10 dark:hover:bg-immich-primary/20 p-6"
         >
-          <div class="flex flex-col sm:flex-row gap-4 sm:items-start">
-            <div class="flex-shrink-0 w-full sm:w-32 md:w-48">
+          <div class="">
+            <div class="w-full flex place-items-center place-content-center">
               <img
                 src="https://imgproxy.fourthwall.com/DuRc1wOto_bXVrM-sqTsf17VxnxBXUFEQ5F_PT6sphQ/w:1920/sm:1/enc/CqJpqXXfIjg43qs5/dYp-7fXLhSxgi23i/vXvGKj_Wr12gyskx/XpH5YYXnecOLkEZD/Df2Y8QRXm5WNGa0M/tTxj3yhuyZNfwLfh/HIAL4muGjJJgH77a/m4-0PI8wYVzKDLfL/aKzTzjksdRXbrDIs/C3FH6IfFkB64QwBV/I4q06GTK8g4kyH_x/R_0WQk6JhX0eicl8/yzswcthmPd9IwLY-/daD-bA"
                 alt="Immich Retro Disk"
-                class="w-full aspect-square object-cover rounded-lg"
+                class="w-full md:w-1/2 aspect-square object-cover rounded-lg"
               />
             </div>
 
-            <div class="flex-1 flex flex-col sm:flex-row gap-4 sm:justify-between sm:min-w-0">
+            <div
+              class="flex-1 flex flex-col sm:flex-row gap-4 sm:justify-between sm:min-w-0 mt-6 sm:place-items-center"
+            >
               <div class="flex flex-col gap-2 sm:min-w-0 sm:flex-1">
-                <Text fontWeight="bold" size="large" class="text-primary">Retro Disk</Text>
+                <p class="text-primary retro-font text-4xl">Retro Disk</p>
                 <Stack gap={1}>
                   {#each retroDiskFeatures as feature, index (index)}
                     <div class="grid grid-cols-[36px_auto] items-center">
@@ -55,8 +55,11 @@
             </div>
           </div>
 
-          <Button href="https://immich.store/products/immich-retro" fullWidth size="large">Select</Button>
+          <div class="mt-6">
+            <Button href="https://immich.store/products/immich-retro" fullWidth size="large">Select</Button>
+          </div>
         </div>
+        <hr />
 
         <div class="flex gap-4 justify-between flex-wrap lg:flex-nowrap">
           <!-- SERVER -->
@@ -142,3 +145,43 @@
     </Stack>
   </Stack>
 </FullPageLayout>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Jersey+15&display=swap');
+  .retro-font {
+    font-family: 'Jersey 15', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  .gradiant-bg {
+    position: relative;
+    background: linear-gradient(
+      to right,
+      rgba(198, 221, 247, 0.25) 0%,
+      rgba(255, 240, 204, 0.25) 25%,
+      rgba(152, 191, 163, 0.25) 50%,
+      rgba(198, 221, 247, 0.25) 75%,
+      rgba(237, 190, 214, 0.25) 100%
+    );
+  }
+
+  :global(.dark) .gradiant-bg {
+    background: linear-gradient(
+      to right,
+      rgba(198, 221, 247, 0.11) 0%,
+      rgba(255, 240, 204, 0.11) 25%,
+      rgba(152, 191, 163, 0.11) 50%,
+      rgba(198, 221, 247, 0.11) 75%,
+      rgba(237, 190, 214, 0.11) 100%
+    );
+  }
+
+  :global(.dark) .gradiant-bg::before {
+    background: rgba(0, 0, 0, 0);
+  }
+
+  .gradiant-bg > * {
+    position: relative;
+    z-index: 1;
+  }
+</style>
