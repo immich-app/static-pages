@@ -267,13 +267,13 @@
     releaseItem({
       icon: mdiApi,
       title: 'New API documentation',
-      description: 'Launched a dedicated website for API documentation: https://api.imimch.app/',
+      description: 'Launched a dedicated website for API documentation: https://api.immich.app/',
       release: 'v2.0.0',
     }),
     releaseItem({
       icon: mdiWeb,
       title: 'New homepage',
-      description: 'Launched a new version of our website: https://imimch.app/',
+      description: 'Launched a new version of our website: https://immich.app/',
       release: 'v2.0.0',
     }),
     releaseItem({
