@@ -1,10 +1,9 @@
 <script lang="ts">
   import { siteMetadata } from '$lib';
-  import screenshotDark from '$lib/assets/img/screenshot-dark.webp';
-  import screenshotLight from '$lib/assets/img/screenshot-light.webp';
   import qrCodeDark from '$lib/assets/img/app-qr-code-dark.svg';
   import qrCodeLight from '$lib/assets/img/app-qr-code-light.svg';
-  import { onMount } from 'svelte';
+  import screenshotDark from '$lib/assets/img/screenshot-dark.webp';
+  import screenshotLight from '$lib/assets/img/screenshot-light.webp';
 
   import {
     appStoreBadge,
@@ -17,8 +16,8 @@
     playStoreBadge,
     SiteMetadata,
     Text,
-    VStack,
     theme,
+    VStack,
   } from '@immich/ui';
   import { mdiKeyOutline, mdiOpenInNew, mdiShoppingOutline } from '@mdi/js';
   import { siDiscord, siGithub, siWeblate } from 'simple-icons';
@@ -29,26 +28,12 @@
     { href: Constants.Socials.Github, text: 'View on GitHub', icon: siGithub.path },
     { href: Constants.Socials.Weblate, text: 'Translate on Weblate', icon: siWeblate.path },
   ];
-
-  let mounted = $state(false);
-  const effectiveTheme = $derived(mounted ? theme.value : 'light');
-
-  const screenSrc = $derived(effectiveTheme === 'dark' ? screenshotDark : screenshotLight);
-  const qrSrc = $derived(effectiveTheme === 'dark' ? qrCodeDark : qrCodeLight);
-
-  let showLogo = $state(false);
-  onMount(() => {
-    showLogo = true;
-    mounted = true;
-  });
 </script>
 
 <SiteMetadata site={siteMetadata} />
 
 <VStack gap={8} class="mt-4 lg:mt-16 text-center">
-  {#if showLogo}
-    <Logo size="giant" variant="stacked-futo" />
-  {/if}
+  <Logo size="giant" variant="stacked-futo" />
 
   <Heading size="title" tag="h1" fontWeight="extra-bold">
     Self-hosted <span class="text-primary">photo and<br class="hidden lg:block" /> video management</span> solution
@@ -75,7 +60,7 @@
   </div>
 
   <div class="relative -z-10">
-    <img src={screenSrc} alt="Immich application" />
+    <img src={theme.value === 'dark' ? screenshotDark : screenshotLight} alt="Immich application" />
 
     <div class="-top-[55%] left-0 h-[200%] w-full absolute -z-10 overflow-visible">
       <Logo size="giant" class="h-full w-full mb-2 antialiased z-10 blur-3xl opacity-20" />
@@ -97,7 +82,7 @@
     </Button>
   </div>
 
-  <img src={qrSrc} alt="QRCode" class="h-36 rounded-xl" />
+  <img src={theme.value === 'dark' ? qrCodeDark : qrCodeLight} alt="QRCode" class="h-36 rounded-xl" />
 
   <hr class="border-t w-full max-w-(--breakpoint-sm) m-8" />
   <Heading size="title" tag="h2">Support the project</Heading>

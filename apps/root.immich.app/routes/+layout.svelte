@@ -35,7 +35,7 @@
 
   const { children }: Props = $props();
 
-  initializeTheme({ selector: 'body' });
+  initializeTheme({ selector: 'html', lightClass: 'light', darkClass: 'dark' });
 
   let pathname = '';
   onMount(() => {
