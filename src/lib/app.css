@@ -32,13 +32,11 @@
   @apply text-gray-600 dark:text-gray-400;
 }
 
-:root.dark,
-body.dark {
+:root.dark {
   color-scheme: dark;
 }
 
-:root:not(.dark),
-body:not(.dark) {
+:root:not(.dark) {
   color-scheme: light;
 }
 
