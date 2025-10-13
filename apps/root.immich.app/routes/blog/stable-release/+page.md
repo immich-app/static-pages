@@ -14,7 +14,7 @@
 
 [Watch the video](https://www.youtube.com/watch?v=xz8LfGXgFAI)
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/xz8LfGXgFAI?rel=0" title="Immich Demo DVD" frameBorder="0"   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"  allowFullScreen class="mb-4"></iframe>
+<iframe src="https://www.youtube.com/embed/xz8LfGXgFAI?rel=0" title="Immich Demo DVD" frameBorder="0"   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"  allowFullScreen class="mb-4 aspect-video"></iframe>
 
 Hello everyone,
 
