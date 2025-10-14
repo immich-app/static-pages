@@ -1,4 +1,5 @@
 import type { Color } from '@immich/ui';
+import type { Component } from 'svelte';
 
 export type HeaderItem = {
   title: string;
@@ -18,4 +19,12 @@ export type TimelineItem = {
   link?: { url: string; text: string };
   done?: false;
   getDateLabel: (language: string) => string;
+};
+
+export type Feature = {
+  icon: string;
+  title: string;
+  description: string;
+  href: string;
+  content: Component;
 };
