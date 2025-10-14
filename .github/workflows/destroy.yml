@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         environment: ['dev', 'prod']
-        name: ['api', 'root', 'my', 'buy', 'get', 'datasets']
+        app_name: ['root', 'api', 'my', 'get', 'buy', 'datasets']
     steps:
       - name: Checkout code
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
@@ -37,7 +37,7 @@ jobs:
         working-directory: ${{ github.workspace }}/deployment
         env:
           ENVIRONMENT: ${{ matrix.environment }}
-          TF_VAR_app_name: ${{ matrix.name }}
+          TF_VAR_app_name: ${{ matrix.app_name }}
           TF_VAR_dist_dir: ${{ github.workspace }}/dist
           TF_VAR_stage: pr-${{ github.event.number }}
           OP_SERVICE_ACCOUNT_TOKEN: ${{ matrix.environment == 'prod' && secrets.OP_TF_PROD_ENV || secrets.OP_TF_DEV_ENV }}
