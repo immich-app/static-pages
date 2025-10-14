@@ -53,7 +53,6 @@
           {/if}
 
           {#if endpoint.sharedLinkRoute}
-            <ApiAdminRouteBadge />
             <ApiSharedLinkRouteBadge />
           {/if}
 
