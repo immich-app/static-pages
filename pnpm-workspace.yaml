@@ -1,0 +1,19 @@
+packages:
+  - apps/*
+  - apps/datasets.immich.app/backend
+
+dedupePeerDependents: true
+
+injectWorkspacePackages: true
+
+onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
+  - esbuild
+  - sharp
+  - workerd
+
+preferWorkspacePackages: true
+
+shamefullyHoist: false
+
+verifyDepsBeforeRun: install

@@ -15,45 +15,51 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app_name: ['api', 'root', 'my', 'buy', 'get', 'datasets']
+        app_name: ['root', 'api', 'my', 'get', 'buy', 'datasets']
+
+    defaults:
+      run:
+        working-directory: apps/${{ matrix.app_name }}.immich.app
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
 
       - name: Setup Node
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: './.nvmrc'
+          cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
 
-      - name: Set app
-        run: |
-          touch .env
-          echo IMMICH_APP="${{ matrix.app_name }}.immich.app" >> .env
+      - name: Install
+        run: pnpm install
 
-      - name: Run npm install
-        run: npm ci
-
-      - name: Run linter
-        run: npm run lint
+      - name: Lint
+        run: pnpm lint
         if: ${{ !cancelled() }}
 
-      - name: Run formatter
-        run: npm run format
+      - name: Format
+        run: pnpm format
         if: ${{ !cancelled() }}
 
-      - name: Run tsc
-        run: npm run check
+      - name: Type check
+        run: pnpm check
         if: ${{ !cancelled() }}
 
-      - name: Run unit tests
-        run: npm test
+      - name: Test
+        run: pnpm test
         if: ${{ !cancelled() }}
 
       - name: Check for app backend
         id: check-backend
         run: |
-          if [ -d "apps/${{ matrix.app_name }}.immich.app/backend" ]; then
+          if [ -d "backend" ]; then
             echo "has_backend=true" >> $GITHUB_ENV
           else
             echo "has_backend=false" >> $GITHUB_ENV
@@ -63,5 +69,5 @@ jobs:
         if: ${{ env.has_backend == 'true' }}
         working-directory: 'apps/${{ matrix.app_name }}.immich.app/backend'
         run: |
-          npm ci
-          npm test
+          pnpm install
+          pnpm test

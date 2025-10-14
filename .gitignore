@@ -3,8 +3,8 @@ node_modules
 # Output
 .output
 .vercel
-/.svelte-kit
-/build
+apps/*/.svelte-kit
+apps/*/build
 
 # OS
 .DS_Store
