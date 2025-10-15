@@ -48,10 +48,9 @@
     "vitest-browser-svelte": "^1.1.0"
   },
   "dependencies": {
-    "@immich/ui": "^0.35.0",
+    "@immich/ui": "^0.36.0",
     "@mdi/js": "^7.4.47",
     "feed": "^5.1.0",
-    "food": "^0.3.5",
     "svelte-highlight": "^7.8.4"
   }
 }

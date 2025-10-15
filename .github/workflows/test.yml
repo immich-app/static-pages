@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app_name: ['root', 'api', 'my', 'get', 'buy', 'datasets']
+        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets']
 
     defaults:
       run:

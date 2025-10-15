@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cleanClass } from '$lib';
+  import { cleanClass } from '$common';
   import ApiSchemaType from '$lib/components/ApiSchemaType.svelte';
   import { getOpenApi, getRefHref, isRef } from '$lib/services/open-api';
   import type { ReferenceObject, SchemaObject } from '$lib/services/open-api.d';

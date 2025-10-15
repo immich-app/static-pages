@@ -15,7 +15,7 @@ const config = {
       fallback: 'index.html',
     }),
     alias: {
-      $common: '../common',
+      $common: '../../common',
       '$common/*': '../../common/*',
       '@immich/ui': resolve('./node_modules/@immich/ui/dist'),
     },
