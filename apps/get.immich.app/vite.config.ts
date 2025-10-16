@@ -6,7 +6,6 @@ export default defineConfig({
   plugins: [tailwindcss(), sveltekit()],
   server: {
     fs: {
-      // Allow serving files from one level up to the project root
       allow: ['../../common'],
     },
   },

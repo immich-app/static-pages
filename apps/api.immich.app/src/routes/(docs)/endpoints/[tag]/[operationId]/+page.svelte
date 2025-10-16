@@ -1,4 +1,5 @@
 <script lang="ts">
+  import LinkableHeading from '$common/components/LinkableHeading.svelte';
   import ApiAdminRouteBadge from '$lib/components/ApiAdminRouteBadge.svelte';
   import ApiDeprecatedBadge from '$lib/components/ApiDeprecatedBadge.svelte';
   import ApiParams from '$lib/components/ApiParams.svelte';
@@ -8,7 +9,6 @@
   import ApiSchema from '$lib/components/ApiSchema.svelte';
   import ApiSharedLinkRouteBadge from '$lib/components/ApiSharedLinkRouteBadge.svelte';
   import { getEndpointColor, getOpenApi, isRef } from '$lib/services/open-api';
-  import LinkableHeading from '$lib/components/LinkableHeading.svelte';
   import { Button, Heading, Icon, Stack, Text } from '@immich/ui';
   import { mdiArrowLeft, mdiArrowRight } from '@mdi/js';
   import { type PageData } from './$types';
@@ -71,14 +71,14 @@
 
   {#if endpoint.params.length > 0}
     <section class="flex flex-col gap-2">
-      <LinkableHeading tag="h2" href="#parameters" size="small">Parameters</LinkableHeading>
+      <LinkableHeading tag="h2" id="parameters" size="small">Parameters</LinkableHeading>
       <ApiParams params={endpoint.params} />
     </section>
   {/if}
 
   {#if endpoint.queryParams.length > 0}
     <section class="flex flex-col gap-2">
-      <LinkableHeading tag="h2" href="#query-parameters" size="small">Query Parameters</LinkableHeading>
+      <LinkableHeading tag="h2" id="query-parameters" size="small">Query Parameters</LinkableHeading>
       <ApiParams params={endpoint.queryParams} />
     </section>
   {/if}

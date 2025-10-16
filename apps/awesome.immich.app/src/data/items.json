@@ -1,0 +1,208 @@
+[
+  {
+    "name": "Client apps",
+    "id": "client-apps",
+    "projects": [
+      {
+        "title": "ImmichFrame",
+        "description": "Run an Immich slideshow in a photo frame.",
+        "href": "https://github.com/3rob3/ImmichFrame"
+      },
+      {
+        "title": "Immich Kiosk",
+        "description": "Lightweight slideshow to run on kiosk devices and browsers.",
+        "href": "https://github.com/damongolding/immich-kiosk"
+      },
+      {
+        "title": "Immich Android TV",
+        "description": "Unofficial Immich Android TV app.",
+        "href": "https://github.com/giejay/Immich-Android-TV"
+      },
+      {
+        "title": "Immich Public Proxy",
+        "description": "Share your Immich photos and albums in a safe way without exposing your Immich instance to the public.",
+        "href": "https://github.com/alangrainger/immich-public-proxy"
+      }
+    ]
+  },
+  {
+    "id": "cli-tools",
+    "name": "Command-line tools",
+    "projects": [
+      {
+        "title": "immich-go",
+        "description": "An alternative to the immich-CLI that doesn't depend on nodejs. It specializes in importing Google Photos Takeout archives.",
+        "href": "https://github.com/simulot/immich-go"
+      },
+      {
+        "title": "Powershell Module PSImmich",
+        "description": "Powershell Module for the Immich API",
+        "href": "https://github.com/hanpq/PSImmich"
+      },
+      {
+        "title": "Immich Stack",
+        "description": "Automatically groups similar photos into stacks within the Immich photo management system.",
+        "href": "https://github.com/Majorfi/immich-stack/"
+      },
+      {
+        "title": "Immich Stack",
+        "description": "Auto-stack photos with identical filenames and differing extensions (i.e. JPG+RAW)",
+        "href": "https://github.com/sid3windr/immich-stack"
+      },
+      {
+        "title": "API Album Sync",
+        "description": "A Python script to sync folders as albums.",
+        "href": "https://git.orenit.solutions/open/immichalbumpull"
+      },
+      {
+        "title": "Create albums from folders",
+        "description": "A Python script to create albums based on the folder structure of an external library.",
+        "href": "https://github.com/Salvoxia/immich-folder-album-creator"
+      },
+      {
+        "title": "Immich Birthday Sync",
+        "description": "Bulk-upload and -download birthdays, with CardDAV sync support",
+        "href": "https://github.com/sid3windr/immich-birthday"
+      },
+      {
+        "title": "Immich Downloader",
+        "description": "Downloads a configurable number of random photos based on people or album ID.",
+        "href": "https://github.com/jon6fingrs/immich-dl"
+      },
+      {
+        "title": "Immich Machine Learning Load Balancer",
+        "description": "Speed up your machine learning by load balancing your requests to multiple computers",
+        "href": "https://github.com/apetersson/immich_ml_balancer"
+      }
+    ]
+  },
+  {
+    "id": "integrations",
+    "name": "Integrations",
+    "projects": [
+      {
+        "title": "Immich Kodi",
+        "description": "Unofficial Kodi plugin for Immich.",
+        "href": "https://github.com/vladd11/immich-kodi"
+      },
+      {
+        "title": "Lightroom Publisher: mi.Immich.Publisher",
+        "description": "Lightroom plugin to publish photos from Lightroom collections to Immich albums.",
+        "href": "https://github.com/midzelis/mi.Immich.Publisher"
+      },
+      {
+        "title": "Lightroom Immich Plugin: lrc-immich-plugin",
+        "description": "Lightroom plugin to publish, export photos from Lightroom to Immich. Import from Immich to Lightroom is also supported.",
+        "href": "https://blog.fokuspunk.de/lrc-immich-plugin/"
+      }
+    ]
+  },
+  {
+    "id": "tools",
+    "name": "Tools",
+    "projects": [
+      {
+        "title": "Immich-Tools",
+        "description": "Provides scripts for handling problems on the repair page.",
+        "href": "https://github.com/clumsyCoder00/Immich-Tools"
+      },
+      {
+        "title": "Immich Power Tools",
+        "description": "Power tools for organizing your immich library.",
+        "href": "https://github.com/varun-raj/immich-power-tools"
+      },
+      {
+        "title": "Immich-Tiktok-Remover",
+        "description": "Script to search for and remove TikTok videos from your Immich library.",
+        "href": "https://github.com/mxc2/immich-tiktok-remover"
+      },
+      {
+        "title": "Immich Upload Optimizer",
+        "description": "Automatically optimize files uploaded to Immich in order to save storage space",
+        "href": "https://github.com/miguelangel-nubla/immich-upload-optimizer"
+      }
+    ]
+  },
+  {
+    "id": "distributions",
+    "name": "Distributions",
+    "projects": [
+      {
+        "title": "Immich Distribution",
+        "description": "Snap package for easy install and zero-care auto updates of Immich. Self-hosted photo management.",
+        "href": "https://immich-distribution.nsg.cc"
+      }
+    ]
+  },
+  {
+    "id": "guides",
+    "name": "Guides",
+    "projects": [
+      {
+        "title": "Cloudflare Tunnels with SSO/OAuth",
+        "description": "Setting up Cloudflare Tunnels and a SaaS App for Immich.",
+        "href": "https://github.com/immich-app/immich/discussions/8299"
+      },
+      {
+        "title": "Database backup in TrueNAS",
+        "description": "Create a database backup with pgAdmin in TrueNAS.",
+        "href": "https://github.com/immich-app/immich/discussions/8809"
+      },
+      {
+        "title": "Unraid backup scripts",
+        "description": "Back up your assets in Unraid with a pre-prepared script.",
+        "href": "https://github.com/immich-app/immich/discussions/8416"
+      },
+      {
+        "title": "Sync folders with albums",
+        "description": "synchronize folders in imported library with albums having the folders name.",
+        "href": "https://github.com/immich-app/immich/discussions/3382"
+      },
+      {
+        "title": "Immich Podman Quadlets Handbook",
+        "description": "A rewrite of the original Immich Docker Compose file using Podman Quadlets, with a set of extra guides in the repository's wiki.",
+        "href": "https://github.com/linux-universe/immich-podman-quadlets/blob/main/README.md"
+      },
+      {
+        "title": "Podman/Quadlets Install",
+        "description": "Documentation for simple podman setup using quadlets.",
+        "href": "https://github.com/tbelway/immich-podman-quadlets/blob/main/docs/install/podman-quadlet.md"
+      },
+      {
+        "title": "Google Photos import + albums",
+        "description": "Import your Google Photos files into Immich and add your albums.",
+        "href": "https://github.com/immich-app/immich/discussions/1340"
+      },
+      {
+        "title": "Access Immich with custom domain",
+        "description": "Access your local Immich installation over the internet using your own domain.",
+        "href": "https://github.com/ppr88/immich-guides/blob/main/open-immich-custom-domain.md"
+      },
+      {
+        "title": "Nginx caching map server",
+        "description": "Increase privacy by using nginx as a caching proxy in front of a map tile server.",
+        "href": "https://github.com/pcouy/pcouy.github.io/blob/main/_posts/2024-08-30-proxying-a-map-tile-server-for-increased-privacy.md"
+      },
+      {
+        "title": "fail2ban setup instructions",
+        "description": "How to configure an existing fail2ban installation to block incorrect login attempts.",
+        "href": "https://github.com/immich-app/immich/discussions/3243#discussioncomment-6681948"
+      },
+      {
+        "title": "Immich remote access with NordVPN Meshnet",
+        "description": "Access Immich with an end-to-end encrypted connection.",
+        "href": "https://meshnet.nordvpn.com/how-to/remote-files-media-access/immich-remote-access"
+      },
+      {
+        "title": "Trust Self Signed Certificates with Immich - OAuth Setup",
+        "description": "Set up Certificate Authority trust with Immich, and your private OAuth2/OpenID service, while using a private CA for HTTPS commication.",
+        "href": "https://github.com/immich-app/immich/discussions/18614"
+      }
+    ]
+  },
+  {
+    "id": "other",
+    "name": "Other",
+    "projects": []
+  }
+]
