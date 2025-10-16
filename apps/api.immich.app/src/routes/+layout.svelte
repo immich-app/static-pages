@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { afterNavigate, beforeNavigate } from '$app/navigation';
-  import { page } from '$app/state';
   import { ApiPage } from '$lib';
   import '$lib/app.css';
   import { getOpenApi } from '$lib/services/open-api';
@@ -15,7 +13,7 @@
     theme,
   } from '@immich/ui';
   import { mdiApi, mdiScriptText, mdiSend, mdiTag, mdiTagMultiple } from '@mdi/js';
-  import { onMount, type Snippet } from 'svelte';
+  import { type Snippet } from 'svelte';
 
   interface Props {
     children?: Snippet;
@@ -24,24 +22,6 @@
   let { children }: Props = $props();
 
   initializeTheme({ selector: 'body' });
-
-  let pathname = '';
-  onMount(() => {
-    pathname = page.url.pathname;
-  });
-
-  beforeNavigate(() => {
-    const newPathname = $state.snapshot(page.url.pathname);
-    pathname = newPathname;
-  });
-
-  afterNavigate(() => {
-    const newPathname = $state.snapshot(page.url.pathname);
-    if (pathname === newPathname) {
-      return;
-    }
-    window.scrollTo({ top: 0, behavior: 'auto' });
-  });
 
   const handleToggleTheme = () => {
     theme.value = theme.value === Theme.Dark ? Theme.Light : Theme.Dark;
