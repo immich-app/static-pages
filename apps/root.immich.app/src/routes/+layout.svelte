@@ -2,7 +2,6 @@
   import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/state';
   import PageContent from '$common/components/PageContent.svelte';
-  import { Posts } from '$lib';
   import '$lib/app.css';
   import {
     AppShell,
@@ -10,13 +9,10 @@
     AppShellSidebar,
     Button,
     Constants,
-    Icon,
     IconButton,
     initializeTheme,
-    Link,
     Logo,
     NavbarItem,
-    Text,
     ThemeSwitcher,
   } from '@immich/ui';
   import {
@@ -24,12 +20,10 @@
     mdiDownload,
     mdiMenu,
     mdiOpenInNew,
-    mdiPartyPopper,
     mdiPostOutline,
     mdiScriptTextOutline,
     mdiShoppingOutline,
   } from '@mdi/js';
-  import { DateTime } from 'luxon';
   import { siGithub } from 'simple-icons';
   import { onMount, type Snippet } from 'svelte';
   import { MediaQuery } from 'svelte/reactivity';
@@ -74,24 +68,11 @@
     const active = path === page.url.pathname || page.url.pathname.startsWith(path);
     return active ? 'primary' : 'secondary';
   };
-
-  const expiresAt = DateTime.fromObject({ year: 2025, month: 10, day: 15 });
-  let isVisible = $derived(DateTime.now().toMillis() < expiresAt.toMillis());
 </script>
 
 <AppShell>
   <AppShellHeader>
     <div>
-      {#if isVisible}
-        <div class="bg-primary/15 dark:bg-subtle flex w-full items-center justify-around px-4 py-2">
-          <div class="flex place-items-center items-center gap-2">
-            <Icon icon={mdiPartyPopper} class="text-primary" size="1.5rem" />
-            <Text color="secondary" size="small">
-              It's official &mdash; Immich is stable! Read the <Link href={Posts.StableRelease.url}>announcement</Link>
-            </Text>
-          </div>
-        </div>
-      {/if}
       <nav class="flex grid-cols-[1fr_auto_1fr] justify-between p-2 lg:grid lg:gap-2">
         <div class="flex place-items-center gap-2">
           <IconButton
