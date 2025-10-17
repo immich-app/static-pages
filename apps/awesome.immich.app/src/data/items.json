@@ -73,6 +73,11 @@
         "title": "Immich Machine Learning Load Balancer",
         "description": "Speed up your machine learning by load balancing your requests to multiple computers",
         "href": "https://github.com/apetersson/immich_ml_balancer"
+      },
+      {
+        "title": "Immich-Slideshow-Toolkit",
+        "description": "Commandline tools for creating video slideshow Mp4s from Immich albums.",
+        "href": "https://github.com/knom/immich-slideshow-toolkit"
       }
     ]
   },
