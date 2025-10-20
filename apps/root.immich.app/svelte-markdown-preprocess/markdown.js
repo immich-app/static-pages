@@ -49,6 +49,11 @@ export const md = new Marked().use({
       return output;
     },
 
+    blockquote({ tokens }) {
+      const children = this.parser.parse(tokens);
+      return `<md.blockquote>${children}</md.blockquote>\n`;
+    },
+
     paragraph({ tokens }) {
       const children = this.parser.parseInline(tokens);
       return `<md.p>${children}</md.p>\n`;

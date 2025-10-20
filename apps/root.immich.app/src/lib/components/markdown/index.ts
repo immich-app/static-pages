@@ -1,4 +1,5 @@
 import a from './a.svelte';
+import blockquote from './blockquote.svelte';
 import code from './code.svelte';
 import heading from './heading.svelte';
 import hr from './hr.svelte';
@@ -8,6 +9,7 @@ import p from './p.svelte';
 
 export const md = {
   a,
+  blockquote,
   code,
   heading,
   hr,

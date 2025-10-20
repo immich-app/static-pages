@@ -36,6 +36,14 @@ export type BlogPost = {
 };
 
 export const Posts = {
+  GoogleFlagsImmich: {
+    id: '019a01e1-4dc0-73db-aebd-623726a62335',
+    title: 'Google flags Immich sites as dangerous',
+    description: 'How Google actively breaks Immich deployments, an open-source Google Photos alternative',
+    publishedAt: DateTime.fromObject({ year: 2025, month: 10, day: 20 }),
+    authors: ['Jason Rasmussen'],
+    url: '/blog/google-flags-immich-as-dangerous',
+  },
   StableRelease: {
     id: '0199ca17-0cf1-768e-83f8-3049b22212ec',
     title: 'Stable release',
