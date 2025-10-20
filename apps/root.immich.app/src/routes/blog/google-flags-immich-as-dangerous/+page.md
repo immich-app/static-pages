@@ -72,7 +72,7 @@ A day or two later, the resolution was accepted and the domain was clean again! 
 
 ## Minimizing the issue
 
-A preview environment can be requested by adding the `preview` label to a pull request on GitHub. When the environment is created, a comment is posted on the pull request with the preview url, which follows the following format:
+An Immich preview environment can be requested by adding the `preview` label to a pull request on GitHub. When the environment is created, a comment is posted on the pull request with the preview url, which follows the following format:
 
 ```
 https://pr-<num>.preview.internal.immich.cloud/
