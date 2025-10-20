@@ -46,7 +46,7 @@ https://pr-22838.preview.internal.immich.cloud/auth/login
 ...
 ```
 
-It was super useful to learn that the affected URLs were for our _preview environments_. Maybe the thought was these Immich environments were imitating our [demo website](https://demo.immich.app/)? The most alarming thing was realizing that a single flagged subdomain would apparently invalidate the _entire domain_.
+It was super useful to learn that the affected URLs were for our _preview environments_. Maybe the thought was that these Immich environments were imitating our [demo website](https://demo.immich.app/)? The most alarming thing was realizing that a single flagged subdomain would apparently invalidate the _entire domain_.
 
 ## Impact
 
