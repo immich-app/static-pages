@@ -14,7 +14,7 @@ Earlier this month all of our `*.immich.cloud` websites were marked as dangerous
 
 <img src={dangerousSite} alt="Dangerous site" class='rounded-lg mb-4'>
 
-I had never known or understood how this browser feature worked, but it's now, unfortunately, been added to my list of [Cursed Knowledge](/cursed-knowledge).
+No one on the team really understood how this browser feature worked, but it's now, unfortunately, been added to our list of [Cursed Knowledge](/cursed-knowledge).
 
 ## Background
 
@@ -69,6 +69,8 @@ Since, nothing is _actually_ wrong we decided to respond with the following:
 > Immich is a self-hosted application, and the Immich team (https://immich.app/) owns and operates the `immich.cloud` domain and subdomains. The flagged sites are our own deployments of our own products and are not impersonating anything or anyone else.
 
 A day or two later, the resolution was accepted and the domain was clean again! 🎉
+
+We _thought_ we were home free, but unfortunately that was not the case.
 
 ## Minimizing the issue
 
