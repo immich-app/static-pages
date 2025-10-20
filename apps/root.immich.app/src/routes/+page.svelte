@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { browser } from '$app/environment';
   import qrCodeDark from '$common/img/app-qr-code-dark.svg';
   import qrCodeLight from '$common/img/app-qr-code-light.svg';
   import screenshotDark from '$common/img/screenshot-dark.webp';
@@ -33,9 +32,7 @@
 <SiteMetadata site={siteMetadata} />
 
 <VStack gap={8} class="mt-4 text-center lg:mt-16">
-  {#if browser}
-    <Logo size="giant" variant="stacked-futo" />
-  {/if}
+  <Logo size="giant" variant="stacked-futo" />
 
   <Heading size="title" tag="h1" fontWeight="extra-bold">
     Self-hosted <span class="text-primary">photo and<br class="hidden lg:block" /> video management</span> solution
@@ -62,9 +59,8 @@
   </div>
 
   <div class="relative -z-10">
-    {#if browser}
-      <img src={theme.value === 'dark' ? screenshotDark : screenshotLight} alt="Immich application" />
-    {/if}
+    <img src={theme.value === 'dark' ? screenshotDark : screenshotLight} alt="Immich application" />
+
     <div class="absolute -top-[55%] left-0 -z-10 h-[200%] w-full overflow-visible">
       <Logo size="giant" class="z-10 mb-2 h-full w-full antialiased opacity-20 blur-3xl" />
       <div class="bg-immich-bg/90 absolute left-0 top-0 h-full w-full backdrop-blur-xl dark:bg-transparent"></div>
@@ -85,9 +81,7 @@
     </Button>
   </div>
 
-  {#if browser}
-    <img src={theme.value === 'dark' ? qrCodeDark : qrCodeLight} alt="QRCode" class="h-36 rounded-xl" />
-  {/if}
+  <img src={theme.value === 'dark' ? qrCodeDark : qrCodeLight} alt="QRCode" class="h-36 rounded-xl" />
 
   <hr class="max-w-(--breakpoint-sm) m-8 w-full border-t" />
   <Heading size="title" tag="h2">Support the project</Heading>

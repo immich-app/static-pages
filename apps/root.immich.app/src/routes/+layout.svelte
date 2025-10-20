@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { browser } from '$app/environment';
   import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/state';
   import PageContent from '$common/components/PageContent.svelte';
@@ -87,9 +86,7 @@
             class="md:hidden"
           />
           <a href="/" class="flex gap-2 text-4xl">
-            {#if browser}
-              <Logo variant="inline" />
-            {/if}
+            <Logo variant="inline" />
           </a>
         </div>
 
