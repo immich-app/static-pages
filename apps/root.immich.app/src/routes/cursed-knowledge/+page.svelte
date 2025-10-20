@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { TimelineItem } from '$lib';
-  import { siteMetadata } from '$lib';
+  import { Posts, siteMetadata } from '$lib';
   import Timeline from '$lib/components/Timeline.svelte';
   import { Heading, SiteMetadata, Stack, Text } from '@immich/ui';
   import {
@@ -8,6 +8,7 @@
     mdiBug,
     mdiCalendarToday,
     mdiClockOutline,
+    mdiCloseOctagon,
     mdiCloudKeyOutline,
     mdiCodeJson,
     mdiCrop,
@@ -30,7 +31,21 @@
 
   type Item = Omit<TimelineItem, 'done' | 'getDateLabel'> & { date: Date };
 
+  const dangerousPost = Posts.GoogleFlagsImmich;
+
   const items: Item[] = [
+    {
+      icon: mdiCloseOctagon,
+      title: "Google's safe browsing is cursed",
+      iconClass: 'text-danger',
+      description:
+        'Google\'s safe browsing service is cursed because it can flag legitimate sites as "dangerous" without any human review and continue to do so indefinitely.',
+      link: {
+        url: dangerousPost.url,
+        text: 'Blog',
+      },
+      date: dangerousPost.publishedAt.toJSDate(),
+    },
     {
       icon: mdiClockOutline,
       title: 'setTimeout is cursed',
