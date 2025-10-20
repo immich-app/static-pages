@@ -50,7 +50,7 @@ It was super useful to learn that the affected URLs were for our _preview enviro
 
 ## Impact
 
-This issue effects all of the preview environments and other internal services such as zitadel, outline, grafana, victoria metrics, etc. This also impacts our production tile server, which is deployed at `tiles.immich.cloud`. Luckily, the requests to the tile server are made via JavaScript, and since those are not user facing they seem to still be working as expected.
+This issue affects all of our preview environments and other internal services such as zitadel, outline, grafana, victoria metrics, etc. This also impacts our production tile server, which is deployed at `tiles.immich.cloud`. Luckily, the requests to the tile server are made via JavaScript, and since those are not user facing they seem to still be working as expected.
 
 ## "Fixing" the issue
 
