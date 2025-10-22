@@ -29,7 +29,7 @@
   <section>
     <div class="flex flex-col gap-2">
       <Heading size="large" tag="h1" class="flex flex-col md:flex-row md:items-center md:justify-between">
-        <span class="group flex items-center gap-1 {endpoint.deprecated ? 'italic text-gray-500' : ''}">
+        <span class="group flex items-center gap-1 {endpoint.deprecated ? 'text-gray-500 italic' : ''}">
           <span class="flex gap-2">
             <span class={getEndpointColor(endpoint)}>{endpoint.method}</span>
             <span>{endpoint.route}</span>

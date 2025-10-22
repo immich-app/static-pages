@@ -158,7 +158,7 @@
           </div>
         </CardHeader>
         <CardBody>
-          <div class="grid select-none grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          <div class="grid grid-cols-2 gap-4 select-none md:grid-cols-3 lg:grid-cols-4">
             {#each exifUploaderManager.assets as asset (asset.metadata.assetId)}
               {@const selected = exifUploaderManager.selection.includes(asset)}
               <Card

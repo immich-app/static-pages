@@ -29,7 +29,7 @@
     </nav>
   </AppShellHeader>
 
-  <PageContent class="max-w-(--breakpoint-lg) mx-auto w-full">
+  <PageContent class="mx-auto w-full max-w-(--breakpoint-lg)">
     {@render children?.()}
   </PageContent>
 </AppShell>
