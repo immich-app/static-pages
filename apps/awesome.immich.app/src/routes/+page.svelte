@@ -48,7 +48,7 @@
     <hr class="mt-8" />
   {/if}
 
-  <LinkableHeading tag="h2" class="mb-2 mt-6" id={category.id}>
+  <LinkableHeading tag="h2" class="mt-6 mb-2" id={category.id}>
     {category.name} ({category.projects.length})
   </LinkableHeading>
 

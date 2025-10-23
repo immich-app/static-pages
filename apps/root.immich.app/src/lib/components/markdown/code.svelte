@@ -32,7 +32,7 @@
 </script>
 
 {#if multiline}
-  <div class="mb-2 mt-2">
+  <div class="mt-2 mb-2">
     <CodeBlock {code} {language} />
   </div>
 {:else}

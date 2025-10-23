@@ -882,6 +882,6 @@
   <Heading size="title" tag="h1">Roadmap</Heading>
   <Text>{pageMetadata.description}</Text>
 </Stack>
-<div class="max-w-(--breakpoint-md) mx-auto mt-8 flex w-full justify-around">
+<div class="mx-auto mt-8 flex w-full max-w-(--breakpoint-md) justify-around">
   <Timeline items={[...roadmap, ...milestones]} />
 </div>

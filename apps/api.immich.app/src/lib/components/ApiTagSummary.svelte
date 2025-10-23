@@ -18,7 +18,7 @@
       <Button href={endpoint.href} shape="rectangle" color="secondary" fullWidth variant="ghost" class="p-4">
         <div class="flex w-full flex-col">
           <CardTitle>
-            <span class="group flex justify-between gap-2 {endpoint.deprecated ? 'italic text-gray-500' : ''}">
+            <span class="group flex justify-between gap-2 {endpoint.deprecated ? 'text-gray-500 italic' : ''}">
               <span class="flex gap-2">
                 <span class={getEndpointColor(endpoint)}>{endpoint.method}</span>
                 <span>{endpoint.route}</span>

@@ -21,7 +21,7 @@
     />
   </AppShellHeader>
 
-  <PageContent class="max-w-(--breakpoint-lg) mx-auto w-full">
+  <PageContent class="mx-auto w-full max-w-(--breakpoint-lg)">
     <VStack gap={8} class="mt-4 text-center lg:mt-16">
       <Logo size="giant" variant="logo" class="border" />
       <div class="flex flex-col gap-2">

@@ -68,11 +68,11 @@
 
       <div class="absolute -top-[55%] left-0 -z-10 h-[200%] w-full overflow-visible">
         <Logo size="giant" class="z-10 mb-2 h-full w-full antialiased opacity-20 blur-3xl" />
-        <div class="bg-immich-bg/90 absolute left-0 top-0 h-full w-full backdrop-blur-xl dark:bg-transparent"></div>
+        <div class="bg-immich-bg/90 absolute top-0 left-0 h-full w-full backdrop-blur-xl dark:bg-transparent"></div>
       </div>
     </div>
 
-    <hr class="max-w-(--breakpoint-sm) m-2 w-full border-t" />
+    <hr class="m-2 w-full max-w-(--breakpoint-sm) border-t" />
     <Heading size="title" tag="h2">Download mobile app</Heading>
 
     <Text size="large">Download Immich app and start backing up your photos and videos securely to your own server</Text
@@ -89,7 +89,7 @@
 
     <img src={theme.value === 'dark' ? qrCodeDark : qrCodeLight} alt="QRCode" class="h-36 rounded-xl" />
 
-    <hr class="max-w-(--breakpoint-sm) m-8 w-full border-t" />
+    <hr class="m-8 w-full max-w-(--breakpoint-sm) border-t" />
     <Heading size="title" tag="h2">Support the project</Heading>
 
     <Text size="large">
