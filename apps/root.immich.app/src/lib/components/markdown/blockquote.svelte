@@ -9,4 +9,4 @@
   const { children }: Props = $props();
 </script>
 
-<Text {children} class="border-muted border-s-4 ps-4" size="large" variant="italic" />
+<Text {children} class="border-muted border-s-4 ps-4" variant="italic" />

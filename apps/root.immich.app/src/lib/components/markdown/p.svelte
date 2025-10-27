@@ -9,6 +9,6 @@
   const { children }: Props = $props();
 </script>
 
-<Text size="large" class="mb-1">
+<Text class="mb-1">
   {@render children()}
 </Text>
