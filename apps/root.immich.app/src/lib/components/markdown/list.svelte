@@ -7,7 +7,7 @@
   };
 
   const { children, ordered }: Props = $props();
-  const styles = 'list-outside ps-6 w-full flex flex-col gap-1 text-large';
+  const styles = 'list-outside ps-6 w-full flex flex-col gap-1';
 </script>
 
 {#if ordered}

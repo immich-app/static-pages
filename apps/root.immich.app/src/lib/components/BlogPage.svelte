@@ -39,7 +39,7 @@
 
   {@render children?.()}
 
-  <Text size="large" class="mt-4">Cheers,<br />The Immich Team</Text>
+  <Text class="mt-4">Cheers,<br />The Immich Team</Text>
 </Stack>
 
 {#if postScript}
