@@ -1,8 +1,8 @@
+import { svelteMarkdownPreprocess } from '@immich/svelte-markdown-preprocess';
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import dotenv from 'dotenv';
 import { resolve } from 'node:path';
-import { svelteMarkdownPreprocess } from './svelte-markdown-preprocess/index.js';
 
 dotenv.config({ path: '../../.env' });
 
