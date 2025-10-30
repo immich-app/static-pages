@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { TimelineItem } from '$lib';
-  import { Posts, siteMetadata } from '$lib';
+  import { posts, siteMetadata } from '$lib';
   import Timeline from '$lib/components/Timeline.svelte';
   import { Heading, SiteMetadata, Stack, Text } from '@immich/ui';
   import {
@@ -31,7 +31,10 @@
 
   type Item = Omit<TimelineItem, 'done' | 'getDateLabel'> & { date: Date };
 
-  const dangerousPost = Posts.GoogleFlagsImmich;
+  const dangerousPost = posts.find((post) => post.id === '019a01e1-4dc0-73db-aebd-623726a62335');
+  if (!dangerousPost) {
+    throw new Error('Unable to resolve blog post');
+  }
 
   const items: Item[] = [
     {

@@ -1,18 +1,21 @@
+---
+id: 0199bf42-e615-76ad-8bf5-351584cc59c1
+title: Immich introduces product keys
+description: Purchase a product key to support Immich development, FUTO, and open source software.
+publishedAt: 2024-07-18
+authors: [Alex Tran, Jason Rasmussen]
+---
+
 <script lang="ts">
-  import { Posts } from '$lib';
-  import BlogFaqs from '$lib/components/BlogFaqs.svelte';
-  import BlogPage from '$lib/components/BlogPage.svelte';
-  import List from '$lib/components/List.svelte';
-  import { Button, Code, Constants, Heading, Link, Text } from '@immich/ui';
+  import { Button, Constants, Link } from '@immich/ui';
   import { mdiOpenInNew } from '@mdi/js';
 </script>
 
-<BlogPage post={Posts.PurchaseImmich}>
 Hello everybody,
 
 Firstly, on behalf of the Immich team, I'd like to thank everybody for your continuous support of Immich since the very first day! Your contributions, encouragement, and community engagement have helped bring Immich to its current state. The team and I are forever grateful for that.
 
-Since <Link href={Posts.ImmichJoinsFuto.url}>joining FUTO</Link>, one of the goals has been to foster a healthy relationship between the developers and the users. We believe that this enables us to create great software, establish transparent policies and build trust.
+Since [joining FUTO](/blog/immich-joins-futo), one of the goals has been to foster a healthy relationship between the developers and the users. We believe that this enables us to create great software, establish transparent policies and build trust.
 
 We want to build a great software application that brings value to you and your loved ones' lives. We are not using you as a product, i.e., selling or tracking your data. We are not putting annoying ads into our software. We respect your privacy. We want to be compensated for the hard work we put in to build Immich for you.
 
@@ -42,9 +45,7 @@ Thank you again for your support, this will help create a strong foundation and 
 
 Starting with release `v1.109.0` you can use your purchased product key to activate Immich.
 
-</BlogPage>
-
-<BlogFaqs>
+{#snippet postScript()}
 
 ### 1. Where can I purchase a product key?
 
@@ -72,4 +73,4 @@ No, there will never be any paywalled features.
 
 You can email us at `billing@futo.org` with your `orderId` and your email address. Or, you can reach out to us on our <Link href={Constants.Socials.Discord}>Discord</Link>.
 
-</BlogFaqs>
+{/snippet}

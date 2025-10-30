@@ -1,24 +1,35 @@
 <script lang="ts">
-  import type { BlogPost } from '$lib';
   import { blogMetadata } from '$lib';
-  import { Heading, Icon, Link, SiteMetadata, Stack, Text } from '@immich/ui';
+  import { Heading, Icon, Link, Markdown, SiteMetadata, Text } from '@immich/ui';
   import { mdiChevronRight } from '@mdi/js';
   import { DateTime } from 'luxon';
   import type { Snippet } from 'svelte';
 
   type Props = {
-    post: BlogPost;
+    attributes: {
+      title: string;
+      publishedAt: string;
+      modifiedAt?: string;
+      authors: string[];
+      description: string;
+      draft?: boolean;
+    };
     children?: Snippet;
     postScript?: Snippet;
   };
 
-  let { post, children, postScript }: Props = $props();
-  let { title, publishedAt, authors, description } = $derived(post);
+  let { attributes: post, children, postScript }: Props = $props();
+  let { title, publishedAt, authors, description } = $derived({
+    title: post.title,
+    publishedAt: DateTime.fromISO(post.publishedAt),
+    authors: post.authors,
+    description: post.description,
+  });
 </script>
 
 <SiteMetadata site={blogMetadata} page={{ title, description }} />
 
-<Stack gap={2}>
+<div>
   <ul class="text-muted flex place-items-center gap-1">
     <li class="flex place-items-center">
       <Link href="/blog" underline={false}><span class="hover:underline">Blog</span></Link>
@@ -28,7 +39,7 @@
   </ul>
 
   <Heading tag="h1" size="title" class="mt-6">
-    {#if post.isDraft}[Draft]{/if}
+    {#if post.draft}[Draft]{/if}
     {post.title}
   </Heading>
 
@@ -36,13 +47,14 @@
     <Text color="muted" variant="italic">{publishedAt.toLocaleString(DateTime.DATE_FULL)}</Text>
     <Text color="muted">— {authors.join(', ')}</Text>
   </div>
+</div>
 
-  {@render children?.()}
+{@render children?.()}
 
-  <Text class="mt-4">Cheers,<br />The Immich Team</Text>
-</Stack>
+<Text class="mt-4">Cheers,<br />The Immich Team</Text>
 
 {#if postScript}
-  <hr />
+  <Markdown.LineBreak />
+  <Markdown.Heading level={2} id="faqs">FAQs</Markdown.Heading>
   {@render postScript?.()}
 {/if}

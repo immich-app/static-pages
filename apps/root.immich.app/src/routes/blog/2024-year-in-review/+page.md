@@ -1,15 +1,19 @@
+---
+id: 0199bf43-0a6d-720b-ba24-cb6e8277693e
+title: 2024 - A year in review
+description: A review of the major milestones and accomplishments in 2024.
+publishedAt: 2024-12-30
+authors: [Alex Tran]
+---
+
 <script>
   import emailNotifications from '$lib/assets/img/email-notifications.webp';
   import folderView from '$lib/assets/img/folder-view.webp';
   import improvedSearch from '$lib/assets/img/improved-search.webp';
   import networkSwitching from '$lib/assets/img/network-switching.webp';
   import newLogo from '$lib/assets/img/new-logo.webp';
-  import { Posts } from '$lib';
-  import BlogPage from '$lib/components/BlogPage.svelte';
   import { Button, Constants, Link } from '@immich/ui';
 </script>
-
-<BlogPage post={Posts.YearInReview2024}>
 
 Hi everyone,
 
@@ -21,7 +25,7 @@ Since the first day I posted the [video prototype](https://www.reddit.com/r/self
 
 The project's core idea is to do good things without a hidden agenda or ill motives, to give people a delightful choice to manage their digital media besides the solutions from exploitative big cloud providers. Just last year, we were daydreaming of how wonderful it would be if we could do those things daily as our full-time job. One might have said it is good karma, but Louis Rossman from FUTO found us and extended the invitation for the company to fund the project to let us develop the software full-time. It was a dream come true for all the core contributors to talk about Immich, interact with the users, have fun writing code, and build out the features of Immich every day. We would not be here without your love and support for the project.
 
-Similar to <Link href={Posts.YearInReview2023.url}>last year</Link>, here's a recap of everything the project accomplished in 2024.
+Similar to <Link href="/blog/2023-year-in-review">last year</Link>, here's a recap of everything the project accomplished in 2024.
 
 ## Milestones
 
@@ -80,5 +84,3 @@ As always, if you find the project helpful, you can support us at <https://buy.i
 <Button href={Constants.Sites.Buy} color="secondary">Purchase Immich</Button>
 
 ---
-
-</BlogPage>

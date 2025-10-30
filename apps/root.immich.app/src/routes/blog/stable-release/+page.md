@@ -1,14 +1,16 @@
+---
+id: 0199ca17-0cf1-768e-83f8-3049b22212ec
+title: Stable release
+description: Read about the Immich v2.0.0 stable release and what it means for you.
+publishedAt: 2025-10-09
+authors: [Alex Tran, Jason Rasmussen, Zack Pollard]
+---
+
 <script lang="ts">
-  import { Posts } from '$lib';
-  import BlogPage from '$lib/components/BlogPage.svelte';
-  import BlogFaqs from '$lib/components/BlogFaqs.svelte';
-  import { Button, Code, Constants, Link, Text } from '@immich/ui';
   import { mdiOpenInNew } from '@mdi/js';
   import merchStealth from '$lib/assets/img/merch-stealth.webp';
   import retroDisk from '$lib/assets/img/retro-disk.webp';
 </script>
-
-<BlogPage post={Posts.StableRelease}>
 
 ## Welcome
 
@@ -67,9 +69,7 @@ We cannot thank you enough for the support over the past three years. Community 
 
 **Update** &mdash; the live stream is over, but you can re-watch it [here](https://www.youtube.com/watch?v=qgQ4ci2hRMQ).
 
-</BlogPage>
-
-<BlogFaqs>
+{#snippet postScript()}
 
 ### Will there be a live stream?
 
@@ -103,4 +103,4 @@ Any `v2.x.x` version of the mobile app will work with any `2.x.x` version of t
 
 Yes. Immich will continue to build, develop, and release new features.
 
-</BlogFaqs>
+{/snippet}
