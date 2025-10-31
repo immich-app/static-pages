@@ -47,6 +47,9 @@
     <Text color="muted" variant="italic">{publishedAt.toLocaleString(DateTime.DATE_FULL)}</Text>
     <Text color="muted">— {authors.join(', ')}</Text>
   </div>
+
+  <Markdown.Paragraph><em>{description}</em></Markdown.Paragraph>
+  <Markdown.LineBreak />
 </div>
 
 {@render children?.()}
