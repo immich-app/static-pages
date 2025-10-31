@@ -15,8 +15,8 @@
       <Card color="secondary">
         <CardHeader class="group-hover:text-primary">
           <CardTitle class="flex gap-1">
-            <Text color={post.isDraft ? 'muted' : undefined}>
-              {#if post.isDraft}[Draft]{/if}
+            <Text color={post.draft ? 'muted' : undefined}>
+              {#if post.draft}[Draft]{/if}
               {post.title}
             </Text>
           </CardTitle>

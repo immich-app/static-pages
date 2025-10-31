@@ -1,11 +1,15 @@
+---
+id: 0199bf43-cfec-769c-95a8-2ff1c9774fb0
+title: New Svelte component library
+description: Learn more about the Svelte component library that is powering this and other Immich websites.
+publishedAt: 2025-09-25
+authors: [Jason Rasmussen]
+---
+
 <script>
-  import { Posts } from '$lib';
-  import BlogPage from '$lib/components/BlogPage.svelte';
-  import { Button, Constants } from '@immich/ui';
+  import { Button } from '@immich/ui';
   import { siGithub } from 'simple-icons';
 </script>
-
-<BlogPage post={Posts.ImmichUi}>
 
 Last November (2024), I took on the task of trying to build a standalone Svelte component library, based on the Immich
 web application. It was a long, time consuming task, especially since I had no prior experience writing a Svelte
@@ -60,5 +64,3 @@ tests.
 Even though I would say the library is incomplete, it has already been a huge win for the team. We recently launched
 <https://datasets.immich.app/>, which was built by an intern using the component library, and it looks great! We also just launched
 <https://api.immich.app/>, and it similarly looks great and is consistent with our other sites.
-
-</BlogPage>

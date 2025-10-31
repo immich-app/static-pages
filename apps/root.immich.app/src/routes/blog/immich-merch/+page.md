@@ -1,12 +1,16 @@
+---
+id: 0199bf43-3627-71fe-9747-35d71cb778eb
+title: Immich launches merch
+description: The Immich merch store is now live! Get your swag today, and learn about our new mascot, Mich.
+publishedAt: 2025-02-27
+authors: [Zack Pollard, Jason Rasmussen]
+---
+
 <script lang="ts">
-  import { Posts } from '$lib';
-  import BlogPage from '$lib/components/BlogPage.svelte';
   import { Button, Constants, Link } from '@immich/ui';
   import { mdiOpenInNew } from '@mdi/js';
   import img from '$lib/assets/img/merch-website.webp';
 </script>
-
-<BlogPage post={Posts.ImmichStore}>
 
 Hello everybody,
 
@@ -14,7 +18,9 @@ We would like to introduce you to Mich, our mascot, as well as our merch store! 
 
 ---
 
-<img src={img} class="w-full" alt="Immich merch and Mich" />
+<figure>
+  <img src={img} class="w-full pb-4" alt="Immich merch and Mich" />
+</figure>
 
 ---
 
@@ -29,5 +35,3 @@ It is pretty common for new users to be unfamiliar with the meaning or pronuncia
 ---
 
 We hope you like the merch and Mich, now, back to building more features!
-
-</BlogPage>

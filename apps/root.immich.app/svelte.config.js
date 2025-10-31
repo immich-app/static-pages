@@ -13,7 +13,14 @@ const staticFiles = ['/favicon.ico', '/img/social-preview.png'];
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   extensions: ['.svelte', '.md'],
-  preprocess: [svelteMarkdownPreprocess(), vitePreprocess()],
+  preprocess: [
+    svelteMarkdownPreprocess({
+      layouts: {
+        default: '$lib/components/BlogPage.svelte',
+      },
+    }),
+    vitePreprocess(),
+  ],
   kit: {
     adapter: adapter(),
     alias: {

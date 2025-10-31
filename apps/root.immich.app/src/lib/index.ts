@@ -1,5 +1,6 @@
-import { DateTime } from 'luxon';
 import { PUBLIC_IMMICH_ENV } from '$env/static/public';
+import fm from 'front-matter';
+import { DateTime } from 'luxon';
 
 export const siteMetadata = {
   title: 'Immich',
@@ -32,101 +33,77 @@ export type BlogPost = {
   modifiedAt?: DateTime;
   authors: string[];
   url: string;
-  isDraft?: boolean;
+  draft?: boolean;
 };
 
-export const Posts = {
-  GoogleFlagsImmich: {
-    id: '019a01e1-4dc0-73db-aebd-623726a62335',
-    title: 'Google flags Immich sites as dangerous',
-    description: 'How Google actively breaks Immich deployments, an open-source Google Photos alternative',
-    publishedAt: DateTime.fromObject({ year: 2025, month: 10, day: 20 }),
-    authors: ['Jason Rasmussen'],
-    url: '/blog/google-flags-immich-as-dangerous',
-  },
-  StableRelease: {
-    id: '0199ca17-0cf1-768e-83f8-3049b22212ec',
-    title: 'Stable release',
-    description: 'Read about the Immich v2.0.0 stable release and what it means for you.',
-    publishedAt: DateTime.fromObject({ year: 2025, month: 10, day: 9 }),
-    authors: ['Alex Tran', 'Jason Rasmussen', 'Zack Pollard'],
-    url: '/blog/stable-release',
-  },
-  ImmichUi: {
-    id: '0199bf43-cfec-769c-95a8-2ff1c9774fb0',
-    title: 'New Svelte component library',
-    description: 'Learn more about the Svelte component library that is powering this and other Immich websites.',
-    publishedAt: DateTime.fromObject({ year: 2025, month: 9, day: 25 }),
-    authors: ['Jason Rasmussen'],
-    url: '/blog/immich-ui',
-  },
-  NewSyncImplementation: {
-    id: '0199bf43-a42d-75e8-9cab-06041f89ed14',
-    title: 'Sync v2',
-    description: 'Learn how Immich developed a better way to synchronize data with the mobile app.',
-    publishedAt: DateTime.fromObject({ year: 2025, month: 9, day: 24 }),
-    authors: ['Jason Rasmussen'],
-    url: '/blog/sync-v2',
-  },
-  CursedKnowledge: {
-    id: '0199bf43-7a22-7778-a514-2db731e3c99d',
-    title: 'Cursed knowledge',
-    description:
-      "The story behind the Cursed Knowledge page and how we gained the knowledge we have that we wish we didn't.",
-    publishedAt: DateTime.fromObject({ year: 2025, month: 9, day: 23 }),
-    authors: ['Jason Rasmussen'],
-    url: '/blog/cursed-knowledge',
-  },
-  ImmichApi: {
-    id: '0199bf43-5985-714c-8e5c-aa94e65a0176',
-    title: 'New API documentation',
-    description: 'The Immich API documentation has been moved to a new home.',
-    publishedAt: DateTime.fromObject({ year: 2025, month: 9, day: 23 }),
-    authors: ['Jason Rasmussen'],
-    url: '/blog/immich-api-documentation',
-  },
-  ImmichStore: {
-    id: '0199bf43-3627-71fe-9747-35d71cb778eb',
-    title: 'Immich launches merch',
-    description: 'The Immich merch store is now live! Get your swag today, and learn about our new mascot, Mich.',
-    publishedAt: DateTime.fromObject({ year: 2025, month: 2, day: 27 }),
-    authors: ['Zack Pollard', 'Jason Rasmussen'],
-    url: '/blog/immich-merch',
-  },
-  YearInReview2024: {
-    id: '0199bf43-0a6d-720b-ba24-cb6e8277693e',
-    title: '2024 - A year in review',
-    description: 'A review of the major milestones and accomplishments in 2024.',
-    publishedAt: DateTime.fromObject({ year: 2024, month: 12, day: 30 }),
-    authors: ['Alex Tran'],
-    url: '/blog/2024-year-in-review',
-  },
-  PurchaseImmich: {
-    id: '0199bf42-e615-76ad-8bf5-351584cc59c1',
-    title: 'Immich introduces product keys',
-    description: 'Purchase a product key to support Immich development, FUTO, and open source software.',
-    publishedAt: DateTime.fromObject({ year: 2024, month: 7, day: 18 }),
-    authors: ['Alex Tran', 'Jason Rasmussen'],
-    url: '/blog/immich-product-keys',
-  },
-  ImmichJoinsFuto: {
-    id: '0199bf42-bd9c-7461-86a7-2487f13b6e8b',
-    title: 'Immich joins FUTO',
-    description: 'The core team goes full-time on Immich as part of FUTO.',
-    publishedAt: DateTime.fromObject({ year: 2024, month: 5, day: 1 }),
-    authors: ['Alex Tran'],
-    url: '/blog/immich-joins-futo',
-  },
-  YearInReview2023: {
-    id: '0199bf42-8ee2-70cd-b6ad-02222625932b',
-    title: '2023 - A year in review',
-    description: 'A review of the major milestones and accomplishments in 2023.',
-    publishedAt: DateTime.fromObject({ year: 2023, month: 12, day: 30 }),
-    authors: ['Alex Tran'],
-    url: '/blog/2023-year-in-review',
-  },
-} satisfies Record<string, BlogPost>;
+type PostFrontMatter = {
+  id: string;
+  title: string;
+  description: string;
+  publishedAt: Date;
+  modifiedAt?: Date;
+  draft?: boolean;
+  authors: string[];
+};
 
-export const posts: BlogPost[] = (Object.values(Posts) as BlogPost[])
-  .sort((a, b) => b.publishedAt.valueOf() - a.publishedAt.valueOf())
-  .filter((post) => PUBLIC_IMMICH_ENV === 'development' || (post.publishedAt <= DateTime.now() && !post.isDraft));
+const getFrontMatterExample = (missingAttributes: string[]) => {
+  return [
+    '---',
+    ...Object.entries({
+      id: 'your-uuid-v7-here',
+      title: 'Your post title',
+      description: 'A brief description of your post',
+      publishedAt: '2025-10-01',
+      authors: '[Author 1, Author 2]',
+    })
+      .filter(([key]) => missingAttributes.includes(key))
+      .map(([key, value]) => `${key}: ${value}`),
+    '---',
+  ].join('\n');
+};
+
+const asPost = (filename: string, attributes: PostFrontMatter) => {
+  const requiredAttributes = ['id', 'title', 'description', 'publishedAt', 'authors'];
+  const missingAttributes = requiredAttributes.filter((attr) => !(attr in attributes));
+  if (missingAttributes.length > 0) {
+    throw new Error(
+      `${filename} is missing ${missingAttributes.join(', ')}.\n${getFrontMatterExample(missingAttributes)}`,
+    );
+  }
+
+  return {
+    id: attributes.id,
+    title: attributes.title,
+    description: attributes.description,
+    publishedAt: DateTime.fromJSDate(attributes.publishedAt) as DateTime<true>,
+    modifiedAt: attributes.modifiedAt ? (DateTime.fromJSDate(attributes.modifiedAt) as DateTime<true>) : undefined,
+    authors: attributes.authors,
+    url: `/blog/${filename}`,
+    draft: attributes.draft === true,
+  };
+};
+
+const getPosts = () => {
+  const idMap = new Map<string, string>();
+  const modules = import.meta.glob<{ default: string }>('../routes/blog/**/*.md', { query: '?raw', eager: true });
+  const posts: BlogPost[] = [];
+  for (const [path, { default: content }] of Object.entries(modules)) {
+    const post = asPost(path.split('/').at(-2)!, fm<PostFrontMatter>(content).attributes);
+
+    if (idMap.has(post.id)) {
+      throw new Error(
+        `Detected a duplicate blog ID! ${post.id} is used in ${path} and ${idMap.get(post.id)}. Hint: use pnpm uuid to generate a new uuid-v7`,
+      );
+    }
+
+    idMap.set(post.id, path);
+
+    if (PUBLIC_IMMICH_ENV === 'development' || (post.publishedAt <= DateTime.now() && !post.draft)) {
+      posts.push(post);
+    }
+  }
+
+  return posts.sort((a, b) => b.publishedAt.valueOf() - a.publishedAt.valueOf());
+};
+
+export const posts: BlogPost[] = getPosts();

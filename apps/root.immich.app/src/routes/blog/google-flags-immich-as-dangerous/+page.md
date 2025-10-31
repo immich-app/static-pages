@@ -1,14 +1,15 @@
+---
+id: 019a01e1-4dc0-73db-aebd-623726a62335
+title: Google flags Immich sites as dangerous
+description: How Google actively breaks Immich deployments, an open-source Google Photos alternative.
+publishedAt: 2025-10-20
+authors: [Jason Rasmussen]
+---
+
 <script lang="ts">
-  import { Posts } from '$lib';
-  import BlogPage from '$lib/components/BlogPage.svelte';
-  import BlogFaqs from '$lib/components/BlogFaqs.svelte';
-  import { Button, Code, Constants, Link, Text } from '@immich/ui';
-  import { mdiOpenInNew } from '@mdi/js';
   import dangerousSite from '$lib/assets/img/dangerous-site.webp';
   import dangerousSiteAppeal from '$lib/assets/img/dangerous-site-appeal.webp';
 </script>
-
-<BlogPage post={Posts.GoogleFlagsImmich}>
 
 Earlier this month all of our `*.immich.cloud` websites were marked as dangerous and users started being shown the dreaded "red-screen-of-death" page.
 
@@ -60,7 +61,7 @@ The Google Search Console has a `Request Review` button, where you can explain h
 
 ---
 
-## <img src={dangerousSiteAppeal} alt="Dangerous site appeal" class='rounded-lg my-4'>
+<img src={dangerousSiteAppeal} alt="Dangerous site appeal" class='rounded-lg my-4'>
 
 ---
 
@@ -96,5 +97,3 @@ Google Safe Browsing looks to be have been built without consideration for open-
 - etc.
 
 Unfortunately, Google seems to have the ability to arbitrarily flag any domain and make it immediately unaccessible to users. I'm not sure what, if anything, can be done when this happens, except constantly request another review from the all mighty Google.
-
-</BlogPage>

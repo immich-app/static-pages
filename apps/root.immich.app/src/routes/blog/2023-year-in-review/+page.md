@@ -1,9 +1,10 @@
-<script>
-  import { Posts } from '$lib';
-  import BlogPage from '$lib/components/BlogPage.svelte';
-</script>
-
-<BlogPage post={Posts.YearInReview2023}>
+---
+id: 0199bf42-8ee2-70cd-b6ad-02222625932b
+title: 2023 - A year in review
+description: A review of the major milestones and accomplishments in 2023.
+publishedAt: 2023-12-30
+authors: [Alex Tran]
+---
 
 Hi everyone,
 
@@ -74,5 +75,3 @@ Diving into the next year, the team will continue to build on the foundation we 
 My long-term goal is to help hone Immich into a diamond in the FOSS space, where the UI, UX, development experiences, documentation, and quality are at a high standard while remaining free for everybody to use.
 
 I hope you enjoy Immich and have a happy and peaceful holiday.
-
-</BlogPage>

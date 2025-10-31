@@ -1,12 +1,16 @@
+---
+id: 0199bf43-7a22-7778-a514-2db731e3c99d
+title: Cursed knowledge
+description: "The story behind the Cursed Knowledge page and how we gained the knowledge we have that we wish we didn't."
+publishedAt: 2025-09-23
+authors: [Jason Rasmussen]
+---
+
 <script>
-  import { Posts } from '$lib';
-  import BlogPage from '$lib/components/BlogPage.svelte';
   import GithubReference from '$lib/components/GithubReference.svelte';
   import { Button, Constants } from '@immich/ui';
   import { mdiOpenInNew } from '@mdi/js';
 </script>
-
-<BlogPage post={Posts.CursedKnowledge}>
 
 After working on Immich for a year or two, the team, collectively, had learned a lot of _weird_ stuff. We often found ourselves discussing these oddities, which we internally dubbed "cursed knowledge" — knowledge we had, that we wished we did _not_ have. The range of topics varied from obscure bugs to random, unintuitive library behavior. Eventually, we decided to create a dedicated page to document what we had learned.
 
@@ -23,5 +27,3 @@ It is worth clarifying that the purpose of this page is not to _complain_. We, m
 It is also worth mentioning that some of the cursed knowledge is now "legacy". Some of the issues, like the Cloudflare `Fetch` behavior is _less cursed_ because the setting that enabled this behavior now has a different default, and it is much more difficult to enable it unknowingly.
 
 Inevitably, and somewhat reluctantly, we will likely continue to gain _even more_ cursed knowledge. We will continue to update our page as this happens, so check back periodically for new entries!
-
-</BlogPage>
