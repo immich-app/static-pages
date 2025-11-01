@@ -1,0 +1,45 @@
+name: Import Outline post
+on:
+  workflow_dispatch:
+    inputs:
+      post_url:
+        required: true
+        description: 'The URL of the post to import'
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@67018539274d69449ef7c02e8e71183d1719ab42 # v2.1.4
+        with:
+          app-id: ${{ secrets.PUSH_O_MATIC_APP_ID }}
+          private-key: ${{ secrets.PUSH_O_MATIC_APP_KEY }}
+
+      - name: Checkout code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+          ref: 'main'
+
+      - name: Import post
+        id: import
+        env:
+          OUTLINE_POST_URL: ${{ inputs.post_url }}
+          OUTLINE_API_KEY: ${{ secrets.OUTLINE_API_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.STATIC_BUCKET_NAME }}
+          R2_ENDPOINT_URL: ${{ secrets.STATIC_BUCKET_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.STATIC_BUCKET_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.STATIC_BUCKET_KEY_SECRET }}
+          R2_PUBLIC_URL: "https://static.immich.cloud"
+        run: uv run --script import-post.py
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          add-paths: apps/root.immich.app/src/routes/blog
+          commit-message: "blog: import ${{ steps.import.outputs.slug }}"
+          title: "blog: import ${{ steps.import.outputs.slug }}"
+          branch: "blog/${{ steps.import.outputs.uuid }}"
