@@ -38,11 +38,14 @@ jobs:
           R2_PUBLIC_URL: "https://static.immich.cloud"
         run: uv run --script import-post.py
 
+      - name: Format
+        run: pnpm --filter "...[HEAD]" run format:fix
+
       - name: Create PR
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
         with:
           token: ${{ steps.generate-token.outputs.token }}
           add-paths: apps/root.immich.app/src/routes/blog
-          commit-message: "blog: import ${{ steps.import.outputs.slug }}"
-          title: "blog: import ${{ steps.import.outputs.slug }}"
+          commit-message: "feat: import ${{ steps.import.outputs.slug }}"
+          title: "feat: import ${{ steps.import.outputs.slug }}"
           branch: "blog/${{ steps.import.outputs.uuid }}"
