@@ -65,10 +65,10 @@ def convert_to_webp(image_data: bytes, quality: int = WEBP_QUALITY) -> bytes:
 
 
 class ImageProcessingRenderer(MarkdownRenderer):
-  def __init__(self, importer: 'PostImporter', slug: str):
+  def __init__(self, importer: 'PostImporter', uuid: str):
     super().__init__()
     self.importer = importer
-    self.slug = slug
+    self.uuid = uuid
 
   def render_image(self, token: span_token.Image) -> Iterable[Fragment]:
     original_url = token.src
@@ -82,7 +82,7 @@ class ImageProcessingRenderer(MarkdownRenderer):
     content_hash = hash_content(image_data)
     webp_data = convert_to_webp(image_data)
 
-    s3_key = f"{BLOG_PREFIX}/{self.slug}/{content_hash}.webp"
+    s3_key = f"{BLOG_PREFIX}/{self.uuid}/{content_hash}.webp"
     self.importer.upload_to_s3(webp_data, s3_key)
 
     token.src = f"{self.importer.r2_public_url}/{s3_key}"
@@ -149,8 +149,8 @@ class PostImporter:
     etag = response.get('ETag', '').strip('"')
     print(f"Uploaded to S3: {key} (ETag: {etag})")
 
-  def process_images(self, post_data: frontmatter.Post, slug: str) -> str:
-    with ImageProcessingRenderer(self, slug) as renderer:
+  def process_images(self, post_data: frontmatter.Post, uuid: str) -> str:
+    with ImageProcessingRenderer(self, uuid) as renderer:
       doc = mistletoe.Document(post_data.content)  # TODO: Verify content has no frontmatter
       return renderer.render(doc)
 
@@ -171,11 +171,12 @@ class PostImporter:
 
   def run(self) -> None:
     post, post_data = self.fetch_post_from_outline()
+    uuid = post['data']['id']
     slug = post_data.get('slug') or slugify(post['data']['title'])
 
-    self.clear_s3_directory(f"{BLOG_PREFIX}/{slug}/")
+    self.clear_s3_directory(f"{BLOG_PREFIX}/{uuid}/")
 
-    rendered_markdown = self.process_images(post_data, slug)
+    rendered_markdown = self.process_images(post_data, uuid)
     post_data.content = rendered_markdown
 
     self.update_frontmatter(post_data, post, slug)
