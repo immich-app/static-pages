@@ -185,5 +185,10 @@ class PostImporter:
     print(f"\nPost written to: {output_file}")
     print(f"Post slug: {slug}")
 
+    if output := os.environ.get('GITHUB_OUTPUT'):
+      with open(output, 'a') as o:
+        o.write(f"slug={slug}\n")
+        o.write(f"uuid={uuid}\n")
+
 
 PostImporter().run()
