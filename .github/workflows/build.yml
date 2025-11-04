@@ -54,7 +54,7 @@ jobs:
         run: pnpm build
 
       - name: Upload build output
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: build-frontend-output-${{ matrix.app_name }}
           include-hidden-files: true
@@ -95,7 +95,7 @@ jobs:
         run: npx wrangler build
 
       - name: Upload build output
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: build-backend-output-${{ matrix.app_name }}
           path: 'apps/${{ matrix.app_name }}.immich.app/backend/dist'
@@ -121,7 +121,7 @@ jobs:
           persist-credentials: false
 
       - name: Get build artifact
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           name: 'build-frontend-output-${{ matrix.app_name }}'
           path: '${{ github.workspace }}/dist/frontend'
@@ -137,7 +137,7 @@ jobs:
 
       - name: Get backend build artifact
         if: ${{ env.has_backend == 'true' }}
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           name: 'build-backend-output-${{ matrix.app_name }}'
           path: '${{ github.workspace }}/dist/backend'
