@@ -93,6 +93,7 @@
   } from '@mdi/js';
 
   const releases = {
+    'v2.2.0': new Date(2025, 9, 30),
     'v2.0.0': new Date(2025, 9, 1),
     'v1.141.1': new Date(2025, 8, 8),
     'v1.135.0': new Date(2025, 5, 18),
@@ -234,11 +235,6 @@
       description: 'Upload large files in smaller chunks to improve reliability',
     },
     {
-      icon: mdiOcr,
-      title: 'Optical character recognition (OCR)',
-      description: 'Use machine learning to extract text from images and make it searchable',
-    },
-    {
       icon: mdiCameraBurst,
       title: 'Automatic stacking',
       description: 'Automatically stack burst photos',
@@ -256,6 +252,12 @@
   }));
 
   const milestones: TimelineItem[] = [
+    releaseItem({
+      icon: mdiOcr,
+      title: 'Optical character recognition (OCR)',
+      description: 'Use machine learning to extract text from images and make it searchable',
+      release: 'v2.2.0',
+    }),
     starMilestone(80_000, new Date(2025, 9, 5)),
     releaseItem({
       icon: mdiDisc,
