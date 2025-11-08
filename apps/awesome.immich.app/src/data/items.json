@@ -125,6 +125,11 @@
         "title": "Immich Upload Optimizer",
         "description": "Automatically optimize files uploaded to Immich in order to save storage space",
         "href": "https://github.com/miguelangel-nubla/immich-upload-optimizer"
+      },
+      {
+        "title": "Telegram to Immich Bot",
+        "description": "Telegram bot for uploading files directly to your Immich instance, preserving the metadata",
+        "href": "https://github.com/myanesp/telegram-immich-bot"
       }
     ]
   },
