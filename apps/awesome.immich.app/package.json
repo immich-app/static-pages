@@ -48,7 +48,7 @@
     "vitest-browser-svelte": "^2.0.0"
   },
   "dependencies": {
-    "@immich/ui": "^0.40.0",
+    "@immich/ui": "^0.41.0",
     "@mdi/js": "^7.4.47"
   }
 }
