@@ -20,7 +20,10 @@ type Linkable<T> = T & {
 };
 
 export type ApiModel = Linkable<SchemaObject>;
-export type ApiEndpointTag = Linkable<{ endpoints: Linkable<ApiEndpoint>[] }>;
+export type ApiEndpointTag = Linkable<{
+  endpoints: Linkable<ApiEndpoint>[];
+  description?: string;
+}>;
 export type ApiEndpoint = {
   name: string;
   method: ApiMethod;
@@ -65,6 +68,7 @@ const methodColor: Partial<Record<ApiMethod, string>> = {
   GET: 'text-success',
   POST: 'text-info',
   PUT: 'text-warning',
+  PATCH: 'text-warning',
   DELETE: 'text-danger',
 };
 export const getEndpointColor = (endpoint: ApiEndpoint) =>
@@ -167,16 +171,26 @@ export const parseSpec = (spec: OpenAPIObject) => {
     }
   }
 
+  const addTag = (tag: { name: string; description?: string }) => {
+    if (!tagsMap[tag.name]) {
+      tagsMap[tag.name] = {
+        href: getTagHref(tag.name),
+        name: tag.name,
+        description: tag.description,
+        endpoints: [],
+      };
+    }
+  };
+
   const tagsMap: Record<string, ApiEndpointTag> = {};
+  for (const { name, description } of Object.values(spec.tags ?? [])) {
+    addTag({ name, description });
+  }
 
   for (const item of Object.values(endpointsMap)) {
     for (const tag of item.tags) {
       if (!tagsMap[tag]) {
-        tagsMap[tag] = {
-          href: getTagHref(tag),
-          name: tag,
-          endpoints: [],
-        };
+        addTag({ name: tag });
       }
 
       const endpointHref = `${tagsMap[tag].href}/${item.operationId}` as Pathname;
@@ -242,11 +256,12 @@ let openApi: ReturnType<typeof parseSpec> | undefined;
 type Fetch = typeof fetch;
 export const loadOpenApi = async (fetch: Fetch) => {
   if (!openApi) {
-    console.log(`Loading open-api from ${PUBLIC_IMMICH_SPEC_URL}`);
+    const url = PUBLIC_IMMICH_SPEC_URL;
+    console.log(`Loading open-api from ${url}`);
 
-    const response = await fetch(PUBLIC_IMMICH_SPEC_URL);
+    const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`Request returned non-200 (${response.status})`);
+      throw new Error(`Failed to load url: ${url}. Received status: ${response.status}`);
     }
 
     const spec = (await response.json()) as unknown as OpenAPIObject;
