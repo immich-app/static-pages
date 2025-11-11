@@ -4,13 +4,14 @@
   import { getOpenApi } from '$lib/services/open-api';
   import {
     asText,
-    CommandPalette,
+    CommandPaletteContext,
     commandPaletteManager,
     initializeTheme,
     onThemeChange,
     siteCommands,
     Theme,
     theme,
+    type CommandItem,
   } from '@immich/ui';
   import { mdiApi, mdiScriptText, mdiSend, mdiTag, mdiTagMultiple } from '@mdi/js';
   import { type Snippet } from 'svelte';
@@ -29,11 +30,12 @@
   };
 
   const { tags, models } = getOpenApi();
+  const commands: CommandItem[] = [];
 
-  commandPaletteManager.reset();
+  commandPaletteManager.enable();
 
   for (const tag of tags) {
-    commandPaletteManager.addCommands({
+    commands.push({
       icon: mdiTagMultiple,
       iconClass: 'text-pink-700 dark:text-pink-200',
       type: 'Tag',
@@ -43,7 +45,7 @@
     });
 
     for (const endpoint of tag.endpoints) {
-      commandPaletteManager.addCommands({
+      commands.push({
         icon: mdiApi,
         type: 'Endpoint',
         iconClass: 'text-indigo-700 dark:text-indigo-200',
@@ -56,7 +58,7 @@
   }
 
   for (const model of models) {
-    commandPaletteManager.addCommands({
+    commands.push({
       icon: mdiTag,
       iconClass: 'text-violet-700 dark:text-violet-200',
       type: 'Model',
@@ -67,8 +69,8 @@
     });
   }
 
-  commandPaletteManager.addCommands(
-    [
+  commands.push(
+    ...[
       {
         title: 'Introduction',
         description: 'Overview of Immich API',
@@ -119,8 +121,8 @@
     })),
   );
 
-  commandPaletteManager.addCommands(
-    [
+  commands.push(
+    ...[
       {
         title: 'Toggle theme',
         description: 'Toggle between light and dark theme',
@@ -135,11 +137,9 @@
     })),
   );
 
-  commandPaletteManager.addCommands(siteCommands);
-
-  commandPaletteManager.enable();
+  commands.push(...siteCommands);
 </script>
 
-<CommandPalette />
+<CommandPaletteContext {commands} />
 
 {@render children?.()}
