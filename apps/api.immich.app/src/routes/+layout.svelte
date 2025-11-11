@@ -31,11 +31,13 @@
     onThemeChange();
   };
 
-  const init = () => {
+  commandPaletteManager.enable();
+
+  const commands = $state<CommandItem[]>([]);
+
+  try {
     const { tags, models } = getOpenApi();
     const commands: CommandItem[] = [];
-
-    commandPaletteManager.enable();
 
     for (const tag of tags) {
       commands.push({
@@ -71,84 +73,81 @@
         text: asText(model.name, model.title, model.description),
       });
     }
+  } catch {
+    // noop
+  }
 
-    commands.push(
-      ...[
-        {
-          title: 'Introduction',
-          description: 'Overview of Immich API',
-          href: ApiPage.Introduction,
-          text: asText('introduction'),
-        },
-        {
-          title: 'Getting started',
-          description: 'Learn how to get started with Immich API',
-          href: ApiPage.GettingStarted,
-          text: asText('getting', 'started'),
-        },
-        {
-          title: 'Authentication',
-          description: 'Learn how authentication works in the Immich API',
-          href: ApiPage.Authentication,
-          text: asText('authentication', 'authorization'),
-        },
-        {
-          title: 'Permissions',
-          description: 'Learn how permissions work with the Immich API',
-          href: ApiPage.Permissions,
-          text: asText('permissions'),
-        },
-        {
-          title: 'SDK',
-          description: 'Learn about the @immich/sdk generated client',
-          href: ApiPage.Sdk,
-          text: asText('@immich/sdk'),
-        },
-        {
-          title: 'Endpoints',
-          description: 'A list of all the endpoints in the Immich API',
-          href: ApiPage.Endpoints,
-          text: asText('overview', 'endpoints'),
-        },
-        {
-          title: 'Models',
-          description: 'A list of all the models in the Immich API',
-          href: ApiPage.Models,
-          text: asText('overview', 'models'),
-        },
-      ].map((item) => ({
-        icon: mdiScriptText,
-        iconClass: 'text-teal-800 dark:text-teal-200',
-        type: 'Page',
-        ...item,
-      })),
-    );
-
-    commands.push(
-      ...[
-        {
-          title: 'Toggle theme',
-          description: 'Toggle between light and dark theme',
-          action: () => handleToggleTheme(),
-          text: asText('theme', 'toggle', 'dark', 'light'),
-        },
-      ].map((item) => ({
-        icon: mdiSend,
-        iconClass: 'text-purple-800 dark:text-purple-200',
-        type: 'Action',
-        ...item,
-      })),
-    );
-
-    commands.push(...siteCommands);
-
-    return commands;
-  };
+  commands.push(
+    ...[
+      {
+        title: 'Introduction',
+        description: 'Overview of Immich API',
+        href: ApiPage.Introduction,
+        text: asText('introduction'),
+      },
+      {
+        title: 'Getting started',
+        description: 'Learn how to get started with Immich API',
+        href: ApiPage.GettingStarted,
+        text: asText('getting', 'started'),
+      },
+      {
+        title: 'Authentication',
+        description: 'Learn how authentication works in the Immich API',
+        href: ApiPage.Authentication,
+        text: asText('authentication', 'authorization'),
+      },
+      {
+        title: 'Permissions',
+        description: 'Learn how permissions work with the Immich API',
+        href: ApiPage.Permissions,
+        text: asText('permissions'),
+      },
+      {
+        title: 'SDK',
+        description: 'Learn about the @immich/sdk generated client',
+        href: ApiPage.Sdk,
+        text: asText('@immich/sdk'),
+      },
+      {
+        title: 'Endpoints',
+        description: 'A list of all the endpoints in the Immich API',
+        href: ApiPage.Endpoints,
+        text: asText('overview', 'endpoints'),
+      },
+      {
+        title: 'Models',
+        description: 'A list of all the models in the Immich API',
+        href: ApiPage.Models,
+        text: asText('overview', 'models'),
+      },
+    ].map((item) => ({
+      icon: mdiScriptText,
+      iconClass: 'text-teal-800 dark:text-teal-200',
+      type: 'Page',
+      ...item,
+    })),
+    ...[
+      {
+        title: 'Toggle theme',
+        description: 'Toggle between light and dark theme',
+        action: () => handleToggleTheme(),
+        text: asText('theme', 'toggle', 'dark', 'light'),
+      },
+    ].map((item) => ({
+      icon: mdiSend,
+      iconClass: 'text-purple-800 dark:text-purple-200',
+      type: 'Action',
+      ...item,
+    })),
+    ...siteCommands,
+  );
 </script>
+
+<CommandPaletteContext {commands} />
 
 {#if page.data.error}
   <ErrorLayout error={page.data.error}></ErrorLayout>
 {:else}
-  <CommandPaletteContext commands={init()} />
   {@render children?.()}
 {/if}
