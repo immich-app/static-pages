@@ -76,10 +76,14 @@ export interface OperationObject {
   deprecated?: boolean;
   security?: SecurityRequirementObject[];
   servers?: ServerObject[];
-  'x-immich-permission'?: string;
-  'x-immich-admin-only'?: boolean;
-  'x-immich-lifecycle'?: { deprecatedAt?: string; addedAt?: string };
 }
+export type State = 'Stable' | 'Alpha' | 'Beta' | 'Deprecated' | 'Internal';
+export type HistoryItem = {
+  version: string;
+  state: State | 'Added' | 'Updated';
+  description?: string;
+  replacementId?: string;
+};
 export interface ExternalDocumentationObject {
   description?: string;
   url: string;

@@ -2,11 +2,14 @@ import type { Pathname } from '$app/types';
 import { PUBLIC_IMMICH_SPEC_URL } from '$env/static/public';
 import { ApiPage } from '$lib';
 import type {
+  HistoryItem,
   OpenAPIObject,
+  OperationObject,
   ParameterObject,
   ReferenceObject,
   RequestBodyObject,
   SchemaObject,
+  State,
 } from '$lib/services/open-api.d';
 
 export type ApiMethod = 'GET' | 'PUT' | 'POST' | 'DELETE' | 'OPTIONS' | 'HEAD' | 'PATCH';
@@ -17,6 +20,13 @@ type Linkable<T> = T & {
   name: string;
   previous?: Linkable<T>;
   next?: Linkable<T>;
+};
+
+export type ApiCustomExtensions<T> = T & {
+  'x-immich-permission'?: string;
+  'x-immich-admin-only'?: boolean;
+  'x-immich-history'?: HistoryItem[];
+  'x-immich-state'?: State;
 };
 
 export type ApiModel = Linkable<SchemaObject>;
@@ -38,11 +48,19 @@ export type ApiEndpoint = {
   tags: string[];
   authentication: AuthenticationMethod[];
   permission?: string;
-  params: ParameterObject[];
-  queryParams: ParameterObject[];
+  params: ApiParam[];
+  queryParams: ApiParam[];
   requestBody?: ReferenceObject;
   responses: ApiEndpointResponse[];
+  history?: HistoryItem[];
+  state?: State;
 };
+
+export type ApiParam = ParameterObject & {
+  state?: State;
+  history?: HistoryItem[];
+};
+
 type ApiEndpointResponse = {
   status: number;
   description?: string;
@@ -59,6 +77,10 @@ const isParameterObject =
 const asSlug = (tag: string) => tag.toLowerCase().replace(/\s/g, '-');
 const getModelHref = (model: string) => `${ApiPage.Models}/${model}` as Pathname;
 const getTagHref = (tag: string) => `${ApiPage.Endpoints}/${asSlug(tag)}` as Pathname;
+
+export const withExtensions = <T>(param: ApiCustomExtensions<T>): T & { history?: HistoryItem[]; state?: State } => {
+  return { ...param, history: param['x-immich-history'], state: param['x-immich-state'] };
+};
 
 export const getRefName = (ref: ReferenceObject) => ref.$ref.replace('#/components/schemas/', '');
 export const getRefHref = (ref: ReferenceObject) => getModelHref(getRefName(ref));
@@ -86,7 +108,7 @@ export const parseSpec = (spec: OpenAPIObject) => {
 
   const endpointsMap: Record<string, ApiEndpoint> = {};
   for (const [route, methods] of Object.entries(spec.paths)) {
-    for (const [method, item] of Object.entries({
+    for (const [method, itemRaw] of Object.entries({
       get: methods.get,
       put: methods.put,
       post: methods.post,
@@ -96,6 +118,7 @@ export const parseSpec = (spec: OpenAPIObject) => {
       patch: methods.patch,
       trace: methods.trace,
     })) {
+      const item = itemRaw as ApiCustomExtensions<OperationObject> | undefined;
       if (!item) {
         continue;
       }
@@ -151,6 +174,8 @@ export const parseSpec = (spec: OpenAPIObject) => {
         name: operationId || 'unknown',
         authentication: authentication.filter(Boolean),
         responses,
+        history: item['x-immich-history'],
+        state: item['x-immich-state'],
         permission: item['x-immich-permission'],
         deprecated: item.deprecated,
         adminRoute: item['x-immich-admin-only'] ?? false,
