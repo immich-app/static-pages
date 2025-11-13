@@ -1,13 +1,14 @@
 <script lang="ts">
   import LinkableHeading from '$common/components/LinkableHeading.svelte';
   import ApiAdminRouteBadge from '$lib/components/ApiAdminRouteBadge.svelte';
-  import ApiDeprecatedBadge from '$lib/components/ApiDeprecatedBadge.svelte';
+  import ApiHistory from '$lib/components/ApiHistory.svelte';
   import ApiParams from '$lib/components/ApiParams.svelte';
   import ApiPermission from '$lib/components/ApiPermission.svelte';
   import ApiPlayground from '$lib/components/ApiPlayground.svelte';
   import ApiPublicRouteBadge from '$lib/components/ApiPublicRouteBadge.svelte';
   import ApiSchema from '$lib/components/ApiSchema.svelte';
   import ApiSharedLinkRouteBadge from '$lib/components/ApiSharedLinkRouteBadge.svelte';
+  import ApiState from '$lib/components/ApiState.svelte';
   import { getEndpointColor, getOpenApi, isRef } from '$lib/services/open-api';
   import { Button, CommandPaletteContext, Heading, Icon, Stack, Text, type CommandItem } from '@immich/ui';
   import { mdiArrowLeft, mdiArrowRight } from '@mdi/js';
@@ -65,9 +66,9 @@
       </div>
 
       <div class="flex gap-1">
-        {#if endpoint.deprecated}
+        {#if endpoint.state}
           <div class="my-1">
-            <ApiDeprecatedBadge />
+            <ApiState state={endpoint.state} />
           </div>
         {/if}
 
@@ -153,6 +154,13 @@
           {/each}
         </div>
       {/if}
+    </section>
+  {/if}
+
+  {#if endpoint.history}
+    <section class="flex flex-col gap-2">
+      <Heading tag="h2" size="small">History</Heading>
+      <ApiHistory history={endpoint.history} />
     </section>
   {/if}
 

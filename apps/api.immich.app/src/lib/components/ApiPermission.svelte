@@ -7,8 +7,6 @@
 </script>
 
 <span
-  class="text-dark rounded-lg bg-purple-200 px-2 py-1 dark:bg-purple-900 dark:text-purple-50"
-  title="The {value} permission"
+  class="text-dark rounded-lg bg-purple-200 px-2 py-0.5 text-sm dark:bg-purple-900 dark:text-purple-50"
+  title="The {value} permission">Permission: {value}</span
 >
-  <span class="font-mono">{value}</span>
-</span>
