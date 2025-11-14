@@ -207,6 +207,11 @@
         "title": "Trust Self Signed Certificates with Immich - OAuth Setup",
         "description": "Set up Certificate Authority trust with Immich, and your private OAuth2/OpenID service, while using a private CA for HTTPS communication.",
         "href": "https://github.com/immich-app/immich/discussions/18614"
+      },
+      {
+        "title": "How-To Install Immich on Rockstor NAS",
+        "description": "Set up Immich with External Libraries on your Rockstor NAS server.",
+        "href": "https://rockstor.com/docs/interface/docker-based-rock-ons/immich.html"
       }
     ]
   },
