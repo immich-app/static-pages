@@ -1,16 +1,19 @@
 <script lang="ts">
+  import { page } from '$app/state';
   import { ApiPage } from '$lib';
   import '$lib/app.css';
+  import ErrorLayout from '$lib/components/ErrorLayout.svelte';
   import { getOpenApi } from '$lib/services/open-api';
   import {
     asText,
-    CommandPalette,
+    CommandPaletteContext,
     commandPaletteManager,
     initializeTheme,
     onThemeChange,
     siteCommands,
     Theme,
     theme,
+    type CommandItem,
   } from '@immich/ui';
   import { mdiApi, mdiScriptText, mdiSend, mdiTag, mdiTagMultiple } from '@mdi/js';
   import { type Snippet } from 'svelte';
@@ -28,47 +31,54 @@
     onThemeChange();
   };
 
-  const { tags, models } = getOpenApi();
+  commandPaletteManager.enable();
 
-  commandPaletteManager.reset();
+  const commands = $state<CommandItem[]>([]);
 
-  for (const tag of tags) {
-    commandPaletteManager.addCommands({
-      icon: mdiTagMultiple,
-      iconClass: 'text-pink-700 dark:text-pink-200',
-      type: 'Tag',
-      title: tag.name,
-      href: tag.href,
-      text: asText(tag.name),
-    });
+  try {
+    const { tags, models } = getOpenApi();
+    const commands: CommandItem[] = [];
 
-    for (const endpoint of tag.endpoints) {
-      commandPaletteManager.addCommands({
-        icon: mdiApi,
-        type: 'Endpoint',
-        iconClass: 'text-indigo-700 dark:text-indigo-200',
-        title: endpoint.operationId,
-        description: endpoint.description,
-        href: endpoint.href,
-        text: asText(endpoint.operationId, endpoint.name, endpoint.description),
+    for (const tag of tags) {
+      commands.push({
+        icon: mdiTagMultiple,
+        iconClass: 'text-pink-700 dark:text-pink-200',
+        type: 'Tag',
+        title: tag.name,
+        href: tag.href,
+        text: asText(tag.name),
+      });
+
+      for (const endpoint of tag.endpoints) {
+        commands.push({
+          icon: mdiApi,
+          type: 'Endpoint',
+          iconClass: 'text-indigo-700 dark:text-indigo-200',
+          title: endpoint.operationId,
+          description: endpoint.description,
+          href: endpoint.href,
+          text: asText(endpoint.operationId, endpoint.name, endpoint.description),
+        });
+      }
+    }
+
+    for (const model of models) {
+      commands.push({
+        icon: mdiTag,
+        iconClass: 'text-violet-700 dark:text-violet-200',
+        type: 'Model',
+        title: model.name,
+        description: model.description,
+        href: model.href,
+        text: asText(model.name, model.title, model.description),
       });
     }
+  } catch {
+    // noop
   }
 
-  for (const model of models) {
-    commandPaletteManager.addCommands({
-      icon: mdiTag,
-      iconClass: 'text-violet-700 dark:text-violet-200',
-      type: 'Model',
-      title: model.name,
-      description: model.description,
-      href: model.href,
-      text: asText(model.name, model.title, model.description),
-    });
-  }
-
-  commandPaletteManager.addCommands(
-    [
+  commands.push(
+    ...[
       {
         title: 'Introduction',
         description: 'Overview of Immich API',
@@ -117,10 +127,7 @@
       type: 'Page',
       ...item,
     })),
-  );
-
-  commandPaletteManager.addCommands(
-    [
+    ...[
       {
         title: 'Toggle theme',
         description: 'Toggle between light and dark theme',
@@ -133,13 +140,14 @@
       type: 'Action',
       ...item,
     })),
+    ...siteCommands,
   );
-
-  commandPaletteManager.addCommands(siteCommands);
-
-  commandPaletteManager.enable();
 </script>
 
-<CommandPalette />
+<CommandPaletteContext {commands} />
 
-{@render children?.()}
+{#if page.data.error}
+  <ErrorLayout error={page.data.error}></ErrorLayout>
+{:else}
+  {@render children?.()}
+{/if}

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ApiPage } from '$lib';
   import ApiTagSummary from '$lib/components/ApiTagSummary.svelte';
-  import { Button, Heading, Icon, Stack, Text } from '@immich/ui';
+  import { Button, type CommandItem, CommandPaletteContext, Heading, Icon, Stack, Text } from '@immich/ui';
   import { mdiArrowLeft, mdiArrowRight } from '@mdi/js';
   import { type PageData } from './$types';
 
@@ -13,6 +13,31 @@
 
   const tag = $derived(data.tag);
 </script>
+
+{#key tag.name}
+  <CommandPaletteContext
+    commands={[
+      tag.previous && {
+        icon: mdiArrowLeft,
+        title: 'Previous tag',
+        type: 'Navigation',
+        iconClass: '',
+        text: 'previous',
+        href: tag.previous.href,
+        shortcuts: { key: 'ArrowLeft' },
+      },
+      tag.next && {
+        icon: mdiArrowRight,
+        title: 'Next tag',
+        type: 'Navigation',
+        iconClass: '',
+        text: 'next',
+        href: tag.next.href,
+        shortcuts: { key: 'ArrowRight' },
+      },
+    ].filter(Boolean) as CommandItem[]}
+  />
+{/key}
 
 <Stack gap={4}>
   <div class="flex items-center justify-between">

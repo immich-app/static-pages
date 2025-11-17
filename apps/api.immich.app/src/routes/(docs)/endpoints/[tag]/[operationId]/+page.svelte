@@ -1,15 +1,16 @@
 <script lang="ts">
   import LinkableHeading from '$common/components/LinkableHeading.svelte';
   import ApiAdminRouteBadge from '$lib/components/ApiAdminRouteBadge.svelte';
-  import ApiDeprecatedBadge from '$lib/components/ApiDeprecatedBadge.svelte';
+  import ApiHistory from '$lib/components/ApiHistory.svelte';
   import ApiParams from '$lib/components/ApiParams.svelte';
   import ApiPermission from '$lib/components/ApiPermission.svelte';
   import ApiPlayground from '$lib/components/ApiPlayground.svelte';
   import ApiPublicRouteBadge from '$lib/components/ApiPublicRouteBadge.svelte';
   import ApiSchema from '$lib/components/ApiSchema.svelte';
   import ApiSharedLinkRouteBadge from '$lib/components/ApiSharedLinkRouteBadge.svelte';
+  import ApiState from '$lib/components/ApiState.svelte';
   import { getEndpointColor, getOpenApi, isRef } from '$lib/services/open-api';
-  import { Button, Heading, Icon, Stack, Text } from '@immich/ui';
+  import { Button, CommandPaletteContext, Heading, Icon, Stack, Text, type CommandItem } from '@immich/ui';
   import { mdiArrowLeft, mdiArrowRight } from '@mdi/js';
   import { type PageData } from './$types';
 
@@ -25,46 +26,90 @@
   const { fromRef } = getOpenApi();
 </script>
 
+{#key endpoint.operationId}
+  <CommandPaletteContext
+    commands={[
+      endpoint.previous && {
+        icon: mdiArrowLeft,
+        title: 'Previous endpoint',
+        type: 'Navigation',
+        iconClass: '',
+        text: 'previous',
+        href: endpoint.previous.href,
+        shortcuts: { key: 'ArrowLeft' },
+      },
+      endpoint.next && {
+        icon: mdiArrowRight,
+        title: 'Next endpoint',
+        type: 'Navigation',
+        iconClass: '',
+        text: 'next',
+        href: endpoint.next.href,
+        shortcuts: { key: 'ArrowRight' },
+      },
+    ].filter(Boolean) as CommandItem[]}
+  />
+{/key}
+
 <Stack gap={8}>
   <section>
-    <div class="flex flex-col gap-2">
-      <Heading size="large" tag="h1" class="flex flex-col md:flex-row md:items-center md:justify-between">
-        <span class="group flex items-center gap-1 {endpoint.deprecated ? 'text-gray-500 italic' : ''}">
+    <div>
+      <div class="mb-1">
+        <div class="flex flex-col gap-0.5">
+          <Heading size="large" tag="h1">
+            {endpoint.summary || endpoint.operationId}
+          </Heading>
+          {#if endpoint.description}
+            <Text color="muted">{endpoint.description}</Text>
+          {/if}
+        </div>
+      </div>
+
+      <div class="flex gap-1">
+        {#if endpoint.state}
+          <div class="my-1">
+            <ApiState state={endpoint.state} />
+          </div>
+        {/if}
+
+        {#if endpoint.adminRoute}
+          <div class="my-1">
+            <ApiAdminRouteBadge />
+          </div>
+        {/if}
+
+        {#if endpoint.sharedLinkRoute}
+          <div class="my-1">
+            <ApiSharedLinkRouteBadge />
+          </div>
+        {/if}
+
+        {#if endpoint.publicRoute}
+          <div class="my-1">
+            <ApiPublicRouteBadge />
+          </div>
+        {/if}
+
+        {#if endpoint.permission}
+          <div class="my-1">
+            <ApiPermission value={endpoint.permission} />
+          </div>
+        {/if}
+      </div>
+
+      <Text size="giant" fontWeight="bold" class="mt-2 flex flex-col md:flex-row md:items-center md:justify-between">
+        <span
+          class="group flex w-full flex-col gap-2 md:flex-row md:items-center md:justify-between {endpoint.deprecated
+            ? 'text-gray-500 italic'
+            : ''}"
+        >
           <span class="flex gap-2">
             <span class={getEndpointColor(endpoint)}>{endpoint.method}</span>
             <span>{endpoint.route}</span>
           </span>
+          <span class="text-muted">{endpoint.operationId}</span>
         </span>
-        <Text color="muted">{endpoint.operationId}</Text>
-      </Heading>
-      {#if endpoint.description}
-        <Text color="muted" fontWeight="bold">{endpoint.description}</Text>
-      {/if}
-      <div class="flex flex-col justify-between gap-4 lg:flex-row">
-        <div>
-          {#if endpoint.deprecated}
-            <span>
-              <ApiDeprecatedBadge />
-            </span>
-          {/if}
-
-          {#if endpoint.adminRoute}
-            <ApiAdminRouteBadge />
-          {/if}
-
-          {#if endpoint.sharedLinkRoute}
-            <ApiSharedLinkRouteBadge />
-          {/if}
-
-          {#if endpoint.publicRoute}
-            <ApiPublicRouteBadge />
-          {/if}
-
-          {#if endpoint.permission}
-            <ApiPermission value={endpoint.permission} />
-          {/if}
-        </div>
-      </div>
+      </Text>
     </div>
     <hr class="border-subtle mt-4 border" />
   </section>
@@ -109,6 +154,13 @@
           {/each}
         </div>
       {/if}
+    </section>
+  {/if}
+
+  {#if endpoint.history}
+    <section class="flex flex-col gap-2">
+      <Heading tag="h2" size="small">History</Heading>
+      <ApiHistory history={endpoint.history} />
     </section>
   {/if}
 
