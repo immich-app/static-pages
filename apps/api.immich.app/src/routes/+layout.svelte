@@ -37,7 +37,6 @@
 
   try {
     const { tags, models } = getOpenApi();
-    const commands: CommandItem[] = [];
 
     for (const tag of tags) {
       commands.push({
