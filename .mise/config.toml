@@ -1,0 +1,44 @@
+[tools]
+opentofu = "1.10.3"
+terragrunt = "0.87.0"
+
+[env]
+TF_VAR_dist_dir="{{config_root}}/dist"
+
+[tasks.tg]
+run = "op run '--env-file={{config_root}}/deployment/.env' -- terragrunt"
+description = "Wrapper for terragrunt"
+dir = "{{cwd}}"
+
+[tasks."tg:fmt"]
+run = "mise run tg hclfmt"
+description = "Format terragrunt files"
+
+[tasks.tf]
+run = "mise run tg run --all"
+description = "Wrapper for terragrunt run-all"
+dir = "{{cwd}}"
+
+[tasks."tf:fmt"]
+run = "tofu fmt -recursive tf/"
+description = "Format terraform files"
+
+[tasks."tf:init"]
+run = "mise run tf init -- -reconfigure"
+dir = "{{cwd}}"
+
+[tasks."tf:plan"]
+run = "mise run tf plan"
+dir = "{{cwd}}"
+
+[tasks."tf:apply"]
+run = "mise run tf apply"
+dir = "{{cwd}}"
+
+[tasks."tf:destroy"]
+run = "mise run tf destroy"
+dir = "{{cwd}}"
+
+[settings]
+experimental = true
+idiomatic_version_file_enable_tools = []
