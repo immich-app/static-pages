@@ -17,7 +17,7 @@
     "format:fix": "prettier --write ."
   },
   "devDependencies": {
-    "@eslint/compat": "^1.4.0",
+    "@eslint/compat": "^2.0.0",
     "@eslint/js": "^9.36.0",
     "@immich/svelte-markdown-preprocess": "^0.1.0",
     "@sveltejs/adapter-static": "^3.0.9",
