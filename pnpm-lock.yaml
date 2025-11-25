@@ -160,9 +160,6 @@ importers:
       luxon:
         specifier: ^3.7.2
         version: 3.7.2
-      marked:
-        specifier: ^16.4.0
-        version: 16.4.2
       playwright:
         specifier: ^1.55.1
         version: 1.56.1
@@ -682,9 +679,6 @@ importers:
       luxon:
         specifier: ^3.7.2
         version: 3.7.2
-      marked:
-        specifier: ^16.4.0
-        version: 16.4.2
       playwright:
         specifier: ^1.55.1
         version: 1.56.1
@@ -2348,11 +2342,6 @@ packages:
 
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
-
-  marked@16.4.2:
-    resolution: {integrity: sha512-TI3V8YYWvkVf3KJe1dRkpnjs68JUPyEa5vjKrp1XEEJUAOaQc+Qj+L1qWbPd0SJuAdQkFU0h73sXXqwDYxsiDA==}
-    engines: {node: '>= 20'}
-    hasBin: true
 
   merge2@1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
@@ -4468,8 +4457,6 @@ snapshots:
   magic-string@0.30.21:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
-
-  marked@16.4.2: {}
 
   merge2@1.4.1: {}
 
