@@ -75,8 +75,10 @@ const asPost = (filename: string, attributes: PostFrontMatter) => {
     id: attributes.id,
     title: attributes.title,
     description: attributes.description,
-    publishedAt: DateTime.fromJSDate(attributes.publishedAt) as DateTime<true>,
-    modifiedAt: attributes.modifiedAt ? (DateTime.fromJSDate(attributes.modifiedAt) as DateTime<true>) : undefined,
+    publishedAt: DateTime.fromJSDate(attributes.publishedAt, { zone: 'UTC' }) as DateTime<true>,
+    modifiedAt: attributes.modifiedAt
+      ? (DateTime.fromJSDate(attributes.modifiedAt, { zone: 'UTC' }) as DateTime<true>)
+      : undefined,
     authors: attributes.authors,
     url: `/blog/${filename}`,
     draft: attributes.draft === true,

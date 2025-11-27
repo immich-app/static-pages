@@ -13,6 +13,9 @@
       authors: string[];
       description: string;
       draft?: boolean;
+      coverUrl?: string;
+      coverAlt?: string;
+      coverAttribution?: string;
     };
     children?: Snippet;
     postScript?: Snippet;
@@ -49,6 +52,23 @@
   </div>
 
   <Markdown.Paragraph><em>{description}</em></Markdown.Paragraph>
+
+  {#if post.coverUrl}
+    <figure class="my-6">
+      <img
+        src={post.coverUrl}
+        alt={post.coverAlt ?? 'Blog cover image'}
+        class="aspect-21/9 w-full rounded-lg border object-cover"
+      />
+      {#if post.coverAttribution}
+        <figcaption class="text-muted mt-2 text-center text-sm">
+          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+          {@html post.coverAttribution}
+        </figcaption>
+      {/if}
+    </figure>
+  {/if}
+
   <Markdown.LineBreak />
 </div>
 
