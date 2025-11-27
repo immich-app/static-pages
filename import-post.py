@@ -166,7 +166,7 @@ class PostImporter:
     output_dir.mkdir(parents=True, exist_ok=True)
     output_file = output_dir / "+page.md"
 
-    output_file.write_text(frontmatter.dumps(post_data))
+    output_file.write_text(frontmatter.dumps(post_data, default_flow_style=True))
     return output_file
 
   def run(self) -> None:
