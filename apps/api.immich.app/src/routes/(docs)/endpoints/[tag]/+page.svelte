@@ -1,9 +1,10 @@
 <script lang="ts">
   import { ApiPage } from '$lib';
   import ApiTagSummary from '$lib/components/ApiTagSummary.svelte';
-  import { Button, type CommandItem, CommandPaletteContext, Heading, Icon, Stack, Text } from '@immich/ui';
+  import { Button, CommandPaletteContext, Heading, Icon, Stack, Text, type ActionItem } from '@immich/ui';
   import { mdiArrowLeft, mdiArrowRight } from '@mdi/js';
   import { type PageData } from './$types';
+  import { goto } from '$app/navigation';
 
   type Props = {
     data: PageData;
@@ -17,25 +18,27 @@
 {#key tag.name}
   <CommandPaletteContext
     commands={[
-      tag.previous && {
+      {
         icon: mdiArrowLeft,
         title: 'Previous tag',
         type: 'Navigation',
         iconClass: '',
         text: 'previous',
-        href: tag.previous.href,
+        $if: () => !!tag.previous,
+        onAction: () => goto(tag.previous!.href),
         shortcuts: { key: 'ArrowLeft' },
       },
-      tag.next && {
+      {
         icon: mdiArrowRight,
         title: 'Next tag',
         type: 'Navigation',
         iconClass: '',
         text: 'next',
-        href: tag.next.href,
+        $if: () => !!tag.next,
+        onAction: () => goto(tag.next!.href),
         shortcuts: { key: 'ArrowRight' },
       },
-    ].filter(Boolean) as CommandItem[]}
+    ].filter(Boolean) as ActionItem[]}
   />
 {/key}
 

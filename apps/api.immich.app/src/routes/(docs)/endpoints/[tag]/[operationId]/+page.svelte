@@ -10,9 +10,10 @@
   import ApiSharedLinkRouteBadge from '$lib/components/ApiSharedLinkRouteBadge.svelte';
   import ApiState from '$lib/components/ApiState.svelte';
   import { getEndpointColor, getOpenApi, isRef } from '$lib/services/open-api';
-  import { Button, CommandPaletteContext, Heading, Icon, Stack, Text, type CommandItem } from '@immich/ui';
+  import { Button, CommandPaletteContext, Heading, Icon, Stack, Text, type ActionItem } from '@immich/ui';
   import { mdiArrowLeft, mdiArrowRight } from '@mdi/js';
   import { type PageData } from './$types';
+  import { goto } from '$app/navigation';
 
   type Props = {
     data: PageData;
@@ -29,25 +30,27 @@
 {#key endpoint.operationId}
   <CommandPaletteContext
     commands={[
-      endpoint.previous && {
+      {
         icon: mdiArrowLeft,
         title: 'Previous endpoint',
         type: 'Navigation',
         iconClass: '',
         text: 'previous',
-        href: endpoint.previous.href,
+        $if: () => !!endpoint.previous,
+        onAction: () => goto(endpoint.previous!.href),
         shortcuts: { key: 'ArrowLeft' },
       },
-      endpoint.next && {
+      {
         icon: mdiArrowRight,
         title: 'Next endpoint',
         type: 'Navigation',
         iconClass: '',
         text: 'next',
-        href: endpoint.next.href,
+        $if: () => !!endpoint.next,
+        onAction: () => goto(endpoint.next!.href),
         shortcuts: { key: 'ArrowRight' },
       },
-    ].filter(Boolean) as CommandItem[]}
+    ].filter(Boolean) as ActionItem[]}
   />
 {/key}
 
