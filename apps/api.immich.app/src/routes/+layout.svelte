@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import { ApiPage } from '$lib';
   import '$lib/app.css';
@@ -13,7 +14,7 @@
     siteCommands,
     Theme,
     theme,
-    type CommandItem,
+    type ActionItem,
   } from '@immich/ui';
   import { mdiApi, mdiScriptText, mdiSend, mdiTag, mdiTagMultiple } from '@mdi/js';
   import { type Snippet } from 'svelte';
@@ -33,7 +34,7 @@
 
   commandPaletteManager.enable();
 
-  const commands = $state<CommandItem[]>([]);
+  const commands = $state<ActionItem[]>([]);
 
   try {
     const { tags, models } = getOpenApi();
@@ -44,8 +45,7 @@
         iconClass: 'text-pink-700 dark:text-pink-200',
         type: 'Tag',
         title: tag.name,
-        href: tag.href,
-        text: asText(tag.name),
+        onAction: () => goto(tag.href),
       });
 
       for (const endpoint of tag.endpoints) {
@@ -55,8 +55,8 @@
           iconClass: 'text-indigo-700 dark:text-indigo-200',
           title: endpoint.operationId,
           description: endpoint.description,
-          href: endpoint.href,
-          text: asText(endpoint.operationId, endpoint.name, endpoint.description),
+          onAction: () => goto(endpoint.href),
+          searchText: asText(endpoint.operationId, endpoint.name, endpoint.description),
         });
       }
     }
@@ -68,8 +68,8 @@
         type: 'Model',
         title: model.name,
         description: model.description,
-        href: model.href,
-        text: asText(model.name, model.title, model.description),
+        onAction: () => goto(model.href),
+        searchText: asText(model.name, model.title, model.description),
       });
     }
   } catch {
@@ -82,56 +82,50 @@
         title: 'Introduction',
         description: 'Overview of Immich API',
         href: ApiPage.Introduction,
-        text: asText('introduction'),
       },
       {
         title: 'Getting started',
         description: 'Learn how to get started with Immich API',
         href: ApiPage.GettingStarted,
-        text: asText('getting', 'started'),
       },
       {
         title: 'Authentication',
         description: 'Learn how authentication works in the Immich API',
         href: ApiPage.Authentication,
-        text: asText('authentication', 'authorization'),
       },
       {
         title: 'Permissions',
         description: 'Learn how permissions work with the Immich API',
         href: ApiPage.Permissions,
-        text: asText('permissions'),
       },
       {
         title: 'SDK',
         description: 'Learn about the @immich/sdk generated client',
         href: ApiPage.Sdk,
-        text: asText('@immich/sdk'),
       },
       {
         title: 'Endpoints',
         description: 'A list of all the endpoints in the Immich API',
         href: ApiPage.Endpoints,
-        text: asText('overview', 'endpoints'),
       },
       {
         title: 'Models',
         description: 'A list of all the models in the Immich API',
         href: ApiPage.Models,
-        text: asText('overview', 'models'),
       },
-    ].map((item) => ({
+    ].map(({ href, ...item }) => ({
       icon: mdiScriptText,
       iconClass: 'text-teal-800 dark:text-teal-200',
       type: 'Page',
+      onAction: () => goto(href),
       ...item,
     })),
     ...[
       {
         title: 'Toggle theme',
         description: 'Toggle between light and dark theme',
-        action: () => handleToggleTheme(),
-        text: asText('theme', 'toggle', 'dark', 'light'),
+        onAction: () => handleToggleTheme(),
+        searchText: asText('theme', 'toggle', 'dark', 'light'),
       },
     ].map((item) => ({
       icon: mdiSend,

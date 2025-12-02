@@ -124,8 +124,8 @@
       <span>
         I agree to release the uploaded assets under the
         <a href="https://creativecommons.org/public-domain/cc0/" target="_blank" class="text-primary">CC0 license</a>
-        into the public domain. In addition, the files have not been modified in any way that would alter their original
-        content or metadata.
+        into the public domain. In addition, the files have not been modified in any way that would alter their original content
+        or metadata.
       </span>
 
       <div class="flex gap-4">
