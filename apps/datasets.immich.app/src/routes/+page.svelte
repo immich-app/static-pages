@@ -18,9 +18,9 @@
         <ProjectCard icon={mdiCameraEnhance} title="EXIF Dataset" href="/projects/exif">
           {#snippet description()}
             <Text
-              ><Link href="https://en.wikipedia.org/wiki/Exif">EXIF</Link> stands for Exchangeable Image File Format. It
-              is a standard that specifies the metadata that can be embedded in image files, especially those captured by
-              digital cameras and smartphones.</Text
+              ><Link href="https://en.wikipedia.org/wiki/Exif">EXIF</Link> stands for Exchangeable Image File Format. It is
+              a standard that specifies the metadata that can be embedded in image files, especially those captured by digital
+              cameras and smartphones.</Text
             >
 
             <Text

@@ -51,8 +51,8 @@
         <section class="flex flex-col gap-2">
           <Heading tag="h2">3. Use of Your Information</Heading>
           <Text>
-            <strong>Tax Calculation:</strong> The country of origin and postal code (for users from Canada or the United
-            States) are collected solely for determining the applicable tax rates on your purchase.
+            <strong>Tax Calculation:</strong> The country of origin and postal code (for users from Canada or the United States)
+            are collected solely for determining the applicable tax rates on your purchase.
           </Text>
         </section>
 
