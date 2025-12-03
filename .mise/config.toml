@@ -1,6 +1,6 @@
 [tools]
 opentofu = "1.10.3"
-terragrunt = "0.87.0"
+terragrunt = "0.93.11"
 
 [env]
 TF_VAR_dist_dir="{{config_root}}/dist"
