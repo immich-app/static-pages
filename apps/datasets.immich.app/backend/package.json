@@ -23,6 +23,6 @@
     "class-validator": "^0.14.2",
     "itty-router": "^5.0.18",
     "luxon": "^3.6.1",
-    "simple-icons": "^15.16.1"
+    "simple-icons": "^16.0.0"
   }
 }
