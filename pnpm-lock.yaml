@@ -18,8 +18,8 @@ importers:
         specifier: ^7.4.47
         version: 7.4.47
       simple-icons:
-        specifier: ^15.16.1
-        version: 15.22.0
+        specifier: ^16.0.0
+        version: 16.1.0
       svelte-highlight:
         specifier: ^7.8.4
         version: 7.9.0
@@ -176,8 +176,8 @@ importers:
         specifier: ^0.7.2
         version: 0.7.2(prettier-plugin-svelte@3.4.0(prettier@3.7.4)(svelte@5.45.5))(prettier@3.7.4)
       simple-icons:
-        specifier: ^15.16.1
-        version: 15.22.0
+        specifier: ^16.0.0
+        version: 16.1.0
       svelte:
         specifier: ^5.39.5
         version: 5.45.5
@@ -212,8 +212,8 @@ importers:
         specifier: ^7.4.47
         version: 7.4.47
       simple-icons:
-        specifier: ^15.16.1
-        version: 15.22.0
+        specifier: ^16.0.0
+        version: 16.1.0
       svelte-highlight:
         specifier: ^7.8.4
         version: 7.9.0
@@ -309,8 +309,8 @@ importers:
         specifier: ^7.1.1
         version: 7.2.0
       simple-icons:
-        specifier: ^15.16.1
-        version: 15.22.0
+        specifier: ^16.0.0
+        version: 16.1.0
       svelte-highlight:
         specifier: ^7.8.4
         version: 7.9.0
@@ -415,8 +415,8 @@ importers:
         specifier: ^3.6.1
         version: 3.7.2
       simple-icons:
-        specifier: ^15.16.1
-        version: 15.22.0
+        specifier: ^16.0.0
+        version: 16.1.0
     devDependencies:
       '@cloudflare/vitest-pool-workers':
         specifier: ^0.10.0
@@ -443,8 +443,8 @@ importers:
         specifier: ^7.4.47
         version: 7.4.47
       simple-icons:
-        specifier: ^15.16.1
-        version: 15.22.0
+        specifier: ^16.0.0
+        version: 16.1.0
       svelte-highlight:
         specifier: ^7.8.4
         version: 7.9.0
@@ -534,8 +534,8 @@ importers:
         specifier: ^7.4.47
         version: 7.4.47
       simple-icons:
-        specifier: ^15.16.1
-        version: 15.22.0
+        specifier: ^16.0.0
+        version: 16.1.0
       svelte-highlight:
         specifier: ^7.8.4
         version: 7.9.0
@@ -698,8 +698,8 @@ importers:
         specifier: ^0.7.2
         version: 0.7.2(prettier-plugin-svelte@3.4.0(prettier@3.7.4)(svelte@5.45.5))(prettier@3.7.4)
       simple-icons:
-        specifier: ^15.16.1
-        version: 15.22.0
+        specifier: ^16.0.0
+        version: 16.1.0
       svelte:
         specifier: ^5.39.5
         version: 5.45.5
@@ -2586,6 +2586,10 @@ packages:
 
   simple-icons@15.22.0:
     resolution: {integrity: sha512-i/w5Ie4tENfGYbdCo2iJ+oies0vOFd8QXWHopKOUzudfLCvnmeheF2PpHp89Z2azpc+c2su3lMiWO/SpP+429A==}
+    engines: {node: '>=0.12.18'}
+
+  simple-icons@16.1.0:
+    resolution: {integrity: sha512-fL95b22MWTn3y+zQ/QC9oKqJ6mXXNwm35oy5XMVPdvJZGfGNWDMMb33kfqm50OuRKNcdjbk7HQ73NdWcvaBXIQ==}
     engines: {node: '>=0.12.18'}
 
   simple-swizzle@0.2.4:
@@ -4610,6 +4614,8 @@ snapshots:
   siginfo@2.0.0: {}
 
   simple-icons@15.22.0: {}
+
+  simple-icons@16.1.0: {}
 
   simple-swizzle@0.2.4:
     dependencies:
