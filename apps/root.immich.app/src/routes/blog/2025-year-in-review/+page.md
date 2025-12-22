@@ -1,25 +1,26 @@
 ---
 { authors: [Immich Team], description: A review of the major milestones accomplished
-    in 2025., id: 153e5050-88b9-43e7-8b7b-ef0c0438057d, publishedAt: 2025-12-22, slug: 2025-year-in-review, title: 2025 - A year in reivew }
+    in 2025., id: 153e5050-88b9-43e7-8b7b-ef0c0438057d, publishedAt: 2025-12-22, slug: 2025-year-in-review, title: 2025 - A year in review }
 ---
+
+<br/>
 
 Hello everyone!
 
-As we approach the holidays, we wanted to take a moment to look back at the past year with all of you. There's something about working on Immich that makes time feel... different. A year somehow feels like three. Days blend into weeks, weeks into months, and suddenly we look back and realize just how much has changed.
+As we approach the holidays, we wanted to take a moment to look back at the past year with all of you. There's something about working on Immich that makes time feel... different. A year somehow feels like three. Days blend into weeks, weeks into months, and suddenly we look back and realize just how much we have done.
 
 We crossed the 1.5-year mark since becoming FUTOnians, and we still feel incredibly grateful for where we are. The whole team gets to work on what we love, every single day. That's not something most people get to say, and we don't take it for granted.
 
 This year, we brought on more people full-time, some from within the Immich core team and others from outside the community. The team is growing, and so is the project's scope as we work to make it the best self-hosted photo management system out there.
 
-![Immich Team (Chris, Zack, Jason, Alex, Paul, Daniel, Ganka, Mert, missing the Boet and the intern, Brandon :P)](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/3bd14c69eb2d20ea68a1b4d15325716e.webp ' =2048x1536')
+![Immich Team (Chris, Zack, Jason, Alex, Paul, Daniel, Ganka, Mert, missing the Boet and the intern, Brandon :P)](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/3bd14c69eb2d20ea68a1b4d15325716e.webp 'Immich Team (Chris, Zack, Jason, Alex, Paul, Daniel, Ganka, Mert, missing the Boet and the intern, Brandon)')
+<i class="text-xs">Immich Team (LTR: Chris, Zack, Jason, Alex, Paul, Daniel, Ganka, Mert, missing the Boet and the intern, Brandon :P)</i>
 
-So let us walk you through what "three years in one year" actually looked like.
+So let us walk you through what "three years in one" actually looked like.
 
----
+## All I wanted for last Christmas was "Stable"!
 
-## All I wanted for Christmas was "Stable"!
-
-Since the beginning of the year, we have set "Stable" as our team's development priority. We knew it would be a journey, and the team came together in ways that we're all so proud of, tackling challenges and roadblocks to finally deliver it on October 1st.
+Since the beginning of the year, we have set a stable version of Immich as our team's development priority. We knew it would be a journey, and the team came together in ways that we're all so proud of, tackling challenges and roadblocks to finally deliver it on October 1st.
 
 Three major technical overhauls defined the year's goal
 
@@ -39,13 +40,13 @@ Each of these steps came with its own set of challenges, requiring countless hou
 
 ---
 
-Despite this heavy foundation work, we still managed to ship an incredible amount of new features and improvements. Looking at our release notes, the numbers tell the story:
+Despite this heavy foundation work, we still managed to ship an incredible amount of new features and improvements.
 
 - 85 new features
 - 200 enhancements to existing features
 - 290 bug fixes
 
-Here are some highlights from the year:
+Here are some highlights from those improvements:
 
 - HDR video support with our native video player
 - Search by tags and descriptions
@@ -59,51 +60,53 @@ Here are some highlights from the year:
 - Multiple admin account support
 - Mobile app widgets for your home screen
 
-  ![Mobile app home screen widget](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/e96b877a4b325f08f940a597727a101b.webp ' =304x343')
+  ![Mobile app home screen widget](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/e96b877a4b325f08f940a597727a101b.webp)
 
 - Granular API key permissions for power users
 - Large file management utility
 - Custom URLs for shared links
 - Private/locked photos feature
 
-  ![Pin code creation for locked view](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/4f1c5d5e7c0ebf1eef1029301e340650.webp ' =456x328')
+  ![Pin code creation for locked view](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/4f1c5d5e7c0ebf1eef1029301e340650.webp)
 
 - "View similar photos" discovery
 - GPS utility for location management
-- Google Cast support![A casting session](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/3c2dc2fb1944a9cca8d2a1ea8d9d084b.webp ' =2326x1724')
+- Google Cast support![A casting session](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/3c2dc2fb1944a9cca8d2a1ea8d9d084b.webp)
 - Background backup improvements
 - Optical character recognition (OCR)
 
-  ![OCR viewer](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/158116d921f3cb7e859b9067428eb76d.webp ' =418x519')
+  ![OCR viewer](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/158116d921f3cb7e859b9067428eb76d.webp)
 
 - Digital Ocean 1-Click deployment
 - ...and much more
 
 ## Websites
 
-Looking back over the year, it turns out we did a decent amount of work _outside_ of Immich as well. Here is a list of websites that we launched throughout the year:
+Looking back over the year, it turns out we also did a decent amount of work _outside_ of Immich as well.
+
+Here is a list of websites that we launched throughout the year:
 
 - https://immich.app/ — New homepage & blog
 - https://immich.store — Merch with a new mascot, Mich
 - https://data.immich.app/ — Data website with fancy charts
 - https://api.immich.app/ — New API documentation
 
-  ![](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/a10bde6c0546fd82843a08b003978d7e.webp ' =1546x1154')
+  ![api page](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/a10bde6c0546fd82843a08b003978d7e.webp ' api page')
 
 - https://ui.immich.app/ — Svelte UI component library
 
-  ![](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/1a7ef7f4f4c322182d56bfd5a6b14ce5.webp ' =1391x812')
+  ![immich ui library page](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/1a7ef7f4f4c322182d56bfd5a6b14ce5.webp 'immich ui library page')
 
 - https://awesome.immich.app/ — A list of awesome apps, integrations, tools, distributions, and guides
 
 ## Fun Statistics
 
-- Grew from 55,000 stars to 87,000 stars on GitHub
-- 1 major release, 25 minor releases (v1.124 -v1.144 & v2.0 — v2.4)
-- 35,000+ Discord members and 42,000+ Reddit member
-- \~8,800 commits of love, sweat, and occasional tears
-- \~1700 contributors
-- \~2930 commits to main in this year, meaning we have gone through the review process for the same number of PR
+- Grew from **55,000** stars to **87,000** stars on GitHub
+- **1** major release, **25** minor releases (v1.124 -v1.144 & v2.0 — v2.4)
+- **35,000+** Discord members and 42,000+ Reddit member
+- **8,800+** commits of love, sweat, and occasional tears
+- **~1700** contributors
+- **~2930** commits to main in this year, meaning we have gone through the review process for the same number of PR
 
 ## Hello, 2026!
 
@@ -117,10 +120,8 @@ Sneak peak about some of the features that _might_ get delivered in January
 
 ---
 
-None of this would have been possible without our incredible community. Thank you for being so patient during the bumpy period, for your detailed bug reports, your feature suggestions, and your contributions.
+None of this would have been possible without our incredible community. Thank you for being so patient during the bumpy period, for your detailed bug reports, your feature suggestions, and your creative contributions.
 
-On behalf of the team, we wish you a peaceful and joyful holiday season. We will wind down on GitHub and Discord activity for the rest of the year to recharge, collect more memories, and come back strong in 2026.
+On behalf of FUTO, we wish you a peaceful and joyful holiday season. We will wind down on GitHub and Discord activity for the rest of the year to recharge, collect more memories, and come back strong in 2026.
 
-As always, if you find the project helpful, you can support us at <https://buy.immich.app/.>
-
----
+_And as always, if you find the project helpful, you can support us at <https://buy.immich.app/.>_
