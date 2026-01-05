@@ -10,7 +10,7 @@
       },
       {
         "title": "Immich Kiosk",
-        "description": "Lightweight slideshow to run on kiosk devices and browsers.",
+        "description": "Highly configurable slideshows for displaying Immich assets on browsers and devices.",
         "href": "https://github.com/damongolding/immich-kiosk"
       },
       {
