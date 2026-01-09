@@ -64,8 +64,8 @@ importers:
         specifier: ^3.12.4
         version: 3.13.1(eslint@9.39.2(jiti@2.6.1))(svelte@5.46.0)
       globals:
-        specifier: ^16.4.0
-        version: 16.5.0
+        specifier: ^17.0.0
+        version: 17.0.0
       playwright:
         specifier: ^1.55.1
         version: 1.57.0
@@ -155,8 +155,8 @@ importers:
         specifier: ^4.0.2
         version: 4.0.2
       globals:
-        specifier: ^16.4.0
-        version: 16.5.0
+        specifier: ^17.0.0
+        version: 17.0.0
       luxon:
         specifier: ^3.7.2
         version: 3.7.2
@@ -255,8 +255,8 @@ importers:
         specifier: ^3.12.4
         version: 3.13.1(eslint@9.39.2(jiti@2.6.1))(svelte@5.46.0)
       globals:
-        specifier: ^16.4.0
-        version: 16.5.0
+        specifier: ^17.0.0
+        version: 17.0.0
       playwright:
         specifier: ^1.55.1
         version: 1.57.0
@@ -355,8 +355,8 @@ importers:
         specifier: ^3.12.4
         version: 3.13.1(eslint@9.39.2(jiti@2.6.1))(svelte@5.46.0)
       globals:
-        specifier: ^16.4.0
-        version: 16.5.0
+        specifier: ^17.0.0
+        version: 17.0.0
       playwright:
         specifier: ^1.55.1
         version: 1.57.0
@@ -486,8 +486,8 @@ importers:
         specifier: ^3.12.4
         version: 3.13.1(eslint@9.39.2(jiti@2.6.1))(svelte@5.46.0)
       globals:
-        specifier: ^16.4.0
-        version: 16.5.0
+        specifier: ^17.0.0
+        version: 17.0.0
       playwright:
         specifier: ^1.55.1
         version: 1.57.0
@@ -577,8 +577,8 @@ importers:
         specifier: ^3.12.4
         version: 3.13.1(eslint@9.39.2(jiti@2.6.1))(svelte@5.46.0)
       globals:
-        specifier: ^16.4.0
-        version: 16.5.0
+        specifier: ^17.0.0
+        version: 17.0.0
       playwright:
         specifier: ^1.55.1
         version: 1.57.0
@@ -677,8 +677,8 @@ importers:
         specifier: ^3.12.4
         version: 3.13.1(eslint@9.39.2(jiti@2.6.1))(svelte@5.46.0)
       globals:
-        specifier: ^16.4.0
-        version: 16.5.0
+        specifier: ^17.0.0
+        version: 17.0.0
       luxon:
         specifier: ^3.7.2
         version: 3.7.2
@@ -2123,6 +2123,10 @@ packages:
 
   globals@16.5.0:
     resolution: {integrity: sha512-c/c15i26VrJ4IRt5Z89DnIzCGDn9EcebibhAOjw5ibqEHsE1wLUgkPn9RDmNcUKyU87GeaL633nyJ+pplFR2ZQ==}
+    engines: {node: '>=18'}
+
+  globals@17.0.0:
+    resolution: {integrity: sha512-gv5BeD2EssA793rlFWVPMMCqefTlpusw6/2TbAVMy0FzcG8wKJn4O+NqJ4+XWmmwrayJgw5TzrmWjFgmz1XPqw==}
     engines: {node: '>=18'}
 
   graceful-fs@4.2.11:
@@ -4241,6 +4245,8 @@ snapshots:
   globals@14.0.0: {}
 
   globals@16.5.0: {}
+
+  globals@17.0.0: {}
 
   graceful-fs@4.2.11: {}
 
