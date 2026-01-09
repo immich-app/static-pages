@@ -1,5 +1,6 @@
 <script lang="ts">
   import '$lib/app.css';
+  import { TooltipProvider } from '@immich/ui';
   import type { Snippet } from 'svelte';
 
   interface Props {
@@ -9,4 +10,6 @@
   let { children }: Props = $props();
 </script>
 
-{@render children?.()}
+<TooltipProvider>
+  {@render children?.()}
+</TooltipProvider>
