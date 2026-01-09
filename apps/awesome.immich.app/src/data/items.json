@@ -130,7 +130,12 @@
         "title": "Telegram to Immich Bot",
         "description": "Telegram bot for uploading files directly to your Immich instance, preserving the metadata",
         "href": "https://github.com/myanesp/telegram-immich-bot"
-      }
+      },
+			{
+				"title": "Immich Analyze",
+				"description": "AI-powered image description generator for Immich that analyzes photos with Ollama models and updates database metadata",
+				"href": "https://github.com/timasoft/immich-analyze"
+			}
     ]
   },
   {
