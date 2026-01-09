@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from '$app/navigation';
   import LinkableHeading from '$common/components/LinkableHeading.svelte';
   import ApiAdminRouteBadge from '$lib/components/ApiAdminRouteBadge.svelte';
   import ApiHistory from '$lib/components/ApiHistory.svelte';
@@ -10,10 +11,9 @@
   import ApiSharedLinkRouteBadge from '$lib/components/ApiSharedLinkRouteBadge.svelte';
   import ApiState from '$lib/components/ApiState.svelte';
   import { getEndpointColor, getOpenApi, isRef } from '$lib/services/open-api';
-  import { Button, CommandPaletteContext, Heading, Icon, Stack, Text, type ActionItem } from '@immich/ui';
+  import { Button, CommandPaletteDefaultProvider, Heading, Icon, Stack, Text, type ActionItem } from '@immich/ui';
   import { mdiArrowLeft, mdiArrowRight } from '@mdi/js';
   import { type PageData } from './$types';
-  import { goto } from '$app/navigation';
 
   type Props = {
     data: PageData;
@@ -28,8 +28,9 @@
 </script>
 
 {#key endpoint.operationId}
-  <CommandPaletteContext
-    commands={[
+  <CommandPaletteDefaultProvider
+    name="Endpoints"
+    actions={[
       {
         icon: mdiArrowLeft,
         title: 'Previous endpoint',

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ApiPage } from '$lib';
   import ApiTagSummary from '$lib/components/ApiTagSummary.svelte';
-  import { Button, CommandPaletteContext, Heading, Icon, Stack, Text, type ActionItem } from '@immich/ui';
+  import { Button, CommandPaletteDefaultProvider, Heading, Icon, Stack, Text, type ActionItem } from '@immich/ui';
   import { mdiArrowLeft, mdiArrowRight } from '@mdi/js';
   import { type PageData } from './$types';
   import { goto } from '$app/navigation';
@@ -16,8 +16,9 @@
 </script>
 
 {#key tag.name}
-  <CommandPaletteContext
-    commands={[
+  <CommandPaletteDefaultProvider
+    name="Tags"
+    actions={[
       {
         icon: mdiArrowLeft,
         title: 'Previous tag',

@@ -7,7 +7,7 @@
   import { getOpenApi } from '$lib/services/open-api';
   import {
     asText,
-    CommandPaletteContext,
+    CommandPaletteDefaultProvider,
     commandPaletteManager,
     initializeTheme,
     onThemeChange,
@@ -34,13 +34,13 @@
 
   commandPaletteManager.enable();
 
-  const commands = $state<ActionItem[]>([]);
+  const actions = $state<ActionItem[]>([]);
 
   try {
     const { tags, models } = getOpenApi();
 
     for (const tag of tags) {
-      commands.push({
+      actions.push({
         icon: mdiTagMultiple,
         iconClass: 'text-pink-700 dark:text-pink-200',
         type: 'Tag',
@@ -49,7 +49,7 @@
       });
 
       for (const endpoint of tag.endpoints) {
-        commands.push({
+        actions.push({
           icon: mdiApi,
           type: 'Endpoint',
           iconClass: 'text-indigo-700 dark:text-indigo-200',
@@ -62,7 +62,7 @@
     }
 
     for (const model of models) {
-      commands.push({
+      actions.push({
         icon: mdiTag,
         iconClass: 'text-violet-700 dark:text-violet-200',
         type: 'Model',
@@ -76,7 +76,7 @@
     // noop
   }
 
-  commands.push(
+  actions.push(
     ...[
       {
         title: 'Introduction',
@@ -137,7 +137,7 @@
   );
 </script>
 
-<CommandPaletteContext {commands} />
+<CommandPaletteDefaultProvider {actions} name="Global" />
 
 {#if page.data.error}
   <ErrorLayout error={page.data.error}></ErrorLayout>
