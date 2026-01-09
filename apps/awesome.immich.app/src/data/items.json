@@ -130,7 +130,7 @@
         "title": "Telegram to Immich Bot",
         "description": "Telegram bot for uploading files directly to your Immich instance, preserving the metadata",
         "href": "https://github.com/myanesp/telegram-immich-bot"
-      }
+      },
       {
         "title": "Immich timelaspe selfie",
         "description": "This tool creates selfie timelapse videos using Immich.",
