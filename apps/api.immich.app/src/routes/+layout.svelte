@@ -14,6 +14,7 @@
     siteCommands,
     Theme,
     theme,
+    TooltipProvider,
     type ActionItem,
   } from '@immich/ui';
   import { mdiApi, mdiScriptText, mdiSend, mdiTag, mdiTagMultiple } from '@mdi/js';
@@ -139,8 +140,10 @@
 
 <CommandPaletteDefaultProvider {actions} name="Global" />
 
-{#if page.data.error}
-  <ErrorLayout error={page.data.error}></ErrorLayout>
-{:else}
-  {@render children?.()}
-{/if}
+<TooltipProvider>
+  {#if page.data.error}
+    <ErrorLayout error={page.data.error}></ErrorLayout>
+  {:else}
+    {@render children?.()}
+  {/if}
+</TooltipProvider>
