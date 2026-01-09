@@ -1,7 +1,10 @@
 <script lang="ts">
   import '$lib/app.css';
+  import { TooltipProvider } from '@immich/ui';
 
   let { children } = $props();
 </script>
 
-{@render children()}
+<TooltipProvider>
+  {@render children()}
+</TooltipProvider>

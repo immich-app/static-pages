@@ -14,6 +14,7 @@
     Logo,
     NavbarItem,
     ThemeSwitcher,
+    TooltipProvider,
   } from '@immich/ui';
   import {
     mdiChartGantt,
@@ -70,65 +71,67 @@
   };
 </script>
 
-<AppShell>
-  <AppShellHeader>
-    <div>
-      <nav class="flex grid-cols-[1fr_auto_1fr] justify-between p-2 lg:grid lg:gap-2">
-        <div class="flex place-items-center gap-2">
-          <IconButton
-            shape="round"
-            color="secondary"
-            variant="ghost"
-            size="medium"
-            aria-label="Main menu"
-            icon={mdiMenu}
-            onclick={() => (isOpen = !isOpen)}
-            class="md:hidden"
-          />
-          <a href="/" class="flex gap-2 text-4xl">
-            <Logo variant="inline" />
-          </a>
-        </div>
+<TooltipProvider>
+  <AppShell>
+    <AppShellHeader>
+      <div>
+        <nav class="flex grid-cols-[1fr_auto_1fr] justify-between p-2 lg:grid lg:gap-2">
+          <div class="flex place-items-center gap-2">
+            <IconButton
+              shape="round"
+              color="secondary"
+              variant="ghost"
+              size="medium"
+              aria-label="Main menu"
+              icon={mdiMenu}
+              onclick={() => (isOpen = !isOpen)}
+              class="md:hidden"
+            />
+            <a href="/" class="flex gap-2 text-4xl">
+              <Logo variant="inline" />
+            </a>
+          </div>
 
-        <div class="hidden place-items-center gap-1 lg:flex">
-          <Button href="/blog" variant="ghost" color={withActiveColor('/blog')}>Blog</Button>
-          <Button href="/roadmap" variant="ghost" color={withActiveColor('/roadmap')}>Roadmap</Button>
-          <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Store} color="secondary" variant="ghost">
-            Merch
-          </Button>
-          <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Docs} color="secondary" variant="ghost">
-            Docs
-          </Button>
-          <Button
-            leadingIcon={siGithub.path}
-            trailingIcon={mdiOpenInNew}
-            href={Constants.Socials.Github}
-            color="secondary"
-            variant="ghost"
-          >
-            GitHub
-          </Button>
-        </div>
-        <div class="flex place-items-center justify-end gap-2">
-          <Button href={Constants.Sites.Buy} color="primary">Buy Immich</Button>
-          <ThemeSwitcher />
-        </div>
-      </nav>
-    </div>
-  </AppShellHeader>
+          <div class="hidden place-items-center gap-1 lg:flex">
+            <Button href="/blog" variant="ghost" color={withActiveColor('/blog')}>Blog</Button>
+            <Button href="/roadmap" variant="ghost" color={withActiveColor('/roadmap')}>Roadmap</Button>
+            <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Store} color="secondary" variant="ghost">
+              Merch
+            </Button>
+            <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Docs} color="secondary" variant="ghost">
+              Docs
+            </Button>
+            <Button
+              leadingIcon={siGithub.path}
+              trailingIcon={mdiOpenInNew}
+              href={Constants.Socials.Github}
+              color="secondary"
+              variant="ghost"
+            >
+              GitHub
+            </Button>
+          </div>
+          <div class="flex place-items-center justify-end gap-2">
+            <Button href={Constants.Sites.Buy} color="primary">Buy Immich</Button>
+            <ThemeSwitcher />
+          </div>
+        </nav>
+      </div>
+    </AppShellHeader>
 
-  <AppShellSidebar bind:open>
-    <div class="my-4 me-4">
-      <NavbarItem title="Documentation" href={Constants.Sites.Docs} icon={mdiScriptTextOutline} />
-      <NavbarItem title="Blog" href="/blog" icon={mdiPostOutline} />
-      <NavbarItem title="Roadmap" href="/roadmap" icon={mdiChartGantt} />
-      <NavbarItem title="Download" href="/download" icon={mdiDownload} />
-      <NavbarItem title="Merch" href={Constants.Sites.Store} icon={mdiShoppingOutline} />
-      <NavbarItem title="Github" href={Constants.Socials.Github} icon={siGithub.path} />
-    </div>
-  </AppShellSidebar>
+    <AppShellSidebar bind:open>
+      <div class="my-4 me-4">
+        <NavbarItem title="Documentation" href={Constants.Sites.Docs} icon={mdiScriptTextOutline} />
+        <NavbarItem title="Blog" href="/blog" icon={mdiPostOutline} />
+        <NavbarItem title="Roadmap" href="/roadmap" icon={mdiChartGantt} />
+        <NavbarItem title="Download" href="/download" icon={mdiDownload} />
+        <NavbarItem title="Merch" href={Constants.Sites.Store} icon={mdiShoppingOutline} />
+        <NavbarItem title="Github" href={Constants.Socials.Github} icon={siGithub.path} />
+      </div>
+    </AppShellSidebar>
 
-  <PageContent class="mx-auto w-full max-w-(--breakpoint-lg)">
-    {@render children?.()}
-  </PageContent>
-</AppShell>
+    <PageContent class="mx-auto w-full max-w-(--breakpoint-lg)">
+      {@render children?.()}
+    </PageContent>
+  </AppShell>
+</TooltipProvider>

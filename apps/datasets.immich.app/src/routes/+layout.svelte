@@ -1,6 +1,6 @@
 <script lang="ts">
   import '$lib/app.css';
-  import { initializeTheme } from '@immich/ui';
+  import { initializeTheme, TooltipProvider } from '@immich/ui';
   import type { Snippet } from 'svelte';
 
   type Props = {
@@ -12,4 +12,6 @@
   initializeTheme();
 </script>
 
-{@render children?.()}
+<TooltipProvider>
+  {@render children?.()}
+</TooltipProvider>
