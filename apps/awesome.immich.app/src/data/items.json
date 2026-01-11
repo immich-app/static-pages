@@ -19,6 +19,12 @@
         "href": "https://github.com/giejay/Immich-Android-TV"
       },
       {
+        "title": "Immich Apple TV",
+        "description": "Unofficial Immich Apple TV app.",
+        "href": "https://apps.apple.com/us/app/immich-viewer/id6757225201",
+        "href": "https://github.com/adriankraemer/Immich-Viewer"
+      },
+      {
         "title": "Immich Public Proxy",
         "description": "Share your Immich photos and albums in a safe way without exposing your Immich instance to the public.",
         "href": "https://github.com/alangrainger/immich-public-proxy"
