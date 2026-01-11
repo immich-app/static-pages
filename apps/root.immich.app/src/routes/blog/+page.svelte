@@ -7,7 +7,7 @@
 <SiteMetadata site={blogMetadata} />
 
 <Heading size="title" tag="h1" fontWeight="bold" class="mb-1">Blog</Heading>
-<Text color="muted" class="mb-8">{blogMetadata.description}</Text>
+<Text color="muted" class="mt-4 mb-8">{blogMetadata.description}</Text>
 
 <Stack gap={6}>
   {#each posts as post (post.url)}
@@ -15,12 +15,12 @@
       <Card color="secondary">
         <CardHeader class="group-hover:text-primary">
           <CardTitle class="flex gap-1">
-            <Text color={post.draft ? 'muted' : undefined}>
+            <Text color={post.draft ? 'muted' : undefined} size="giant" class="font-medium">
               {#if post.draft}[Draft]{/if}
               {post.title}
             </Text>
           </CardTitle>
-          <div class="flex gap-2">
+          <div class="mt-1 flex gap-1 text-sm">
             <Text color="muted" variant="italic">{post.publishedAt.toLocaleString(DateTime.DATE_FULL)}</Text>
             <Text color="muted">— {post.authors.join(', ')}</Text>
           </div>

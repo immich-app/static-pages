@@ -16,8 +16,8 @@
 }
 
 @font-face {
-  font-family: 'Overpass';
-  src: url('./fonts/overpass/Overpass.ttf') format('truetype-variations');
+  font-family: 'Google Sans';
+  src: url('./fonts/GoogleSans/GoogleSans.ttf') format('truetype-variations');
   font-weight: 1 999;
   font-style: normal;
   ascent-override: 100%;
@@ -48,7 +48,7 @@ html {
 body {
   margin: 0;
   font-family:
-    'Overpass',
+    'Google Sans',
     system-ui,
     -apple-system,
     BlinkMacSystemFont,

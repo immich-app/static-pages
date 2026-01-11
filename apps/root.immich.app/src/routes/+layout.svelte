@@ -112,7 +112,7 @@
             </Button>
           </div>
           <div class="flex place-items-center justify-end gap-2">
-            <Button href={Constants.Sites.Buy} color="primary">Buy Immich</Button>
+            <Button href={Constants.Sites.Buy} color="primary" size="small">Buy Immich</Button>
             <ThemeSwitcher />
           </div>
         </nav>
