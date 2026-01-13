@@ -28,6 +28,11 @@
         "title": "Immich Public Proxy",
         "description": "Share your Immich photos and albums in a safe way without exposing your Immich instance to the public.",
         "href": "https://github.com/alangrainger/immich-public-proxy"
+      },
+      {
+        "title": "View-Only Web Interface",
+        "description": "Display Immich photos publicly while allowing for the ability to filter and search for images.",
+        "href": "https://github.com/JimmyeJones/Immich-View-Only-Web-Interface"
       }
     ]
   },
