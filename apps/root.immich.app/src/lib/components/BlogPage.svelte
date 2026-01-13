@@ -41,14 +41,14 @@
     <li>{title}</li>
   </ul>
 
-  <Heading tag="h1" size="title" class="mt-6">
+  <Heading tag="h1" size="giant" class="mt-6">
     {#if post.draft}[Draft]{/if}
     {post.title}
   </Heading>
 
-  <div class="mb-2 flex gap-2">
-    <Text color="muted" variant="italic">{publishedAt.toLocaleString(DateTime.DATE_FULL)}</Text>
-    <Text color="muted">— {authors.join(', ')}</Text>
+  <div class="mt-6 mb-2 flex gap-1">
+    <Text color="muted" size="small" variant="italic">{publishedAt.toLocaleString(DateTime.DATE_FULL)}</Text>
+    <Text color="muted" size="small">— {authors.join(', ')}</Text>
   </div>
 
   <Markdown.Paragraph><em>{description}</em></Markdown.Paragraph>
