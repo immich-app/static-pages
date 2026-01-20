@@ -32,10 +32,7 @@
   let shiftHeld = $state(false);
 
   let disabledMetadataEditing = $derived(exifUploaderManager.selection.length === 0);
-  let assetTypeSelectState = $derived.by(() => {
-    const type = exifUploaderManager.selectedMetadata.captureType;
-    return type ? { value: type, label: AssetTypeNames[type] } : undefined;
-  });
+  let selectedAssetType = $derived(exifUploaderManager.selectedMetadata.captureType);
 
   const onDragAndDropUpload = (files?: FileList | File[]) => {
     for (const file of files || []) {
@@ -125,7 +122,7 @@
 {:else}
   <section>
     <!-- Columns -->
-    <div class="my-4 grid grid-cols-1 gap-4 md:grid-cols-[auto_minmax(400px,_1fr)]">
+    <div class="my-4 grid grid-cols-1 gap-4 md:grid-cols-[auto_minmax(400px,1fr)]">
       <Card color="secondary">
         <CardHeader>
           <div class="flex justify-between">
@@ -243,12 +240,12 @@
           <Stack gap={4}>
             <Field label="Capture Type" disabled={disabledMetadataEditing}>
               <Select
-                onChange={(e) => exifUploaderManager.updateSelectedMetadata('captureType', e.value as AssetType)}
-                data={Object.entries(AssetTypeNames).map(([value, label]) => ({
-                  value,
+                onChange={(e) => exifUploaderManager.updateSelectedMetadata('captureType', e)}
+                options={Object.entries(AssetTypeNames).map(([value, label]) => ({
+                  value: value as AssetType,
                   label,
                 }))}
-                bind:value={assetTypeSelectState}
+                bind:value={selectedAssetType}
               />
             </Field>
             <Field label="Camera Brand" disabled={disabledMetadataEditing}>

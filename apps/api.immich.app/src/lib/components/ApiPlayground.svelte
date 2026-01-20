@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { type ApiEndpoint } from '$lib/services/open-api';
+  import { type ApiEndpoint, type ApiMethod } from '$lib/services/open-api';
   import { playgroundManager } from '$lib/services/playground-manager.svelte';
   import {
     Button,
@@ -33,8 +33,11 @@
 
   let response = $state<Response | undefined>();
 
-  const httpMethods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].map((method) => ({ label: method, value: method }));
-  let selectedMethod = $derived(httpMethods.find(({ value }) => value === endpoint?.method) ?? httpMethods[0]);
+  const httpMethods = (['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const).map((method: ApiMethod) => ({
+    label: method,
+    value: method,
+  }));
+  let selectedMethod = $derived(endpoint?.method ?? httpMethods[0].value);
   let requestUrl = $derived<string>(endpoint?.route ?? '');
   let requestBody = $state<string>('');
 
@@ -44,7 +47,7 @@
     }
 
     const result = await playgroundManager.sendRequest({
-      method: selectedMethod.value,
+      method: selectedMethod,
       url: requestUrl,
       body: requestBody,
     });
@@ -81,13 +84,13 @@
     <div class="flex flex-col gap-4">
       <div class="flex flex-col gap-2 md:place-items-center">
         <Field label="Method">
-          <Select bind:value={selectedMethod} data={httpMethods} />
+          <Select bind:value={selectedMethod} options={httpMethods} />
         </Field>
         <Field label="Url">
           <Input bind:value={requestUrl} />
         </Field>
       </div>
-      {#if selectedMethod.value !== 'GET'}
+      {#if selectedMethod !== 'GET'}
         <Field label="Request">
           <Textarea id="request-body" aria-labelledby="request-body-label" bind:value={requestBody} rows={8} grow />
         </Field>
