@@ -22,7 +22,7 @@
             "comment": "Matches an album view URL."
           },
           {
-            "/": "/memories/*",
+            "/": "/memory",
             "comment": "Matches a memory view URL."
           },
           {
