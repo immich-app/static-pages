@@ -137,7 +137,7 @@
         "description": "Automatically optimize files uploaded to Immich in order to save storage space",
         "href": "https://github.com/miguelangel-nubla/immich-upload-optimizer"
       },
-      {        
+      {
         "title": "FlowLogix Mirror Immich",
         "description": "Sync your macOS Apple Photos to Immich with title, description, keywords and other metadata",
         "href": "https://github.com/flowlogix/mirror-immich"
