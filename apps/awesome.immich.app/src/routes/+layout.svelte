@@ -6,7 +6,9 @@
     AppShell,
     AppShellHeader,
     Button,
-    HStack,
+    ControlBar,
+    ControlBarHeader,
+    ControlBarOverflow,
     initializeTheme,
     Logo,
     ThemeSwitcher,
@@ -26,19 +28,20 @@
 
 <TooltipProvider>
   <AppShell>
-    <AppShellHeader>
-      <nav class="flex items-center justify-between p-2 md:gap-2">
-        <a href="/">
-          <Logo variant="inline" />
-        </a>
-
-        <HStack gap={1}>
+    <AppShellHeader class="w-full">
+      <ControlBar variant="ghost" static>
+        <ControlBarHeader>
+          <a href="/">
+            <Logo variant="inline" class="hidden sm:block" />
+            <Logo variant="logo" class="sm:hidden" />
+          </a>
+        </ControlBarHeader>
+        <ControlBarOverflow>
           <Button color="secondary" href={siteMetadata.editUrl} leadingIcon={mdiPencil}>Edit this page</Button>
           <ThemeSwitcher />
-        </HStack>
-      </nav>
+        </ControlBarOverflow>
+      </ControlBar>
     </AppShellHeader>
-
     <PageContent class="mx-auto w-full max-w-(--breakpoint-lg)">
       {@render children?.()}
     </PageContent>
