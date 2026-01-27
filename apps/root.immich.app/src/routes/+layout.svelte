@@ -74,7 +74,7 @@
 <TooltipProvider>
   <AppShell>
     <AppShellHeader>
-      <div>
+      <div class="w-full">
         <nav class="flex grid-cols-[1fr_auto_1fr] justify-between p-2 lg:grid lg:gap-2">
           <div class="flex place-items-center gap-2">
             <IconButton
@@ -88,7 +88,8 @@
               class="md:hidden"
             />
             <a href="/" class="flex gap-2 text-4xl">
-              <Logo variant="inline" />
+              <Logo variant="inline" class="hidden sm:block" />
+              <Logo variant="logo" class="sm:hidden" />
             </a>
           </div>
 

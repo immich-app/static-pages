@@ -25,7 +25,7 @@
   let { items = [], onToggleSidebar }: Props = $props();
 </script>
 
-<nav class="flex items-center justify-between md:gap-2 p-2">
+<nav class="w-full flex items-center justify-between md:gap-2 p-2">
   <div class="flex gap-2 place-items-center">
     {#if onToggleSidebar}
       <IconButton
@@ -40,7 +40,8 @@
       />
     {/if}
     <a href="/" class="flex gap-2 text-4xl">
-      <Logo variant="inline" />
+      <Logo variant="inline" class="hidden sm:block" />
+      <Logo variant="logo" class="sm:hidden" />
     </a>
   </div>
 

@@ -44,7 +44,7 @@
     "vitest-browser-svelte": "^2.0.0"
   },
   "dependencies": {
-    "@immich/ui": "^0.60.0",
+    "@immich/ui": "^0.60.3",
     "@mdi/js": "^7.4.47",
     "exifreader": "^4.32.0",
     "p-limit": "^7.1.1",

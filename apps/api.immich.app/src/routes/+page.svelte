@@ -7,7 +7,7 @@
 </script>
 
 <AppShell>
-  <AppShellHeader>
+  <AppShellHeader class="w-full">
     <Header
       items={[
         {
