@@ -123,11 +123,6 @@
         "href": "https://github.com/clumsyCoder00/Immich-Tools"
       },
       {
-        "title": "Immich Power Tools",
-        "description": "Power tools for organizing your immich library.",
-        "href": "https://github.com/varun-raj/immich-power-tools"
-      },
-      {
         "title": "Immich-Tiktok-Remover",
         "description": "Script to search for and remove TikTok videos from your Immich library.",
         "href": "https://github.com/mxc2/immich-tiktok-remover"
