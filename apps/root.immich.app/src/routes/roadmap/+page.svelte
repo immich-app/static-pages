@@ -240,7 +240,7 @@
       description: 'Automatically create albums based on rules',
     },
     {
-      icon: mdiImport,
+      icon: mdiImageAlbum,
       title: 'Smart memories',
       description: 'Automatically create memories based on events, locations, and people',
     },
