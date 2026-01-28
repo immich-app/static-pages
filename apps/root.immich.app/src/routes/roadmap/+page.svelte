@@ -10,9 +10,11 @@
     mdiApi,
     mdiAppleIos,
     mdiArchiveOutline,
+    mdiBackupRestore,
     mdiBash,
     mdiBookmark,
     mdiBookSearchOutline,
+    mdiBroom,
     mdiCakeVariant,
     mdiCameraBurst,
     mdiCast,
@@ -45,10 +47,10 @@
     mdiHistory,
     mdiImage,
     mdiImageAlbum,
-    mdiImageEdit,
     mdiImageMultipleOutline,
     mdiImagePlusOutline,
     mdiImageSearch,
+    mdiImport,
     mdiKeyboardSettingsOutline,
     mdiLicense,
     mdiLinkEdit,
@@ -70,7 +72,6 @@
     mdiRaw,
     mdiRocketLaunch,
     mdiRotate360,
-    mdiRotateLeft,
     mdiScaleBalance,
     mdiSecurity,
     mdiServer,
@@ -79,6 +80,7 @@
     mdiShareCircle,
     mdiStar,
     mdiStarOutline,
+    mdiSync,
     mdiTableKey,
     mdiTag,
     mdiTagFaces,
@@ -86,6 +88,7 @@
     mdiText,
     mdiThemeLightDark,
     mdiTrashCanOutline,
+    mdiTune,
     mdiUploadMultipleOutline,
     mdiVectorCombine,
     mdiVideo,
@@ -93,6 +96,8 @@
   } from '@mdi/js';
 
   const releases = {
+    'v2.5.0': new Date(2026, 0, 28),
+    'v2.3.0': new Date(2025, 10, 19),
     'v2.2.0': new Date(2025, 9, 30),
     'v2.0.0': new Date(2025, 9, 1),
     'v1.141.1': new Date(2025, 8, 8),
@@ -220,16 +225,6 @@
       description: 'Automate tasks with workflows',
     },
     {
-      icon: mdiImageEdit,
-      title: 'Basic editor',
-      description: 'Basic photo editing capabilities',
-    },
-    {
-      icon: mdiRotateLeft,
-      title: 'Rotation',
-      description: 'Rotate an image 90, 180, or 270 degrees',
-    },
-    {
       icon: mdiUploadMultipleOutline,
       title: 'Chunked uploads',
       description: 'Upload large files in smaller chunks to improve reliability',
@@ -244,6 +239,16 @@
       title: 'Smart albums',
       description: 'Automatically create albums based on rules',
     },
+    {
+      icon: mdiImageAlbum,
+      title: 'Smart memories',
+      description: 'Automatically create memories based on events, locations, and people',
+    },
+    {
+      icon: mdiImport,
+      title: 'iCloud import',
+      description: 'Build a better way to import large iCloud libraries',
+    },
   ].map((item) => ({
     ...item,
     done: false,
@@ -252,6 +257,31 @@
   }));
 
   const milestones: TimelineItem[] = [
+    releaseItem({
+      icon: mdiBroom,
+      title: 'Free up space',
+      description: 'Automatically delete files that have already been backed up',
+      release: 'v2.5.0',
+    }),
+    releaseItem({
+      icon: mdiBackupRestore,
+      title: 'Database backup & restore',
+      description: 'Manage and restore database backups via the web interface',
+      release: 'v2.5.0',
+    }),
+    releaseItem({
+      icon: mdiTune,
+      title: 'Basic editor',
+      description: 'Crop, rotate, and mirror images directly in Immich',
+      release: 'v2.5.0',
+    }),
+    starMilestone(90_000, new Date(2026, 0, 26)),
+    releaseItem({
+      icon: mdiSync,
+      title: 'Delete synchronization',
+      description: 'Synchronize deletes from the web to mobile (Android)',
+      release: 'v2.3.0',
+    }),
     releaseItem({
       icon: mdiOcr,
       title: 'Optical character recognition (OCR)',
