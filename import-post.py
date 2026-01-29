@@ -1,17 +1,18 @@
 # /// script
-# requires-python = ">=3.14"
 # dependencies = [
 #   "requests == 2.32.5",
 #   "python-frontmatter == 1.1.0",
 #   "mistletoe == 1.5.0",
 #   "pillow == 12.0.0",
-#   "boto3 == 1.40.64"
+#   "boto3 == 1.40.64",
+#   "pyyaml == 6.0.3"
 # ]
 # ///
 import datetime
 import hashlib
 import os
 import re
+import yaml
 from io import BytesIO
 from pathlib import Path
 from typing import Iterable
@@ -63,12 +64,27 @@ def convert_to_webp(image_data: bytes, quality: int = WEBP_QUALITY) -> bytes:
   img.save(output, format='WEBP', quality=quality)
   return output.getvalue()
 
+class FlowList(list):
+    pass
+
+def represent_flow_list(dumper, data):
+    return dumper.represent_sequence(
+        "tag:yaml.org,2002:seq",
+        data,
+        flow_style=True,
+    )
+
+yaml.add_representer(FlowList, represent_flow_list, Dumper=yaml.SafeDumper)
+
 
 class ImageProcessingRenderer(MarkdownRenderer):
-  def __init__(self, importer: 'PostImporter', uuid: str):
+  cover_image: span_token.Image | None = None
+
+  def __init__(self, importer: 'PostImporter', uuid: str, first_as_cover: bool = False):
     super().__init__()
     self.importer = importer
     self.uuid = uuid
+    self.first_as_cover = first_as_cover
 
   def render_image(self, token: span_token.Image) -> Iterable[Fragment]:
     original_url = token.src
@@ -86,7 +102,16 @@ class ImageProcessingRenderer(MarkdownRenderer):
     self.importer.upload_to_s3(webp_data, s3_key)
 
     token.src = f"{self.importer.r2_public_url}/{s3_key}"
+
     print(f"Replaced with: {token.src}")
+
+    # outline puts dimensions in the title
+    if getattr(token, "title", None) and token.title.startswith(" ="):
+        token.title = None
+
+    if self.first_as_cover and self.cover_image is None:
+      self.cover_image = token
+      return ""
 
     return super().render_image(token)
 
@@ -116,7 +141,8 @@ class PostImporter:
     response.raise_for_status()
     post = response.json()
 
-    text = post['data']['text'].replace('\\---', '---', 2)
+    text = post['data']['text'].replace('---', '---', 2)
+
     post_data = frontmatter.loads(text)
 
     return post, post_data
@@ -149,37 +175,36 @@ class PostImporter:
     etag = response.get('ETag', '').strip('"')
     print(f"Uploaded to S3: {key} (ETag: {etag})")
 
-  def process_images(self, post_data: frontmatter.Post, uuid: str) -> str:
-    with ImageProcessingRenderer(self, uuid) as renderer:
-      doc = mistletoe.Document(post_data.content)  # TODO: Verify content has no frontmatter
-      return renderer.render(doc)
-
-  def update_frontmatter(self, post_data: frontmatter.Post, post: dict, slug: str) -> None:
-    post_data['id'] = post['data']['id']
-    post_data['title'] = post['data']['title']
-    post_data['publishedAt'] = datetime.date.today()
-    post_data['authors'] = ['Immich Team']
-    post_data['slug'] = slug
-
   def write_output(self, post_data: frontmatter.Post, slug: str) -> Path:
     output_dir = OUTPUT_BASE / slug
     output_dir.mkdir(parents=True, exist_ok=True)
     output_file = output_dir / "+page.md"
 
-    output_file.write_text(frontmatter.dumps(post_data, default_flow_style=True))
+    output_file.write_text(frontmatter.dumps(post_data, Dumper=yaml.SafeDumper))
     return output_file
 
   def run(self) -> None:
     post, post_data = self.fetch_post_from_outline()
     uuid = post['data']['id']
-    slug = post_data.get('slug') or slugify(post['data']['title'])
+    title = post['data']['title']
+    slug = post_data.get('slug') or slugify(title)
 
     self.clear_s3_directory(f"{BLOG_PREFIX}/{uuid}/")
 
-    rendered_markdown = self.process_images(post_data, uuid)
-    post_data.content = rendered_markdown
+    with ImageProcessingRenderer(self, uuid, first_as_cover=True) as renderer:
+      doc = mistletoe.Document(post_data.content)
 
-    self.update_frontmatter(post_data, post, slug)
+      post_data.content = renderer.render(doc)
+      post_data['id'] = uuid
+      post_data['title'] = title
+      post_data['publishedAt'] = datetime.date.today()
+      post_data['authors'] = FlowList(['Immich Team'])
+      post_data['slug'] = slug
+
+      if renderer.cover_image:
+        post_data['coverUrl'] = renderer.cover_image.src
+        post_data['coverAlt'] = "".join(child.content for child in getattr(renderer.cover_image, "children", []) if hasattr(child, "content"))
+
     output_file = self.write_output(post_data, slug)
 
     print(f"\nPost written to: {output_file}")
