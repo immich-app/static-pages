@@ -15,7 +15,7 @@ title: January recap
 
 Hello everyone!
 
-January has already come and gone, but it feels like [2025](https://immich.app/blog/2025-year-in-review) _just_ ended. Either way, it's time for another project update. So far this month we have published our [2nd security advisory](https://github.com/immich-app/immich/security/advisories/GHSA-237r-x578-h5mv), crossed off a few big items from our [roadmap](https://immich.app/roadmap), and had our [first release of the year](https://github.com/immich-app/immich/releases/tag/v2.5.0). Keep reading below for the full details.
+January has already come and gone, but it feels like [2025](/blog/2025-year-in-review) _just_ ended. Either way, it's time for another project update. So far this month we have published our [2nd security advisory](https://github.com/immich-app/immich/security/advisories/GHSA-237r-x578-h5mv), crossed off a few big items from our [roadmap](https://immich.app/roadmap), and had our [first release of the year](https://github.com/immich-app/immich/releases/tag/v2.5.0). Keep reading below for the full details.
 
 Some of us also be at [FOSDEM](https://fosdem.org) again this upcoming weekend (January 31st and February 1st). If you happen to be around and see us, please say hi! We even have some goodies :)
 
@@ -94,7 +94,7 @@ I did manage to "break prod" for the first time as an Immich team member with ve
 
 ## Upcoming goals
 
-Looking forward to February we hope to continue work on Workflows, which we introduced [back in November](https://immich.app/blog/2025-november-recap). Also, I imagine there will be some issues & other feedback from the recently released features that will likely try to incorporate into the application. Related, the number of pull requests and issues have [continued to increase](https://data.immich.app/), so the team will probably try to get those both down to manageable numbers again.
+Looking forward to February we hope to continue work on Workflows, which we introduced [back in November](/blog/2025-november-recap). Also, I imagine there will be some issues & other feedback from the recently released features that will likely try to incorporate into the application. Related, the number of pull requests and issues have [continued to increase](https://data.immich.app/), so the team will probably try to get those both down to manageable numbers again.
 
 ![Graph of open pull requests over time](https://static.immich.cloud/blog/fe82bb73-0959-4867-a669-4de0f21a0e91/6d02197684c4ba4a1d5bf17626e87ece.webp)
 
