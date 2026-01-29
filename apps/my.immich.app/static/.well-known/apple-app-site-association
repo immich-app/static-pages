@@ -28,6 +28,10 @@
           {
             "/": "/photos/*",
             "comment": "Matches a photo view URL."
+          },
+          {
+            "/": "/people/*",
+            "comment": "Matches a photo view URL."
           }
         ]
       }
