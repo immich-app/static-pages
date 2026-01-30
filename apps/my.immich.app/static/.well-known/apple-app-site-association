@@ -31,7 +31,7 @@
           },
           {
             "/": "/people/*",
-            "comment": "Matches a photo view URL."
+            "comment": "Matches a people view URL."
           }
         ]
       }
