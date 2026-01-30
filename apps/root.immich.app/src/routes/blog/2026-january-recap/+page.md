@@ -5,7 +5,7 @@ coverAttribution:
   Photo by <a href="https://unsplash.com/@jakehills?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Jake
   Hills</a> on <a href="https://unsplash.com/photos/landscape-photography-of-horizon-mI02K_LxlfU">Unsplash</a>
 coverUrl: https://static.immich.cloud/blog/fe82bb73-0959-4867-a669-4de0f21a0e91/496363a1c3633d9ad97bd5b5cba61353.webp
-description: A recap of January, 2025, including an update on upcoming features, releases,
+description: A recap of January, 2026, including an update on upcoming features, releases,
   developer updates, and more.
 id: fe82bb73-0959-4867-a669-4de0f21a0e91
 publishedAt: 2026-01-29
