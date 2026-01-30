@@ -4,6 +4,7 @@
   import PageContent from '$common/components/PageContent.svelte';
   import '$lib/app.css';
   import {
+    AnnouncementBanner,
     AppShell,
     AppShellHeader,
     AppShellSidebar,
@@ -11,8 +12,10 @@
     Constants,
     IconButton,
     initializeTheme,
+    Link,
     Logo,
     NavbarItem,
+    Text,
     ThemeSwitcher,
     TooltipProvider,
   } from '@immich/ui';
@@ -25,6 +28,7 @@
     mdiScriptTextOutline,
     mdiShoppingOutline,
   } from '@mdi/js';
+  import { DateTime } from 'luxon';
   import { siGithub } from 'simple-icons';
   import { onMount, type Snippet } from 'svelte';
   import { MediaQuery } from 'svelte/reactivity';
@@ -75,6 +79,18 @@
   <AppShell>
     <AppShellHeader>
       <div class="w-full">
+        {#if !page.url.pathname.startsWith('/blog')}
+          <AnnouncementBanner until={DateTime.fromObject({ year: 2026, month: 2, day: 7 })}>
+            {#snippet content()}
+              <div class="flex justify-center">
+                <Text color="secondary" size="small">
+                  Read our <Link href="/blog/2026-january-recap">January recap</Link> &dash; roadmap changes, developer updates,
+                  and more!
+                </Text>
+              </div>
+            {/snippet}
+          </AnnouncementBanner>
+        {/if}
         <nav class="flex grid-cols-[1fr_auto_1fr] justify-between p-2 lg:grid lg:gap-2">
           <div class="flex place-items-center gap-2">
             <IconButton

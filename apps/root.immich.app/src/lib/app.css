@@ -3,3 +3,8 @@
 @import '$common/theme/theme.css';
 @source '../../node_modules/@immich/ui/dist';
 @source '../../../../common';
+
+@theme {
+  --spacing-control-bar-container: auto;
+  --spacing-control-bar: --spacing(16);
+}
