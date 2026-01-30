@@ -47,6 +47,7 @@
     "@immich/ui": "^0.60.3",
     "@mdi/js": "^7.4.47",
     "exifreader": "^4.32.0",
+    "mediabunny": "^1.31.0",
     "p-limit": "^7.1.1",
     "simple-icons": "^16.0.0",
     "svelte-highlight": "^7.8.4",

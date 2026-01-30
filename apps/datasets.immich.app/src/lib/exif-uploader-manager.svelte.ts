@@ -1,5 +1,7 @@
+import { toastManager } from '@immich/ui';
 import { mdiAccount, mdiCameraBurst, mdiImage, mdiPanoramaVariant, mdiPencil, mdiSphere } from '@mdi/js';
 import EXIFReader from 'exifreader';
+import { ALL_FORMATS, BufferSource, Input } from 'mediabunny';
 import type { ExifDatasetMetadata } from '../../types/metadata';
 import type { UploadableAssets } from '../../types/upload-manager';
 
@@ -45,37 +47,50 @@ class ExifUploaderManager implements UploadableAssets {
   }
 
   async addAsset(asset: File) {
-    let tags: EXIFReader.Tags;
+    let tags: EXIFReader.Tags | null = null;
 
     if (asset.size > MAX_FILE_SIZE) {
-      throw new Error(`File size exceeds ${MAX_FILE_SIZE / (1024 * 1024)}MB limit`);
+      toastManager.danger(`File "${asset.name}" exceeds the ${MAX_FILE_SIZE / (1024 * 1024)}MB size limit.`);
+      return;
     }
 
     try {
       tags = await EXIFReader.load(asset, { async: true });
     } catch {
-      throw new Error('Invalid Image file, please upload a valid image.');
+      try {
+        // if EXIF reading fails, then its not an image. Check if it is a common video format
+        const input = new Input({
+          source: new BufferSource(await asset.arrayBuffer()),
+          formats: ALL_FORMATS, // .mp4, .webm, .wav, ...
+        });
+
+        await input.computeDuration();
+      } catch {
+        toastManager.danger(`File "${asset.name}" is not a supported image or video format.`);
+        return;
+      }
     }
 
-    const previewBlob = await this.generatePreview(asset);
-    let preview: Blob;
+    let previewBlob: Blob | null = null;
+    try {
+      previewBlob = await this.generatePreview(asset);
+    } catch (e) {
+      console.error('Preview generation failed', e);
+    }
 
     // if the preview generation failed, use the original file as the preview
     if (!previewBlob) {
-      preview = asset;
-    } else {
-      preview = previewBlob;
+      previewBlob = asset;
     }
 
     const id = crypto.randomUUID();
-
     const newAsset: EXIFAsset = {
       data: asset,
-      preview: preview,
+      preview: previewBlob,
       name: asset.name,
       metadata: {
-        cameraMake: tags['Make']?.description,
-        cameraModel: tags['Model']?.description,
+        cameraMake: tags?.['Make']?.description,
+        cameraModel: tags?.['Model']?.description,
         originalFilename: asset.name,
         assetId: id,
       },
