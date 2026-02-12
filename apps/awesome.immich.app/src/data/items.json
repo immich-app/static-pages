@@ -89,6 +89,11 @@
         "title": "Immich-Slideshow-Toolkit",
         "description": "Commandline tools for creating video slideshow Mp4s from Immich albums.",
         "href": "https://github.com/knom/immich-slideshow-toolkit"
+      },
+      {
+        "title": "Immich Face Recognition Export Tool",
+        "description": "A Python tool to export face recognition data from Immich photo management system to DigiKam-compatible XMP format files.",
+        "href": "https://github.com/yuhuan417/immich-scripts"
       }
     ]
   },
