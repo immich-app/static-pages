@@ -107,9 +107,15 @@
         "href": "https://github.com/knom/immich-slideshow-toolkit"
       },
       {
+<<<<<<< HEAD
         "title": "TeleImmich",
         "description": "Sync exported Telegram backups to an Immich instance",
         "href": "https://github.com/dev-mkm/TeleImmich"
+=======
+        "title": "Immich Face Recognition Export Tool",
+        "description": "A Python tool to export face recognition data from Immich photo management system to DigiKam-compatible XMP format files.",
+        "href": "https://github.com/yuhuan417/immich-scripts"
+>>>>>>> 620b918 (Add Immich Face Recognition Export Tool to items.json)
       }
     ]
   },
