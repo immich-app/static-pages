@@ -1,5 +1,5 @@
 [tools]
-opentofu = "1.11.4"
+opentofu = "1.11.5"
 terragrunt = "0.99.1"
 
 [env]
