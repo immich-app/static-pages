@@ -46,7 +46,7 @@ importers:
         specifier: ^4.1.13
         version: 4.1.18(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.2))
       '@types/node':
-        specifier: ^24.10.11
+        specifier: ^24.10.13
         version: 24.10.13
       '@vitest/browser':
         specifier: ^3.2.4
@@ -134,7 +134,7 @@ importers:
         specifier: ^3.7.1
         version: 3.7.1
       '@types/node':
-        specifier: ^24.10.11
+        specifier: ^24.10.13
         version: 24.10.13
       '@vitest/browser':
         specifier: ^3.2.4
@@ -237,7 +237,7 @@ importers:
         specifier: ^4.1.13
         version: 4.1.18(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.2))
       '@types/node':
-        specifier: ^24.10.11
+        specifier: ^24.10.13
         version: 24.10.13
       '@vitest/browser':
         specifier: ^3.2.4
@@ -340,7 +340,7 @@ importers:
         specifier: ^4.1.13
         version: 4.1.18(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.2))
       '@types/node':
-        specifier: ^24.10.11
+        specifier: ^24.10.13
         version: 24.10.13
       '@vitest/browser':
         specifier: ^3.2.4
@@ -471,7 +471,7 @@ importers:
         specifier: ^4.1.13
         version: 4.1.18(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.2))
       '@types/node':
-        specifier: ^24.10.11
+        specifier: ^24.10.13
         version: 24.10.13
       '@vitest/browser':
         specifier: ^3.2.4
@@ -562,7 +562,7 @@ importers:
         specifier: ^4.1.13
         version: 4.1.18(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.2))
       '@types/node':
-        specifier: ^24.10.11
+        specifier: ^24.10.13
         version: 24.10.13
       '@vitest/browser':
         specifier: ^3.2.4
@@ -662,7 +662,7 @@ importers:
         specifier: ^3.7.1
         version: 3.7.1
       '@types/node':
-        specifier: ^24.10.11
+        specifier: ^24.10.13
         version: 24.10.13
       '@vitest/browser':
         specifier: ^3.2.4
