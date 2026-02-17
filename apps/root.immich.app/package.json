@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.0",
-    "@eslint/js": "^9.36.0",
+    "@eslint/js": "^10.0.0",
     "@immich/svelte-markdown-preprocess": "^0.2.1",
     "@sveltejs/adapter-static": "^3.0.9",
     "@sveltejs/kit": "^2.43.2",
@@ -28,7 +28,7 @@
     "@types/node": "^24.10.13",
     "@vitest/browser": "^3.2.4",
     "dotenv": "^17.2.3",
-    "eslint": "^9.36.0",
+    "eslint": "^10.0.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-svelte": "^3.12.4",
     "globals": "^17.0.0",
