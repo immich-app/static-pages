@@ -307,7 +307,7 @@ importers:
         version: 4.36.1
       mediabunny:
         specifier: ^1.31.0
-        version: 1.32.2
+        version: 1.33.0
       p-limit:
         specifier: ^7.1.1
         version: 7.3.0
@@ -2230,8 +2230,8 @@ packages:
     engines: {node: '>= 20'}
     hasBin: true
 
-  mediabunny@1.32.2:
-    resolution: {integrity: sha512-cxzGriei0JAYaYApO7xsN8ITq1npEnQPBAE43Z3vnGHhh8UVm8Cgb5o06wrufDVYlFg58I2sF6d/xWH39uXuEw==}
+  mediabunny@1.33.0:
+    resolution: {integrity: sha512-4RXTA2lOyP0nQ6Q4sODQYZmcuY4bRVWjRhRhgOCWcLqzsH1tY6ePFpbq/8VzTM7FYbyI4ImSfpiUc52alWEcoQ==}
 
   miniflare@4.20260210.0:
     resolution: {integrity: sha512-HXR6m53IOqEzq52DuGF1x7I1K6lSIqzhbCbQXv/cTmPnPJmNkr7EBtLDm4nfSkOvlDtnwDCLUjWII5fyGJI5Tw==}
@@ -4156,7 +4156,7 @@ snapshots:
 
   marked@17.0.2: {}
 
-  mediabunny@1.32.2:
+  mediabunny@1.33.0:
     dependencies:
       '@types/dom-mediacapture-transform': 0.1.11
       '@types/dom-webcodecs': 0.1.13
