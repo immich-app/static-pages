@@ -89,6 +89,11 @@
         "title": "Immich-Slideshow-Toolkit",
         "description": "Commandline tools for creating video slideshow Mp4s from Immich albums.",
         "href": "https://github.com/knom/immich-slideshow-toolkit"
+      },
+      {
+        "title": "TeleImmich",
+        "description": "Sync exported Telegram backups to an Immich instance",
+        "href": "https://github.com/dev-mkm/TeleImmich"
       }
     ]
   },
