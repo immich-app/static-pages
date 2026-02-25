@@ -186,12 +186,62 @@ jobs:
           branch: ${{ fromJson(steps.deploy-output.outputs.output).pages_branch.value }}
           wranglerVersion: '3'
 
+      - name: Save preview URL
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          APP_NAME: ${{ matrix.app_name }}
+          SUBDOMAIN: ${{ fromJson(steps.deploy-output.outputs.output).immich_subdomain.value }}
+        run: |
+          mkdir -p /tmp/preview-urls
+          echo "${APP_NAME}|${SUBDOMAIN}" > "/tmp/preview-urls/${APP_NAME}.txt"
+
+      - name: Upload preview URL
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: preview-url-${{ matrix.app_name }}
+          path: /tmp/preview-urls/${{ matrix.app_name }}.txt
+          retention-days: 1
+
+  preview-comment:
+    name: Preview Comment
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+    steps:
+      - name: Download all preview URLs
+        continue-on-error: true
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          pattern: preview-url-*
+          path: /tmp/preview-urls
+          merge-multiple: true
+
+      - name: Build comment body
+        id: build-comment
+        env:
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          shopt -s nullglob
+          SHORT_SHA="${SHA:0:7}"
+          BODY="<!-- preview-urls -->"$'\n'
+          BODY+="### Preview Deployments ([${SHORT_SHA}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${SHA}))"$'\n\n'
+          BODY+="| App | Preview URL |"$'\n'
+          BODY+="|-----|-------------|"$'\n'
+          for file in /tmp/preview-urls/*.txt; do
+            IFS='|' read -r app_name subdomain < "$file"
+            BODY+="| ${app_name}.immich.app | [${subdomain}](https://${subdomain}) |"$'\n'
+          done
+          {
+            echo "body<<COMMENT_EOF"
+            echo "$BODY"
+            echo "COMMENT_EOF"
+          } >> $GITHUB_OUTPUT
+
       - name: Comment
         uses: actions-cool/maintain-one-comment@4b2dbf086015f892dcb5e8c1106f5fccd6c1476b # v3
-        if: ${{ github.event_name == 'pull_request' }}
         with:
           number: ${{ github.event.number }}
-          body: |
-            📖 Preview of ${{ matrix.app_name }}.immich.app deployed to [${{ fromJson(steps.deploy-output.outputs.output).immich_subdomain.value }}](https://${{ fromJson(steps.deploy-output.outputs.output).immich_subdomain.value }})
+          body: ${{ steps.build-comment.outputs.body }}
           emojis: 'rocket'
-          body-include: '<!-- ${{ matrix.app_name }} PR URL -->'
+          body-include: '<!-- preview-urls -->'
