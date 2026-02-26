@@ -61,7 +61,7 @@
     <Text>My Immich allows public links to link you to specific areas of your personal Immich instance.</Text>
     <Text
       >For example, if you save <Link href="https://example.com" /> as your instance URL, navigating to
-      <Link href="https://my.immich.app/albums" /> will redirect to <Link href"https://example.com/albums" />.
+      <Link href="https://my.immich.app/albums" /> will redirect to <Link href="https://example.com/albums" />.
     </Text>
 
     <form onsubmit={handleSubmit}>
