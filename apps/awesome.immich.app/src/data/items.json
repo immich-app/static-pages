@@ -155,7 +155,7 @@
       {
  	"title": "immich-semantic-captioner",
   	"description": "AI-powered tool using semantic/LLM models to generate rich captions, descriptions, and tags for Immich assets, improving search for memes, reactions, and text-heavy images.",
-  	"href": "https://github.com/E621Labs/immich-semantic-captioner"
+  	"href": "https://github.com/mikesimone/immich-semantic-captioner"
       }
     ]
   },
