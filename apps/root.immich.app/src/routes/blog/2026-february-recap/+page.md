@@ -4,7 +4,7 @@ coverAlt: ''
 coverAttribution: Photo by <a href="https://unsplash.com/@v2osk" class="underline">v2osk</a>
   on <a href="https://unsplash.com/photos/foggy-mountain-summit-1Z2niiBPg5A" class="underline">Unsplash</a>
 coverUrl: https://static.immich.cloud/blog/dd9fd7aa-2635-49ef-98ff-5f9b157c5a40/9ef436ed0ee5b85bddf8f36734767602.webp
-description: A recap of February, 2026, including an update pull requests, issues, releases, developer updates, and more.
+description: A recap of February, 2026, including an update on pull requests, issues, releases, developer updates, and more.
 id: dd9fd7aa-2635-49ef-98ff-5f9b157c5a40
 publishedAt: 2026-03-02
 slug: 2026-february-recap
