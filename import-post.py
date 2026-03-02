@@ -42,10 +42,11 @@ def hash_content(data: bytes) -> str:
   return hashlib.md5(data).hexdigest()
 
 
-def download_image(url: str, auth_header: str) -> bytes:
+def download_media(url: str, auth_header: str) -> tuple[bytes, str]:
   response = requests.get(url, headers={"Authorization": auth_header})
   response.raise_for_status()
-  return response.content
+  content_type = response.headers['Content-Type']  # ensure content type is present
+  return (response.content, content_type)
 
 
 def convert_to_webp(image_data: bytes, quality: int = WEBP_QUALITY) -> bytes:
@@ -86,20 +87,57 @@ class ImageProcessingRenderer(MarkdownRenderer):
     self.uuid = uuid
     self.first_as_cover = first_as_cover
 
+  def render_link(self, token: span_token.Link) -> Iterable[Fragment]:
+    original_url = token.target
+
+    # assume all attachment links are videos?
+    if not original_url.startswith('/api/attachments.redirect'):
+      return super().render_link(token)
+
+    original_url = urlunparse(self.importer.outline_url_parts._replace(path=token.target))
+
+    video_data, content_type = download_media(original_url, self.importer.outline_auth_header)
+    if content_type != 'video/mp4':
+      print(f"Warning: Expected video/mp4 but got {content_type} for {original_url}")
+      return super().render_link(token)
+
+    content_hash = hash_content(video_data)
+
+    print(f"Processing video: {original_url} ({content_type})")
+
+    s3_key = f"{BLOG_PREFIX}/{self.uuid}/{content_hash}.mp4"
+    self.importer.upload_to_s3(video_data, s3_key, content_type='video/mp4')
+
+    src = f"{self.importer.r2_public_url}/{s3_key}"
+    print(f"Replaced with: {src}")
+
+    title = getattr(token, "title", None)
+
+    # outline puts dimensions in the title
+    if getattr(token, "title", None) and token.title.startswith(" ="):
+      title = None
+
+    template = '<video autoplay src="{src}"{title} controls>Your browser does not support the video tag.</video>'
+    title_template = ' title="{title}"'
+
+    return [Fragment(text=template.format(src=src, title=title_template.format(title=title) if title else ''))]
+
+
   def render_image(self, token: span_token.Image) -> Iterable[Fragment]:
     original_url = token.src
     if not original_url.startswith(('http://', 'https://')):
       parts = self.importer.outline_url_parts
       original_url = urlunparse(parts._replace(path=original_url))
 
-    print(f"Processing image: {original_url}")
+    image_data, content_type = download_media(original_url, self.importer.outline_auth_header)
 
-    image_data = download_image(original_url, self.importer.outline_auth_header)
+    print(f"Processing image: {original_url} ({content_type})")
+
     content_hash = hash_content(image_data)
     webp_data = convert_to_webp(image_data)
 
     s3_key = f"{BLOG_PREFIX}/{self.uuid}/{content_hash}.webp"
-    self.importer.upload_to_s3(webp_data, s3_key)
+    self.importer.upload_to_s3(webp_data, s3_key, content_type='image/webp')
 
     token.src = f"{self.importer.r2_public_url}/{s3_key}"
 
@@ -165,7 +203,7 @@ class PostImporter:
       )
       print(f"Deleted {len(objects_to_delete)} objects from {prefix}")
 
-  def upload_to_s3(self, data: bytes, key: str, content_type: str = 'image/webp') -> None:
+  def upload_to_s3(self, data: bytes, key: str, content_type: str) -> None:
     response = self.s3.put_object(
       Bucket=self.r2_bucket_name,
       Key=key,
