@@ -12,8 +12,8 @@ importers:
   apps/api.immich.app:
     dependencies:
       '@immich/ui':
-        specifier: ^0.64.0
-        version: 0.64.1(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)
+        specifier: ^0.65.0
+        version: 0.65.0(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -106,8 +106,8 @@ importers:
   apps/awesome.immich.app:
     dependencies:
       '@immich/ui':
-        specifier: ^0.64.0
-        version: 0.64.1(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)
+        specifier: ^0.65.0
+        version: 0.65.0(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -206,8 +206,8 @@ importers:
   apps/buy.immich.app:
     dependencies:
       '@immich/ui':
-        specifier: ^0.64.0
-        version: 0.64.1(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)
+        specifier: ^0.65.0
+        version: 0.65.0(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -297,8 +297,8 @@ importers:
   apps/datasets.immich.app:
     dependencies:
       '@immich/ui':
-        specifier: ^0.64.0
-        version: 0.64.1(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)
+        specifier: ^0.65.0
+        version: 0.65.0(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -400,8 +400,8 @@ importers:
   apps/datasets.immich.app/backend:
     dependencies:
       '@immich/ui':
-        specifier: ^0.64.0
-        version: 0.64.1(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)
+        specifier: ^0.65.0
+        version: 0.65.0(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)
       '@tsndr/cloudflare-worker-jwt':
         specifier: ^3.2.0
         version: 3.2.1
@@ -440,8 +440,8 @@ importers:
   apps/get.immich.app:
     dependencies:
       '@immich/ui':
-        specifier: ^0.64.0
-        version: 0.64.1(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)
+        specifier: ^0.65.0
+        version: 0.65.0(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -531,8 +531,8 @@ importers:
   apps/my.immich.app:
     dependencies:
       '@immich/ui':
-        specifier: ^0.64.0
-        version: 0.64.1(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)
+        specifier: ^0.65.0
+        version: 0.65.0(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -622,8 +622,8 @@ importers:
   apps/root.immich.app:
     dependencies:
       '@immich/ui':
-        specifier: ^0.64.0
-        version: 0.64.1(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)
+        specifier: ^0.65.0
+        version: 0.65.0(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -1186,8 +1186,8 @@ packages:
     peerDependencies:
       svelte: ^5.0.0
 
-  '@immich/ui@0.64.1':
-    resolution: {integrity: sha512-4U+MO4FWUjGEtdWZGGLeYlzsy5VU/dsPrWTWXWOeAZahZmKJhPKJnGkEpfHobb5yVgB/yhTTZk/TQEUX+8a79Q==}
+  '@immich/ui@0.65.0':
+    resolution: {integrity: sha512-fex/7k+glMcQOorBbr8LOruTWGqPIyOlQyKS/wSVBPC7ggxmDpyI0z2WMluEXXQbm9shQM967VLPByP9U4igEQ==}
     peerDependencies:
       svelte: ^5.0.0
 
@@ -3153,7 +3153,7 @@ snapshots:
       node-emoji: 2.2.0
       svelte: 5.53.5
 
-  '@immich/ui@0.64.1(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)':
+  '@immich/ui@0.65.0(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)))(svelte@5.53.5)(tailwindcss@4.2.0)':
     dependencies:
       '@immich/svelte-markdown-preprocess': 0.2.1(svelte@5.53.5)
       '@internationalized/date': 3.11.0
