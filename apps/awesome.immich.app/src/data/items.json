@@ -26,7 +26,6 @@
       {
         "title": "Immich Apple TV",
         "description": "Unofficial Immich Apple TV app.",
-        "href": "https://apps.apple.com/us/app/immich-viewer/id6757225201",
         "href": "https://github.com/adriankraemer/Immich-Viewer"
       },
       {
@@ -238,6 +237,11 @@
         "title": "How-To Install Immich on Rockstor NAS",
         "description": "Set up Immich with External Libraries on your Rockstor NAS server.",
         "href": "https://rockstor.com/docs/interface/docker-based-rock-ons/immich.html"
+      },
+      {
+        "title": "How to Self-Host Immich with Docker Compose",
+        "description": "Step-by-step guide to deploying Immich with Docker Compose, covering installation, configuration, and AI-powered features.",
+        "href": "https://selfhosting.sh/apps/immich/"
       }
     ]
   },
