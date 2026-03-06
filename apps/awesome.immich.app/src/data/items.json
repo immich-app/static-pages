@@ -14,6 +14,11 @@
         "href": "https://github.com/damongolding/immich-kiosk"
       },
       {
+        "title": "Immich Slides",
+        "description": "Yet another Immich slideshow app — but with an actual settings UI. Configure layouts, filters, timing, and animations directly from the interface instead of Docker env files or URL parameters.",
+        "href": "https://github.com/ntrampe/slides"
+      },
+      {
         "title": "Immich Android TV",
         "description": "Unofficial Immich Android TV app.",
         "href": "https://github.com/giejay/Immich-Android-TV"
