@@ -1,33 +1,19 @@
 <script lang="ts">
-  import { blogMetadata } from '$lib';
+  import { blogMetadata, posts } from '$lib';
   import { Heading, Icon, Link, Markdown, SiteMetadata, Text } from '@immich/ui';
   import { mdiChevronRight } from '@mdi/js';
   import { DateTime } from 'luxon';
   import type { Snippet } from 'svelte';
 
   type Props = {
-    attributes: {
-      title: string;
-      publishedAt: string;
-      modifiedAt?: string;
-      authors: string[];
-      description: string;
-      draft?: boolean;
-      coverUrl?: string;
-      coverAlt?: string;
-      coverAttribution?: string;
-    };
+    attributes: { id: string };
     children?: Snippet;
     postScript?: Snippet;
   };
 
-  let { attributes: post, children, postScript }: Props = $props();
-  let { title, publishedAt, authors, description } = $derived({
-    title: post.title,
-    publishedAt: DateTime.fromISO(post.publishedAt),
-    authors: post.authors,
-    description: post.description,
-  });
+  let { attributes, children, postScript }: Props = $props();
+  const post = $derived(posts.find((blog) => blog.id === attributes.id)!);
+  let { title, publishedAt, authors, description } = $derived(post);
 </script>
 
 <SiteMetadata site={blogMetadata} page={{ title, description }} />
