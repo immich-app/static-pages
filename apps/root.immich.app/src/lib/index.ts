@@ -24,26 +24,27 @@ export type TimelineItem = {
   getDateLabel: (language: string) => string;
 };
 
-export type BlogPost = {
+type Attributes = {
   /** uuid-v7, which can be generated with `npx -y uuid v7` */
   id: string;
   title: string;
   description: string;
-  publishedAt: DateTime;
-  modifiedAt?: DateTime;
-  authors: string[];
-  url: string;
   draft?: boolean;
+  authors: string[];
+  coverUrl?: string;
+  coverAlt?: string;
+  coverAttribution?: string;
 };
 
-type PostFrontMatter = {
-  id: string;
-  title: string;
-  description: string;
+export type BlogPost = Attributes & {
+  publishedAt: DateTime;
+  modifiedAt?: DateTime;
+  url: string;
+};
+
+type PostFrontMatter = Attributes & {
   publishedAt: Date;
   modifiedAt?: Date;
-  draft?: boolean;
-  authors: string[];
 };
 
 const getFrontMatterExample = (missingAttributes: string[]) => {
@@ -82,6 +83,9 @@ const asPost = (filename: string, attributes: PostFrontMatter) => {
     authors: attributes.authors,
     url: `/blog/${filename}`,
     draft: attributes.draft === true,
+    coverUrl: attributes.coverUrl,
+    coverAlt: attributes.coverAlt,
+    coverAttribution: attributes.coverAttribution,
   };
 };
 
