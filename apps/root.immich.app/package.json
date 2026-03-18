@@ -22,7 +22,7 @@
     "@immich/svelte-markdown-preprocess": "^0.2.1",
     "@sveltejs/adapter-static": "^3.0.9",
     "@sveltejs/kit": "^2.43.2",
-    "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "@sveltejs/vite-plugin-svelte": "^6.2.4",
     "@tailwindcss/vite": "^4.1.13",
     "@types/luxon": "^3.7.1",
     "@types/node": "^24.12.0",
