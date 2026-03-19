@@ -1,0 +1,5 @@
+@import 'tailwindcss';
+@import '@immich/ui/theme/default.css';
+@import '$common/theme/theme.css';
+@source '../../node_modules/@immich/ui/dist';
+@source '../../../../common';
