@@ -67,6 +67,7 @@ export const questions: SurveyQuestion[] = [
     section: 1,
     sectionTitle: 'Questions about your Immich server, your library and your internet speed',
     text: 'What is the total size of your Immich library?',
+    description: 'You can find this on your <a href="https://my.immich.app/admin/server-status" target="_blank" rel="noopener noreferrer" class="underline text-immich-primary">server status page</a>.',
     type: 'radio',
     required: true,
     options: [

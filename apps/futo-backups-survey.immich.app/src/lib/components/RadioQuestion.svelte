@@ -27,7 +27,7 @@
 <h2 class="mb-2 text-2xl font-bold">{question.text}</h2>
 
 {#if question.description}
-  <p class="mb-6 text-base text-gray-500">{question.description}</p>
+  <p class="mb-6 text-base text-gray-500">{@html question.description}</p>
 {/if}
 
 <div class="flex flex-col gap-3">
