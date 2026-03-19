@@ -28,7 +28,7 @@
   }
 
   .checkmark-circle {
-    stroke: var(--immich-primary);
+    stroke: rgb(var(--immich-primary));
     stroke-width: 2;
     stroke-dasharray: 166;
     stroke-dashoffset: 166;
@@ -36,7 +36,7 @@
   }
 
   .checkmark-check {
-    stroke: var(--immich-primary);
+    stroke: rgb(var(--immich-primary));
     stroke-width: 3;
     stroke-linecap: round;
     stroke-linejoin: round;

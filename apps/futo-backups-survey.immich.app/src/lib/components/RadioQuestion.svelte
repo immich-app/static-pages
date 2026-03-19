@@ -35,17 +35,15 @@
     <button
       class="flex min-h-12 w-full items-center gap-3 rounded-lg border-2 p-4 text-left transition-all duration-150
         {answer?.value === option.value
-        ? 'border-[var(--immich-primary)] bg-[var(--immich-primary)]/10'
+        ? 'border-immich-primary bg-immich-primary-10'
         : 'border-gray-200 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400'}"
       onclick={() => select(option.value)}
     >
-      {#if answer?.value === option.value}
-        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-[var(--immich-primary)] text-white">
-          <Icon icon={mdiCheck} size="18" />
-        </span>
-      {:else}
-        <span class="h-4 w-4 shrink-0 rounded-full border-2 border-gray-300 dark:border-gray-500"></span>
-      {/if}
+      <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full {answer?.value === option.value ? 'bg-immich-primary text-white' : 'border-2 border-gray-300 dark:border-gray-500'}">
+        {#if answer?.value === option.value}
+          <Icon icon={mdiCheck} size="14" />
+        {/if}
+      </span>
       <span class="text-base">{option.label}</span>
     </button>
   {/each}
@@ -54,16 +52,14 @@
     <div
       class="flex min-h-12 w-full items-center gap-3 rounded-lg border-2 p-4 transition-all duration-150
         {answer?.value === 'Other'
-        ? 'border-[var(--immich-primary)] bg-[var(--immich-primary)]/10'
+        ? 'border-immich-primary bg-immich-primary-10'
         : 'border-gray-200 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400'}"
     >
-      {#if answer?.value === 'Other'}
-        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-[var(--immich-primary)] text-white">
-          <Icon icon={mdiCheck} size="18" />
-        </span>
-      {:else}
-        <span class="h-4 w-4 shrink-0 rounded-full border-2 border-gray-300 dark:border-gray-500"></span>
-      {/if}
+      <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full {answer?.value === 'Other' ? 'bg-immich-primary text-white' : 'border-2 border-gray-300 dark:border-gray-500'}">
+        {#if answer?.value === 'Other'}
+          <Icon icon={mdiCheck} size="14" />
+        {/if}
+      </span>
       <input
         type="text"
         class="flex-1 bg-transparent text-base outline-none placeholder:text-gray-400"

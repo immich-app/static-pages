@@ -9,7 +9,7 @@
 </script>
 
 <div class="flex min-h-screen flex-col items-center justify-center gap-6 p-6">
-  <Logo variant="stacked" size="large" />
+  <Logo variant="stacked" size="giant" />
 
   <div class="flex max-w-[640px] flex-col gap-4 text-base">
     <h1 class="text-3xl font-bold">FUTO Backups</h1>

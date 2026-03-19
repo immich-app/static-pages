@@ -17,8 +17,6 @@
 
   let direction = $state(1);
   let transitioning = $state(false);
-  let showingSectionHeader = $state(false);
-  let currentSection = $state<SurveySection | null>(null);
   let dismissedSections = $state<Set<number>>(new Set());
 
   const needsSectionHeader = $derived.by(() => {
@@ -27,15 +25,13 @@
     return sections.find((s) => s.questionIds[0] === q.id) ?? null;
   });
 
-  $effect(() => {
+  const showingSectionHeader = $derived.by(() => {
     const section = needsSectionHeader;
-    if (section && !dismissedSections.has(section.number)) {
-      showingSectionHeader = true;
-      currentSection = section;
-    } else {
-      showingSectionHeader = false;
-      currentSection = null;
-    }
+    return !!(section && !dismissedSections.has(section.number));
+  });
+
+  const currentSection = $derived.by(() => {
+    return showingSectionHeader ? needsSectionHeader : null;
   });
 
   function dismissSection() {
@@ -44,7 +40,6 @@
       // Trigger reactivity by reassigning
       dismissedSections = new Set(dismissedSections);
     }
-    showingSectionHeader = false;
   }
 
   function handleAnswer(questionId: string, value: string, otherText?: string) {
@@ -92,18 +87,18 @@
   }
 </script>
 
-<div class="relative min-h-screen overflow-hidden">
-  <div class="fixed top-0 left-0 z-50 h-1 w-full bg-gray-200">
+<div class="relative min-h-screen">
+  <div class="fixed top-0 left-0 z-50 h-1 w-full bg-gray-700">
     <div
-      class="h-full bg-[var(--immich-primary)] transition-all duration-300"
+      class="h-full bg-immich-primary transition-all duration-300"
       style="width: {engine.progress}%"
     ></div>
   </div>
 
-  <div class="relative flex min-h-screen items-center justify-center">
+  <div class="relative min-h-screen overflow-hidden">
     {#key `${engine.currentIndex}-${showingSectionHeader}`}
       <div
-        class="absolute w-full"
+        class="w-full"
         in:fly={{ y: direction * 50, duration: 300, easing: cubicOut }}
         out:fly={{ y: direction * -50, duration: 300, easing: cubicOut }}
       >
@@ -115,7 +110,7 @@
             canGoBack={currentSection.number > 1}
           />
         {:else if engine.currentQuestion}
-          <div class="flex min-h-screen flex-col items-center justify-center px-4">
+          <div class="flex min-h-screen flex-col items-center justify-center px-4 pb-24">
             <QuestionCard
               question={engine.currentQuestion}
               answer={engine.answers[engine.currentQuestion.id]}
