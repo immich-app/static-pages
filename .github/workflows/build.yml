@@ -175,15 +175,15 @@ jobs:
             INCLUDE_DIRS='**/workers/${{ matrix.app_name }}'
           fi
 
-          QUEUE_ARGS="--queue-include-dir='**/!(workers)/**'"
+          QUEUE_ARGS=(--queue-include-dir='**/!(workers)/**')
           if [ -n "$INCLUDE_DIRS" ]; then
-            QUEUE_ARGS="$QUEUE_ARGS --queue-include-dir="$INCLUDE_DIRS""
+            QUEUE_ARGS+=(--queue-include-dir="$INCLUDE_DIRS")
           fi
 
           op run --env-file='.env' -- terragrunt run --all apply \
             --non-interactive \
             --parallelism 1 \
-            $QUEUE_ARGS
+            "${QUEUE_ARGS[@]}"
 
       - name: Cloudflare Deploy Output
         id: deploy-output
@@ -196,16 +196,16 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_PAGES_UPLOAD }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: ${{ fromJson(steps.deploy-output.outputs.output || '{}').pages_project_name.value }}
+          projectName: ${{ fromJson(steps.deploy-output.outputs.output).pages_project_name.value }}
           directory: 'dist/frontend'
-          branch: ${{ fromJson(steps.deploy-output.outputs.output || '{}').pages_branch.value }}
+          branch: ${{ fromJson(steps.deploy-output.outputs.output).pages_branch.value }}
           wranglerVersion: '3'
 
       - name: Save preview URL
         if: ${{ github.event_name == 'pull_request' }}
         env:
           APP_NAME: ${{ matrix.app_name }}
-          SUBDOMAIN: ${{ fromJson(steps.deploy-output.outputs.output || '{}').immich_subdomain.value }}
+          SUBDOMAIN: ${{ fromJson(steps.deploy-output.outputs.output).immich_subdomain.value }}
         run: |
           mkdir -p /tmp/preview-urls
           echo "${APP_NAME}|${SUBDOMAIN}" > "/tmp/preview-urls/${APP_NAME}.txt"
