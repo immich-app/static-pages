@@ -284,6 +284,8 @@ export const questions: SurveyQuestion[] = [
       opt('Kubernetes'),
       opt('LXC / System Container'),
       opt('Nix'),
+      opt('Unraid App'),
+      opt('TrueNAS App / Chart'),
       opt('Other'),
     ],
   },

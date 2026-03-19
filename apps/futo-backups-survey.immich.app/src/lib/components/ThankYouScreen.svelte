@@ -3,7 +3,7 @@
 </script>
 
 <div class="flex min-h-screen flex-col items-center justify-center gap-6 p-6 text-center">
-  <Logo variant="stacked" size="large" />
+  <Logo variant="icon" size="giant" />
 
   <div class="checkmark-container">
     <svg class="checkmark" viewBox="0 0 52 52">

@@ -13,9 +13,10 @@
     onNext: () => void;
     onBack: () => void;
     canGoBack: boolean;
+    isLast?: boolean;
   }
 
-  let { question, answer, onAnswer, onNext, onBack, canGoBack }: Props = $props();
+  let { question, answer, onAnswer, onNext, onBack, canGoBack, isLast = false }: Props = $props();
 
   const hasAnswer = $derived(!!answer?.value);
   const isOptional = $derived(!question.required);
@@ -54,7 +55,7 @@
       disabled={!hasAnswer && !isOptional}
       onclick={onNext}
     >
-      {hasAnswer || !isOptional ? 'Next' : 'Skip'}
+      {isLast ? 'Submit' : hasAnswer || !isOptional ? 'Next' : 'Skip'}
     </Button>
   </div>
 </div>

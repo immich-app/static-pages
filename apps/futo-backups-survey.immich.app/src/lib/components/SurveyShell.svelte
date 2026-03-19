@@ -1,9 +1,10 @@
 <script lang="ts">
   import { fly } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
-  import { sections } from '$lib/survey-definition';
+  import { questions, sections } from '$lib/survey-definition';
   import type { SurveySection } from '$lib/types';
   import type { createSurveyEngine } from '$lib/survey-engine.svelte';
+  import { findNextVisibleIndex } from '$lib/survey-engine.svelte';
   import QuestionCard from './QuestionCard.svelte';
   import SectionHeader from './SectionHeader.svelte';
 
@@ -33,6 +34,10 @@
   const currentSection = $derived.by(() => {
     return showingSectionHeader ? needsSectionHeader : null;
   });
+
+  const isLastQuestion = $derived(
+    findNextVisibleIndex(engine.currentIndex, questions, engine.answers) >= questions.length,
+  );
 
   function dismissSection() {
     if (currentSection) {
@@ -119,6 +124,7 @@
               onNext={handleNext}
               onBack={handleBack}
               canGoBack={engine.currentIndex > 0}
+              isLast={isLastQuestion}
             />
           </div>
         {/if}
