@@ -21,6 +21,6 @@ data "terraform_remote_state" "cloudflare_pages_project" {
 
   config = {
     conn_str    = var.tf_state_postgres_conn_str
-    schema_name = "cloudflare_pages_project_immich_app_${var.app_name}_${var.env}"
+    schema_name = "cloudflare_pages_project_immich_app_${replace(var.app_name, "-", "_")}_${var.env}"
   }
 }
