@@ -42,9 +42,9 @@
   function dismissSection() {
     if (currentSection) {
       dismissedSections.add(currentSection.number);
-      // Trigger reactivity by reassigning
       dismissedSections = new Set(dismissedSections);
     }
+    window.scrollTo(0, 0);
   }
 
   function handleAnswer(questionId: string, value: string, otherText?: string) {
@@ -59,6 +59,7 @@
     if (engine.isComplete) {
       onComplete();
     }
+    window.scrollTo(0, 0);
     setTimeout(() => {
       transitioning = false;
     }, 350);
@@ -87,6 +88,7 @@
       }
     }
 
+    window.scrollTo(0, 0);
     setTimeout(() => {
       transitioning = false;
     }, 350);
