@@ -87,6 +87,13 @@ export function createSurveyEngine(
     currentIndex = findPrevVisibleIndex(currentIndex, questions, answers);
   }
 
+  function goTo(questionId: string) {
+    const idx = questions.findIndex((q) => q.id === questionId);
+    if (idx >= 0) {
+      currentIndex = idx;
+    }
+  }
+
   function setAnswer(questionId: string, value: string, otherText?: string) {
     answers[questionId] = { value, ...(otherText ? { otherText } : {}) };
   }
@@ -118,6 +125,7 @@ export function createSurveyEngine(
     },
     next,
     previous,
+    goTo,
     setAnswer,
     initialize,
     shouldShowQuestion: (q: SurveyQuestion) => shouldShowQuestion(q, answers),

@@ -1,4 +1,4 @@
-export type QuestionType = 'radio' | 'email' | 'textarea';
+export type QuestionType = 'radio' | 'email' | 'email-signup' | 'textarea';
 
 export interface QuestionOption {
   label: string;

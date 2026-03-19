@@ -3,6 +3,7 @@
   import type { SurveyQuestion, SurveyAnswer } from '$lib/types';
   import RadioQuestion from './RadioQuestion.svelte';
   import EmailQuestion from './EmailQuestion.svelte';
+  import EmailSignupQuestion from './EmailSignupQuestion.svelte';
   import TextareaQuestion from './TextareaQuestion.svelte';
 
   interface Props {
@@ -26,7 +27,7 @@
     // Auto-advance on radio pick (but not for "Other" with text input)
     if (value !== 'Other' || !question.hasOther) {
       clearTimeout(autoNextTimer);
-      autoNextTimer = setTimeout(() => onNext(), 400);
+      autoNextTimer = setTimeout(() => onNext(), 200);
     }
   }
 </script>
@@ -36,6 +37,8 @@
     <RadioQuestion {question} {answer} onAnswer={handleRadioAnswer} />
   {:else if question.type === 'email'}
     <EmailQuestion {question} {answer} onAnswer={(v) => onAnswer(v)} />
+  {:else if question.type === 'email-signup'}
+    <EmailSignupQuestion {question} {answer} {onAnswer} />
   {:else if question.type === 'textarea'}
     <TextareaQuestion {question} {answer} onAnswer={(v) => onAnswer(v)} />
   {/if}

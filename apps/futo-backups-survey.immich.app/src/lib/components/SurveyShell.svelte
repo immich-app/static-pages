@@ -70,14 +70,15 @@
       dismissedSections = new Set(dismissedSections);
       engine.previous();
     } else {
-      // On a question — check if going back crosses a section boundary
       const currentQ = engine.currentQuestion;
-      engine.previous();
-      const prevQ = engine.currentQuestion;
-      if (currentQ && prevQ && currentQ.section !== prevQ.section) {
-        // Re-show the current section header when navigating back into it
-        dismissedSections.delete(prevQ.section);
+      const currentSec = currentQ ? sections.find((s) => s.questionIds.includes(currentQ.id)) : null;
+
+      if (currentSec && currentQ?.id === currentSec.questionIds[0]) {
+        // At the first question of a section — re-show this section's header
+        dismissedSections.delete(currentSec.number);
         dismissedSections = new Set(dismissedSections);
+      } else {
+        engine.previous();
       }
     }
 

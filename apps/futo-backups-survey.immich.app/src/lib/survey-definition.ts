@@ -292,26 +292,16 @@ export const questions: SurveyQuestion[] = [
     id: 'q17',
     section: 5,
     sectionTitle: 'Beta Program',
-    text: 'Beta Program',
+    text: 'Stay in the loop',
     description:
-      "Leave your email address below and we'll reach out when the beta is ready.",
-    type: 'email',
+      "As we've explained, we're working on FUTO Backups so that you can securely backup your Immich library. The closed beta will be completely free. You can sign up here if you'd like, but this is totally optional.",
+    type: 'email-signup',
     required: false,
     placeholder: 'name@example.com',
-  },
-  {
-    id: 'q18',
-    section: 5,
-    sectionTitle: 'Beta Program',
-    text: 'Get Updates',
-    description:
-      "You didn't enroll in the beta program, if you would still like to receive product updates though, you can leave your email here.",
-    type: 'email',
-    required: false,
-    placeholder: 'name@example.com',
-    conditional: {
-      showIf: { questionId: 'q17', condition: 'skipped' },
-    },
+    options: [
+      opt('Join the closed beta'),
+      opt('Receive product updates'),
+    ],
   },
   {
     id: 'q19',
@@ -357,7 +347,7 @@ export const sections: SurveySection[] = [
     number: 5,
     title: 'Beta Program',
     description:
-      "We're planning a closed beta before the full launch. If you'd like to be considered for early access, leave your email address below and we'll reach out when the beta is ready. You will also receive product updates as we progress towards a full release. If you only want updates, you can just signup to those on the next screen.",
-    questionIds: ['q17', 'q18', 'q19'],
+      "We're planning a closed beta before the full launch. If you'd like early access or product updates, leave your email on the next screen.",
+    questionIds: ['q17', 'q19'],
   },
 ];

@@ -2,13 +2,14 @@ import { expect, test, describe } from 'vitest';
 import { questions, sections } from './survey-definition';
 
 describe('survey-definition', () => {
-  test('has exactly 19 questions', () => {
-    expect(questions).toHaveLength(19);
+  test('has exactly 18 questions', () => {
+    expect(questions).toHaveLength(18);
   });
 
-  test('questions have sequential ids q1 through q19', () => {
+  test('questions have sequential ids q1-q17 then q19', () => {
     const ids = questions.map((q) => q.id);
-    expect(ids).toEqual(Array.from({ length: 19 }, (_, i) => `q${i + 1}`));
+    const expected = [...Array.from({ length: 17 }, (_, i) => `q${i + 1}`), 'q19'];
+    expect(ids).toEqual(expected);
   });
 
   test('has exactly 5 sections', () => {
@@ -31,8 +32,8 @@ describe('survey-definition', () => {
     expect(sections[3].questionIds).toEqual(['q13', 'q14', 'q15', 'q16']);
   });
 
-  test('section 5 contains q17-q19', () => {
-    expect(sections[4].questionIds).toEqual(['q17', 'q18', 'q19']);
+  test('section 5 contains q17, q19', () => {
+    expect(sections[4].questionIds).toEqual(['q17', 'q19']);
   });
 
   test('all radio questions have at least 2 options', () => {
@@ -50,9 +51,10 @@ describe('survey-definition', () => {
     }
   });
 
-  test('q17 and q18 are email type', () => {
-    expect(questions.find((q) => q.id === 'q17')?.type).toBe('email');
-    expect(questions.find((q) => q.id === 'q18')?.type).toBe('email');
+  test('q17 is email-signup type with options', () => {
+    const q17 = questions.find((q) => q.id === 'q17');
+    expect(q17?.type).toBe('email-signup');
+    expect(q17?.options?.length).toBeGreaterThanOrEqual(2);
   });
 
   test('q19 is textarea with 5000 char limit', () => {
@@ -61,15 +63,8 @@ describe('survey-definition', () => {
     expect(q19?.maxLength).toBe(5000);
   });
 
-  test('q18 has conditional: showIf q17 skipped', () => {
-    const q18 = questions.find((q) => q.id === 'q18');
-    expect(q18?.conditional).toEqual({
-      showIf: { questionId: 'q17', condition: 'skipped' },
-    });
-  });
-
-  test('q5, q12, q17, q18, q19 have descriptions', () => {
-    const descIds = ['q5', 'q12', 'q17', 'q18', 'q19'];
+  test('q5, q12, q17, q19 have descriptions', () => {
+    const descIds = ['q5', 'q12', 'q17', 'q19'];
     for (const id of descIds) {
       const q = questions.find((q) => q.id === id);
       expect(q?.description, `${id} should have a description`).toBeTruthy();

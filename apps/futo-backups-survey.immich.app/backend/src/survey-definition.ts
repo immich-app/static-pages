@@ -25,11 +25,5 @@ export const questions: SurveyQuestion[] = [
   { id: 'q15' },
   { id: 'q16' },
   { id: 'q17' },
-  {
-    id: 'q18',
-    conditional: {
-      showIf: { questionId: 'q17', condition: 'skipped' },
-    },
-  },
   { id: 'q19' },
 ];
