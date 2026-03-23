@@ -83,6 +83,49 @@ router.post('/api/answers/batch', async (request, env) => {
   return new Response(null, { status: 204 });
 });
 
+// @deprecated — kept for old clients still calling the single-answer endpoint
+router.post('/api/answers', async (request, env) => {
+  const db = env.DB;
+  const { questionId, value, otherText } = (await request.json()) as {
+    questionId: string;
+    value: string;
+    otherText?: string;
+  };
+
+  const ip =
+    request.headers.get('CF-Connecting-IP') ??
+    request.headers.get('x-forwarded-for') ??
+    'unknown';
+
+  let respondentId = getRespondentId(request);
+  const headers = new Headers();
+
+  if (!respondentId) {
+    respondentId = crypto.randomUUID();
+    setRespondentCookie(headers, respondentId);
+  }
+
+  await db
+    .prepare(
+      `INSERT INTO respondents (id, ip_address, created_at) VALUES (?, ?, ?)
+       ON CONFLICT (id) DO UPDATE SET ip_address = excluded.ip_address`,
+    )
+    .bind(respondentId, ip, new Date().toISOString())
+    .run();
+
+  await db
+    .prepare(
+      `INSERT INTO answers (respondent_id, question_id, answer, other_text, answered_at)
+       VALUES (?, ?, ?, ?, ?)
+       ON CONFLICT (respondent_id, question_id)
+       DO UPDATE SET answer = excluded.answer, other_text = excluded.other_text, answered_at = excluded.answered_at`,
+    )
+    .bind(respondentId, questionId, value, otherText ?? null, new Date().toISOString())
+    .run();
+
+  return new Response(null, { status: 204, headers });
+});
+
 router.get('/api/resume', async (request, env) => {
   const db = env.DB;
   let respondentId = getRespondentId(request);
