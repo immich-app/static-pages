@@ -6,6 +6,9 @@
   "observability": {
     "enabled": true
   },
+  "vars": {
+    "CF_TURNSTILE_SECRET": "DEV_TURNSTILE_TOKEN"
+  },
   "d1_databases": [
     {
       "binding": "DB",

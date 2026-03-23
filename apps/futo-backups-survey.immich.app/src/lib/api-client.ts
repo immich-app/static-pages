@@ -1,5 +1,20 @@
 import type { SurveyAnswer } from './types';
 
+/**
+ * Verifies a Cloudflare Turnstile token with the backend.
+ */
+export async function verifyTurnstile(turnstileToken: string): Promise<void> {
+  const res = await fetch('/api/verify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ turnstileToken }),
+    credentials: 'same-origin',
+  });
+  if (!res.ok) {
+    throw new Error('Challenge verification failed. Please try again.');
+  }
+}
+
 interface PendingSave {
   questionId: string;
   value: string;
@@ -84,6 +99,7 @@ export async function fetchResume(): Promise<{
   answers?: Record<string, { value: string; otherText?: string }>;
   nextQuestionIndex?: number;
   isComplete?: boolean;
+  isVerified?: boolean;
 }> {
   const res = await fetch('/api/resume', { credentials: 'same-origin' });
   if (!res.ok) {

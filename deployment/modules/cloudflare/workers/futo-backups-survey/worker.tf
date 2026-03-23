@@ -5,6 +5,11 @@ resource "cloudflare_workers_script" "api" {
   compatibility_date = "2025-06-03"
   module             = true
 
+  secret_text_binding {
+    name = "CF_TURNSTILE_SECRET"
+    text = data.terraform_remote_state.cloudflare_account.outputs.turnstile_default_invisible_secret
+  }
+
   d1_database_binding {
     name        = "DB"
     database_id = cloudflare_d1_database.survey.id

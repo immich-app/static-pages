@@ -1,6 +1,11 @@
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import dotenv from 'dotenv';
 import { resolve } from 'node:path';
+
+dotenv.config({ path: '../../.env' });
+
+process.env.PUBLIC_CF_TURNSTILE_SITE = process.env.PUBLIC_CF_TURNSTILE_SITE || '1x00000000000000000000BB';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {

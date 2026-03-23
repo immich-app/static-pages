@@ -9,6 +9,48 @@ const router = AutoRouter<IRequest, [Env, ExecutionContext]>({
   finally: [corsify],
 });
 
+router.post('/api/verify', async (request, env) => {
+  const db = env.DB;
+  const { turnstileToken } = (await request.json()) as { turnstileToken: string };
+
+  if (!turnstileToken) {
+    return new Response('Missing turnstile token', { status: 400 });
+  }
+
+  // dev environment — skip Cloudflare call
+  if (env.CF_TURNSTILE_SECRET !== 'DEV_TURNSTILE_TOKEN') {
+    const ip = request.headers.get('CF-Connecting-IP');
+    if (!ip) {
+      return new Response('Missing client IP', { status: 400 });
+    }
+
+    const formData = new FormData();
+    formData.append('secret', env.CF_TURNSTILE_SECRET);
+    formData.append('response', turnstileToken);
+    formData.append('remoteip', ip);
+
+    const result = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      body: formData,
+      method: 'POST',
+    });
+
+    const outcome = (await result.json()) as { success: boolean };
+    if (!outcome.success) {
+      return new Response('Turnstile validation failed', { status: 403 });
+    }
+  }
+
+  const respondentId = getRespondentId(request);
+  if (respondentId) {
+    await db
+      .prepare('UPDATE respondents SET is_verified = 1 WHERE id = ?')
+      .bind(respondentId)
+      .run();
+  }
+
+  return Response.json({ success: true });
+});
+
 router.post('/api/answers', async (request, env) => {
   const db = env.DB;
   const { questionId, value, otherText } = (await request.json()) as {
@@ -71,9 +113,9 @@ router.get('/api/resume', async (request, env) => {
   }
 
   const respondent = await db
-    .prepare('SELECT id, is_complete FROM respondents WHERE id = ?')
+    .prepare('SELECT id, is_complete, is_verified FROM respondents WHERE id = ?')
     .bind(respondentId)
-    .first<{ id: string; is_complete: number }>();
+    .first<{ id: string; is_complete: number; is_verified: number }>();
 
   if (!respondent) {
     return Response.json({ answers: {}, nextQuestionIndex: 0 }, { headers });
@@ -113,7 +155,7 @@ router.get('/api/resume', async (request, env) => {
     }
   }
 
-  return Response.json({ answers, nextQuestionIndex }, { headers });
+  return Response.json({ answers, nextQuestionIndex, isVerified: !!respondent.is_verified }, { headers });
 });
 
 router.post('/api/complete', async (request, env) => {

@@ -1,5 +1,8 @@
 <script lang="ts">
+  import { PUBLIC_CF_TURNSTILE_SITE } from '$env/static/public';
   import { Button, Logo } from '@immich/ui';
+  import { Turnstile } from 'svelte-turnstile';
+  import { verifyTurnstile } from '$lib/api-client';
 
   interface Props {
     onStart: () => void;
@@ -31,6 +34,12 @@
       <li>Private Beta Signup</li>
     </ol>
   </div>
+
+  <Turnstile
+    siteKey={PUBLIC_CF_TURNSTILE_SITE}
+    on:callback={(e) => verifyTurnstile(e.detail.token).catch(() => {})}
+    on:error={() => {}}
+  />
 
   <Button color="primary" onclick={onStart}>Get Started</Button>
 </div>

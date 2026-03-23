@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { PUBLIC_CF_TURNSTILE_SITE } from '$env/static/public';
   import { onMount } from 'svelte';
+  import { Turnstile } from 'svelte-turnstile';
   import { createSurveyEngine } from '$lib/survey-engine.svelte';
-  import { fetchResume, fireAndForgetSave, postComplete, onSaveError } from '$lib/api-client';
+  import { fetchResume, fireAndForgetSave, postComplete, onSaveError, verifyTurnstile } from '$lib/api-client';
   import SurveyShell from '$lib/components/SurveyShell.svelte';
   import ThankYouScreen from '$lib/components/ThankYouScreen.svelte';
   import AlreadyCompleted from '$lib/components/AlreadyCompleted.svelte';
@@ -12,11 +14,17 @@
   let alreadyCompleted = $state(false);
   let surveyFinished = $state(false);
   let showWelcome = $state(false);
+  let needsVerification = $state(false);
   let error = $state<string | null>(null);
 
   onSaveError((message) => {
     error = message;
   });
+
+  function onTurnstileCallback(token: string) {
+    needsVerification = false;
+    verifyTurnstile(token).catch(() => {});
+  }
 
   onMount(async () => {
     try {
@@ -24,6 +32,7 @@
       if (resume.isComplete) {
         alreadyCompleted = true;
       } else if (resume.answers && resume.nextQuestionIndex !== undefined && resume.nextQuestionIndex > 0) {
+        needsVerification = !resume.isVerified;
         engine.initialize(resume.answers, resume.nextQuestionIndex);
       } else {
         showWelcome = true;
@@ -76,5 +85,12 @@
 {:else if showWelcome}
   <WelcomeScreen onStart={() => (showWelcome = false)} />
 {:else}
+  {#if needsVerification}
+    <Turnstile
+      siteKey={PUBLIC_CF_TURNSTILE_SITE}
+      on:callback={(e) => onTurnstileCallback(e.detail.token)}
+      on:error={() => (needsVerification = false)}
+    />
+  {/if}
   <SurveyShell {engine} onAnswer={handleAnswer} onComplete={handleComplete} />
 {/if}
