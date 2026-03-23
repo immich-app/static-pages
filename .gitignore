@@ -1,10 +1,14 @@
 node_modules
 
+# IDEs
+.idea
+
 # Output
 .output
 .vercel
 apps/*/.svelte-kit
 apps/*/build
+apps/*/.wrangler
 
 # OS
 .DS_Store
@@ -19,3 +23,7 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Planning
+.planning/
+apps/*/.planning

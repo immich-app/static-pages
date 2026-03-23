@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "futo-backups-survey-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-06-03",
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "CF_TURNSTILE_SECRET": "DEV_TURNSTILE_TOKEN"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "futo-backups-survey",
+      "database_id": "local"
+    }
+  ]
+}

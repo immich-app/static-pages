@@ -22,11 +22,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets']
+        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets', 'futo-backups-survey']
+        include:
+          - app_name: futo-backups-survey
+            app_dir: futo-backups-survey.immich.app
 
     defaults:
       run:
-        working-directory: apps/${{ matrix.app_name }}.immich.app
+        working-directory: apps/${{ matrix.app_dir || format('{0}.immich.app', matrix.app_name) }}
 
     steps:
       - name: Checkout code
@@ -58,7 +61,7 @@ jobs:
         with:
           name: build-frontend-output-${{ matrix.app_name }}
           include-hidden-files: true
-          path: apps/${{ matrix.app_name }}.immich.app/build
+          path: apps/${{ matrix.app_dir || format('{0}.immich.app', matrix.app_name) }}/${{ matrix.build_path || 'build' }}
           retention-days: 1
 
   build-backend:
@@ -66,11 +69,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app_name: ['datasets']
+        app_name: ['datasets', 'futo-backups-survey']
+        include:
+          - app_name: futo-backups-survey
+            app_dir: futo-backups-survey.immich.app
 
     defaults:
       run:
-        working-directory: apps/${{ matrix.app_name }}.immich.app/backend
+        working-directory: apps/${{ matrix.app_dir || format('{0}.immich.app', matrix.app_name) }}/backend
 
     steps:
       - name: Checkout code
@@ -98,7 +104,7 @@ jobs:
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
         with:
           name: build-backend-output-${{ matrix.app_name }}
-          path: 'apps/${{ matrix.app_name }}.immich.app/backend/dist'
+          path: apps/${{ matrix.app_dir || format('{0}.immich.app', matrix.app_name) }}/backend/dist
           retention-days: 1
 
   deploy:
@@ -108,11 +114,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets']
+        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets', 'futo-backups-survey']
+        include:
+          - app_name: futo-backups-survey
+            app_dir: futo-backups-survey.immich.app
     env:
       TF_VAR_app_name: ${{ matrix.app_name }}
       TF_VAR_stage: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || '' }}
-      TF_VAR_dist_dir: ${{github.workspace}}/dist/backend
+      TF_VAR_dist_dir: ${{ github.workspace }}/dist/backend
+      TF_VAR_migrations_dir: ${{ github.workspace }}/apps/${{ matrix.app_dir || format('{0}.immich.app', matrix.app_name) }}/backend/migrations
       OP_SERVICE_ACCOUNT_TOKEN: ${{ github.ref == 'refs/heads/main' && secrets.OP_TF_PROD_ENV || secrets.OP_TF_DEV_ENV }}
     steps:
       - name: Checkout code
@@ -129,7 +139,8 @@ jobs:
       - name: Check if the app has a backend folder
         id: check-backend
         run: |
-          if [ -d "apps/${{ matrix.app_name }}.immich.app/backend" ]; then
+          APP_DIR="${{ matrix.app_dir || format('{0}.immich.app', matrix.app_name) }}"
+          if [ -d "apps/${APP_DIR}/backend" ]; then
             echo "has_backend=true" >> $GITHUB_ENV
           else
             echo "has_backend=false" >> $GITHUB_ENV
@@ -164,11 +175,15 @@ jobs:
             INCLUDE_DIRS='**/workers/${{ matrix.app_name }}'
           fi
 
+          QUEUE_ARGS=(--queue-include-dir='**/!(workers)/**')
+          if [ -n "$INCLUDE_DIRS" ]; then
+            QUEUE_ARGS+=(--queue-include-dir="$INCLUDE_DIRS")
+          fi
+
           op run --env-file='.env' -- terragrunt run --all apply \
             --non-interactive \
             --parallelism 1 \
-            --queue-include-dir='**/!(workers)/**' \
-            --queue-include-dir="$INCLUDE_DIRS"
+            "${QUEUE_ARGS[@]}"
 
       - name: Cloudflare Deploy Output
         id: deploy-output
