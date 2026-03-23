@@ -39,11 +39,24 @@
     findNextVisibleIndex(engine.currentIndex, questions, engine.answers) >= questions.length,
   );
 
+  const skippableSectionNumbers = new Set([5]);
+
   function dismissSection() {
     if (currentSection) {
       dismissedSections.add(currentSection.number);
       dismissedSections = new Set(dismissedSections);
     }
+    window.scrollTo(0, 0);
+  }
+
+  function skipSection() {
+    if (!currentSection) return;
+    const nextSection = sections.find((s) => s.number === currentSection!.number + 1);
+    if (nextSection) {
+      engine.goTo(nextSection.questionIds[0]);
+    }
+    dismissedSections.add(currentSection.number);
+    dismissedSections = new Set(dismissedSections);
     window.scrollTo(0, 0);
   }
 
@@ -115,6 +128,7 @@
             section={currentSection}
             onContinue={dismissSection}
             onBack={handleBack}
+            onSkip={skippableSectionNumbers.has(currentSection.number) ? skipSection : undefined}
             canGoBack={currentSection.number > 1}
           />
         {:else if engine.currentQuestion}
