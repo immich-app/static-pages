@@ -1,8 +1,8 @@
-import { SELF } from 'cloudflare:test';
+import { exports } from 'cloudflare:workers';
 import { describe, expect, it } from 'vitest';
 
 async function getJWTAuthHeader() {
-  const response = await SELF.fetch(
+  const response = await exports.default.fetch(
     new Request('https://example.com/api/auth', {
       method: 'POST',
       body: JSON.stringify({ turnstileToken: 'TEST_TOKEN' }),
@@ -15,7 +15,7 @@ async function getJWTAuthHeader() {
 
 describe('JWT Authentication', () => {
   it('returns a valid JWT token', async () => {
-    const response = await SELF.fetch(
+    const response = await exports.default.fetch(
       new Request('https://example.com/api/auth', {
         method: 'POST',
         body: JSON.stringify({ turnstileToken: 'TEST_TOKEN' }),
@@ -46,7 +46,7 @@ describe('EXIF Dataset upload API worker', () => {
       }),
     );
 
-    const response = await SELF.fetch(
+    const response = await exports.default.fetch(
       new Request('https://example.com/api/exif/upload', {
         method: 'PUT',
         body: formData,
@@ -74,7 +74,7 @@ describe('EXIF Dataset upload API worker', () => {
       }),
     );
 
-    const response = await SELF.fetch(
+    const response = await exports.default.fetch(
       new Request('https://example.com/api/exif/upload', {
         method: 'PUT',
         body: formData,
@@ -101,7 +101,7 @@ describe('EXIF Dataset upload API worker', () => {
       }),
     );
 
-    const response = await SELF.fetch(
+    const response = await exports.default.fetch(
       new Request('https://example.com/api/exif/upload', {
         method: 'PUT',
         body: formData,
@@ -130,7 +130,7 @@ describe('EXIF Dataset upload API worker', () => {
       }),
     );
 
-    const response = await SELF.fetch(
+    const response = await exports.default.fetch(
       new Request('https://example.com/api/exif/upload', {
         method: 'PUT',
         body: formData,
@@ -147,7 +147,7 @@ describe('EXIF Dataset upload API worker', () => {
     const formData = new FormData();
     formData.append('file', new Blob(['test1234'], { type: 'image/jpeg' }), 'test.jpg');
 
-    const response = await SELF.fetch(
+    const response = await exports.default.fetch(
       new Request('https://example.com/api/exif/upload', {
         method: 'PUT',
         body: formData,
@@ -163,7 +163,7 @@ describe('EXIF Dataset upload API worker', () => {
   it('rejects missing all data', async () => {
     const formData = new FormData();
 
-    const response = await SELF.fetch(
+    const response = await exports.default.fetch(
       new Request('https://example.com/api/exif/upload', {
         method: 'PUT',
         body: formData,
@@ -191,7 +191,7 @@ describe('EXIF Dataset upload API worker', () => {
       }),
     );
 
-    const response = await SELF.fetch(
+    const response = await exports.default.fetch(
       new Request('https://example.com/api/exif/upload', {
         method: 'POST',
         body: formData,
@@ -218,7 +218,7 @@ describe('EXIF Dataset upload API worker', () => {
       }),
     );
 
-    const response = await SELF.fetch(
+    const response = await exports.default.fetch(
       new Request('https://example.com/api/exif/upload', {
         method: 'PUT',
         body: formData,
@@ -246,7 +246,7 @@ describe('EXIF Dataset upload API worker', () => {
       }),
     );
 
-    const response = await SELF.fetch(
+    const response = await exports.default.fetch(
       new Request('https://example.com/api/exif/upload', {
         method: 'PUT',
         body: formData,
@@ -270,7 +270,7 @@ describe('EXIF Dataset upload API worker', () => {
       }),
     );
 
-    const response = await SELF.fetch(
+    const response = await exports.default.fetch(
       new Request('https://example.com/api/exif/upload', {
         method: 'PUT',
         body: formData,
@@ -297,7 +297,7 @@ describe('EXIF Dataset upload API worker', () => {
       }),
     );
 
-    const response = await SELF.fetch(
+    const response = await exports.default.fetch(
       new Request('https://example.com/api/exif/upload', {
         method: 'PUT',
         body: formData,
