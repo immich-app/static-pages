@@ -24,14 +24,15 @@
       launches, which will be free for the duration of the beta period.
     </p>
 
-    <p class="text-gray-500">This survey is broken down in 5 sections;</p>
+    <p class="text-gray-500">This survey is broken down in 6 sections;</p>
 
     <ol class="list-decimal space-y-1 pl-6 text-gray-500">
       <li>Questions about your immich server, your library and your internet speed</li>
       <li>Your current backup solution</li>
       <li>Questions about FUTO Backups - and your interest in it</li>
-      <li>Additional questions about how you host Immich</li>
       <li>Private Beta Signup</li>
+      <li>Additional questions about how you host Immich</li>
+      <li>Final Thoughts</li>
     </ol>
   </div>
 

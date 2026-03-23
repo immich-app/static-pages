@@ -6,14 +6,19 @@ describe('survey-definition', () => {
     expect(questions).toHaveLength(18);
   });
 
-  test('questions have sequential ids q1-q17 then q19', () => {
+  test('questions have expected ids in order', () => {
     const ids = questions.map((q) => q.id);
-    const expected = [...Array.from({ length: 17 }, (_, i) => `q${i + 1}`), 'q19'];
+    const expected = [
+      ...Array.from({ length: 12 }, (_, i) => `q${i + 1}`),
+      'q17',
+      'q13', 'q14', 'q15', 'q16',
+      'q19',
+    ];
     expect(ids).toEqual(expected);
   });
 
-  test('has exactly 5 sections', () => {
-    expect(sections).toHaveLength(5);
+  test('has exactly 6 sections', () => {
+    expect(sections).toHaveLength(6);
   });
 
   test('section 1 contains q1-q6', () => {
@@ -28,12 +33,16 @@ describe('survey-definition', () => {
     expect(sections[2].questionIds).toEqual(['q10', 'q11', 'q12']);
   });
 
-  test('section 4 contains q13-q16', () => {
-    expect(sections[3].questionIds).toEqual(['q13', 'q14', 'q15', 'q16']);
+  test('section 4 contains q17', () => {
+    expect(sections[3].questionIds).toEqual(['q17']);
   });
 
-  test('section 5 contains q17, q19', () => {
-    expect(sections[4].questionIds).toEqual(['q17', 'q19']);
+  test('section 5 contains q13-q16', () => {
+    expect(sections[4].questionIds).toEqual(['q13', 'q14', 'q15', 'q16']);
+  });
+
+  test('section 6 contains q19', () => {
+    expect(sections[5].questionIds).toEqual(['q19']);
   });
 
   test('all radio questions have at least 2 options', () => {

@@ -21,18 +21,18 @@ describe('shouldShowQuestion', () => {
 });
 
 describe('findNextVisibleIndex', () => {
-  it('from Q16 goes to Q17 normally', () => {
+  it('from Q12 goes to Q17 normally', () => {
     const answers: Record<string, SurveyAnswer> = {};
-    const q16Index = indexOf('q16');
-    const result = findNextVisibleIndex(q16Index, questions, answers);
+    const q12Index = indexOf('q12');
+    const result = findNextVisibleIndex(q12Index, questions, answers);
     expect(result).toBe(indexOf('q17'));
   });
 
-  it('from Q17 goes to Q19', () => {
+  it('from Q17 goes to Q13', () => {
     const answers: Record<string, SurveyAnswer> = {};
     const q17Index = indexOf('q17');
     const result = findNextVisibleIndex(q17Index, questions, answers);
-    expect(result).toBe(indexOf('q19'));
+    expect(result).toBe(indexOf('q13'));
   });
 
   it('past last question returns questions.length (signals completion)', () => {
@@ -44,11 +44,11 @@ describe('findNextVisibleIndex', () => {
 });
 
 describe('findPrevVisibleIndex', () => {
-  it('from Q19 goes back to Q17', () => {
+  it('from Q19 goes back to Q16', () => {
     const answers: Record<string, SurveyAnswer> = {};
     const q19Index = indexOf('q19');
     const result = findPrevVisibleIndex(q19Index, questions, answers);
-    expect(result).toBe(indexOf('q17'));
+    expect(result).toBe(indexOf('q16'));
   });
 
   it('at index 0 returns 0', () => {

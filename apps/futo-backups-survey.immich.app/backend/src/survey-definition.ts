@@ -20,10 +20,10 @@ export const questions: SurveyQuestion[] = [
   { id: 'q10' },
   { id: 'q11' },
   { id: 'q12' },
+  { id: 'q17' },
   { id: 'q13' },
   { id: 'q14' },
   { id: 'q15' },
   { id: 'q16' },
-  { id: 'q17' },
   { id: 'q19' },
 ];

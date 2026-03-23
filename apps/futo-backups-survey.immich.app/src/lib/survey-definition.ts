@@ -220,10 +220,27 @@ export const questions: SurveyQuestion[] = [
     ],
   },
 
-  // Section 4: Additional questions about how you host Immich
+  // Section 4: Private Beta Signup
+  {
+    id: 'q17',
+    section: 4,
+    sectionTitle: 'Beta Program',
+    text: 'Stay in the loop',
+    description:
+      "As we've explained, we're working on FUTO Backups so that you can securely backup your Immich library. The closed beta will be completely free. You can sign up here if you'd like, but this is totally optional.",
+    type: 'email-signup',
+    required: false,
+    placeholder: 'name@example.com',
+    options: [
+      opt('Join the closed beta'),
+      opt('Receive product updates'),
+    ],
+  },
+
+  // Section 5: Additional questions about how you host Immich
   {
     id: 'q13',
-    section: 4,
+    section: 5,
     sectionTitle: 'Additional questions about your Immich instance',
     text: 'What type of storage does your Immich server use for its media library?',
     type: 'radio',
@@ -239,7 +256,7 @@ export const questions: SurveyQuestion[] = [
   },
   {
     id: 'q14',
-    section: 4,
+    section: 5,
     sectionTitle: 'Additional questions about your Immich instance',
     text: 'What type of drives primarily make up your media storage?',
     type: 'radio',
@@ -250,7 +267,7 @@ export const questions: SurveyQuestion[] = [
   },
   {
     id: 'q15',
-    section: 4,
+    section: 5,
     sectionTitle: 'Additional questions about your Immich instance',
     text: 'What is the underlying OS or Hypervisor running your Immich server?',
     type: 'radio',
@@ -272,7 +289,7 @@ export const questions: SurveyQuestion[] = [
   },
   {
     id: 'q16',
-    section: 4,
+    section: 5,
     sectionTitle: 'Additional questions about your Immich instance',
     text: 'How are you running Immich?',
     type: 'radio',
@@ -290,26 +307,11 @@ export const questions: SurveyQuestion[] = [
     ],
   },
 
-  // Section 5: Private Beta Signup
-  {
-    id: 'q17',
-    section: 5,
-    sectionTitle: 'Beta Program',
-    text: 'Stay in the loop',
-    description:
-      "As we've explained, we're working on FUTO Backups so that you can securely backup your Immich library. The closed beta will be completely free. You can sign up here if you'd like, but this is totally optional.",
-    type: 'email-signup',
-    required: false,
-    placeholder: 'name@example.com',
-    options: [
-      opt('Join the closed beta'),
-      opt('Receive product updates'),
-    ],
-  },
+  // Section 6: Final thoughts
   {
     id: 'q19',
-    section: 5,
-    sectionTitle: 'Beta Program',
+    section: 6,
+    sectionTitle: 'Final Thoughts',
     text: 'Is there anything else you\'d like to share?',
     description:
       "Any thoughts, concerns, features you'd want, or questions about a managed backup service for Immich",
@@ -341,16 +343,21 @@ export const sections: SurveySection[] = [
   },
   {
     number: 4,
+    title: 'Beta Program',
+    description:
+      "We're planning a closed beta before the full launch. If you'd like early access or product updates, leave your email on the next screen.",
+    questionIds: ['q17'],
+  },
+  {
+    number: 5,
     title: 'Additional questions about your Immich instance',
     description:
       "We have further questions when it comes to your Immich instance. Your answers will allow us to better tailor Immich's development in the future.",
     questionIds: ['q13', 'q14', 'q15', 'q16'],
   },
   {
-    number: 5,
-    title: 'Beta Program',
-    description:
-      "We're planning a closed beta before the full launch. If you'd like early access or product updates, leave your email on the next screen.",
-    questionIds: ['q17', 'q19'],
+    number: 6,
+    title: 'Final Thoughts',
+    questionIds: ['q19'],
   },
 ];
