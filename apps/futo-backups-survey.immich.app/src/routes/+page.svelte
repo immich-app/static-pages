@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { Turnstile } from 'svelte-turnstile';
   import { createSurveyEngine } from '$lib/survey-engine.svelte';
-  import { fetchResume, fireAndForgetSave, postComplete, onSaveError, verifyTurnstile } from '$lib/api-client';
+  import { fetchResume, bufferAnswer, flushBuffer, flushBufferSync, postComplete, onSaveError, verifyTurnstile } from '$lib/api-client';
   import SurveyShell from '$lib/components/SurveyShell.svelte';
   import ThankYouScreen from '$lib/components/ThankYouScreen.svelte';
   import AlreadyCompleted from '$lib/components/AlreadyCompleted.svelte';
@@ -26,30 +26,42 @@
     verifyTurnstile(token).catch(() => {});
   }
 
-  onMount(async () => {
-    try {
-      const resume = await fetchResume();
-      if (resume.isComplete) {
-        alreadyCompleted = true;
-      } else if (resume.answers && resume.nextQuestionIndex !== undefined && resume.nextQuestionIndex > 0) {
-        needsVerification = !resume.isVerified;
-        engine.initialize(resume.answers, resume.nextQuestionIndex);
-      } else {
-        showWelcome = true;
+  const handleUnload = () => flushBufferSync();
+
+  onMount(() => {
+    (async () => {
+      try {
+        const resume = await fetchResume();
+        if (resume.isComplete) {
+          alreadyCompleted = true;
+        } else if (resume.answers && resume.nextQuestionIndex !== undefined && resume.nextQuestionIndex > 0) {
+          needsVerification = !resume.isVerified;
+          engine.initialize(resume.answers, resume.nextQuestionIndex);
+        } else {
+          showWelcome = true;
+        }
+      } catch (e) {
+        error = e instanceof Error ? e.message : 'Something went wrong. Please try again later.';
       }
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Something went wrong. Please try again later.';
-    }
-    loading = false;
+      loading = false;
+    })();
+
+    window.addEventListener('beforeunload', handleUnload);
+    return () => window.removeEventListener('beforeunload', handleUnload);
   });
 
   function handleAnswer(questionId: string, value: string, otherText?: string) {
     engine.setAnswer(questionId, value, otherText);
-    fireAndForgetSave({ questionId, value, otherText });
+    bufferAnswer({ questionId, value, otherText });
   }
 
   async function handleComplete() {
     try {
+      const flushed = await flushBuffer();
+      if (!flushed) {
+        error = 'Failed to save your answers. Please try again.';
+        return;
+      }
       await postComplete();
       surveyFinished = true;
     } catch (e) {

@@ -1,23 +1,21 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-// Module will be imported after it exists
-let saveAnswer: typeof import('./api-client').saveAnswer;
-let fireAndForgetSave: typeof import('./api-client').fireAndForgetSave;
-let flushPendingQueue: typeof import('./api-client').flushPendingQueue;
-let getPendingQueue: typeof import('./api-client').getPendingQueue;
+let bufferAnswer: typeof import('./api-client').bufferAnswer;
+let flushBuffer: typeof import('./api-client').flushBuffer;
+let flushBufferSync: typeof import('./api-client').flushBufferSync;
+let getBufferSize: typeof import('./api-client').getBufferSize;
 let fetchResume: typeof import('./api-client').fetchResume;
 let postComplete: typeof import('./api-client').postComplete;
 
 beforeEach(async () => {
   vi.useFakeTimers();
   vi.stubGlobal('fetch', vi.fn());
-  // Re-import module fresh each test to reset pendingQueue
   vi.resetModules();
   const mod = await import('./api-client');
-  saveAnswer = mod.saveAnswer;
-  fireAndForgetSave = mod.fireAndForgetSave;
-  flushPendingQueue = mod.flushPendingQueue;
-  getPendingQueue = mod.getPendingQueue;
+  bufferAnswer = mod.bufferAnswer;
+  flushBuffer = mod.flushBuffer;
+  flushBufferSync = mod.flushBufferSync;
+  getBufferSize = mod.getBufferSize;
   fetchResume = mod.fetchResume;
   postComplete = mod.postComplete;
 });
@@ -27,129 +25,231 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe('saveAnswer', () => {
-  it('calls fetch with correct body and headers', async () => {
+describe('bufferAnswer', () => {
+  it('adds an answer to the buffer', () => {
+    bufferAnswer({ questionId: 'q1', value: 'test' });
+    expect(getBufferSize()).toBe(1);
+  });
+
+  it('overwrites duplicate questionIds', () => {
+    bufferAnswer({ questionId: 'q1', value: 'first' });
+    bufferAnswer({ questionId: 'q1', value: 'second' });
+    expect(getBufferSize()).toBe(1);
+  });
+
+  it('buffers multiple different questions', () => {
+    bufferAnswer({ questionId: 'q1', value: 'a' });
+    bufferAnswer({ questionId: 'q2', value: 'b' });
+    bufferAnswer({ questionId: 'q3', value: 'c' });
+    expect(getBufferSize()).toBe(3);
+  });
+
+  it('auto-flushes after 4 answers', async () => {
     const mockFetch = vi.fn().mockResolvedValue({ ok: true, status: 204 });
     vi.stubGlobal('fetch', mockFetch);
 
-    const data = { questionId: 'q1', value: 'test' };
-    const promise = saveAnswer(data);
-    await vi.runAllTimersAsync();
-    await promise;
+    bufferAnswer({ questionId: 'q1', value: 'a' });
+    bufferAnswer({ questionId: 'q2', value: 'b' });
+    bufferAnswer({ questionId: 'q3', value: 'c' });
+    expect(mockFetch).not.toHaveBeenCalled();
 
-    expect(mockFetch).toHaveBeenCalledWith('/api/answers', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-      credentials: 'same-origin',
-    });
+    bufferAnswer({ questionId: 'q4', value: 'd' });
+    await vi.runAllTimersAsync();
+
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    const body = JSON.parse(mockFetch.mock.calls[0][1].body);
+    expect(body.answers).toHaveLength(4);
+    expect(getBufferSize()).toBe(0);
   });
 
-  it('returns true on 204 response', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, status: 204 }));
+  it('auto-flushes after 10 seconds of inactivity', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({ ok: true, status: 204 });
+    vi.stubGlobal('fetch', mockFetch);
 
-    const promise = saveAnswer({ questionId: 'q1', value: 'test' });
+    bufferAnswer({ questionId: 'q1', value: 'a' });
+    bufferAnswer({ questionId: 'q2', value: 'b' });
+
+    expect(mockFetch).not.toHaveBeenCalled();
+
+    await vi.advanceTimersByTimeAsync(10_000);
+
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    const body = JSON.parse(mockFetch.mock.calls[0][1].body);
+    expect(body.answers).toHaveLength(2);
+    expect(getBufferSize()).toBe(0);
+  });
+
+  it('resets inactivity timer on each new answer', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({ ok: true, status: 204 });
+    vi.stubGlobal('fetch', mockFetch);
+
+    bufferAnswer({ questionId: 'q1', value: 'a' });
+
+    // Wait 8 seconds, then add another answer
+    await vi.advanceTimersByTimeAsync(8_000);
+    expect(mockFetch).not.toHaveBeenCalled();
+
+    bufferAnswer({ questionId: 'q2', value: 'b' });
+
+    // 8 more seconds — still within the new 10s window
+    await vi.advanceTimersByTimeAsync(8_000);
+    expect(mockFetch).not.toHaveBeenCalled();
+
+    // 2 more seconds — now 10s since last answer
+    await vi.advanceTimersByTimeAsync(2_000);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('resets counter after threshold flush', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({ ok: true, status: 204 });
+    vi.stubGlobal('fetch', mockFetch);
+
+    // First batch of 4
+    bufferAnswer({ questionId: 'q1', value: 'a' });
+    bufferAnswer({ questionId: 'q2', value: 'b' });
+    bufferAnswer({ questionId: 'q3', value: 'c' });
+    bufferAnswer({ questionId: 'q4', value: 'd' });
+    await vi.runAllTimersAsync();
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+
+    // Next 3 answers should NOT trigger a flush
+    bufferAnswer({ questionId: 'q5', value: 'e' });
+    bufferAnswer({ questionId: 'q6', value: 'f' });
+    bufferAnswer({ questionId: 'q7', value: 'g' });
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+
+    // 4th answer triggers second flush
+    bufferAnswer({ questionId: 'q8', value: 'h' });
+    await vi.runAllTimersAsync();
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+  });
+
+  it('duplicate answers do not inflate the flush counter', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({ ok: true, status: 204 });
+    vi.stubGlobal('fetch', mockFetch);
+
+    // Answer same question 4 times — should count as 4 towards threshold
+    // (user changed their mind rapidly)
+    bufferAnswer({ questionId: 'q1', value: 'a' });
+    bufferAnswer({ questionId: 'q1', value: 'b' });
+    bufferAnswer({ questionId: 'q1', value: 'c' });
+    bufferAnswer({ questionId: 'q1', value: 'd' });
+    await vi.runAllTimersAsync();
+
+    // Threshold is based on answer events, not unique questions
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    const body = JSON.parse(mockFetch.mock.calls[0][1].body);
+    expect(body.answers).toHaveLength(1); // deduped in buffer
+  });
+});
+
+describe('flushBuffer', () => {
+  it('returns true immediately when buffer is empty', async () => {
+    const result = await flushBuffer();
+    expect(result).toBe(true);
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('sends buffered answers to /api/answers/batch', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({ ok: true, status: 204 });
+    vi.stubGlobal('fetch', mockFetch);
+
+    bufferAnswer({ questionId: 'q1', value: 'a' });
+    bufferAnswer({ questionId: 'q2', value: 'b' });
+
+    const promise = flushBuffer();
     await vi.runAllTimersAsync();
     const result = await promise;
 
     expect(result).toBe(true);
+    expect(mockFetch).toHaveBeenCalledWith('/api/answers/batch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: expect.any(String),
+      credentials: 'same-origin',
+    });
+
+    const body = JSON.parse(mockFetch.mock.calls[0][1].body);
+    expect(body.answers).toHaveLength(2);
+    expect(getBufferSize()).toBe(0);
   });
 
-  it('retries on 500 response - fetch called 4 times total', async () => {
+  it('re-adds items to buffer on failure', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 500 }));
+
+    bufferAnswer({ questionId: 'q1', value: 'a' });
+
+    const promise = flushBuffer();
+    await vi.runAllTimersAsync();
+    const result = await promise;
+
+    expect(result).toBe(false);
+    expect(getBufferSize()).toBe(1);
+  });
+
+  it('retries on 500 response - 4 attempts total', async () => {
     const mockFetch = vi.fn().mockResolvedValue({ ok: false, status: 500 });
     vi.stubGlobal('fetch', mockFetch);
 
-    const promise = saveAnswer({ questionId: 'q1', value: 'test' });
+    bufferAnswer({ questionId: 'q1', value: 'a' });
+
+    const promise = flushBuffer();
     await vi.runAllTimersAsync();
     await promise;
 
-    expect(mockFetch).toHaveBeenCalledTimes(4); // 1 initial + 3 retries
+    expect(mockFetch).toHaveBeenCalledTimes(4);
   });
 
-  it('does NOT retry on 400 response - fetch called once', async () => {
+  it('does NOT retry on 400 response', async () => {
     const mockFetch = vi.fn().mockResolvedValue({ ok: false, status: 400 });
     vi.stubGlobal('fetch', mockFetch);
 
-    const promise = saveAnswer({ questionId: 'q1', value: 'test' });
+    bufferAnswer({ questionId: 'q1', value: 'a' });
+
+    const promise = flushBuffer();
     await vi.runAllTimersAsync();
     await promise;
 
     expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 
-  it('retries on network error (fetch throws)', async () => {
-    const mockFetch = vi.fn().mockRejectedValue(new TypeError('Failed to fetch'));
-    vi.stubGlobal('fetch', mockFetch);
-
-    const promise = saveAnswer({ questionId: 'q1', value: 'test' });
-    await vi.runAllTimersAsync();
-    await promise;
-
-    expect(mockFetch).toHaveBeenCalledTimes(4); // 1 initial + 3 retries
-  });
-
-  it('uses delays of 1000, 2000, 4000 ms between retries', async () => {
-    const mockFetch = vi.fn().mockResolvedValue({ ok: false, status: 500 });
-    vi.stubGlobal('fetch', mockFetch);
-
-    const promise = saveAnswer({ questionId: 'q1', value: 'test' });
-
-    // Initial call happens immediately
-    await vi.advanceTimersByTimeAsync(0);
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-
-    // After 1000ms: first retry
-    await vi.advanceTimersByTimeAsync(1000);
-    expect(mockFetch).toHaveBeenCalledTimes(2);
-
-    // After 2000ms more: second retry
-    await vi.advanceTimersByTimeAsync(2000);
-    expect(mockFetch).toHaveBeenCalledTimes(3);
-
-    // After 4000ms more: third retry
-    await vi.advanceTimersByTimeAsync(4000);
-    expect(mockFetch).toHaveBeenCalledTimes(4);
-
-    await promise;
-  });
-});
-
-describe('fireAndForgetSave', () => {
-  it('adds to pendingQueue on total failure', async () => {
+  it('does not overwrite newer buffer entries on failure', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 500 }));
 
-    fireAndForgetSave({ questionId: 'q1', value: 'test' });
-    await vi.runAllTimersAsync();
-    // Allow microtasks to settle
-    await vi.advanceTimersByTimeAsync(0);
+    bufferAnswer({ questionId: 'q1', value: 'old' });
 
-    expect(getPendingQueue()).toHaveLength(1);
-    expect(getPendingQueue()[0]).toEqual({ questionId: 'q1', value: 'test' });
+    const promise = flushBuffer();
+
+    // Buffer a newer answer while flush is in progress
+    bufferAnswer({ questionId: 'q1', value: 'new' });
+
+    await vi.runAllTimersAsync();
+    await promise;
+
+    // The buffer should still have the newer value, not the failed old one
+    expect(getBufferSize()).toBe(1);
   });
 });
 
-describe('flushPendingQueue', () => {
-  it('re-fires queued items', async () => {
-    const mockFetch = vi.fn().mockResolvedValue({ ok: false, status: 500 });
-    vi.stubGlobal('fetch', mockFetch);
+describe('flushBufferSync', () => {
+  it('uses sendBeacon when buffer has items', () => {
+    const mockSendBeacon = vi.fn().mockReturnValue(true);
+    vi.stubGlobal('navigator', { sendBeacon: mockSendBeacon });
 
-    // First: make a save fail to populate the queue
-    fireAndForgetSave({ questionId: 'q1', value: 'test' });
-    await vi.runAllTimersAsync();
-    await vi.advanceTimersByTimeAsync(0);
-    expect(getPendingQueue()).toHaveLength(1);
+    bufferAnswer({ questionId: 'q1', value: 'a' });
+    flushBufferSync();
 
-    // Now make fetch succeed and flush
-    mockFetch.mockResolvedValue({ ok: true, status: 204 });
-    const callsBefore = mockFetch.mock.calls.length;
-    flushPendingQueue();
-    await vi.runAllTimersAsync();
-    await vi.advanceTimersByTimeAsync(0);
+    expect(mockSendBeacon).toHaveBeenCalledWith('/api/answers/batch', expect.any(Blob));
+    expect(getBufferSize()).toBe(0);
+  });
 
-    // Queue should be empty now (re-fired successfully)
-    expect(getPendingQueue()).toHaveLength(0);
-    // fetch should have been called at least once more
-    expect(mockFetch.mock.calls.length).toBeGreaterThan(callsBefore);
+  it('does nothing when buffer is empty', () => {
+    const mockSendBeacon = vi.fn();
+    vi.stubGlobal('navigator', { sendBeacon: mockSendBeacon });
+
+    flushBufferSync();
+
+    expect(mockSendBeacon).not.toHaveBeenCalled();
   });
 });
 

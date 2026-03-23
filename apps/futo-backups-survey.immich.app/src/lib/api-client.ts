@@ -21,26 +21,60 @@ interface PendingSave {
   otherText?: string;
 }
 
-let pendingQueue: PendingSave[] = [];
+let answerBuffer: Map<string, PendingSave> = new Map();
+let inactivityTimer: ReturnType<typeof setTimeout> | null = null;
+let unflushedCount = 0;
 
 const BACKOFF_DELAYS = [1000, 2000, 4000];
+const INACTIVITY_MS = 10_000;
+const FLUSH_THRESHOLD = 4;
+
+let onSaveErrorCallback: ((message: string) => void) | null = null;
 
 /**
- * Saves an answer to the server with exponential backoff retry.
- * Retries up to 3 times on server errors (5xx) and network errors.
- * Does NOT retry on client errors (4xx).
+ * Registers a callback invoked when a batch save fails after all retries.
  */
-export async function saveAnswer(data: PendingSave): Promise<boolean> {
+export function onSaveError(cb: (message: string) => void): void {
+  onSaveErrorCallback = cb;
+}
+
+function resetInactivityTimer() {
+  if (inactivityTimer !== null) {
+    clearTimeout(inactivityTimer);
+  }
+  inactivityTimer = setTimeout(() => {
+    flushBuffer();
+  }, INACTIVITY_MS);
+}
+
+/**
+ * Buffers an answer for later batch submission.
+ * Auto-flushes after 4 answers or 10 seconds of inactivity.
+ */
+export function bufferAnswer(data: PendingSave): void {
+  answerBuffer.set(data.questionId, data);
+  unflushedCount++;
+  resetInactivityTimer();
+
+  if (unflushedCount >= FLUSH_THRESHOLD) {
+    flushBuffer();
+  }
+}
+
+/**
+ * Sends a batch of answers to the server with exponential backoff retry.
+ */
+async function saveBatch(answers: PendingSave[]): Promise<boolean> {
   for (let attempt = 0; attempt <= BACKOFF_DELAYS.length; attempt++) {
     try {
-      const res = await fetch('/api/answers', {
+      const res = await fetch('/api/answers/batch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ answers }),
         credentials: 'same-origin',
       });
       if (res.ok) return true;
-      if (res.status < 500) return false; // client error, don't retry
+      if (res.status < 500) return false;
     } catch {
       // network error, retry
     }
@@ -51,44 +85,60 @@ export async function saveAnswer(data: PendingSave): Promise<boolean> {
   return false;
 }
 
-let onSaveErrorCallback: ((message: string) => void) | null = null;
-
 /**
- * Registers a callback invoked when a save fails after all retries.
+ * Flushes the answer buffer to the server as a batch.
+ * Returns true on success, false on failure.
+ * On failure, items are re-added to the buffer for the next flush attempt.
  */
-export function onSaveError(cb: (message: string) => void): void {
-  onSaveErrorCallback = cb;
-}
+export async function flushBuffer(): Promise<boolean> {
+  if (answerBuffer.size === 0) return true;
 
-/**
- * Fire-and-forget: saves an answer without blocking.
- * On total failure (all retries exhausted), queues for later retry and notifies via callback.
- */
-export function fireAndForgetSave(data: PendingSave): void {
-  saveAnswer(data).then((success) => {
-    if (!success) {
-      pendingQueue.push(data);
-      onSaveErrorCallback?.('Failed to save answer. Your response will be retried automatically.');
-    }
-  });
-}
-
-/**
- * Re-attempts all queued saves that previously failed.
- */
-export function flushPendingQueue(): void {
-  const queue = [...pendingQueue];
-  pendingQueue = [];
-  for (const item of queue) {
-    fireAndForgetSave(item);
+  if (inactivityTimer !== null) {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = null;
   }
+  unflushedCount = 0;
+
+  const batch = [...answerBuffer.values()];
+  answerBuffer.clear();
+
+  const success = await saveBatch(batch);
+  if (!success) {
+    // Re-add failed items, but don't overwrite newer entries
+    for (const item of batch) {
+      if (!answerBuffer.has(item.questionId)) {
+        answerBuffer.set(item.questionId, item);
+      }
+    }
+    onSaveErrorCallback?.('Failed to save answers. Your responses will be retried automatically.');
+  }
+  return success;
 }
 
 /**
- * Returns the current pending queue (for testing).
+ * Synchronous flush for beforeunload — uses sendBeacon.
  */
-export function getPendingQueue(): PendingSave[] {
-  return pendingQueue;
+export function flushBufferSync(): void {
+  if (answerBuffer.size === 0) return;
+
+  if (inactivityTimer !== null) {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = null;
+  }
+  unflushedCount = 0;
+
+  const batch = [...answerBuffer.values()];
+  answerBuffer.clear();
+
+  const blob = new Blob([JSON.stringify({ answers: batch })], { type: 'application/json' });
+  navigator.sendBeacon('/api/answers/batch', blob);
+}
+
+/**
+ * Returns the current buffer size (for testing).
+ */
+export function getBufferSize(): number {
+  return answerBuffer.size;
 }
 
 /**
