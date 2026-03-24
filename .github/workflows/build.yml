@@ -131,7 +131,7 @@ jobs:
           persist-credentials: false
 
       - name: Get build artifact
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: 'build-frontend-output-${{ matrix.app_name }}'
           path: '${{ github.workspace }}/dist/frontend'
@@ -148,21 +148,21 @@ jobs:
 
       - name: Get backend build artifact
         if: ${{ env.has_backend == 'true' }}
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: 'build-backend-output-${{ matrix.app_name }}'
           path: '${{ github.workspace }}/dist/backend'
 
       - name: Install 1Password CLI
-        uses: 1password/install-cli-action@9a0c9dd934086b7ab1d90115d455bda1c53c2bdb # v2
+        uses: 1password/install-cli-action@9a0c9dd934086b7ab1d90115d455bda1c53c2bdb # v2.0.2
 
       - name: Install Terragrunt
-        uses: eLco/setup-terragrunt@2c5116f8979bb261072ef57c97ac026cd9c27434 # v1
+        uses: eLco/setup-terragrunt@2c5116f8979bb261072ef57c97ac026cd9c27434 # v1.0.3
         with:
           terragrunt_version: ${{ env.tg_version }}
 
       - name: 'Install OpenTofu'
-        uses: opentofu/setup-opentofu@9d84900f3238fab8cd84ce47d658d25dd008be2f # v1
+        uses: opentofu/setup-opentofu@9d84900f3238fab8cd84ce47d658d25dd008be2f # v1.0.8
         with:
           tofu_version: ${{ env.tofu_version }}
           tofu_wrapper: false
@@ -192,7 +192,7 @@ jobs:
           echo "output=$(op run --no-masking --env-file='../../../.env' -- terragrunt output -json | jq -c .)" >> $GITHUB_OUTPUT
 
       - name: Publish Frontend to Cloudflare Pages
-        uses: cloudflare/pages-action@f0a1cd58cd66095dee69bfa18fa5efd1dde93bca # v1
+        uses: cloudflare/pages-action@f0a1cd58cd66095dee69bfa18fa5efd1dde93bca # v1.5.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_PAGES_UPLOAD }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -226,7 +226,7 @@ jobs:
     steps:
       - name: Download all preview URLs
         continue-on-error: true
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           pattern: preview-url-*
           path: /tmp/preview-urls
@@ -254,7 +254,7 @@ jobs:
           } >> $GITHUB_OUTPUT
 
       - name: Comment
-        uses: actions-cool/maintain-one-comment@4b2dbf086015f892dcb5e8c1106f5fccd6c1476b # v3
+        uses: actions-cool/maintain-one-comment@4b2dbf086015f892dcb5e8c1106f5fccd6c1476b # v3.2.0
         with:
           number: ${{ github.event.number }}
           body: ${{ steps.build-comment.outputs.body }}
