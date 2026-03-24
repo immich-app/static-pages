@@ -51,6 +51,11 @@
         "href": "https://github.com/simulot/immich-go"
       },
       {
+        "title": "gPhotos2Immich",
+        "description": "Sync Google Photos shared albums to Immich, with automatic scheduling, deduplication, and Docker support.",
+        "href": "https://github.com/warreth/gPhotos2Immich"
+      },
+      {
         "title": "Powershell Module PSImmich",
         "description": "Powershell Module for the Immich API",
         "href": "https://github.com/hanpq/PSImmich"
