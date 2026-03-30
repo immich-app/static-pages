@@ -69,7 +69,7 @@ The client editors had a few requirements:
 2. Have a real time preview of what the resulting image would look like
 3. Be able to load existing edits in a deterministic way, regardless of the ordering of the edits.
 
-![Crop a picture of a bird](https://static.immich.cloud/blog/87058112-8de7-4143-9dc2-feac8f944e51/b197ae170bd7355f8a4468b17abcf730.webp 'testing')
+![Crop a picture of a bird](https://static.immich.cloud/blog/87058112-8de7-4143-9dc2-feac8f944e51/b197ae170bd7355f8a4468b17abcf730.webp)
 
 ### Editor experience
 

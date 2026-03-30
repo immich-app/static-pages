@@ -19,19 +19,19 @@ It's time for another project update. February was all about pull requests, bug 
 
 Open pull requests on GitHub reached nearly 200 in early February. Since then, we have been (slowly) making our way through them. We know some of the pull requests have been sitting there _for months_, and for that we apologize. We are doing our best though and will hopefully get to them soon. We are a pretty small team after all. We do have this fancy graph however, which shows an overall downward trend.
 
-![](https://static.immich.cloud/blog/dd9fd7aa-2635-49ef-98ff-5f9b157c5a40/c00fce4ec02a2ed0a524c1f61120895f.webp)
+![Pull requests over time](https://static.immich.cloud/blog/dd9fd7aa-2635-49ef-98ff-5f9b157c5a40/c00fce4ec02a2ed0a524c1f61120895f.webp)
 
 ## Issues
 
 Similarly, open issues on GitHub was getting pretty close to 600, but the last half of February has seen some major work in that area as well.
 
-![](https://static.immich.cloud/blog/dd9fd7aa-2635-49ef-98ff-5f9b157c5a40/bdedc7e6b32df758d954303776a59cc8.webp)
+![Issues over time](https://static.immich.cloud/blog/dd9fd7aa-2635-49ef-98ff-5f9b157c5a40/bdedc7e6b32df758d954303776a59cc8.webp)
 
 ## Releases
 
 In beginning of February, we had 3 patch releases, bringing the latest version to `v2.5.6`. Since then, there have been over 200 commits on main, and the team is gearing up for another release in the next week or two. Here is a sneak peek of one of the shiny new features: map side panel/timeline (thanks to [michelheusschen](https://github.com/michelheusschen)!)
 
-![](https://static.immich.cloud/blog/dd9fd7aa-2635-49ef-98ff-5f9b157c5a40/a624f8ea59c33ad3d91c222f624ba586.webp)
+![Immich map side panel](https://static.immich.cloud/blog/dd9fd7aa-2635-49ef-98ff-5f9b157c5a40/a624f8ea59c33ad3d91c222f624ba586.webp)
 
 ## New blog post: Building the Immich editor
 
