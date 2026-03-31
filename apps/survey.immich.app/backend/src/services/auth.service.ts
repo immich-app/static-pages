@@ -229,6 +229,9 @@ export class AuthService {
   }
 
   async createSessionToken(user: UserInfo): Promise<string> {
+    if (!this.env.SESSION_SECRET) {
+      throw new ServiceError('SESSION_SECRET is not configured', 500);
+    }
     const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
     const payload = btoa(
       JSON.stringify({

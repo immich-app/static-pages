@@ -8,6 +8,7 @@ function constantTimeEqual(a: string, b: string): boolean {
 }
 
 export async function hashPassword(password: string): Promise<string> {
+  if (!password) throw new Error('Password cannot be empty');
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const key = await crypto.subtle.importKey(
     'raw',
@@ -47,6 +48,7 @@ export async function verifyPassword(password: string, stored: string): Promise<
 }
 
 export async function signToken(data: string, secret: string): Promise<string> {
+  if (!secret) throw new Error('Signing secret is not configured');
   const key = await crypto.subtle.importKey(
     'raw',
     new TextEncoder().encode(secret),
