@@ -101,12 +101,12 @@ export class RespondentService {
 
     const respondent = await this.respondents.getById(respondentId);
     if (!respondent) {
-      throw new ServiceError('Respondent not found', 400);
+      throw new ServiceError('Respondent not found', 404);
     }
 
     const survey = await this.surveys.getBySlug(slug);
     if (!survey || respondent.survey_id !== survey.id) {
-      throw new ServiceError('Respondent does not belong to this survey', 400);
+      throw new ServiceError('Respondent does not belong to this survey', 403);
     }
 
     this.checkSurveyClosed(survey);
@@ -126,12 +126,12 @@ export class RespondentService {
   async complete(slug: string, respondentId: string): Promise<void> {
     const respondent = await this.respondents.getById(respondentId);
     if (!respondent) {
-      throw new ServiceError('Respondent not found', 400);
+      throw new ServiceError('Respondent not found', 404);
     }
 
     const survey = await this.surveys.getBySlug(slug);
     if (!survey || respondent.survey_id !== survey.id) {
-      throw new ServiceError('Respondent does not belong to this survey', 400);
+      throw new ServiceError('Respondent does not belong to this survey', 403);
     }
 
     await this.respondents.markComplete(respondentId);
@@ -156,7 +156,7 @@ export class RespondentService {
       if (!grouped.has(row.question_id)) {
         grouped.set(row.question_id, { questionId: row.question_id, answers: [] });
       }
-      grouped.get(row.question_id)!.answers.push({
+      grouped.get(row.question_id)?.answers.push({
         value: row.answer,
         otherText: row.other_text,
         count: row.count,
@@ -198,10 +198,13 @@ export class RespondentService {
             answers: {},
           });
         }
-        respondentMap.get(row.respondent_id)!.answers[row.question_id] = {
-          value: row.answer,
-          otherText: row.other_text,
-        };
+        const entry = respondentMap.get(row.respondent_id);
+        if (entry) {
+          entry.answers[row.question_id] = {
+            value: row.answer,
+            otherText: row.other_text,
+          };
+        }
       }
       const data = JSON.stringify([...respondentMap.values()], null, 2);
       return { data, contentType: 'application/json', filename: `${survey.slug ?? survey.id}-responses.json` };
@@ -230,7 +233,8 @@ export class RespondentService {
       if (!respondentMap.has(row.respondent_id)) {
         respondentMap.set(row.respondent_id, { completedAt: row.completed_at, answers: new Map() });
       }
-      respondentMap.get(row.respondent_id)!.answers.set(row.question_id, {
+      const csvEntry = respondentMap.get(row.respondent_id);
+      csvEntry?.answers.set(row.question_id, {
         value: row.answer,
         otherText: row.other_text,
       });
@@ -384,7 +388,7 @@ export class RespondentService {
           const cond = JSON.parse(q.conditional) as {
             showIf: { questionId: string; condition: string };
           };
-          if (cond.showIf.condition === 'skipped' && answers[cond.showIf.questionId]) {
+          if (cond.showIf.condition === 'skipped' && cond.showIf.questionId in answers) {
             continue;
           }
         } catch {

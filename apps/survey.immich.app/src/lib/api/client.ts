@@ -65,13 +65,14 @@ export function createApiClient(slug: string) {
       clearTimeout(inactivityTimer);
       inactivityTimer = null;
     }
-    unflushedCount = 0;
 
     const batch = [...answerBuffer.values()];
     answerBuffer.clear();
 
     const success = await saveBatch(batch);
-    if (!success) {
+    if (success) {
+      unflushedCount = 0;
+    } else {
       for (const item of batch) {
         if (!answerBuffer.has(item.questionId)) {
           answerBuffer.set(item.questionId, item);

@@ -38,7 +38,7 @@ export function validateSlug(slug: string): string | null {
   if (!slug) return 'Slug is required for publishing';
   if (slug.length < 3) return 'Slug must be at least 3 characters';
   if (slug.length > 50) return 'Slug must be at most 50 characters';
-  if (!/^[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(slug)) {
+  if (!/^[a-z0-9][a-z0-9-]{1,48}[a-z0-9]$/.test(slug)) {
     return 'Slug must be lowercase alphanumeric with hyphens, cannot start or end with a hyphen';
   }
   return null;

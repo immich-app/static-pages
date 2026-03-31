@@ -48,14 +48,6 @@ export class RespondentRepository {
       .run();
   }
 
-  async getAllCompletedBySurveyId(surveyId: string): Promise<Array<{ id: string; completed_at: string | null }>> {
-    const result = await this.db
-      .prepare('SELECT id, completed_at FROM respondents WHERE survey_id = ? AND is_complete = 1 ORDER BY completed_at')
-      .bind(surveyId)
-      .all<{ id: string; completed_at: string | null }>();
-    return result.results;
-  }
-
   async countBySurveyId(surveyId: string): Promise<{ total: number; completed: number }> {
     const row = await this.db
       .prepare(
@@ -210,7 +202,9 @@ export class AnswerRepository {
   }
 
   async searchTextAnswers(surveyId: string, query: string, questionId?: string): Promise<Array<{ respondent_id: string; question_id: string; question_text: string; answer: string }>> {
-    const likeQuery = `%${query}%`;
+    // Escape LIKE special characters so user input is treated literally
+    const escaped = query.replace(/[%_]/g, (ch) => `\\${ch}`);
+    const likeQuery = `%${escaped}%`;
     if (questionId) {
       const result = await this.db
         .prepare(`

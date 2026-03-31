@@ -442,7 +442,7 @@ export class SurveyService {
       const newQuestion: QuestionRow = {
         id: crypto.randomUUID(),
         survey_id: newSurvey.id,
-        section_id: sectionIdMap.get(question.section_id)!,
+        section_id: sectionIdMap.get(question.section_id) ?? question.section_id,
         text: question.text,
         description: question.description,
         type: question.type,

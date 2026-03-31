@@ -1,6 +1,15 @@
 import type { QuestionType, Survey, SurveyQuestion, SurveySection } from '../types';
 import type { BuilderSection } from './builder-types';
 
+function safeJsonParse<T>(value: string | null | undefined, fallback: T): T {
+  if (!value) return fallback;
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return fallback;
+  }
+}
+
 export function sectionsFromApi(apiSections: SurveySection[], apiQuestions: SurveyQuestion[]): BuilderSection[] {
   return apiSections
     .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -53,15 +62,15 @@ export function questionsFromApi(apiQuestions: Array<Record<string, unknown>>): 
     text: q.text as string,
     description: (q.description as string) ?? undefined,
     type: q.type as QuestionType,
-    options: q.options ? JSON.parse(q.options as string) : undefined,
+    options: safeJsonParse(q.options as string | null, undefined),
     hasOther: q.has_other === 1,
     otherPrompt: (q.other_prompt as string) ?? undefined,
     maxLength: (q.max_length as number) ?? undefined,
     placeholder: (q.placeholder as string) ?? undefined,
     required: q.required === 1,
     sortOrder: q.sort_order as number,
-    conditional: q.conditional ? JSON.parse(q.conditional as string) : undefined,
-    config: q.config ? JSON.parse(q.config as string) : undefined,
+    conditional: safeJsonParse(q.conditional as string | null, undefined),
+    config: safeJsonParse(q.config as string | null, undefined),
   }));
 }
 
