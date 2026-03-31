@@ -9,7 +9,7 @@
   let { survey }: Props = $props();
 </script>
 
-<div class="flex min-h-screen flex-col items-center justify-center gap-6 p-6 text-center">
+<div class="flex flex-1 flex-col items-center justify-center gap-6 p-6 text-center">
   <Logo variant="icon" size="giant" />
 
   <div class="checkmark-container">

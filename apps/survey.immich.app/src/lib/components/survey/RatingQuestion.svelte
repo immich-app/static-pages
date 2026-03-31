@@ -16,14 +16,14 @@
   let hoverValue = $state(0);
 </script>
 
-<h2 class="mb-2 text-2xl font-bold">{question.text}</h2>
+<h2 class="mb-2 text-xl font-bold sm:text-2xl">{question.text}</h2>
 
 {#if question.description}
   <p class="mb-6 text-base text-gray-500">{question.description}</p>
 {/if}
 
 <div class="flex flex-col gap-2">
-  <div class="flex items-center gap-1">
+  <div class="flex items-center gap-2 sm:gap-1">
     {#each Array.from({ length: scaleMax }, (_, i) => i + 1) as star (star)}
       <button
         class="transition-transform duration-150 hover:scale-110 focus:outline-none"

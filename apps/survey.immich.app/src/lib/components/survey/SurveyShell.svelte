@@ -95,15 +95,15 @@
   }
 </script>
 
-<div class="relative min-h-screen">
+<div class="relative flex h-full flex-1 flex-col">
   <div class="fixed top-0 left-0 z-50 h-1 w-full bg-gray-700">
     <div class="bg-immich-primary h-full transition-all duration-300" style="width: {engine.progress}%"></div>
   </div>
 
-  <div class="relative min-h-screen overflow-hidden">
+  <div class="relative flex flex-1 flex-col overflow-hidden">
     {#key `${engine.currentIndex}-${showingSectionHeader}`}
       <div
-        class="w-full"
+        class="flex flex-1 flex-col"
         in:fly={{ y: direction * 50, duration: 300, easing: cubicOut }}
         out:fly={{ y: direction * -50, duration: 300, easing: cubicOut }}
       >
@@ -117,7 +117,7 @@
             canGoBack={engine.currentIndex > 0}
           />
         {:else if engine.currentQuestion}
-          <div class="flex min-h-screen flex-col items-center justify-center px-4 pb-24">
+          <div class="flex flex-1 flex-col items-center justify-center px-4 pt-6 pb-28 sm:pb-24">
             <QuestionCard
               question={engine.currentQuestion}
               answer={engine.answers[engine.currentQuestion.id]}

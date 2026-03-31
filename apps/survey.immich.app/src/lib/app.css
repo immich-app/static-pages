@@ -10,6 +10,14 @@
   --color-immich-primary-5: rgb(var(--immich-primary) / 0.05);
 }
 
+/* Prevent double-tap zoom on mobile for survey response pages */
+button,
+select,
+[role='radio'],
+[role='checkbox'] {
+  touch-action: manipulation;
+}
+
 /* Staggered fade-in for page content */
 @keyframes fadeInUp {
   from {

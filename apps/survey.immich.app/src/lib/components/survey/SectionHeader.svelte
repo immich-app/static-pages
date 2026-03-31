@@ -14,7 +14,7 @@
   let { section, sectionIndex, totalSections, onContinue, onBack, canGoBack = false }: Props = $props();
 </script>
 
-<div class="flex min-h-screen flex-col items-center justify-center gap-4 p-6">
+<div class="flex flex-1 flex-col items-center justify-center gap-4 p-6">
   <div class="flex max-w-[640px] flex-col gap-4">
     <span class="text-sm font-medium tracking-wider text-gray-400 uppercase">
       Section {sectionIndex + 1} of {totalSections}

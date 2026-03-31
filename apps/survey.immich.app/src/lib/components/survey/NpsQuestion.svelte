@@ -24,14 +24,14 @@
   }
 </script>
 
-<h2 class="mb-2 text-2xl font-bold">{question.text}</h2>
+<h2 class="mb-2 text-xl font-bold sm:text-2xl">{question.text}</h2>
 
 {#if question.description}
   <p class="mb-6 text-base text-gray-500">{question.description}</p>
 {/if}
 
 <div class="flex flex-col gap-2">
-  <div class="grid grid-cols-6 gap-1.5 sm:grid-cols-11">
+  <div class="grid grid-cols-6 gap-2 sm:grid-cols-11 sm:gap-1.5">
     {#each Array.from({ length: 11 }, (_, i) => i) as n (n)}
       <button
         class="flex min-h-[44px] items-center justify-center rounded-md border-2 text-sm font-semibold transition-all duration-150

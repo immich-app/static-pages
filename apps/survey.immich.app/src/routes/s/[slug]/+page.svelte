@@ -124,11 +124,11 @@
     </div>
   </div>
 {:else if alreadyCompleted}
-  <AlreadyCompleted {slug} />
+  <div class="flex min-h-screen flex-col"><AlreadyCompleted {slug} /></div>
 {:else if surveyFinished || engine?.isComplete}
-  <ThankYouScreen survey={survey ?? undefined} />
+  <div class="flex min-h-screen flex-col"><ThankYouScreen survey={survey ?? undefined} /></div>
 {:else if showWelcome && survey}
-  <WelcomeScreen {survey} {sections} onStart={() => (showWelcome = false)} />
+  <div class="flex min-h-screen flex-col"><WelcomeScreen {survey} {sections} onStart={() => (showWelcome = false)} /></div>
 {:else if engine && sections.length > 0}
-  <SurveyShell {engine} {sections} onAnswer={handleAnswer} onComplete={handleComplete} />
+  <div class="flex min-h-screen flex-col"><SurveyShell {engine} {sections} onAnswer={handleAnswer} onComplete={handleComplete} /></div>
 {/if}

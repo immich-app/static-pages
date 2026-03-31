@@ -24,7 +24,7 @@
   }
 </script>
 
-<h2 class="mb-2 text-2xl font-bold">{question.text}</h2>
+<h2 class="mb-2 text-xl font-bold sm:text-2xl">{question.text}</h2>
 
 {#if question.description}
   <p class="mb-6 text-base text-gray-500">{question.description}</p>

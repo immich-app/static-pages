@@ -13,13 +13,13 @@
   const sortedSections = $derived([...sections].sort((a, b) => a.sortOrder - b.sortOrder));
 </script>
 
-<div class="flex min-h-screen flex-col items-center justify-center gap-8 p-6">
+<div class="flex flex-1 flex-col items-center justify-center gap-8 p-6">
   <div class="animate-in">
     <Logo variant="stacked" size="giant" />
   </div>
 
   <div class="animate-in animate-in-delay-1 flex max-w-[640px] flex-col gap-5 text-base">
-    <h1 class="text-4xl font-bold tracking-tight">{survey.welcomeTitle ?? survey.title}</h1>
+    <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">{survey.welcomeTitle ?? survey.title}</h1>
 
     {#if survey.welcomeDescription}
       <p class="text-lg leading-relaxed text-gray-300">{survey.welcomeDescription}</p>

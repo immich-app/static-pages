@@ -31,7 +31,7 @@
   }
 </script>
 
-<h2 class="mb-2 text-2xl font-bold">{question.text}</h2>
+<h2 class="mb-2 text-xl font-bold sm:text-2xl">{question.text}</h2>
 
 {#if question.description}
   <!-- eslint-disable-next-line svelte/no-at-html-tags -->

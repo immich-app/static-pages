@@ -75,7 +75,7 @@
   });
 </script>
 
-<div class="w-full max-w-[640px] px-4">
+<div class="w-full max-w-[640px] px-4 sm:px-6">
   <div class={validationError ? 'rounded-lg border-2 border-red-500/30 p-4' : ''}>
     {#if question.type === 'radio'}
       <RadioQuestion {question} {answer} onAnswer={handleRadioAnswer} />
@@ -105,7 +105,7 @@
   {/if}
 </div>
 
-<div class="bg-light fixed bottom-0 left-0 z-40 flex w-full justify-center px-4 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+<div class="bg-light fixed bottom-0 left-0 z-40 flex w-full justify-center border-t border-gray-200 px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] dark:border-gray-800 sm:px-6 sm:pt-4">
   <div class="flex w-full max-w-[640px] items-center gap-3">
     {#if canGoBack}
       <Button variant="outline" onclick={onBack}>Back</Button>
