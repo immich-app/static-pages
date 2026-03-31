@@ -1,3 +1,12 @@
+function constantTimeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return result === 0;
+}
+
 export async function hashPassword(password: string): Promise<string> {
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const key = await crypto.subtle.importKey(
@@ -34,7 +43,7 @@ export async function verifyPassword(password: string, stored: string): Promise<
     256,
   );
   const computedB64 = btoa(String.fromCharCode(...new Uint8Array(hash)));
-  return computedB64 === hashB64;
+  return constantTimeEqual(computedB64, hashB64);
 }
 
 export async function signToken(data: string, secret: string): Promise<string> {
@@ -51,5 +60,5 @@ export async function signToken(data: string, secret: string): Promise<string> {
 
 export async function verifyToken(data: string, token: string, secret: string): Promise<boolean> {
   const expected = await signToken(data, secret);
-  return expected === token;
+  return constantTimeEqual(expected, token);
 }

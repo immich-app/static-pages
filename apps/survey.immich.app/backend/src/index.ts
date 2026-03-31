@@ -10,9 +10,17 @@ import { authMiddleware } from './middleware/auth';
 
 const { preflight, corsify } = cors();
 
+function securityHeaders(response: Response): Response {
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  return response;
+}
+
 const router = AutoRouter<IRequest, [Env, ExecutionContext]>({
   before: [preflight, (request: IRequest, env: Env) => authMiddleware(env)(request)],
-  finally: [corsify],
+  finally: [securityHeaders, corsify],
   catch: (error) => {
     if (error instanceof ServiceError) {
       return Response.json({ error: error.message }, { status: error.status });

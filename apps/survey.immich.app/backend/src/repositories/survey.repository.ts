@@ -91,11 +91,21 @@ export class SurveyRepository {
       .run();
   }
 
+  private static readonly ALLOWED_COLUMNS = new Set([
+    'title', 'description', 'slug', 'status',
+    'welcome_title', 'welcome_description',
+    'thank_you_title', 'thank_you_description',
+    'closes_at', 'max_responses',
+    'randomize_questions', 'randomize_options',
+    'password_hash', 'archived_at', 'updated_at',
+  ]);
+
   async update(id: string, fields: Partial<Omit<SurveyRow, 'id' | 'created_at'>>): Promise<void> {
     const sets: string[] = [];
     const values: unknown[] = [];
 
     for (const [key, value] of Object.entries(fields)) {
+      if (!SurveyRepository.ALLOWED_COLUMNS.has(key)) continue;
       sets.push(`${key} = ?`);
       values.push(value);
     }
@@ -139,11 +149,16 @@ export class SectionRepository {
       .run();
   }
 
+  private static readonly ALLOWED_COLUMNS = new Set([
+    'title', 'description', 'sort_order',
+  ]);
+
   async update(id: string, fields: Partial<Omit<SectionRow, 'id' | 'survey_id'>>): Promise<void> {
     const sets: string[] = [];
     const values: unknown[] = [];
 
     for (const [key, value] of Object.entries(fields)) {
+      if (!SectionRepository.ALLOWED_COLUMNS.has(key)) continue;
       sets.push(`${key} = ?`);
       values.push(value);
     }
@@ -226,11 +241,18 @@ export class QuestionRepository {
       .run();
   }
 
+  private static readonly ALLOWED_COLUMNS = new Set([
+    'section_id', 'text', 'description', 'type', 'options',
+    'required', 'has_other', 'other_prompt', 'max_length',
+    'placeholder', 'sort_order', 'conditional', 'config',
+  ]);
+
   async update(id: string, fields: Partial<Omit<QuestionRow, 'id' | 'survey_id'>>): Promise<void> {
     const sets: string[] = [];
     const values: unknown[] = [];
 
     for (const [key, value] of Object.entries(fields)) {
+      if (!QuestionRepository.ALLOWED_COLUMNS.has(key)) continue;
       sets.push(`${key} = ?`);
       values.push(value);
     }

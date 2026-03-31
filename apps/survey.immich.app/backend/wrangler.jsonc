@@ -13,8 +13,9 @@
       "database_id": "local",
     },
   ],
+  // DEV ONLY — override with `wrangler secret put` in production
   "vars": {
-    "PASSWORD_SECRET": "dev-password-secret-change-in-production",
+    "PASSWORD_SECRET": "dev-password-secret-DO-NOT-USE-IN-PRODUCTION",
     "OIDC_ISSUER": "http://localhost:8080/realms/immich",
     "OIDC_CLIENT_ID": "survey-app",
     "OIDC_CLIENT_SECRET": "dev-secret",
@@ -22,7 +23,7 @@
     "OIDC_ROLE_CLAIM": "groups",
     "OIDC_ROLE_MAP_ADMIN": "survey-admin",
     "OIDC_ROLE_MAP_EDITOR": "survey-editor",
-    "SESSION_SECRET": "dev-session-secret-change-in-production"
+    "SESSION_SECRET": "dev-session-secret-DO-NOT-USE-IN-PRODUCTION"
   },
   "analytics_engine_datasets": [
     {

@@ -95,7 +95,7 @@ export function registerAuthRoutes(router: AppRouter) {
       status: 302,
       headers: {
         Location: authUrl,
-        'Set-Cookie': `${AUTH_STATE_COOKIE_NAME}=${encodeURIComponent(stateData)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=300`,
+        'Set-Cookie': `${AUTH_STATE_COOKIE_NAME}=${encodeURIComponent(stateData)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=120`,
       },
     });
   });
@@ -107,7 +107,7 @@ export function registerAuthRoutes(router: AppRouter) {
     const returnedState = url.searchParams.get('state');
     const error = url.searchParams.get('error');
 
-    if (error) throw new ServiceError(`OIDC error: ${error}`, 400);
+    if (error) throw new ServiceError('Authentication failed', 400);
     if (!code || !returnedState) throw new ServiceError('Missing code or state', 400);
 
     const cookies = request.headers.get('cookie') ?? '';

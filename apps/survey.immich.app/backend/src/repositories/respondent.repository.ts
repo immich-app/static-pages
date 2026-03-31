@@ -218,7 +218,7 @@ export class AnswerRepository {
           FROM answers a
           JOIN respondents r ON a.respondent_id = r.id
           JOIN survey_questions q ON a.question_id = q.id
-          WHERE r.survey_id = ? AND a.question_id = ? AND a.answer LIKE ?
+          WHERE r.survey_id = ? AND a.question_id = ? AND a.answer LIKE ? ESCAPE '\'
           ORDER BY a.answered_at DESC
           LIMIT ?
         `)
@@ -232,7 +232,7 @@ export class AnswerRepository {
         FROM answers a
         JOIN respondents r ON a.respondent_id = r.id
         JOIN survey_questions q ON a.question_id = q.id
-        WHERE r.survey_id = ? AND a.answer LIKE ?
+        WHERE r.survey_id = ? AND a.answer LIKE ? ESCAPE '\'
         ORDER BY a.answered_at DESC
         LIMIT ?
       `)

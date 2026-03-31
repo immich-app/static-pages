@@ -24,10 +24,13 @@ export class TagRepository {
       .run();
   }
 
+  private static readonly ALLOWED_COLUMNS = new Set(['name', 'color']);
+
   async update(id: string, fields: Partial<Omit<TagRow, 'id' | 'created_at'>>): Promise<void> {
     const sets: string[] = [];
     const values: unknown[] = [];
     for (const [key, value] of Object.entries(fields)) {
+      if (!TagRepository.ALLOWED_COLUMNS.has(key)) continue;
       sets.push(`${key} = ?`);
       values.push(value);
     }

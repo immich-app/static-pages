@@ -32,7 +32,7 @@
   }
 </script>
 
-<QuestionHeader text={question.text} description={question.description} html />
+<QuestionHeader text={question.text} description={question.description} />
 
 <p class="mb-4 text-sm text-gray-400">Select all that apply</p>
 

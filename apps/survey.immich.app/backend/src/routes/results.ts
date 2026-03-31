@@ -1,16 +1,19 @@
 import { createRespondentService } from '../services/factory';
 import { ServiceError } from '../services/errors';
 import { MAX_PAGINATION_LIMIT } from '../constants';
+import { requireRole, type AuthenticatedRequest } from '../middleware/auth';
 import type { AppRouter } from '../types';
 
 export function registerResultRoutes(router: AppRouter) {
-  router.get('/api/surveys/:id/results', async (request, env) => {
+  router.get('/api/surveys/:id/results', async (request: AuthenticatedRequest, env) => {
+    requireRole(request.user, 'viewer');
     const service = createRespondentService(env);
     const results = await service.getResults(request.params.id);
     return Response.json(results);
   });
 
-  router.get('/api/surveys/:id/results/export', async (request, env) => {
+  router.get('/api/surveys/:id/results/export', async (request: AuthenticatedRequest, env) => {
+    requireRole(request.user, 'viewer');
     const service = createRespondentService(env);
     const url = new URL(request.url);
     const format = url.searchParams.get('format');
@@ -26,13 +29,15 @@ export function registerResultRoutes(router: AppRouter) {
     });
   });
 
-  router.get('/api/surveys/:id/results/live', async (request, env) => {
+  router.get('/api/surveys/:id/results/live', async (request: AuthenticatedRequest, env) => {
+    requireRole(request.user, 'viewer');
     const service = createRespondentService(env);
     const results = await service.getLiveResults(request.params.id);
     return Response.json(results);
   });
 
-  router.get('/api/surveys/:id/results/timeline', async (request, env) => {
+  router.get('/api/surveys/:id/results/timeline', async (request: AuthenticatedRequest, env) => {
+    requireRole(request.user, 'viewer');
     const service = createRespondentService(env);
     const url = new URL(request.url);
     const granularity = url.searchParams.get('granularity') === 'hour' ? 'hour' : 'day';
@@ -40,13 +45,15 @@ export function registerResultRoutes(router: AppRouter) {
     return Response.json(data);
   });
 
-  router.get('/api/surveys/:id/results/dropoff', async (request, env) => {
+  router.get('/api/surveys/:id/results/dropoff', async (request: AuthenticatedRequest, env) => {
+    requireRole(request.user, 'viewer');
     const service = createRespondentService(env);
     const data = await service.getDropoff(request.params.id);
     return Response.json(data);
   });
 
-  router.get('/api/surveys/:id/results/respondents', async (request, env) => {
+  router.get('/api/surveys/:id/results/respondents', async (request: AuthenticatedRequest, env) => {
+    requireRole(request.user, 'viewer');
     const service = createRespondentService(env);
     const url = new URL(request.url);
     const offset = Number(url.searchParams.get('offset')) || 0;
@@ -55,19 +62,22 @@ export function registerResultRoutes(router: AppRouter) {
     return Response.json(data);
   });
 
-  router.get('/api/surveys/:id/results/respondents/:rid', async (request, env) => {
+  router.get('/api/surveys/:id/results/respondents/:rid', async (request: AuthenticatedRequest, env) => {
+    requireRole(request.user, 'viewer');
     const service = createRespondentService(env);
     const data = await service.getRespondentDetail(request.params.id, request.params.rid);
     return Response.json(data);
   });
 
-  router.delete('/api/surveys/:id/results/respondents/:rid', async (request, env) => {
+  router.delete('/api/surveys/:id/results/respondents/:rid', async (request: AuthenticatedRequest, env) => {
+    requireRole(request.user, 'admin');
     const service = createRespondentService(env);
     await service.deleteRespondent(request.params.id, request.params.rid);
     return new Response(null, { status: 204 });
   });
 
-  router.get('/api/surveys/:id/results/search', async (request, env) => {
+  router.get('/api/surveys/:id/results/search', async (request: AuthenticatedRequest, env) => {
+    requireRole(request.user, 'viewer');
     const service = createRespondentService(env);
     const url = new URL(request.url);
     const query = url.searchParams.get('q') ?? '';

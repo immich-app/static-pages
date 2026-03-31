@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { Icon } from '@immich/ui';
   import {
     mdiPlus,
@@ -41,10 +40,6 @@
     }
     loading = false;
   }
-
-  onMount(() => {
-    loadSurveys();
-  });
 
   $effect(() => {
     void showArchived;

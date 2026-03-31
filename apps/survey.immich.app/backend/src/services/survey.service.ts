@@ -215,6 +215,9 @@ export class SurveyService {
 
     if (input.password !== undefined) {
       if (input.password && input.password.length > 0) {
+        if (input.password.length < 4) {
+          throw new ServiceError('Survey password must be at least 4 characters', 400);
+        }
         fields.password_hash = await hashPassword(input.password);
       } else {
         fields.password_hash = null;

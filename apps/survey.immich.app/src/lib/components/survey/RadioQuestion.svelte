@@ -45,7 +45,7 @@
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div onkeydown={handleKeydown}>
-  <QuestionHeader text={question.text} description={question.description} html />
+  <QuestionHeader text={question.text} description={question.description} />
 
   <div class="flex flex-col gap-3" role="radiogroup">
     {#each visibleOptions as option (option.value)}

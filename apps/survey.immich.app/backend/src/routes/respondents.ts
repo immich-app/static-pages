@@ -55,7 +55,8 @@ export function registerRespondentRoutes(router: AppRouter) {
       }
     }
 
-    return Response.json(result);
+    const { password_hash: _password_hash, ...safeSurvey } = result.survey;
+    return Response.json({ ...result, survey: safeSurvey });
   });
 
   router.post('/api/s/:slug/auth', async (request, env) => {
@@ -63,13 +64,15 @@ export function registerRespondentRoutes(router: AppRouter) {
     const service = createSurveyService(env);
     const { survey } = await service.getPublishedSurvey(slug);
 
-    if (!survey.password_hash) {
-      return new Response(null, { status: 204 });
-    }
-
     const body = (await request.json()) as { password: string };
     if (!body.password) {
       throw new ServiceError('Password is required', 400);
+    }
+
+    if (!survey.password_hash) {
+      // No password set — still do a dummy verify to prevent timing side-channel
+      await verifyPassword(body.password, 'AAAAAAAAAAAAAAAAAAAAAA==:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=');
+      return new Response(null, { status: 204 });
     }
 
     const valid = await verifyPassword(body.password, survey.password_hash);

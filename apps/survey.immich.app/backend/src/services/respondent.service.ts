@@ -111,6 +111,14 @@ export class RespondentService {
 
     this.checkSurveyClosed(survey);
 
+    const surveyQuestions = await this.questions.getBySurveyId(survey.id);
+    const validQuestionIds = new Set(surveyQuestions.map(q => q.id));
+    for (const input of inputs) {
+      if (!validQuestionIds.has(input.questionId)) {
+        throw new ServiceError(`Invalid question ID: ${input.questionId}`, 400);
+      }
+    }
+
     const now = new Date().toISOString();
     const answerRows: AnswerRow[] = inputs.map((a) => ({
       respondent_id: respondentId,

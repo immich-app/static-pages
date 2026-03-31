@@ -15,8 +15,10 @@ interface OidcConfig {
   issuer: string;
 }
 
-let cachedOidcConfig: OidcConfig | null = null;
-let cachedJwks: { keys: Array<JsonWebKey & { kid?: string; alg?: string }> } | null = null;
+let cachedOidcConfig: { data: OidcConfig; fetchedAt: number } | null = null;
+let cachedJwks: { data: { keys: Array<JsonWebKey & { kid?: string; alg?: string }> }; fetchedAt: number } | null = null;
+
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 export class AuthService {
   constructor(private env: Env) {}
@@ -73,20 +75,26 @@ export class AuthService {
   // --- OIDC auth ---
 
   async getOidcConfig(): Promise<OidcConfig> {
-    if (cachedOidcConfig) return cachedOidcConfig;
+    if (cachedOidcConfig && Date.now() - cachedOidcConfig.fetchedAt < CACHE_TTL_MS) {
+      return cachedOidcConfig.data;
+    }
     const res = await fetch(`${this.env.OIDC_ISSUER}/.well-known/openid-configuration`);
     if (!res.ok) throw new ServiceError('Failed to fetch OIDC configuration', 500);
-    cachedOidcConfig = (await res.json()) as OidcConfig;
-    return cachedOidcConfig;
+    const data = (await res.json()) as OidcConfig;
+    cachedOidcConfig = { data, fetchedAt: Date.now() };
+    return data;
   }
 
   async getJwks(): Promise<{ keys: Array<JsonWebKey & { kid?: string; alg?: string }> }> {
-    if (cachedJwks) return cachedJwks;
+    if (cachedJwks && Date.now() - cachedJwks.fetchedAt < CACHE_TTL_MS) {
+      return cachedJwks.data;
+    }
     const config = await this.getOidcConfig();
     const res = await fetch(config.jwks_uri);
     if (!res.ok) throw new ServiceError('Failed to fetch JWKS', 500);
-    cachedJwks = (await res.json()) as typeof cachedJwks;
-    return cachedJwks!;
+    const data = (await res.json()) as { keys: Array<JsonWebKey & { kid?: string; alg?: string }> };
+    cachedJwks = { data, fetchedAt: Date.now() };
+    return data;
   }
 
   async getAuthorizationUrl(state: string, nonce: string): Promise<string> {
@@ -116,8 +124,7 @@ export class AuthService {
       }),
     });
     if (!res.ok) {
-      const body = await res.text();
-      throw new ServiceError(`Token exchange failed: ${body}`, 500);
+      throw new ServiceError('Token exchange failed', 500);
     }
     return res.json() as Promise<{ id_token: string; access_token: string }>;
   }
@@ -131,6 +138,11 @@ export class AuthService {
       kid?: string;
       alg?: string;
     };
+
+    if (header.alg !== 'RS256') {
+      throw new ServiceError(`Unsupported token algorithm: ${header.alg}`, 400);
+    }
+
     const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'))) as Record<string, unknown>;
 
     // Verify claims
