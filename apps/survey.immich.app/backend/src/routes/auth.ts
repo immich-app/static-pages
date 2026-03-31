@@ -1,12 +1,13 @@
 import { AuthService } from '../services/auth.service';
 import { ServiceError } from '../services/errors';
 import { SESSION_COOKIE_NAME, AUTH_STATE_COOKIE_NAME, SESSION_MAX_AGE } from '../constants';
+import { createDatabase } from '../db';
 import type { AppRouter } from '../types';
 
 export function registerAuthRoutes(router: AppRouter) {
   // Check auth status + setup state
   router.get('/api/auth/me', async (request, env) => {
-    const authService = new AuthService(env);
+    const authService = new AuthService(env, createDatabase(env.DB));
     const setupComplete = await authService.isSetupComplete();
 
     const passwordEnabled = authService.isPasswordAuthEnabled();
@@ -32,7 +33,7 @@ export function registerAuthRoutes(router: AppRouter) {
 
   // Initial admin setup (first-time password)
   router.post('/api/auth/setup', async (request, env) => {
-    const authService = new AuthService(env);
+    const authService = new AuthService(env, createDatabase(env.DB));
     if (!authService.isPasswordAuthEnabled()) {
       throw new ServiceError('Password authentication is disabled', 400);
     }
@@ -57,7 +58,7 @@ export function registerAuthRoutes(router: AppRouter) {
 
   // Password login
   router.post('/api/auth/password-login', async (request, env) => {
-    const authService = new AuthService(env);
+    const authService = new AuthService(env, createDatabase(env.DB));
     if (!authService.isPasswordAuthEnabled()) {
       throw new ServiceError('Password authentication is disabled', 400);
     }
@@ -78,7 +79,7 @@ export function registerAuthRoutes(router: AppRouter) {
 
   // OIDC login redirect (only if OIDC is configured)
   router.get('/api/auth/login', async (request, env) => {
-    const authService = new AuthService(env);
+    const authService = new AuthService(env, createDatabase(env.DB));
     if (!authService.isOidcConfigured()) {
       throw new ServiceError('OIDC is not configured', 400);
     }
@@ -121,7 +122,7 @@ export function registerAuthRoutes(router: AppRouter) {
     };
     if (stateData.state !== returnedState) throw new ServiceError('State mismatch', 400);
 
-    const authService = new AuthService(env);
+    const authService = new AuthService(env, createDatabase(env.DB));
     const tokens = await authService.exchangeCode(code);
     const user = await authService.validateIdToken(tokens.id_token, stateData.nonce);
     const sessionToken = await authService.createSessionToken(user);

@@ -1,6 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-
-const API = process.env.API_URL || 'http://localhost:8787';
+import { apiPost, apiPut, API, ensureAuth, getAuthHeaders, parseCookie } from './helpers';
 
 interface SetupResult {
   surveyId: string;
@@ -8,23 +7,18 @@ interface SetupResult {
   questionIds: Record<string, string>;
 }
 
-async function apiPost(path: string, body?: unknown) {
-  const res = await fetch(`${API}${path}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    ...(body ? { body: JSON.stringify(body) } : {}),
-  });
-  return res.json();
-}
+let cookie: string;
 
-async function apiPut(path: string, body?: unknown) {
-  const res = await fetch(`${API}${path}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    ...(body ? { body: JSON.stringify(body) } : {}),
-  });
-  return res.json();
-}
+test.beforeAll(async () => {
+  cookie = await ensureAuth();
+});
+
+test.beforeEach(async ({ context }) => {
+  // Set the session cookie so page requests are authenticated
+  const BASE = process.env.BASE_URL || 'http://localhost:5173';
+  const { name, value } = parseCookie(cookie);
+  await context.addCookies([{ name, value, url: BASE }]);
+});
 
 async function createFullSurvey(): Promise<SetupResult> {
   const survey = await apiPost('/api/surveys', { title: 'E2E All 10 Types' });
@@ -242,14 +236,18 @@ test.describe('Full survey with all 10 question types', () => {
       });
     }
 
-    const res = await fetch(`${API}/api/surveys/${setup.surveyId}/results`);
+    const res = await fetch(`${API}/api/surveys/${setup.surveyId}/results`, {
+      headers: getAuthHeaders(),
+    });
     const data = await res.json();
     expect(data.respondentCounts.completed).toBeGreaterThanOrEqual(1);
     expect(data.results.length).toBeGreaterThanOrEqual(5);
   });
 
   test('CSV export works', async () => {
-    const res = await fetch(`${API}/api/surveys/${setup.surveyId}/results/export?format=csv`);
+    const res = await fetch(`${API}/api/surveys/${setup.surveyId}/results/export?format=csv`, {
+      headers: getAuthHeaders(),
+    });
     expect(res.ok).toBe(true);
     expect(res.headers.get('content-type')).toContain('text/csv');
     const csv = await res.text();
@@ -258,7 +256,9 @@ test.describe('Full survey with all 10 question types', () => {
   });
 
   test('JSON export works', async () => {
-    const res = await fetch(`${API}/api/surveys/${setup.surveyId}/results/export?format=json`);
+    const res = await fetch(`${API}/api/surveys/${setup.surveyId}/results/export?format=json`, {
+      headers: getAuthHeaders(),
+    });
     expect(res.ok).toBe(true);
     const data = await res.json();
     expect(Array.isArray(data)).toBe(true);
@@ -270,17 +270,17 @@ test.describe('Full survey with all 10 question types', () => {
   test('results page renders with stats and question results', async ({ page }) => {
     await page.goto(`/results/${setup.surveyId}`);
 
-    // Stats cards should show
-    await expect(page.getByText('Total')).toBeVisible({ timeout: 5000 });
+    // Wait for results to load
+    await expect(page.getByText('Total')).toBeVisible({ timeout: 10000 });
     await expect(page.getByText('Completed')).toBeVisible();
     await expect(page.getByText('Completion')).toBeVisible();
 
-    // Question results should render (check for question text in result cards)
-    await expect(page.getByText('Pick a color')).toBeVisible({ timeout: 5000 });
+    // Question results should render (check for question text as heading in result cards)
+    await expect(page.getByRole('heading', { name: 'Pick a color' })).toBeVisible({ timeout: 10000 });
 
     // Export buttons should be present
-    await expect(page.getByText('Export CSV')).toBeVisible();
-    await expect(page.getByText('Export JSON')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'CSV' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'JSON' })).toBeVisible();
   });
 });
 
@@ -304,7 +304,9 @@ test.describe('Survey duplication', () => {
     expect(dup.id).not.toBe(survey.id);
 
     // Verify the duplicate has sections and questions
-    const res = await fetch(`${API}/api/surveys/${dup.id}`);
+    const res = await fetch(`${API}/api/surveys/${dup.id}`, {
+      headers: getAuthHeaders(),
+    });
     const data = await res.json();
     expect(data.sections.length).toBe(1);
     expect(data.questions.length).toBe(1);

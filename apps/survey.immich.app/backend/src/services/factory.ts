@@ -6,24 +6,27 @@ import { SurveyRepository, SectionRepository, QuestionRepository } from '../repo
 import { RespondentRepository, AnswerRepository } from '../repositories/respondent.repository';
 import { TagRepository } from '../repositories/tag.repository';
 import { AuditRepository } from '../repositories/audit.repository';
+import { createDatabase } from '../db';
 
 export function createSurveyService(env: Env): SurveyService {
-  return new SurveyService(new SurveyRepository(env.DB), new SectionRepository(env.DB), new QuestionRepository(env.DB));
+  const db = createDatabase(env.DB);
+  return new SurveyService(new SurveyRepository(db), new SectionRepository(db), new QuestionRepository(db));
 }
 
 export function createRespondentService(env: Env): RespondentService {
+  const db = createDatabase(env.DB);
   return new RespondentService(
-    new RespondentRepository(env.DB),
-    new AnswerRepository(env.DB),
-    new SurveyRepository(env.DB),
-    new QuestionRepository(env.DB),
+    new RespondentRepository(db),
+    new AnswerRepository(db),
+    new SurveyRepository(db),
+    new QuestionRepository(db),
   );
 }
 
 export function createTagService(env: Env): TagService {
-  return new TagService(new TagRepository(env.DB));
+  return new TagService(new TagRepository(createDatabase(env.DB)));
 }
 
 export function createAuditService(env: Env): AuditService {
-  return new AuditService(new AuditRepository(env.DB));
+  return new AuditService(new AuditRepository(createDatabase(env.DB)));
 }

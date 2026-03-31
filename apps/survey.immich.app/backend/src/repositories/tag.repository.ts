@@ -1,65 +1,47 @@
-export interface TagRow {
-  id: string;
-  name: string;
-  color: string | null;
-  created_at: string;
-}
+import type { Kysely } from 'kysely';
+import type { Database } from '../db';
+
+export type { TagRow } from '../db';
 
 export class TagRepository {
-  constructor(private db: D1Database) {}
+  constructor(private db: Kysely<Database>) {}
 
-  async listAll(): Promise<TagRow[]> {
-    const result = await this.db.prepare('SELECT * FROM tags ORDER BY name').all<TagRow>();
-    return result.results;
+  async listAll(): Promise<import('../db').TagRow[]> {
+    return this.db.selectFrom('tags').selectAll().orderBy('name').execute();
   }
 
-  async getById(id: string): Promise<TagRow | null> {
-    return this.db.prepare('SELECT * FROM tags WHERE id = ?').bind(id).first<TagRow>();
+  async getById(id: string): Promise<import('../db').TagRow | null> {
+    const result = await this.db.selectFrom('tags').selectAll().where('id', '=', id).executeTakeFirst();
+    return result ?? null;
   }
 
-  async create(tag: TagRow): Promise<void> {
-    await this.db
-      .prepare('INSERT INTO tags (id, name, color, created_at) VALUES (?, ?, ?, ?)')
-      .bind(tag.id, tag.name, tag.color, tag.created_at)
-      .run();
+  async create(tag: import('../db').TagRow): Promise<void> {
+    await this.db.insertInto('tags').values(tag).execute();
   }
 
-  private static readonly ALLOWED_COLUMNS = new Set(['name', 'color']);
-
-  async update(id: string, fields: Partial<Omit<TagRow, 'id' | 'created_at'>>): Promise<void> {
-    const sets: string[] = [];
-    const values: unknown[] = [];
-    for (const [key, value] of Object.entries(fields)) {
-      if (!TagRepository.ALLOWED_COLUMNS.has(key)) continue;
-      sets.push(`${key} = ?`);
-      values.push(value);
-    }
-    if (sets.length === 0) return;
-    values.push(id);
-    await this.db
-      .prepare(`UPDATE tags SET ${sets.join(', ')} WHERE id = ?`)
-      .bind(...values)
-      .run();
+  async update(id: string, fields: Partial<Omit<import('../db').TagRow, 'id' | 'created_at'>>): Promise<void> {
+    if (Object.keys(fields).length === 0) return;
+    await this.db.updateTable('tags').set(fields).where('id', '=', id).execute();
   }
 
   async delete(id: string): Promise<void> {
-    await this.db.prepare('DELETE FROM tags WHERE id = ?').bind(id).run();
+    await this.db.deleteFrom('tags').where('id', '=', id).execute();
   }
 
-  async getTagsForSurvey(surveyId: string): Promise<TagRow[]> {
-    const result = await this.db
-      .prepare('SELECT t.* FROM tags t JOIN survey_tags st ON t.id = st.tag_id WHERE st.survey_id = ? ORDER BY t.name')
-      .bind(surveyId)
-      .all<TagRow>();
-    return result.results;
+  async getTagsForSurvey(surveyId: string): Promise<import('../db').TagRow[]> {
+    return this.db
+      .selectFrom('tags as t')
+      .innerJoin('survey_tags as st', 'st.tag_id', 't.id')
+      .selectAll('t')
+      .where('st.survey_id', '=', surveyId)
+      .orderBy('t.name')
+      .execute();
   }
 
   async setTagsForSurvey(surveyId: string, tagIds: string[]): Promise<void> {
-    await this.db.prepare('DELETE FROM survey_tags WHERE survey_id = ?').bind(surveyId).run();
-    if (tagIds.length === 0) return;
-    const stmts = tagIds.map((tagId) =>
-      this.db.prepare('INSERT INTO survey_tags (survey_id, tag_id) VALUES (?, ?)').bind(surveyId, tagId),
-    );
-    await this.db.batch(stmts);
+    await this.db.deleteFrom('survey_tags').where('survey_id', '=', surveyId).execute();
+    for (const tagId of tagIds) {
+      await this.db.insertInto('survey_tags').values({ survey_id: surveyId, tag_id: tagId }).execute();
+    }
   }
 }

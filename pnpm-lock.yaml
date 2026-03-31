@@ -83,7 +83,7 @@ importers:
         version: 5.53.11
       svelte-check:
         specifier: ^4.3.2
-        version: 4.4.5(picomatch@4.0.3)(svelte@5.53.11)(typescript@6.0.2)
+        version: 4.4.5(picomatch@4.0.4)(svelte@5.53.11)(typescript@6.0.2)
       tailwindcss:
         specifier: ^4.2.2
         version: 4.2.2
@@ -819,6 +819,9 @@ importers:
 
   apps/survey.immich.app:
     dependencies:
+      '@immich/kysely-adapter-cloudflare':
+        specifier: ^0.1.0
+        version: 0.1.0(kysely@0.28.15)
       '@immich/ui':
         specifier: ^0.65.0
         version: 0.65.3(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.53.11)(vite@7.3.1(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)))(svelte@5.53.11)(typescript@5.9.3)(vite@7.3.1(@types/node@24.12.0)(jiti@2.6.1)(lightningcss@1.32.0)))(svelte@5.53.11)(tailwindcss@4.2.2)
@@ -846,6 +849,9 @@ importers:
       jspdf:
         specifier: ^4.2.1
         version: 4.2.1
+      kysely:
+        specifier: ^0.28.15
+        version: 0.28.15
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
@@ -1431,6 +1437,11 @@ packages:
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     cpu: [x64]
     os: [win32]
+
+  '@immich/kysely-adapter-cloudflare@0.1.0':
+    resolution: {integrity: sha512-12A3LlkdN4PjUdAqd66QCbemzLxo/7KB26rzsSvZ7i426V0f3FQx7T8PfOYlP6MQa1nDSLLO71wOkEqY2IiZyw==}
+    peerDependencies:
+      kysely: ^0.28.14
 
   '@immich/svelte-markdown-preprocess@0.2.1':
     resolution: {integrity: sha512-mbr/g75lO8Zh+ELCuYrZP0XB4gf2UbK8rJcGYMYxFJJzMMunV+sm9FqtV1dbwW2dpXzCZGz1XPCEZ6oo526TbA==}
@@ -2676,6 +2687,10 @@ packages:
 
   known-css-properties@0.37.0:
     resolution: {integrity: sha512-JCDrsP4Z1Sb9JwG0aJ8Eo2r7k4Ou5MwmThS/6lcIe1ICyb7UBJKGRIUUdqc2ASdE/42lgz6zFUnzAIhtXnBVrQ==}
+
+  kysely@0.28.15:
+    resolution: {integrity: sha512-r2clcf7HLWvDXaVUEvQymXJY4i3bSOIV3xsL/Upy3ZfSv5HeKsk9tsqbBptLvth5qHEIhxeHTA2jNLyQABkLBA==}
+    engines: {node: '>=20.0.0'}
 
   levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
@@ -3944,6 +3959,10 @@ snapshots:
 
   '@img/sharp-win32-x64@0.34.5':
     optional: true
+
+  '@immich/kysely-adapter-cloudflare@0.1.0(kysely@0.28.15)':
+    dependencies:
+      kysely: 0.28.15
 
   '@immich/svelte-markdown-preprocess@0.2.1(svelte@5.53.11)':
     dependencies:
@@ -5304,6 +5323,8 @@ snapshots:
 
   known-css-properties@0.37.0: {}
 
+  kysely@0.28.15: {}
+
   levn@0.4.1:
     dependencies:
       prelude-ls: 1.2.1
@@ -5765,18 +5786,6 @@ snapshots:
       sade: 1.8.1
       svelte: 5.53.11
       typescript: 5.9.3
-    transitivePeerDependencies:
-      - picomatch
-
-  svelte-check@4.4.5(picomatch@4.0.3)(svelte@5.53.11)(typescript@6.0.2):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.31
-      chokidar: 4.0.3
-      fdir: 6.5.0(picomatch@4.0.3)
-      picocolors: 1.1.1
-      sade: 1.8.1
-      svelte: 5.53.11
-      typescript: 6.0.2
     transitivePeerDependencies:
       - picomatch
 

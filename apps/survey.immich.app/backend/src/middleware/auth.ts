@@ -1,6 +1,7 @@
 import type { IRequest } from 'itty-router';
 import { SESSION_COOKIE_NAME, type UserRole } from '../constants';
 import { AuthService, type UserInfo } from '../services/auth.service';
+import { createDatabase } from '../db';
 import { ServiceError } from '../services/errors';
 
 // Extend request with user info
@@ -32,7 +33,7 @@ export function authMiddleware(env: Env): (request: AuthenticatedRequest) => Pro
       throw new ServiceError('Authentication required', 401);
     }
 
-    const authService = new AuthService(env);
+    const authService = new AuthService(env, createDatabase(env.DB));
     const user = await authService.validateSessionToken(token);
     if (!user) {
       throw new ServiceError('Invalid or expired session', 401);

@@ -1,33 +1,18 @@
 import { test, expect, type Page } from '@playwright/test';
+import { apiPost, apiPut, apiGet, apiRawGet, API, ensureAuth, parseCookie } from './helpers';
 
-const API = process.env.API_URL || 'http://localhost:8787';
+let cookie: string;
 
-async function apiPost(path: string, body?: unknown) {
-  const res = await fetch(`${API}${path}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    ...(body ? { body: JSON.stringify(body) } : {}),
-  });
-  return res.json();
-}
+test.beforeAll(async () => {
+  cookie = await ensureAuth();
+});
 
-async function apiPut(path: string, body?: unknown) {
-  const res = await fetch(`${API}${path}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    ...(body ? { body: JSON.stringify(body) } : {}),
-  });
-  return res.json();
-}
-
-async function apiGet(path: string) {
-  const res = await fetch(`${API}${path}`);
-  return res.json();
-}
-
-async function apiRawGet(path: string) {
-  return fetch(`${API}${path}`);
-}
+test.beforeEach(async ({ context }) => {
+  // Set the session cookie so page requests are authenticated
+  const BASE = process.env.BASE_URL || 'http://localhost:5173';
+  const { name, value } = parseCookie(cookie);
+  await context.addCookies([{ name, value, url: BASE }]);
+});
 
 async function waitForTransition(page: Page) {
   await page.waitForTimeout(400);

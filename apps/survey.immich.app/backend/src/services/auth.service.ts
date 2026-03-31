@@ -1,3 +1,5 @@
+import type { Kysely } from 'kysely';
+import type { Database } from '../db';
 import { ServiceError } from './errors';
 import { hashPassword, verifyPassword } from '../utils/crypto';
 
@@ -21,12 +23,19 @@ let cachedJwks: { data: { keys: Array<JsonWebKey & { kid?: string; alg?: string 
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 export class AuthService {
-  constructor(private env: Env) {}
+  constructor(
+    private env: Env,
+    private db: Kysely<Database>,
+  ) {}
 
   // --- Password-based auth (default) ---
 
   async isSetupComplete(): Promise<boolean> {
-    const row = await this.env.DB.prepare("SELECT id FROM admin_credentials WHERE id = 'default'").first();
+    const row = await this.db
+      .selectFrom('admin_credentials')
+      .select('id')
+      .where('id', '=', 'default')
+      .executeTakeFirst();
     return !!row;
   }
 
@@ -38,17 +47,18 @@ export class AuthService {
       throw new ServiceError('Password must be at least 8 characters', 400);
     }
     const hash = await hashPassword(password);
-    await this.env.DB.prepare(
-      "INSERT INTO admin_credentials (id, password_hash, created_at) VALUES ('default', ?, ?)",
-    )
-      .bind(hash, new Date().toISOString())
-      .run();
+    await this.db
+      .insertInto('admin_credentials')
+      .values({ id: 'default', password_hash: hash, created_at: new Date().toISOString() })
+      .execute();
   }
 
   async passwordLogin(password: string): Promise<UserInfo> {
-    const row = await this.env.DB.prepare(
-      "SELECT password_hash FROM admin_credentials WHERE id = 'default'",
-    ).first<{ password_hash: string }>();
+    const row = await this.db
+      .selectFrom('admin_credentials')
+      .select('password_hash')
+      .where('id', '=', 'default')
+      .executeTakeFirst();
     if (!row) {
       throw new ServiceError('Admin account not set up', 400);
     }
