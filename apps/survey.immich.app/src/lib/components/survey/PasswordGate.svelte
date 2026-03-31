@@ -41,12 +41,7 @@
 
     <form onsubmit={handleSubmit} class="space-y-4">
       <div>
-        <Input
-          type="password"
-          bind:value={password}
-          placeholder="Enter password"
-          disabled={submitting}
-        />
+        <Input type="password" bind:value={password} placeholder="Enter password" disabled={submitting} />
       </div>
 
       {#if error}

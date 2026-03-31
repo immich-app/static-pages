@@ -19,8 +19,16 @@
   let container: HTMLDivElement | undefined = $state();
 
   const COLORS = [
-    '#60a5fa', '#4ade80', '#fb923c', '#a78bfa', '#f87171',
-    '#2dd4bf', '#fbbf24', '#f472b6', '#94a3b8', '#818cf8',
+    '#60a5fa',
+    '#4ade80',
+    '#fb923c',
+    '#a78bfa',
+    '#f87171',
+    '#2dd4bf',
+    '#fbbf24',
+    '#f472b6',
+    '#94a3b8',
+    '#818cf8',
   ];
 
   function renderCloud() {
@@ -35,7 +43,9 @@
       size: 12 + (w.count / maxCount) * 40,
     }));
 
-    select(container as HTMLDivElement).selectAll('svg').remove();
+    select(container as HTMLDivElement)
+      .selectAll('svg')
+      .remove();
 
     cloud()
       .size([width, height])

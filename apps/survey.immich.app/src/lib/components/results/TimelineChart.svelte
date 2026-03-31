@@ -1,5 +1,15 @@
 <script lang="ts">
-  import { Chart, LineController, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend, Filler } from 'chart.js';
+  import {
+    Chart,
+    LineController,
+    LineElement,
+    PointElement,
+    CategoryScale,
+    LinearScale,
+    Tooltip,
+    Legend,
+    Filler,
+  } from 'chart.js';
   import { getChartColors } from './chart-utils';
   import type { TimelineDataPoint } from '$lib/types';
 
@@ -71,13 +81,17 @@
     <h3 class="text-base font-semibold">Response Timeline</h3>
     <div class="flex rounded-lg border border-gray-300 dark:border-gray-600">
       <button
-        class="rounded-l-lg px-3 py-1 text-xs font-medium transition-colors {granularity === 'day' ? 'bg-gray-200 dark:bg-gray-700' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}"
-        onclick={() => onGranularityChange('day')}
-      >Day</button>
+        class="rounded-l-lg px-3 py-1 text-xs font-medium transition-colors {granularity === 'day'
+          ? 'bg-gray-200 dark:bg-gray-700'
+          : 'hover:bg-gray-100 dark:hover:bg-gray-800'}"
+        onclick={() => onGranularityChange('day')}>Day</button
+      >
       <button
-        class="rounded-r-lg px-3 py-1 text-xs font-medium transition-colors {granularity === 'hour' ? 'bg-gray-200 dark:bg-gray-700' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}"
-        onclick={() => onGranularityChange('hour')}
-      >Hour</button>
+        class="rounded-r-lg px-3 py-1 text-xs font-medium transition-colors {granularity === 'hour'
+          ? 'bg-gray-200 dark:bg-gray-700'
+          : 'hover:bg-gray-100 dark:hover:bg-gray-800'}"
+        onclick={() => onGranularityChange('hour')}>Hour</button
+      >
     </div>
   </div>
   {#if data.length === 0}

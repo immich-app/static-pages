@@ -65,10 +65,7 @@
         </div>
       {/if}
 
-      <Button
-        variant="outline"
-        onclick={() => oidcLogin(window.location.pathname)}
-      >
+      <Button variant="outline" onclick={() => oidcLogin(window.location.pathname)}>
         <Icon icon={mdiOpenInNew} size="16" />
         Sign in with SSO
       </Button>

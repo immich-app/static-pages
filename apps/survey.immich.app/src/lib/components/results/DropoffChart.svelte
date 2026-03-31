@@ -25,19 +25,23 @@
       return isDark ? 'rgb(74, 222, 128)' : 'rgb(34, 197, 94)';
     });
 
-    const labels = data.map((d, i) => `Q${i + 1}: ${d.questionText.length > 30 ? d.questionText.slice(0, 30) + '...' : d.questionText}`);
+    const labels = data.map(
+      (d, i) => `Q${i + 1}: ${d.questionText.length > 30 ? d.questionText.slice(0, 30) + '...' : d.questionText}`,
+    );
 
     chart?.destroy();
     chart = new Chart(canvas, {
       type: 'bar',
       data: {
         labels,
-        datasets: [{
-          data: data.map((d) => d.respondentsAnswered),
-          backgroundColor: barColor,
-          borderRadius: 4,
-          barThickness: 24,
-        }],
+        datasets: [
+          {
+            data: data.map((d) => d.respondentsAnswered),
+            backgroundColor: barColor,
+            borderRadius: 4,
+            barThickness: 24,
+          },
+        ],
       },
       options: {
         indexAxis: 'y',

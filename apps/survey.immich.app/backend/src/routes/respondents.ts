@@ -3,6 +3,7 @@ import { ServiceError } from '../services/errors';
 import { getRespondentId, setRespondentCookie, deleteRespondentCookie } from '../cookie';
 import { verifyPassword, signToken, verifyToken } from '../utils/crypto';
 import { PASSWORD_SESSION_MAX_AGE } from '../constants';
+import { getContext, type AppContext } from '../config';
 import type { SurveyRow } from '../repositories/survey.repository';
 import type { AppRouter } from '../types';
 
@@ -17,25 +18,26 @@ async function validatePasswordSession(
   request: Request,
   slug: string,
   survey: SurveyRow,
-  env: Env,
+  ctx: AppContext,
 ): Promise<void> {
   if (!survey.password_hash) return;
 
   const token = getPasswordCookie(request, slug);
-  if (!token || !(await verifyToken(survey.id, token, env.PASSWORD_SECRET))) {
+  if (!token || !(await verifyToken(survey.id, token, ctx.config.passwordSecret))) {
     throw new ServiceError('Authentication required', 403);
   }
 }
 
 export function registerRespondentRoutes(router: AppRouter) {
-  router.get('/api/s/:slug', async (request, env) => {
-    const service = createSurveyService(env);
+  router.get('/api/s/:slug', async (request) => {
+    const ctx = getContext(request);
+    const service = createSurveyService(ctx.db);
     const result = await service.getPublishedSurvey(request.params.slug);
     const slug = request.params.slug;
 
     if (result.survey.password_hash) {
       const token = getPasswordCookie(request, slug);
-      const isAuthed = token ? await verifyToken(result.survey.id, token, env.PASSWORD_SECRET) : false;
+      const isAuthed = token ? await verifyToken(result.survey.id, token, ctx.config.passwordSecret) : false;
 
       if (!isAuthed) {
         return Response.json({
@@ -59,9 +61,10 @@ export function registerRespondentRoutes(router: AppRouter) {
     return Response.json({ ...result, survey: safeSurvey });
   });
 
-  router.post('/api/s/:slug/auth', async (request, env) => {
+  router.post('/api/s/:slug/auth', async (request) => {
+    const ctx = getContext(request);
     const slug = request.params.slug;
-    const service = createSurveyService(env);
+    const service = createSurveyService(ctx.db);
     const { survey } = await service.getPublishedSurvey(slug);
 
     const body = (await request.json()) as { password: string };
@@ -70,7 +73,7 @@ export function registerRespondentRoutes(router: AppRouter) {
     }
 
     if (!survey.password_hash) {
-      // No password set — still do a dummy verify to prevent timing side-channel
+      // No password set -- still do a dummy verify to prevent timing side-channel
       await verifyPassword(body.password, 'AAAAAAAAAAAAAAAAAAAAAA==:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=');
       return new Response(null, { status: 204 });
     }
@@ -80,22 +83,24 @@ export function registerRespondentRoutes(router: AppRouter) {
       throw new ServiceError('Invalid password', 403);
     }
 
-    const token = await signToken(survey.id, env.PASSWORD_SECRET);
+    const token = await signToken(survey.id, ctx.config.passwordSecret);
+    const secure = ctx.config.cookieSecure ? 'Secure; ' : '';
     const headers = new Headers();
     headers.set(
       'Set-Cookie',
-      `spw_${slug}=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${PASSWORD_SESSION_MAX_AGE}`,
+      `spw_${slug}=${token}; Path=/; HttpOnly; ${secure}SameSite=Lax; Max-Age=${PASSWORD_SESSION_MAX_AGE}`,
     );
     return new Response(null, { status: 204, headers });
   });
 
-  router.get('/api/s/:slug/resume', async (request, env) => {
-    const service = createRespondentService(env);
-    const surveyService = createSurveyService(env);
+  router.get('/api/s/:slug/resume', async (request) => {
+    const ctx = getContext(request);
+    const service = createRespondentService(ctx.db);
+    const surveyService = createSurveyService(ctx.db);
     const slug = request.params.slug;
 
     const { survey } = await surveyService.getPublishedSurvey(slug);
-    await validatePasswordSession(request, slug, survey, env);
+    await validatePasswordSession(request, slug, survey, ctx);
 
     const respondentId = getRespondentId(request, slug);
     const ip = request.headers.get('CF-Connecting-IP') ?? request.headers.get('x-forwarded-for') ?? 'unknown';
@@ -117,13 +122,14 @@ export function registerRespondentRoutes(router: AppRouter) {
     );
   });
 
-  router.post('/api/s/:slug/answers/batch', async (request, env) => {
-    const service = createRespondentService(env);
-    const surveyService = createSurveyService(env);
+  router.post('/api/s/:slug/answers/batch', async (request) => {
+    const ctx = getContext(request);
+    const service = createRespondentService(ctx.db);
+    const surveyService = createSurveyService(ctx.db);
     const slug = request.params.slug;
 
     const { survey } = await surveyService.getPublishedSurvey(slug);
-    await validatePasswordSession(request, slug, survey, env);
+    await validatePasswordSession(request, slug, survey, ctx);
 
     const respondentId = getRespondentId(request, slug);
 
@@ -139,13 +145,14 @@ export function registerRespondentRoutes(router: AppRouter) {
     return new Response(null, { status: 204 });
   });
 
-  router.post('/api/s/:slug/complete', async (request, env) => {
-    const service = createRespondentService(env);
-    const surveyService = createSurveyService(env);
+  router.post('/api/s/:slug/complete', async (request) => {
+    const ctx = getContext(request);
+    const service = createRespondentService(ctx.db);
+    const surveyService = createSurveyService(ctx.db);
     const slug = request.params.slug;
 
     const { survey } = await surveyService.getPublishedSurvey(slug);
-    await validatePasswordSession(request, slug, survey, env);
+    await validatePasswordSession(request, slug, survey, ctx);
 
     const respondentId = getRespondentId(request, slug);
 
@@ -163,12 +170,13 @@ export function registerRespondentRoutes(router: AppRouter) {
     return new Response(null, { status: 204, headers });
   });
 
-  router.post('/api/s/:slug/heartbeat', async (request, env) => {
+  router.post('/api/s/:slug/heartbeat', async (request) => {
     try {
+      const ctx = getContext(request);
       const body = (await request.json()) as { viewerId?: string; type?: string };
-      const survey = await createSurveyService(env).getPublishedSurvey(request.params.slug);
-      if (body.viewerId && body.type && env.ANALYTICS) {
-        env.ANALYTICS.writeDataPoint({
+      const survey = await createSurveyService(ctx.db).getPublishedSurvey(request.params.slug);
+      if (body.viewerId && body.type && ctx.analytics) {
+        ctx.analytics.writeDataPoint({
           indexes: [survey.survey.id],
           blobs: [body.viewerId, body.type],
           doubles: [1],

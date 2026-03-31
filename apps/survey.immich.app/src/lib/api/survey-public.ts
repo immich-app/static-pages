@@ -22,11 +22,7 @@ export async function authenticateSurvey(slug: string, password: string): Promis
   });
 }
 
-export async function sendHeartbeat(
-  slug: string,
-  viewerId: string,
-  type: 'viewer' | 'respondent',
-): Promise<void> {
+export async function sendHeartbeat(slug: string, viewerId: string, type: 'viewer' | 'respondent'): Promise<void> {
   // Fire-and-forget, no error handling
   fetch(`/api/s/${slug}/heartbeat`, {
     method: 'POST',

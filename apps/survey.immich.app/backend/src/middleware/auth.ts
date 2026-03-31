@@ -1,7 +1,7 @@
 import type { IRequest } from 'itty-router';
 import { SESSION_COOKIE_NAME, type UserRole } from '../constants';
 import { AuthService, type UserInfo } from '../services/auth.service';
-import { createDatabase } from '../db';
+import type { AppContext } from '../config';
 import { ServiceError } from '../services/errors';
 
 // Extend request with user info
@@ -15,7 +15,7 @@ function getCookie(request: IRequest, name: string): string | undefined {
   return match?.[1];
 }
 
-export function authMiddleware(env: Env): (request: AuthenticatedRequest) => Promise<void | Response> {
+export function authMiddleware(ctx: AppContext): (request: AuthenticatedRequest) => Promise<void | Response> {
   return async (request: AuthenticatedRequest) => {
     const url = new URL(request.url);
     const path = url.pathname;
@@ -33,7 +33,7 @@ export function authMiddleware(env: Env): (request: AuthenticatedRequest) => Pro
       throw new ServiceError('Authentication required', 401);
     }
 
-    const authService = new AuthService(env, createDatabase(env.DB));
+    const authService = new AuthService(ctx.config, ctx.db);
     const user = await authService.validateSessionToken(token);
     if (!user) {
       throw new ServiceError('Invalid or expired session', 401);

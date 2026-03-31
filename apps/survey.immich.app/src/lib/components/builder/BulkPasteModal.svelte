@@ -10,11 +10,7 @@
   let { onSubmit, onClose }: Props = $props();
   let text = $state('');
 
-  const lineCount = $derived(
-    text
-      .split('\n')
-      .filter((l) => l.trim()).length,
-  );
+  const lineCount = $derived(text.split('\n').filter((l) => l.trim()).length);
 
   function handleSubmit() {
     const lines = text

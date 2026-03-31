@@ -183,7 +183,9 @@
     <div class="space-y-3">
       {#each surveys as survey, i (survey.id)}
         <div
-          class="card-hover animate-in rounded-xl border border-gray-200 bg-white/[0.02] p-5 dark:border-gray-700/80 {survey.archivedAt ? 'opacity-60' : ''}"
+          class="card-hover animate-in rounded-xl border border-gray-200 bg-white/[0.02] p-5 dark:border-gray-700/80 {survey.archivedAt
+            ? 'opacity-60'
+            : ''}"
           style="animation-delay: {60 + i * 50}ms"
         >
           <div class="flex items-start justify-between gap-4">
@@ -201,7 +203,9 @@
                   {survey.status}
                 </span>
                 {#if survey.archivedAt}
-                  <span class="shrink-0 rounded-full bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-medium tracking-wider text-amber-400 uppercase">
+                  <span
+                    class="shrink-0 rounded-full bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-medium tracking-wider text-amber-400 uppercase"
+                  >
                     Archived
                   </span>
                 {/if}

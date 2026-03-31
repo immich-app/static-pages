@@ -6,10 +6,21 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "cf-typegen": "wrangler types",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "start": "tsx src/server.ts",
+    "build:node": "esbuild src/server.ts --bundle --platform=node --format=esm --outdir=dist --external:better-sqlite3 --external:pg",
+    "test": "echo 'Backend integration tests require a running server. Use test:integration instead.'",
+    "test:integration": "vitest run",
+    "test:integration:watch": "vitest"
   },
   "devDependencies": {
+    "@hono/node-server": "^1.19.12",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/pg": "^8.20.0",
+    "better-sqlite3": "^12.8.0",
+    "esbuild": "^0.27.4",
+    "hono": "^4.12.9",
+    "pg": "^8.20.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.2",
     "vitest": "^4.1.0",
     "wrangler": "^4.75.0"

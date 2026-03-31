@@ -222,7 +222,11 @@
         maxResponses: localMaxResponses ? Number(localMaxResponses) : null,
         randomizeQuestions: localRandomizeQuestions,
         randomizeOptions: localRandomizeOptions,
-        ...(localPasswordEnabled && localPassword ? { password: localPassword } : localPasswordEnabled ? {} : { password: null }),
+        ...(localPasswordEnabled && localPassword
+          ? { password: localPassword }
+          : localPasswordEnabled
+            ? {}
+            : { password: null }),
       } as Partial<Survey> & { password?: string | null });
       if (!isNew) {
         // Strip DnD-generated fake IDs before saving
@@ -498,42 +502,24 @@
             <p class="mt-1 text-[11px] text-gray-500">Survey will stop accepting responses after this date</p>
           </div>
           <div>
-            <label class="mb-1.5 block text-xs font-medium tracking-wider text-gray-500 uppercase"
-              >Max responses</label
-            >
-            <Input
-              type="number"
-              bind:value={localMaxResponses}
-              placeholder="Unlimited"
-            />
+            <label class="mb-1.5 block text-xs font-medium tracking-wider text-gray-500 uppercase">Max responses</label>
+            <Input type="number" bind:value={localMaxResponses} placeholder="Unlimited" />
             <p class="mt-1 text-[11px] text-gray-500">Stop accepting responses after this many completions</p>
           </div>
         </div>
         <div class="flex flex-wrap gap-5">
           <label class="flex cursor-pointer items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              bind:checked={localRandomizeQuestions}
-              class="accent-immich-primary"
-            />
+            <input type="checkbox" bind:checked={localRandomizeQuestions} class="accent-immich-primary" />
             Randomize question order
           </label>
           <label class="flex cursor-pointer items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              bind:checked={localRandomizeOptions}
-              class="accent-immich-primary"
-            />
+            <input type="checkbox" bind:checked={localRandomizeOptions} class="accent-immich-primary" />
             Randomize option order
           </label>
         </div>
         <div class="border-t border-gray-700/60 pt-4">
           <label class="flex cursor-pointer items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              bind:checked={localPasswordEnabled}
-              class="accent-immich-primary"
-            />
+            <input type="checkbox" bind:checked={localPasswordEnabled} class="accent-immich-primary" />
             Password protect this survey
           </label>
           {#if localPasswordEnabled}

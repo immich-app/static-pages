@@ -24,10 +24,7 @@ export const surveyTemplates: SurveyTemplate[] = [
         title: 'Satisfaction',
         description: 'Tell us about your experience',
         sortOrder: 0,
-        questions: [
-          templateQuestion('csat', 0),
-          templateQuestion('overall-experience', 1),
-        ],
+        questions: [templateQuestion('csat', 0), templateQuestion('overall-experience', 1)],
       },
       {
         title: 'Recommendation',

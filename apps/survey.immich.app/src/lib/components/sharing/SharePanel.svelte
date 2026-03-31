@@ -14,9 +14,7 @@
   const twitterUrl = $derived(
     `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
   );
-  const linkedinUrl = $derived(
-    `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-  );
+  const linkedinUrl = $derived(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`);
   const emailUrl = $derived(
     `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent((description ? description + '\n\n' : '') + url)}`,
   );

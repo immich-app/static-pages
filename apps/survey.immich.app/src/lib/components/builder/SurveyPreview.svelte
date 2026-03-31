@@ -71,15 +71,11 @@
     </div>
 
     <div
-      class="relative h-[667px] w-[375px] overflow-hidden rounded-[2.5rem] border-4 border-gray-600 bg-gray-950 shadow-2xl [transform:translateZ(0)]"
+      class="relative h-[667px] w-[375px] [transform:translateZ(0)] overflow-hidden rounded-[2.5rem] border-4 border-gray-600 bg-gray-950 shadow-2xl"
     >
       <div class="flex h-full flex-col overflow-y-auto">
         {#if phase === 'welcome'}
-          <WelcomeScreen
-            {survey}
-            sections={previewSections}
-            onStart={() => (phase = 'survey')}
-          />
+          <WelcomeScreen {survey} sections={previewSections} onStart={() => (phase = 'survey')} />
         {:else if phase === 'survey'}
           <SurveyShell
             {engine}

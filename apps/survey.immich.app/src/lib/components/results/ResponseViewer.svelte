@@ -86,7 +86,9 @@
     <div class="rounded-xl border border-gray-300 dark:border-gray-600">
       <table class="w-full text-sm">
         <thead>
-          <tr class="border-b border-gray-200 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:border-gray-700">
+          <tr
+            class="border-b border-gray-200 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:border-gray-700"
+          >
             <th class="px-4 py-3">Respondent</th>
             <th class="px-4 py-3">Status</th>
             <th class="px-4 py-3">Answers</th>
@@ -97,7 +99,10 @@
         <tbody>
           {#each respondents as r (r.id)}
             <tr
-              class="cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50 {selectedDetail?.id === r.id ? 'bg-gray-50 dark:bg-gray-800/50' : ''}"
+              class="cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50 {selectedDetail?.id ===
+              r.id
+                ? 'bg-gray-50 dark:bg-gray-800/50'
+                : ''}"
               onclick={() => viewDetail(r.id)}
             >
               <td class="px-4 py-3 font-mono text-xs text-gray-400">{r.id.slice(0, 8)}</td>
@@ -146,7 +151,12 @@
       <div class="flex items-center justify-between">
         <span class="text-xs text-gray-500">{total} total responses</span>
         <div class="flex items-center gap-2">
-          <Button variant="outline" size="small" disabled={offset === 0} onclick={() => (offset = Math.max(0, offset - limit))}>
+          <Button
+            variant="outline"
+            size="small"
+            disabled={offset === 0}
+            onclick={() => (offset = Math.max(0, offset - limit))}
+          >
             <Icon icon={mdiChevronLeft} size="16" />
           </Button>
           <span class="text-sm text-gray-400">Page {page} of {totalPages}</span>

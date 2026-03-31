@@ -11,7 +11,14 @@ export class RespondentRepository {
     return this.db.selectFrom('respondents').selectAll().where('id', '=', id).executeTakeFirst() ?? null;
   }
 
-  async create(respondent: { id: string; survey_id: string; ip_address: string | null; is_complete: number; created_at: string; completed_at: string | null }): Promise<void> {
+  async create(respondent: {
+    id: string;
+    survey_id: string;
+    ip_address: string | null;
+    is_complete: number;
+    created_at: string;
+    completed_at: string | null;
+  }): Promise<void> {
     await this.db.insertInto('respondents').values(respondent).execute();
   }
 
@@ -44,7 +51,10 @@ export class RespondentRepository {
     return Number(row?.count ?? 0);
   }
 
-  async getTimelineData(surveyId: string, granularity: 'day' | 'hour'): Promise<Array<{ period: string; started: number; completed: number }>> {
+  async getTimelineData(
+    surveyId: string,
+    granularity: 'day' | 'hour',
+  ): Promise<Array<{ period: string; started: number; completed: number }>> {
     const dateExpr = granularity === 'day' ? sql`substr(created_at, 1, 10)` : sql`substr(created_at, 1, 13)`;
     const completedExpr = granularity === 'day' ? sql`substr(completed_at, 1, 10)` : sql`substr(completed_at, 1, 13)`;
 
@@ -79,7 +89,20 @@ export class RespondentRepository {
     await this.db.deleteFrom('respondents').where('id', '=', id).execute();
   }
 
-  async listBySurveyId(surveyId: string, offset: number, limit: number): Promise<{ respondents: Array<{ id: string; created_at: string; completed_at: string | null; is_complete: number; answer_count: number }>; total: number }> {
+  async listBySurveyId(
+    surveyId: string,
+    offset: number,
+    limit: number,
+  ): Promise<{
+    respondents: Array<{
+      id: string;
+      created_at: string;
+      completed_at: string | null;
+      is_complete: number;
+      answer_count: number;
+    }>;
+    total: number;
+  }> {
     const countResult = await this.db
       .selectFrom('respondents')
       .select(({ fn }) => [fn.count('id').as('total')])
@@ -101,7 +124,16 @@ export class RespondentRepository {
       .offset(offset)
       .execute();
 
-    return { respondents: respondents as Array<{ id: string; created_at: string; completed_at: string | null; is_complete: number; answer_count: number }>, total: Number(countResult?.total ?? 0) };
+    return {
+      respondents: respondents as Array<{
+        id: string;
+        created_at: string;
+        completed_at: string | null;
+        is_complete: number;
+        answer_count: number;
+      }>,
+      total: Number(countResult?.total ?? 0),
+    };
   }
 }
 
@@ -112,13 +144,22 @@ export class AnswerRepository {
     return this.db.selectFrom('answers').selectAll().where('respondent_id', '=', respondentId).execute();
   }
 
-  async upsertBatch(answers: Array<{ respondent_id: string; question_id: string; answer: string; other_text: string | null; answered_at: string }>): Promise<void> {
+  async upsertBatch(
+    answers: Array<{
+      respondent_id: string;
+      question_id: string;
+      answer: string;
+      other_text: string | null;
+      answered_at: string;
+    }>,
+  ): Promise<void> {
     for (const a of answers) {
       await sql`INSERT INTO answers (respondent_id, question_id, answer, other_text, answered_at)
         VALUES (${a.respondent_id}, ${a.question_id}, ${a.answer}, ${a.other_text}, ${a.answered_at})
         ON CONFLICT (respondent_id, question_id)
-        DO UPDATE SET answer = excluded.answer, other_text = excluded.other_text, answered_at = excluded.answered_at`
-        .execute(this.db);
+        DO UPDATE SET answer = excluded.answer, other_text = excluded.other_text, answered_at = excluded.answered_at`.execute(
+        this.db,
+      );
     }
   }
 
@@ -149,12 +190,7 @@ export class AnswerRepository {
     const results = await this.db
       .selectFrom('answers as a')
       .innerJoin('respondents as r', 'a.respondent_id', 'r.id')
-      .select(({ fn }) => [
-        'a.question_id',
-        'a.answer',
-        'a.other_text',
-        fn.count('a.respondent_id').as('count'),
-      ])
+      .select(({ fn }) => ['a.question_id', 'a.answer', 'a.other_text', fn.count('a.respondent_id').as('count')])
       .where('r.survey_id', '=', surveyId)
       .where('r.is_complete', '=', 1)
       .groupBy(['a.question_id', 'a.answer', 'a.other_text'])
@@ -164,7 +200,15 @@ export class AnswerRepository {
     return results.map((r) => ({ ...r, count: Number(r.count) }));
   }
 
-  async getDropoffData(surveyId: string): Promise<Array<{ question_id: string; question_text: string; sort_order: number; section_sort_order: number; answer_count: number }>> {
+  async getDropoffData(surveyId: string): Promise<
+    Array<{
+      question_id: string;
+      question_text: string;
+      sort_order: number;
+      section_sort_order: number;
+      answer_count: number;
+    }>
+  > {
     const results = await this.db
       .selectFrom('survey_questions as q')
       .innerJoin('survey_sections as s', 'q.section_id', 's.id')
@@ -184,10 +228,20 @@ export class AnswerRepository {
       .orderBy('s.sort_order')
       .orderBy('q.sort_order')
       .execute();
-    return results as Array<{ question_id: string; question_text: string; sort_order: number; section_sort_order: number; answer_count: number }>;
+    return results as Array<{
+      question_id: string;
+      question_text: string;
+      sort_order: number;
+      section_sort_order: number;
+      answer_count: number;
+    }>;
   }
 
-  async searchTextAnswers(surveyId: string, query: string, questionId?: string): Promise<Array<{ respondent_id: string; question_id: string; question_text: string; answer: string }>> {
+  async searchTextAnswers(
+    surveyId: string,
+    query: string,
+    questionId?: string,
+  ): Promise<Array<{ respondent_id: string; question_id: string; question_text: string; answer: string }>> {
     const escaped = query.replace(/[%_]/g, (ch) => `\\${ch}`);
     const likeQuery = `%${escaped}%`;
 
@@ -208,7 +262,15 @@ export class AnswerRepository {
     return qb.execute();
   }
 
-  async getAnswersForRespondent(respondentId: string): Promise<Array<{ question_id: string; question_text: string; question_type: string; answer: string; other_text: string | null }>> {
+  async getAnswersForRespondent(respondentId: string): Promise<
+    Array<{
+      question_id: string;
+      question_text: string;
+      question_type: string;
+      answer: string;
+      other_text: string | null;
+    }>
+  > {
     return this.db
       .selectFrom('answers as a')
       .innerJoin('survey_questions as q', 'a.question_id', 'q.id')

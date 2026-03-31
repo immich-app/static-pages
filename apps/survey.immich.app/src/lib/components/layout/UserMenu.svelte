@@ -17,7 +17,10 @@
   <div class="h-8 w-20 animate-pulse rounded-md bg-gray-800"></div>
 {:else if auth.isAuthenticated && auth.user}
   <div class="flex items-center gap-2">
-    <span class="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase {roleBadge[auth.user.role] ?? roleBadge.viewer}">
+    <span
+      class="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase {roleBadge[auth.user.role] ??
+        roleBadge.viewer}"
+    >
       {auth.user.role}
     </span>
     <span class="text-sm text-gray-300">{auth.user.name || auth.user.email}</span>

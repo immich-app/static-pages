@@ -13,6 +13,7 @@ onlyBuiltDependencies:
   - esbuild
   - sharp
   - workerd
+  - better-sqlite3
 
 preferWorkspacePackages: true
 

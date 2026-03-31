@@ -253,7 +253,10 @@ test.describe('Inline validation errors', () => {
     await expect(page.getByText('Question 1')).toBeVisible({ timeout: 3000 });
 
     // Click Submit/Next without answering
-    await page.getByRole('button', { name: /Next|Submit/ }).first().click();
+    await page
+      .getByRole('button', { name: /Next|Submit/ })
+      .first()
+      .click();
     await waitForTransition(page);
 
     // Verify validation error
@@ -434,9 +437,9 @@ test.describe('Question templates in builder', () => {
     await waitForTransition(page);
 
     // Verify the NPS question was added with pre-filled text
-    await expect(
-      page.getByText('How likely are you to recommend us to a friend or colleague?'),
-    ).toBeVisible({ timeout: 3000 });
+    await expect(page.getByText('How likely are you to recommend us to a friend or colleague?')).toBeVisible({
+      timeout: 3000,
+    });
   });
 });
 

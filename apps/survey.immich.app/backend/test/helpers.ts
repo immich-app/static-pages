@@ -84,7 +84,14 @@ export async function createPublishedSurvey(options?: {
 
   const questionIds: string[] = [];
   for (const q of [
-    { text: 'Pick one', type: 'radio', options: [{ label: 'A', value: 'A' }, { label: 'B', value: 'B' }] },
+    {
+      text: 'Pick one',
+      type: 'radio',
+      options: [
+        { label: 'A', value: 'A' },
+        { label: 'B', value: 'B' },
+      ],
+    },
     { text: 'Your name', type: 'text' },
     { text: 'Rate us', type: 'nps' },
   ]) {

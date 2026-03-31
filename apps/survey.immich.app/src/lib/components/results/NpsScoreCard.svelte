@@ -11,7 +11,10 @@
   let { answers }: Props = $props();
 
   const stats = $derived.by(() => {
-    let total = 0, promoters = 0, passives = 0, detractors = 0;
+    let total = 0,
+      promoters = 0,
+      passives = 0,
+      detractors = 0;
     for (const a of answers) {
       const score = Number(a.value);
       if (Number.isNaN(score)) continue;
@@ -28,15 +31,24 @@
   });
 
   const label = $derived(
-    stats.npsScore === null ? '' :
-    stats.npsScore >= 50 ? 'Excellent' :
-    stats.npsScore >= 0 ? 'Good' :
-    stats.npsScore >= -50 ? 'Needs improvement' : 'Critical'
+    stats.npsScore === null
+      ? ''
+      : stats.npsScore >= 50
+        ? 'Excellent'
+        : stats.npsScore >= 0
+          ? 'Good'
+          : stats.npsScore >= -50
+            ? 'Needs improvement'
+            : 'Critical',
   );
 </script>
 
 {#if stats.npsScore !== null}
-  <div class="mt-2 rounded-lg border px-4 py-3 {stats.npsScore >= 0 ? 'border-green-500/20 bg-green-500/5' : 'border-red-500/20 bg-red-500/5'}">
+  <div
+    class="mt-2 rounded-lg border px-4 py-3 {stats.npsScore >= 0
+      ? 'border-green-500/20 bg-green-500/5'
+      : 'border-red-500/20 bg-red-500/5'}"
+  >
     <div class="mb-3 flex items-center gap-3">
       <span class="text-sm font-medium text-gray-400">NPS Score</span>
       <span class="text-2xl font-bold {stats.npsScore >= 0 ? 'text-green-400' : 'text-red-400'}">{stats.npsScore}</span>

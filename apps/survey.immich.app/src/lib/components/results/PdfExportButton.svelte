@@ -152,6 +152,9 @@
     {exporting ? 'Exporting...' : 'PDF'}
   </button>
   {#if error}
-    <span class="absolute top-full right-0 mt-1 whitespace-nowrap rounded bg-red-600 px-2 py-1 text-xs text-white shadow-lg">{error}</span>
+    <span
+      class="absolute top-full right-0 mt-1 rounded bg-red-600 px-2 py-1 text-xs whitespace-nowrap text-white shadow-lg"
+      >{error}</span
+    >
   {/if}
 </div>

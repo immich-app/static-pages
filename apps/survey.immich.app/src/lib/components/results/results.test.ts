@@ -186,9 +186,7 @@ describe('Chart data mapping', () => {
   });
 
   it('includes otherText in label', () => {
-    const answers: ChartAnswer[] = [
-      { value: 'Other', otherText: 'user wrote this', count: 3 },
-    ];
+    const answers: ChartAnswer[] = [{ value: 'Other', otherText: 'user wrote this', count: 3 }];
     const data = toChartData(answers, 10);
     expect(data[0].label).toBe('Other: user wrote this');
     expect(data[0].value).toBe(3);
@@ -196,9 +194,7 @@ describe('Chart data mapping', () => {
   });
 
   it('handles zero totalResponses without division error', () => {
-    const answers: ChartAnswer[] = [
-      { value: 'A', otherText: null, count: 0 },
-    ];
+    const answers: ChartAnswer[] = [{ value: 'A', otherText: null, count: 0 }];
     const data = toChartData(answers, 0);
     expect(data[0].percentage).toBe(0);
   });

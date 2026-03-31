@@ -38,27 +38,21 @@ describe('surveyTemplates', () => {
     }
   });
 
-  it.each(surveyTemplates)(
-    'template "$name" sections have valid structure',
-    (template: SurveyTemplate) => {
-      for (const section of template.sections) {
-        expect(typeof section.title).toBe('string');
-        expect(section.title.length).toBeGreaterThan(0);
-        expect(typeof section.sortOrder).toBe('number');
-      }
-    },
-  );
+  it.each(surveyTemplates)('template "$name" sections have valid structure', (template: SurveyTemplate) => {
+    for (const section of template.sections) {
+      expect(typeof section.title).toBe('string');
+      expect(section.title.length).toBeGreaterThan(0);
+      expect(typeof section.sortOrder).toBe('number');
+    }
+  });
 
-  it.each(surveyTemplates)(
-    'template "$name" questions have valid types',
-    (template: SurveyTemplate) => {
-      for (const section of template.sections) {
-        for (const question of section.questions) {
-          expect(validQuestionTypes).toContain(question.type);
-        }
+  it.each(surveyTemplates)('template "$name" questions have valid types', (template: SurveyTemplate) => {
+    for (const section of template.sections) {
+      for (const question of section.questions) {
+        expect(validQuestionTypes).toContain(question.type);
       }
-    },
-  );
+    }
+  });
 
   it.each(surveyTemplates)(
     'template "$name" questions have required text and type fields',

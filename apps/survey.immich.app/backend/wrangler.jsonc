@@ -23,7 +23,7 @@
     "OIDC_ROLE_CLAIM": "groups",
     "OIDC_ROLE_MAP_ADMIN": "survey-admin",
     "OIDC_ROLE_MAP_EDITOR": "survey-editor",
-    "SESSION_SECRET": "dev-session-secret-DO-NOT-USE-IN-PRODUCTION"
+    "SESSION_SECRET": "dev-session-secret-DO-NOT-USE-IN-PRODUCTION",
   },
   "analytics_engine_datasets": [
     {

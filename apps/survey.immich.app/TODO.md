@@ -74,10 +74,10 @@
 
 ## Phase 6 — Self-Hosting & Portability
 
-- [ ] Environment-based configuration — all config via env vars
-- [ ] SQLite / PostgreSQL adapter — implement existing DB interface for non-Cloudflare
-- [ ] Docker Compose deployment option
-- [ ] Data backup / restore — full export/import of all data
+- [x] Environment-based configuration — all config via env vars (AppConfig)
+- [x] SQLite / PostgreSQL adapter — Kysely multi-dialect (D1, SQLite, PostgreSQL)
+- [x] Docker Compose deployment option — with SQLite default and optional Postgres
+- [x] Data backup / restore — full export/import of all data via admin API
 
 ## Phase 7 — Accessibility & Performance
 

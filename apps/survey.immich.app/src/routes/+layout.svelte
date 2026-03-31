@@ -17,9 +17,7 @@
   const auth = getAuth();
 
   // Public routes that don't require auth
-  const isPublicRoute = $derived(
-    page.url.pathname.startsWith('/s/') || page.url.pathname.startsWith('/embed/'),
-  );
+  const isPublicRoute = $derived(page.url.pathname.startsWith('/s/') || page.url.pathname.startsWith('/embed/'));
 
   onMount(() => {
     initAuth();

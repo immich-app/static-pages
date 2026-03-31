@@ -144,9 +144,7 @@ describe('Type shape validation', () => {
       id: 'r1',
       createdAt: '2026-03-01T00:00:00Z',
       completedAt: null,
-      answers: [
-        { questionId: 'q1', questionText: 'Q1', questionType: 'radio', value: 'yes', otherText: null },
-      ],
+      answers: [{ questionId: 'q1', questionText: 'Q1', questionType: 'radio', value: 'yes', otherText: null }],
     };
     expect(rd.answers).toHaveLength(1);
     expect(rd.answers[0].questionType).toBe('radio');

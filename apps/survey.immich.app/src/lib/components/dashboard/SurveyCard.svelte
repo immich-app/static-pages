@@ -38,7 +38,9 @@
 </script>
 
 <div
-  class="rounded-xl border border-gray-300 p-5 transition-colors hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500 {survey.archivedAt ? 'opacity-60' : ''}"
+  class="rounded-xl border border-gray-300 p-5 transition-colors hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500 {survey.archivedAt
+    ? 'opacity-60'
+    : ''}"
 >
   <div class="mb-3 flex items-start justify-between">
     <div>
@@ -49,13 +51,9 @@
     </div>
     <div class="flex shrink-0 items-center gap-2">
       {#if survey.archivedAt}
-        <span class="rounded-full bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-400">
-          Archived
-        </span>
+        <span class="rounded-full bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-400"> Archived </span>
       {/if}
-      <span
-        class="rounded-full px-3 py-1 text-xs font-medium {statusColors[survey.status] ?? statusColors.draft}"
-      >
+      <span class="rounded-full px-3 py-1 text-xs font-medium {statusColors[survey.status] ?? statusColors.draft}">
         {survey.status}
       </span>
     </div>
@@ -90,12 +88,20 @@
       </a>
     {/if}
     {#if onExport}
-      <button class="p-1 text-gray-400 hover:text-gray-200" onclick={() => onExport?.(survey.id)} title="Export definition">
+      <button
+        class="p-1 text-gray-400 hover:text-gray-200"
+        onclick={() => onExport?.(survey.id)}
+        title="Export definition"
+      >
         <Icon icon={mdiExport} size="16" />
       </button>
     {/if}
     {#if survey.archivedAt && onUnarchive}
-      <button class="p-1 text-amber-400 hover:text-amber-300" onclick={() => onUnarchive?.(survey.id)} title="Unarchive">
+      <button
+        class="p-1 text-amber-400 hover:text-amber-300"
+        onclick={() => onUnarchive?.(survey.id)}
+        title="Unarchive"
+      >
         <Icon icon={mdiArchiveArrowUpOutline} size="16" />
       </button>
     {:else if onArchive}

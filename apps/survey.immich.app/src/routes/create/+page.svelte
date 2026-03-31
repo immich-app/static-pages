@@ -148,7 +148,7 @@
         onclick={startBlank}
       >
         <div
-          class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-800 text-gray-400 transition-colors group-hover:bg-immich-primary-10 group-hover:text-immich-primary"
+          class="group-hover:bg-immich-primary-10 group-hover:text-immich-primary flex h-12 w-12 items-center justify-center rounded-full bg-gray-800 text-gray-400 transition-colors"
         >
           <Icon icon={mdiPlus} size="24" />
         </div>

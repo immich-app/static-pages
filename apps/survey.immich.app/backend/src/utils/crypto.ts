@@ -10,18 +10,8 @@ function constantTimeEqual(a: string, b: string): boolean {
 export async function hashPassword(password: string): Promise<string> {
   if (!password) throw new Error('Password cannot be empty');
   const salt = crypto.getRandomValues(new Uint8Array(16));
-  const key = await crypto.subtle.importKey(
-    'raw',
-    new TextEncoder().encode(password),
-    'PBKDF2',
-    false,
-    ['deriveBits'],
-  );
-  const hash = await crypto.subtle.deriveBits(
-    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
-    key,
-    256,
-  );
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
+  const hash = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' }, key, 256);
   const saltB64 = btoa(String.fromCharCode(...salt));
   const hashB64 = btoa(String.fromCharCode(...new Uint8Array(hash)));
   return `${saltB64}:${hashB64}`;
@@ -31,18 +21,8 @@ export async function verifyPassword(password: string, stored: string): Promise<
   const [saltB64, hashB64] = stored.split(':');
   if (!saltB64 || !hashB64) return false;
   const salt = Uint8Array.from(atob(saltB64), (c: string) => c.charCodeAt(0));
-  const key = await crypto.subtle.importKey(
-    'raw',
-    new TextEncoder().encode(password),
-    'PBKDF2',
-    false,
-    ['deriveBits'],
-  );
-  const hash = await crypto.subtle.deriveBits(
-    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
-    key,
-    256,
-  );
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
+  const hash = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' }, key, 256);
   const computedB64 = btoa(String.fromCharCode(...new Uint8Array(hash)));
   return constantTimeEqual(computedB64, hashB64);
 }

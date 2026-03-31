@@ -6,7 +6,10 @@ import { registerRespondentRoutes } from './routes/respondents';
 import { registerResultRoutes } from './routes/results';
 import { registerTagRoutes } from './routes/tags';
 import { registerAuditRoutes } from './routes/audit';
+import { registerBackupRoutes } from './routes/backup';
 import { authMiddleware } from './middleware/auth';
+import { configFromEnv, type AppContext } from './config';
+import { createD1Database } from './db';
 
 const { preflight, corsify } = cors();
 
@@ -18,8 +21,50 @@ function securityHeaders(response: Response): Response {
   return response;
 }
 
-const router = AutoRouter<IRequest, [Env, ExecutionContext]>({
-  before: [preflight, (request: IRequest, env: Env) => authMiddleware(env)(request)],
+function registerAllRoutes(router: ReturnType<typeof AutoRouter>) {
+  registerAuthRoutes(router as any);
+  registerSurveyRoutes(router as any);
+  registerRespondentRoutes(router as any);
+  registerResultRoutes(router as any);
+  registerTagRoutes(router as any);
+  registerAuditRoutes(router as any);
+  registerBackupRoutes(router as any);
+}
+
+// Factory for Node.js server: creates a router with pre-built context
+export function createRouter(ctx: AppContext) {
+  const nodeRouter = AutoRouter<IRequest & { ctx?: AppContext }>({
+    before: [
+      preflight,
+      (request: IRequest & { ctx?: AppContext }) => {
+        request.ctx = ctx;
+      },
+      (request: IRequest & { ctx?: AppContext }) => authMiddleware(request.ctx!)(request),
+    ],
+    finally: [securityHeaders, corsify],
+    catch: (error) => {
+      if (error instanceof ServiceError) {
+        return Response.json({ error: error.message }, { status: error.status });
+      }
+      console.error('Unhandled error:', error);
+      return Response.json({ error: 'Internal server error' }, { status: 500 });
+    },
+  });
+  registerAllRoutes(nodeRouter);
+  return nodeRouter;
+}
+
+// Workers entry point: creates context from Env per-request
+const router = AutoRouter<IRequest & { ctx?: AppContext }, [Env, ExecutionContext]>({
+  before: [
+    preflight,
+    (request: IRequest & { ctx?: AppContext }, env: Env) => {
+      const config = configFromEnv(env);
+      const db = createD1Database(env.DB);
+      request.ctx = { db, config, analytics: env.ANALYTICS };
+    },
+    (request: IRequest & { ctx?: AppContext }) => authMiddleware(request.ctx!)(request),
+  ],
   finally: [securityHeaders, corsify],
   catch: (error) => {
     if (error instanceof ServiceError) {
@@ -30,11 +75,6 @@ const router = AutoRouter<IRequest, [Env, ExecutionContext]>({
   },
 });
 
-registerAuthRoutes(router);
-registerSurveyRoutes(router);
-registerRespondentRoutes(router);
-registerResultRoutes(router);
-registerTagRoutes(router);
-registerAuditRoutes(router);
+registerAllRoutes(router);
 
 export default router;

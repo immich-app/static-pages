@@ -18,10 +18,7 @@ export async function getSurveyResults(id: string): Promise<{
   return request(`/api/surveys/${id}/results`);
 }
 
-export async function getSurveyTimeline(
-  id: string,
-  granularity: 'day' | 'hour' = 'day',
-): Promise<TimelineDataPoint[]> {
+export async function getSurveyTimeline(id: string, granularity: 'day' | 'hour' = 'day'): Promise<TimelineDataPoint[]> {
   return request(`/api/surveys/${id}/results/timeline?granularity=${granularity}`);
 }
 
@@ -37,18 +34,11 @@ export async function listRespondents(
   return request(`/api/surveys/${id}/results/respondents?offset=${offset}&limit=${limit}`);
 }
 
-export async function getRespondent(
-  surveyId: string,
-  respondentId: string,
-): Promise<RespondentDetail> {
+export async function getRespondent(surveyId: string, respondentId: string): Promise<RespondentDetail> {
   return request(`/api/surveys/${surveyId}/results/respondents/${respondentId}`);
 }
 
-export async function searchAnswers(
-  id: string,
-  query: string,
-  questionId?: string,
-): Promise<SearchResult[]> {
+export async function searchAnswers(id: string, query: string, questionId?: string): Promise<SearchResult[]> {
   const params = new URLSearchParams({ q: query });
   if (questionId) params.set('questionId', questionId);
   return request(`/api/surveys/${id}/results/search?${params}`);

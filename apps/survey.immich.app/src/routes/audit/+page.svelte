@@ -40,9 +40,7 @@
   </div>
 
   {#if error}
-    <div
-      class="mb-6 rounded-lg border border-red-500/20 bg-red-950/90 px-4 py-3 text-sm text-red-300"
-    >
+    <div class="mb-6 rounded-lg border border-red-500/20 bg-red-950/90 px-4 py-3 text-sm text-red-300">
       {error}
     </div>
   {/if}
@@ -71,8 +69,10 @@
         </thead>
         <tbody>
           {#each entries as entry (entry.id)}
-            <tr class="border-b border-gray-100 transition-colors hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/30">
-              <td class="whitespace-nowrap px-4 py-3 text-xs text-gray-500">
+            <tr
+              class="border-b border-gray-100 transition-colors hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/30"
+            >
+              <td class="px-4 py-3 text-xs whitespace-nowrap text-gray-500">
                 {new Date(entry.created_at).toLocaleString()}
               </td>
               <td class="px-4 py-3 text-sm">{entry.user_email}</td>

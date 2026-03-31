@@ -5,6 +5,7 @@ A full-featured survey builder and response collection platform built with Svelt
 ## Features
 
 ### Survey Builder
+
 - **10 question types**: radio, checkbox, text, textarea, email, rating (stars), NPS (0-10), number, dropdown, likert scale
 - **Skip logic**: show/hide questions based on prior answers (equals, notEquals, anyOf, skipped)
 - **Drag-and-drop**: reorder questions and sections with drag handles or arrow buttons
@@ -19,6 +20,7 @@ A full-featured survey builder and response collection platform built with Svelt
 - **Archiving**: soft-archive surveys without deleting
 
 ### Response Experience
+
 - **One-question-at-a-time**: animated transitions between questions
 - **Mobile-optimized**: 44px+ touch targets, responsive NPS grid, safe-area-inset support
 - **Keyboard navigation**: arrow keys for radio, Enter to advance
@@ -26,6 +28,7 @@ A full-featured survey builder and response collection platform built with Svelt
 - **Resume support**: respondents can close and resume later via cookie-based sessions
 
 ### Analytics & Results
+
 - **Real-time dashboard**: auto-refreshing results every 15 seconds
 - **Bar & pie charts**: toggle between chart types per question
 - **Timeline chart**: responses over time with day/hour granularity
@@ -39,12 +42,14 @@ A full-featured survey builder and response collection platform built with Svelt
 - **Live counts**: active respondent tracking via Cloudflare Analytics Engine
 
 ### Sharing
+
 - **Social sharing**: pre-formatted links for Twitter/X, LinkedIn, email
 - **Copy link**: one-click URL copy
 - **Embed**: iframe embed code for external sites
 - **QR code**: scannable QR code for survey URLs
 
 ### Administration
+
 - **Authentication**: password-based admin (default) + optional OIDC SSO
 - **Role-based access**: admin, editor, viewer — synced from OIDC claims
 - **Tags**: organize surveys with colored tags and dashboard filtering
@@ -110,29 +115,29 @@ All configuration is via environment variables in `backend/wrangler.jsonc`. For 
 
 #### Required
 
-| Variable | Description |
-|----------|-------------|
-| `SESSION_SECRET` | Secret key for signing admin session JWTs. Use a random 32+ character string. |
+| Variable          | Description                                                                               |
+| ----------------- | ----------------------------------------------------------------------------------------- |
+| `SESSION_SECRET`  | Secret key for signing admin session JWTs. Use a random 32+ character string.             |
 | `PASSWORD_SECRET` | Secret key for survey password protection HMAC tokens. Use a random 32+ character string. |
 
 #### OIDC Authentication (optional)
 
 Configure these to enable SSO login alongside password authentication.
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `OIDC_ISSUER` | OIDC provider issuer URL | `https://auth.example.com/realms/immich` |
-| `OIDC_CLIENT_ID` | Registered OIDC client ID | `survey-app` |
-| `OIDC_CLIENT_SECRET` | OIDC client secret | (use `wrangler secret put`) |
-| `OIDC_REDIRECT_URI` | Callback URL after login | `https://survey-api.example.com/api/auth/callback` |
-| `OIDC_ROLE_CLAIM` | JWT claim path containing roles | `groups` or `realm_access.roles` |
-| `OIDC_ROLE_MAP_ADMIN` | Claim value for admin role | `survey-admin` |
-| `OIDC_ROLE_MAP_EDITOR` | Claim value for editor role | `survey-editor` |
+| Variable               | Description                     | Example                                            |
+| ---------------------- | ------------------------------- | -------------------------------------------------- |
+| `OIDC_ISSUER`          | OIDC provider issuer URL        | `https://auth.example.com/realms/immich`           |
+| `OIDC_CLIENT_ID`       | Registered OIDC client ID       | `survey-app`                                       |
+| `OIDC_CLIENT_SECRET`   | OIDC client secret              | (use `wrangler secret put`)                        |
+| `OIDC_REDIRECT_URI`    | Callback URL after login        | `https://survey-api.example.com/api/auth/callback` |
+| `OIDC_ROLE_CLAIM`      | JWT claim path containing roles | `groups` or `realm_access.roles`                   |
+| `OIDC_ROLE_MAP_ADMIN`  | Claim value for admin role      | `survey-admin`                                     |
+| `OIDC_ROLE_MAP_EDITOR` | Claim value for editor role     | `survey-editor`                                    |
 
 #### Optional
 
-| Variable | Description | Default |
-|----------|-------------|---------|
+| Variable                | Description                                         | Default                    |
+| ----------------------- | --------------------------------------------------- | -------------------------- |
 | `DISABLE_PASSWORD_AUTH` | Set to `true` to disable password login (OIDC only) | Not set (password enabled) |
 
 ### OIDC Configuration
@@ -151,13 +156,14 @@ The app supports any OIDC-compliant identity provider (Keycloak, Auth0, Okta, Az
 
 The app extracts roles from a configurable OIDC claim. Three roles are supported:
 
-| Role | Permissions |
-|------|------------|
-| **admin** | Full access: create, edit, delete, publish surveys; manage tags; view audit log; delete responses |
-| **editor** | Create and edit surveys, publish/unpublish, manage tags, import/export |
-| **viewer** | View surveys and results, export data |
+| Role       | Permissions                                                                                       |
+| ---------- | ------------------------------------------------------------------------------------------------- |
+| **admin**  | Full access: create, edit, delete, publish surveys; manage tags; view audit log; delete responses |
+| **editor** | Create and edit surveys, publish/unpublish, manage tags, import/export                            |
+| **viewer** | View surveys and results, export data                                                             |
 
 The `OIDC_ROLE_CLAIM` supports nested paths for providers like Keycloak:
+
 - Flat claim: `groups` → reads from `token.groups`
 - Nested claim: `realm_access.roles` → reads from `token.realm_access.roles`
 
@@ -176,9 +182,9 @@ This hides the password login form and rejects password login API calls. Only OI
 
 ### Cloudflare Bindings
 
-| Binding | Type | Description |
-|---------|------|-------------|
-| `DB` | D1 Database | Primary data store |
+| Binding     | Type                     | Description                               |
+| ----------- | ------------------------ | ----------------------------------------- |
+| `DB`        | D1 Database              | Primary data store                        |
 | `ANALYTICS` | Analytics Engine Dataset | Heartbeat tracking for live viewer counts |
 
 ### Database
@@ -195,118 +201,118 @@ cd backend && npx wrangler d1 migrations apply survey --remote
 
 #### Tables
 
-| Table | Purpose |
-|-------|---------|
-| `surveys` | Survey metadata, status, scheduling, password |
-| `survey_sections` | Ordered sections within a survey |
-| `survey_questions` | Questions with type, options, config, conditional logic |
-| `respondents` | Survey respondent sessions |
-| `answers` | Individual question responses |
-| `tags` | Survey tags for organization |
-| `survey_tags` | Survey-to-tag associations |
-| `audit_log` | Admin action audit trail |
-| `admin_credentials` | Local admin password hash |
+| Table               | Purpose                                                 |
+| ------------------- | ------------------------------------------------------- |
+| `surveys`           | Survey metadata, status, scheduling, password           |
+| `survey_sections`   | Ordered sections within a survey                        |
+| `survey_questions`  | Questions with type, options, config, conditional logic |
+| `respondents`       | Survey respondent sessions                              |
+| `answers`           | Individual question responses                           |
+| `tags`              | Survey tags for organization                            |
+| `survey_tags`       | Survey-to-tag associations                              |
+| `audit_log`         | Admin action audit trail                                |
+| `admin_credentials` | Local admin password hash                               |
 
 ## API Reference
 
 ### Authentication
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/api/auth/me` | Check auth status and setup state |
-| `POST` | `/api/auth/setup` | First-time admin password setup |
-| `POST` | `/api/auth/password-login` | Password login |
-| `GET` | `/api/auth/login` | OIDC login redirect |
-| `GET` | `/api/auth/callback` | OIDC callback |
-| `POST` | `/api/auth/logout` | Clear session |
+| Method | Path                       | Description                       |
+| ------ | -------------------------- | --------------------------------- |
+| `GET`  | `/api/auth/me`             | Check auth status and setup state |
+| `POST` | `/api/auth/setup`          | First-time admin password setup   |
+| `POST` | `/api/auth/password-login` | Password login                    |
+| `GET`  | `/api/auth/login`          | OIDC login redirect               |
+| `GET`  | `/api/auth/callback`       | OIDC callback                     |
+| `POST` | `/api/auth/logout`         | Clear session                     |
 
 ### Surveys (requires auth)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/api/surveys?archived=true` | List surveys |
-| `POST` | `/api/surveys` | Create survey |
-| `GET` | `/api/surveys/:id` | Get survey with sections and questions |
-| `PUT` | `/api/surveys/:id` | Update survey |
-| `DELETE` | `/api/surveys/:id` | Delete survey |
-| `PUT` | `/api/surveys/:id/publish` | Publish |
-| `PUT` | `/api/surveys/:id/unpublish` | Unpublish |
-| `POST` | `/api/surveys/:id/duplicate` | Duplicate |
-| `PUT` | `/api/surveys/:id/archive` | Archive |
-| `PUT` | `/api/surveys/:id/unarchive` | Unarchive |
-| `GET` | `/api/surveys/:id/definition` | Export definition |
-| `POST` | `/api/surveys/import` | Import definition |
+| Method   | Path                          | Description                            |
+| -------- | ----------------------------- | -------------------------------------- |
+| `GET`    | `/api/surveys?archived=true`  | List surveys                           |
+| `POST`   | `/api/surveys`                | Create survey                          |
+| `GET`    | `/api/surveys/:id`            | Get survey with sections and questions |
+| `PUT`    | `/api/surveys/:id`            | Update survey                          |
+| `DELETE` | `/api/surveys/:id`            | Delete survey                          |
+| `PUT`    | `/api/surveys/:id/publish`    | Publish                                |
+| `PUT`    | `/api/surveys/:id/unpublish`  | Unpublish                              |
+| `POST`   | `/api/surveys/:id/duplicate`  | Duplicate                              |
+| `PUT`    | `/api/surveys/:id/archive`    | Archive                                |
+| `PUT`    | `/api/surveys/:id/unarchive`  | Unarchive                              |
+| `GET`    | `/api/surveys/:id/definition` | Export definition                      |
+| `POST`   | `/api/surveys/import`         | Import definition                      |
 
 ### Sections & Questions (requires auth)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/api/surveys/:id/sections` | Create section |
-| `PUT` | `/api/sections/:id` | Update section |
-| `DELETE` | `/api/sections/:id` | Delete section |
-| `PUT` | `/api/surveys/:id/sections/reorder` | Reorder sections |
-| `POST` | `/api/sections/:id/questions` | Create question |
-| `PUT` | `/api/questions/:id` | Update question |
-| `DELETE` | `/api/questions/:id` | Delete question |
-| `PUT` | `/api/sections/:id/questions/reorder` | Reorder questions |
+| Method   | Path                                  | Description       |
+| -------- | ------------------------------------- | ----------------- |
+| `POST`   | `/api/surveys/:id/sections`           | Create section    |
+| `PUT`    | `/api/sections/:id`                   | Update section    |
+| `DELETE` | `/api/sections/:id`                   | Delete section    |
+| `PUT`    | `/api/surveys/:id/sections/reorder`   | Reorder sections  |
+| `POST`   | `/api/sections/:id/questions`         | Create question   |
+| `PUT`    | `/api/questions/:id`                  | Update question   |
+| `DELETE` | `/api/questions/:id`                  | Delete question   |
+| `PUT`    | `/api/sections/:id/questions/reorder` | Reorder questions |
 
 ### Tags (requires auth)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/api/tags` | List all tags |
-| `POST` | `/api/tags` | Create tag |
-| `PUT` | `/api/tags/:id` | Update tag |
-| `DELETE` | `/api/tags/:id` | Delete tag |
-| `GET` | `/api/surveys/:id/tags` | Get survey tags |
-| `PUT` | `/api/surveys/:id/tags` | Set survey tags |
+| Method   | Path                    | Description     |
+| -------- | ----------------------- | --------------- |
+| `GET`    | `/api/tags`             | List all tags   |
+| `POST`   | `/api/tags`             | Create tag      |
+| `PUT`    | `/api/tags/:id`         | Update tag      |
+| `DELETE` | `/api/tags/:id`         | Delete tag      |
+| `GET`    | `/api/surveys/:id/tags` | Get survey tags |
+| `PUT`    | `/api/surveys/:id/tags` | Set survey tags |
 
 ### Results (requires auth)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/api/surveys/:id/results` | Aggregated results |
-| `GET` | `/api/surveys/:id/results/live` | Real-time results with live counts |
-| `GET` | `/api/surveys/:id/results/timeline?granularity=day\|hour` | Response timeline |
-| `GET` | `/api/surveys/:id/results/dropoff` | Drop-off analysis |
-| `GET` | `/api/surveys/:id/results/respondents?offset=0&limit=20` | List respondents |
-| `GET` | `/api/surveys/:id/results/respondents/:rid` | Respondent detail |
-| `DELETE` | `/api/surveys/:id/results/respondents/:rid` | Delete respondent |
-| `GET` | `/api/surveys/:id/results/search?q=term` | Search text answers |
-| `GET` | `/api/surveys/:id/results/export?format=csv\|json` | Export responses |
+| Method   | Path                                                      | Description                        |
+| -------- | --------------------------------------------------------- | ---------------------------------- |
+| `GET`    | `/api/surveys/:id/results`                                | Aggregated results                 |
+| `GET`    | `/api/surveys/:id/results/live`                           | Real-time results with live counts |
+| `GET`    | `/api/surveys/:id/results/timeline?granularity=day\|hour` | Response timeline                  |
+| `GET`    | `/api/surveys/:id/results/dropoff`                        | Drop-off analysis                  |
+| `GET`    | `/api/surveys/:id/results/respondents?offset=0&limit=20`  | List respondents                   |
+| `GET`    | `/api/surveys/:id/results/respondents/:rid`               | Respondent detail                  |
+| `DELETE` | `/api/surveys/:id/results/respondents/:rid`               | Delete respondent                  |
+| `GET`    | `/api/surveys/:id/results/search?q=term`                  | Search text answers                |
+| `GET`    | `/api/surveys/:id/results/export?format=csv\|json`        | Export responses                   |
 
 ### Public Survey Routes (no auth)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/api/s/:slug` | Get published survey |
-| `POST` | `/api/s/:slug/auth` | Authenticate with survey password |
-| `GET` | `/api/s/:slug/resume` | Resume survey session |
-| `POST` | `/api/s/:slug/answers/batch` | Submit answers |
-| `POST` | `/api/s/:slug/complete` | Complete survey |
-| `POST` | `/api/s/:slug/heartbeat` | Analytics heartbeat |
+| Method | Path                         | Description                       |
+| ------ | ---------------------------- | --------------------------------- |
+| `GET`  | `/api/s/:slug`               | Get published survey              |
+| `POST` | `/api/s/:slug/auth`          | Authenticate with survey password |
+| `GET`  | `/api/s/:slug/resume`        | Resume survey session             |
+| `POST` | `/api/s/:slug/answers/batch` | Submit answers                    |
+| `POST` | `/api/s/:slug/complete`      | Complete survey                   |
+| `POST` | `/api/s/:slug/heartbeat`     | Analytics heartbeat               |
 
 ### Audit Log (requires admin)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/api/audit-log?offset=0&limit=50` | List audit entries |
-| `GET` | `/api/audit-log/survey/:id` | Audit entries for a survey |
+| Method | Path                               | Description                |
+| ------ | ---------------------------------- | -------------------------- |
+| `GET`  | `/api/audit-log?offset=0&limit=50` | List audit entries         |
+| `GET`  | `/api/audit-log/survey/:id`        | Audit entries for a survey |
 
 ## Question Types
 
-| Type | Description | Options | Config |
-|------|-------------|---------|--------|
-| `radio` | Single choice | Required (2+) | — |
-| `checkbox` | Multiple choice | Required (2+) | — |
-| `text` | Short text input | — | placeholder |
-| `textarea` | Long text input | — | maxLength, placeholder |
-| `email` | Email with validation | — | placeholder |
-| `rating` | Star rating | — | scaleMax (5 or 10), lowLabel, highLabel |
-| `nps` | Net Promoter Score | — | scaleMax (10) |
-| `number` | Numeric input | — | min, max |
-| `dropdown` | Select from list | Required (2+) | — |
-| `likert` | Agreement scale | — | scaleMax, lowLabel, highLabel |
+| Type       | Description           | Options       | Config                                  |
+| ---------- | --------------------- | ------------- | --------------------------------------- |
+| `radio`    | Single choice         | Required (2+) | —                                       |
+| `checkbox` | Multiple choice       | Required (2+) | —                                       |
+| `text`     | Short text input      | —             | placeholder                             |
+| `textarea` | Long text input       | —             | maxLength, placeholder                  |
+| `email`    | Email with validation | —             | placeholder                             |
+| `rating`   | Star rating           | —             | scaleMax (5 or 10), lowLabel, highLabel |
+| `nps`      | Net Promoter Score    | —             | scaleMax (10)                           |
+| `number`   | Numeric input         | —             | min, max                                |
+| `dropdown` | Select from list      | Required (2+) | —                                       |
+| `likert`   | Agreement scale       | —             | scaleMax, lowLabel, highLabel           |
 
 All question types support: required/optional, description text, skip logic (conditional visibility), and "allow other" option (for radio/checkbox/dropdown).
 

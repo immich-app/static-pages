@@ -1,5 +1,6 @@
 import type { Kysely } from 'kysely';
 import type { Database } from '../db';
+import type { AppConfig } from '../config';
 import { ServiceError } from './errors';
 import { hashPassword, verifyPassword } from '../utils/crypto';
 
@@ -24,7 +25,7 @@ const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 export class AuthService {
   constructor(
-    private env: Env,
+    private config: AppConfig,
     private db: Kysely<Database>,
   ) {}
 
@@ -75,11 +76,11 @@ export class AuthService {
   }
 
   isOidcConfigured(): boolean {
-    return !!(this.env.OIDC_ISSUER && this.env.OIDC_CLIENT_ID && this.env.OIDC_ISSUER !== 'disabled');
+    return !!(this.config.oidc.issuer && this.config.oidc.clientId && this.config.oidc.issuer !== 'disabled');
   }
 
   isPasswordAuthEnabled(): boolean {
-    return this.env.DISABLE_PASSWORD_AUTH !== 'true';
+    return !this.config.disablePasswordAuth;
   }
 
   // --- OIDC auth ---
@@ -88,7 +89,7 @@ export class AuthService {
     if (cachedOidcConfig && Date.now() - cachedOidcConfig.fetchedAt < CACHE_TTL_MS) {
       return cachedOidcConfig.data;
     }
-    const res = await fetch(`${this.env.OIDC_ISSUER}/.well-known/openid-configuration`);
+    const res = await fetch(`${this.config.oidc.issuer}/.well-known/openid-configuration`);
     if (!res.ok) throw new ServiceError('Failed to fetch OIDC configuration', 500);
     const data = (await res.json()) as OidcConfig;
     cachedOidcConfig = { data, fetchedAt: Date.now() };
@@ -110,10 +111,10 @@ export class AuthService {
   async getAuthorizationUrl(state: string, nonce: string): Promise<string> {
     const config = await this.getOidcConfig();
     const params = new URLSearchParams({
-      client_id: this.env.OIDC_CLIENT_ID,
+      client_id: this.config.oidc.clientId,
       response_type: 'code',
       scope: 'openid email profile',
-      redirect_uri: this.env.OIDC_REDIRECT_URI,
+      redirect_uri: this.config.oidc.redirectUri,
       state,
       nonce,
     });
@@ -127,10 +128,10 @@ export class AuthService {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
         grant_type: 'authorization_code',
-        client_id: this.env.OIDC_CLIENT_ID,
-        client_secret: this.env.OIDC_CLIENT_SECRET,
+        client_id: this.config.oidc.clientId,
+        client_secret: this.config.oidc.clientSecret,
         code,
-        redirect_uri: this.env.OIDC_REDIRECT_URI,
+        redirect_uri: this.config.oidc.redirectUri,
       }),
     });
     if (!res.ok) {
@@ -156,10 +157,10 @@ export class AuthService {
     const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'))) as Record<string, unknown>;
 
     // Verify claims
-    if (payload.iss !== this.env.OIDC_ISSUER) throw new ServiceError('Invalid issuer', 400);
+    if (payload.iss !== this.config.oidc.issuer) throw new ServiceError('Invalid issuer', 400);
     if (
-      payload.aud !== this.env.OIDC_CLIENT_ID &&
-      !(Array.isArray(payload.aud) && (payload.aud as string[]).includes(this.env.OIDC_CLIENT_ID))
+      payload.aud !== this.config.oidc.clientId &&
+      !(Array.isArray(payload.aud) && (payload.aud as string[]).includes(this.config.oidc.clientId))
     ) {
       throw new ServiceError('Invalid audience', 400);
     }
@@ -202,7 +203,7 @@ export class AuthService {
   }
 
   private extractRole(claims: Record<string, unknown>): 'admin' | 'editor' | 'viewer' {
-    const claimPath = this.env.OIDC_ROLE_CLAIM;
+    const claimPath = this.config.oidc.roleClaim;
     let value: unknown = claims;
 
     // Support nested claims like "realm_access.roles"
@@ -215,21 +216,21 @@ export class AuthService {
     }
 
     if (Array.isArray(value)) {
-      if (value.includes(this.env.OIDC_ROLE_MAP_ADMIN)) return 'admin';
-      if (value.includes(this.env.OIDC_ROLE_MAP_EDITOR)) return 'editor';
+      if (value.includes(this.config.oidc.roleMapAdmin)) return 'admin';
+      if (value.includes(this.config.oidc.roleMapEditor)) return 'editor';
       return 'viewer';
     }
 
     if (typeof value === 'string') {
-      if (value === this.env.OIDC_ROLE_MAP_ADMIN) return 'admin';
-      if (value === this.env.OIDC_ROLE_MAP_EDITOR) return 'editor';
+      if (value === this.config.oidc.roleMapAdmin) return 'admin';
+      if (value === this.config.oidc.roleMapEditor) return 'editor';
     }
 
     return 'viewer';
   }
 
   async createSessionToken(user: UserInfo): Promise<string> {
-    if (!this.env.SESSION_SECRET) {
+    if (!this.config.sessionSecret) {
       throw new ServiceError('SESSION_SECRET is not configured', 500);
     }
     const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
@@ -246,7 +247,7 @@ export class AuthService {
 
     const key = await crypto.subtle.importKey(
       'raw',
-      new TextEncoder().encode(this.env.SESSION_SECRET),
+      new TextEncoder().encode(this.config.sessionSecret),
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['sign'],
@@ -268,7 +269,7 @@ export class AuthService {
       // Verify HMAC signature
       const key = await crypto.subtle.importKey(
         'raw',
-        new TextEncoder().encode(this.env.SESSION_SECRET),
+        new TextEncoder().encode(this.config.sessionSecret),
         { name: 'HMAC', hash: 'SHA-256' },
         false,
         ['verify'],

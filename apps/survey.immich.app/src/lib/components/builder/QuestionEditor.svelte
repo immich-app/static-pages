@@ -133,27 +133,30 @@
   <!-- Collapsed header (always visible) -->
   <div class="flex w-full items-center gap-1 px-4 py-3">
     {#if dragHandle}
-      <div class="shrink-0 cursor-grab text-gray-500 hover:text-gray-300 active:cursor-grabbing" title="Drag to reorder">
+      <div
+        class="shrink-0 cursor-grab text-gray-500 hover:text-gray-300 active:cursor-grabbing"
+        title="Drag to reorder"
+      >
         <Icon icon={mdiDragVertical} size="16" />
       </div>
     {/if}
     <button class="flex min-w-0 flex-1 items-center gap-3 text-left" onclick={onToggle}>
-    <Icon icon={currentTypeInfo.icon} size="16" class="shrink-0 text-gray-400" />
-    <span class="min-w-0 flex-1 truncate text-sm {question.text ? '' : 'text-gray-500 italic'}">
-      {question.text || 'Untitled question'}
-    </span>
-    {#if question.required}
-      <span
-        class="bg-immich-primary-10 text-immich-primary shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium tracking-wider uppercase"
-      >
-        Required
+      <Icon icon={currentTypeInfo.icon} size="16" class="shrink-0 text-gray-400" />
+      <span class="min-w-0 flex-1 truncate text-sm {question.text ? '' : 'text-gray-500 italic'}">
+        {question.text || 'Untitled question'}
       </span>
-    {/if}
-    <div class="flex shrink-0 items-center gap-0.5">
-      <span class="inline-flex items-center transition-transform duration-200 {expanded ? 'rotate-180' : ''}">
-        <Icon icon={mdiChevronDown} size="18" class="text-gray-500" />
-      </span>
-    </div>
+      {#if question.required}
+        <span
+          class="bg-immich-primary-10 text-immich-primary shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium tracking-wider uppercase"
+        >
+          Required
+        </span>
+      {/if}
+      <div class="flex shrink-0 items-center gap-0.5">
+        <span class="inline-flex items-center transition-transform duration-200 {expanded ? 'rotate-180' : ''}">
+          <Icon icon={mdiChevronDown} size="18" class="text-gray-500" />
+        </span>
+      </div>
     </button>
   </div>
 

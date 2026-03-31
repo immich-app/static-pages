@@ -46,7 +46,16 @@
 {:else if loader.surveyFinished || loader.engine?.isComplete}
   <div class="flex min-h-screen flex-col"><ThankYouScreen survey={loader.survey ?? undefined} /></div>
 {:else if loader.showWelcome && loader.survey}
-  <div class="flex min-h-screen flex-col"><WelcomeScreen survey={loader.survey} sections={loader.sections} onStart={() => loader.start()} /></div>
+  <div class="flex min-h-screen flex-col">
+    <WelcomeScreen survey={loader.survey} sections={loader.sections} onStart={() => loader.start()} />
+  </div>
 {:else if loader.engine && loader.sections.length > 0}
-  <div class="flex min-h-screen flex-col"><SurveyShell engine={loader.engine} sections={loader.sections} onAnswer={loader.handleAnswer} onComplete={loader.handleComplete} /></div>
+  <div class="flex min-h-screen flex-col">
+    <SurveyShell
+      engine={loader.engine}
+      sections={loader.sections}
+      onAnswer={loader.handleAnswer}
+      onComplete={loader.handleComplete}
+    />
+  </div>
 {/if}

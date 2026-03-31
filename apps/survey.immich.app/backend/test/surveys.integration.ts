@@ -104,7 +104,11 @@ describe('Survey CRUD', () => {
 
     const res = await authedRequest(`/api/surveys/${surveyId}/duplicate`, { method: 'POST' });
     expect(res.status).toBe(201);
-    const data = (await res.json()) as { survey: { id: string; title: string }; sections: unknown[]; questions: unknown[] };
+    const data = (await res.json()) as {
+      survey: { id: string; title: string };
+      sections: unknown[];
+      questions: unknown[];
+    };
     expect(data.survey.id).not.toBe(surveyId);
     expect(data.survey.title).toContain('(Copy)');
     expect(data.sections.length).toBeGreaterThan(0);
@@ -156,7 +160,10 @@ describe('Sections and Questions', () => {
       body: JSON.stringify({
         text: 'Q1',
         type: 'radio',
-        options: [{ label: 'Yes', value: 'Yes' }, { label: 'No', value: 'No' }],
+        options: [
+          { label: 'Yes', value: 'Yes' },
+          { label: 'No', value: 'No' },
+        ],
       }),
     });
     expect(questionRes.status).toBe(201);
@@ -169,19 +176,28 @@ describe('Sections and Questions', () => {
     });
     const { id: surveyId } = (await surveyRes.json()) as { id: string };
 
-    const s1 = (await (await authedRequest(`/api/surveys/${surveyId}/sections`, {
-      method: 'POST',
-      body: JSON.stringify({ title: 'First' }),
-    })).json()) as { id: string };
+    const s1 = (await (
+      await authedRequest(`/api/surveys/${surveyId}/sections`, {
+        method: 'POST',
+        body: JSON.stringify({ title: 'First' }),
+      })
+    ).json()) as { id: string };
 
-    const s2 = (await (await authedRequest(`/api/surveys/${surveyId}/sections`, {
-      method: 'POST',
-      body: JSON.stringify({ title: 'Second' }),
-    })).json()) as { id: string };
+    const s2 = (await (
+      await authedRequest(`/api/surveys/${surveyId}/sections`, {
+        method: 'POST',
+        body: JSON.stringify({ title: 'Second' }),
+      })
+    ).json()) as { id: string };
 
     const res = await authedRequest(`/api/surveys/${surveyId}/sections/reorder`, {
       method: 'PUT',
-      body: JSON.stringify({ items: [{ id: s2.id, sort_order: 0 }, { id: s1.id, sort_order: 1 }] }),
+      body: JSON.stringify({
+        items: [
+          { id: s2.id, sort_order: 0 },
+          { id: s1.id, sort_order: 1 },
+        ],
+      }),
     });
     expect(res.status).toBe(204);
   });

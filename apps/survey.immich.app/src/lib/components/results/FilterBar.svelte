@@ -12,7 +12,9 @@
 
   let { questions, filterQuestionId, filterValue, onFilterChange }: Props = $props();
 
-  const filterableQuestions = $derived(questions.filter((q) => ['radio', 'checkbox', 'dropdown', 'nps', 'rating', 'likert'].includes(q.type)));
+  const filterableQuestions = $derived(
+    questions.filter((q) => ['radio', 'checkbox', 'dropdown', 'nps', 'rating', 'likert'].includes(q.type)),
+  );
 
   const selectedQuestion = $derived(filterableQuestions.find((q) => q.id === filterQuestionId));
 

@@ -51,7 +51,11 @@ interface ExportDefinition {
   }>;
 }
 
-function createExportDefinition(survey: Survey, sections: SurveySection[], questions: SurveyQuestion[]): ExportDefinition {
+function createExportDefinition(
+  survey: Survey,
+  sections: SurveySection[],
+  questions: SurveyQuestion[],
+): ExportDefinition {
   return {
     version: 1,
     title: survey.title,
@@ -253,12 +257,18 @@ describe('Import/export definition', () => {
     updatedAt: '2026-01-01T00:00:00Z',
   };
 
-  const baseSections: SurveySection[] = [
-    { id: 'sec1', title: 'Section 1', sortOrder: 0 },
-  ];
+  const baseSections: SurveySection[] = [{ id: 'sec1', title: 'Section 1', sortOrder: 0 }];
 
   const baseQuestions: SurveyQuestion[] = [
-    { id: 'q1', section_id: 'sec1', text: 'How are you?', type: 'radio', required: true, sortOrder: 0, options: [{ label: 'Good', value: 'good' }] },
+    {
+      id: 'q1',
+      section_id: 'sec1',
+      text: 'How are you?',
+      type: 'radio',
+      required: true,
+      sortOrder: 0,
+      options: [{ label: 'Good', value: 'good' }],
+    },
   ];
 
   it('export definition shape has version, title, sections', () => {
@@ -460,7 +470,14 @@ describe('API URL construction — survey admin', () => {
     fetchSpy.mockResolvedValueOnce({
       ok: true,
       status: 200,
-      json: () => Promise.resolve({ id: 's1', archived_at: '2026-03-01', created_at: '2026-01-01', updated_at: '2026-03-01', title: 'T' }),
+      json: () =>
+        Promise.resolve({
+          id: 's1',
+          archived_at: '2026-03-01',
+          created_at: '2026-01-01',
+          updated_at: '2026-03-01',
+          title: 'T',
+        }),
     });
     const { archiveSurvey } = await import('../api/survey-admin');
     await archiveSurvey('s1');
@@ -474,7 +491,14 @@ describe('API URL construction — survey admin', () => {
     fetchSpy.mockResolvedValueOnce({
       ok: true,
       status: 200,
-      json: () => Promise.resolve({ id: 's1', archived_at: null, created_at: '2026-01-01', updated_at: '2026-03-01', title: 'T' }),
+      json: () =>
+        Promise.resolve({
+          id: 's1',
+          archived_at: null,
+          created_at: '2026-01-01',
+          updated_at: '2026-03-01',
+          title: 'T',
+        }),
     });
     const { unarchiveSurvey } = await import('../api/survey-admin');
     await unarchiveSurvey('s1');
@@ -500,7 +524,12 @@ describe('API URL construction — survey admin', () => {
     fetchSpy.mockResolvedValueOnce({
       ok: true,
       status: 200,
-      json: () => Promise.resolve({ survey: { id: 's2', title: 'T', created_at: '2026-01-01', updated_at: '2026-01-01' }, sections: [], questions: [] }),
+      json: () =>
+        Promise.resolve({
+          survey: { id: 's2', title: 'T', created_at: '2026-01-01', updated_at: '2026-01-01' },
+          sections: [],
+          questions: [],
+        }),
     });
     const { importSurveyDefinition } = await import('../api/survey-admin');
     const def = { version: 1, title: 'Imported', sections: [] };

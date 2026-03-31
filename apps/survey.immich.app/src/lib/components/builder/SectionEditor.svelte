@@ -235,7 +235,12 @@
 
     <!-- Questions with DnD -->
     <div
-      use:dndzone={{ items: dndQuestions, flipDurationMs: 200, dragDisabled: false, type: `questions-${section.id || index}` }}
+      use:dndzone={{
+        items: dndQuestions,
+        flipDurationMs: 200,
+        dragDisabled: false,
+        type: `questions-${section.id || index}`,
+      }}
       onconsider={handleQuestionDndConsider}
       onfinalize={handleQuestionDndFinalize}
       class="space-y-2"

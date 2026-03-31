@@ -1,5 +1,10 @@
 import { RespondentRepository, AnswerRepository, type AnswerRow } from '../repositories/respondent.repository';
-import { SurveyRepository, QuestionRepository, type QuestionRow, type SurveyRow } from '../repositories/survey.repository';
+import {
+  SurveyRepository,
+  QuestionRepository,
+  type QuestionRow,
+  type SurveyRow,
+} from '../repositories/survey.repository';
 import { ServiceError } from './errors';
 import { BATCH_ANSWER_LIMIT } from '../constants';
 
@@ -112,7 +117,7 @@ export class RespondentService {
     this.checkSurveyClosed(survey);
 
     const surveyQuestions = await this.questions.getBySurveyId(survey.id);
-    const validQuestionIds = new Set(surveyQuestions.map(q => q.id));
+    const validQuestionIds = new Set(surveyQuestions.map((q) => q.id));
     for (const input of inputs) {
       if (!validQuestionIds.has(input.questionId)) {
         throw new ServiceError(`Invalid question ID: ${input.questionId}`, 400);
@@ -272,13 +277,24 @@ export class RespondentService {
     return { data: rows.join('\n'), contentType: 'text/csv', filename: `${survey.slug ?? survey.id}-responses.csv` };
   }
 
-  async getTimeline(surveyId: string, granularity: 'day' | 'hour'): Promise<Array<{ period: string; started: number; completed: number }>> {
+  async getTimeline(
+    surveyId: string,
+    granularity: 'day' | 'hour',
+  ): Promise<Array<{ period: string; started: number; completed: number }>> {
     const survey = await this.surveys.getById(surveyId);
     if (!survey) throw new ServiceError('Survey not found', 404);
     return this.respondents.getTimelineData(surveyId, granularity);
   }
 
-  async getDropoff(surveyId: string): Promise<Array<{ questionId: string; questionText: string; respondentsReached: number; respondentsAnswered: number; dropoffRate: number }>> {
+  async getDropoff(surveyId: string): Promise<
+    Array<{
+      questionId: string;
+      questionText: string;
+      respondentsReached: number;
+      respondentsAnswered: number;
+      dropoffRate: number;
+    }>
+  > {
     const survey = await this.surveys.getById(surveyId);
     if (!survey) throw new ServiceError('Survey not found', 404);
 
@@ -298,13 +314,20 @@ export class RespondentService {
     });
   }
 
-  async listRespondents(surveyId: string, offset: number, limit: number): Promise<{ respondents: Array<{ id: string; createdAt: string; completedAt: string | null; answerCount: number }>; total: number }> {
+  async listRespondents(
+    surveyId: string,
+    offset: number,
+    limit: number,
+  ): Promise<{
+    respondents: Array<{ id: string; createdAt: string; completedAt: string | null; answerCount: number }>;
+    total: number;
+  }> {
     const survey = await this.surveys.getById(surveyId);
     if (!survey) throw new ServiceError('Survey not found', 404);
 
     const data = await this.respondents.listBySurveyId(surveyId, offset, limit);
     return {
-      respondents: data.respondents.map(r => ({
+      respondents: data.respondents.map((r) => ({
         id: r.id,
         createdAt: r.created_at,
         completedAt: r.completed_at,
@@ -314,7 +337,21 @@ export class RespondentService {
     };
   }
 
-  async getRespondentDetail(surveyId: string, respondentId: string): Promise<{ id: string; createdAt: string; completedAt: string | null; answers: Array<{ questionId: string; questionText: string; questionType: string; value: string; otherText: string | null }> }> {
+  async getRespondentDetail(
+    surveyId: string,
+    respondentId: string,
+  ): Promise<{
+    id: string;
+    createdAt: string;
+    completedAt: string | null;
+    answers: Array<{
+      questionId: string;
+      questionText: string;
+      questionType: string;
+      value: string;
+      otherText: string | null;
+    }>;
+  }> {
     const respondent = await this.respondents.getById(respondentId);
     if (!respondent || respondent.survey_id !== surveyId) {
       throw new ServiceError('Respondent not found', 404);
@@ -325,7 +362,7 @@ export class RespondentService {
       id: respondent.id,
       createdAt: respondent.created_at,
       completedAt: respondent.completed_at,
-      answers: answers.map(a => ({
+      answers: answers.map((a) => ({
         questionId: a.question_id,
         questionText: a.question_text,
         questionType: a.question_type,
@@ -335,7 +372,11 @@ export class RespondentService {
     };
   }
 
-  async searchAnswers(surveyId: string, query: string, questionId?: string): Promise<Array<{ respondentId: string; questionId: string; questionText: string; answer: string }>> {
+  async searchAnswers(
+    surveyId: string,
+    query: string,
+    questionId?: string,
+  ): Promise<Array<{ respondentId: string; questionId: string; questionText: string; answer: string }>> {
     const survey = await this.surveys.getById(surveyId);
     if (!survey) throw new ServiceError('Survey not found', 404);
 
@@ -344,7 +385,7 @@ export class RespondentService {
     }
 
     const results = await this.answers.searchTextAnswers(surveyId, query.trim(), questionId);
-    return results.map(r => ({
+    return results.map((r) => ({
       respondentId: r.respondent_id,
       questionId: r.question_id,
       questionText: r.question_text,

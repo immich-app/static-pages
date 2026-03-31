@@ -3,7 +3,14 @@
   import { onMount, onDestroy } from 'svelte';
   import { Icon } from '@immich/ui';
   import { mdiArrowLeft, mdiAccountGroup, mdiCheckCircle, mdiDownload } from '@mdi/js';
-  import type { Survey, SurveyQuestion, SurveySection, TimelineDataPoint, DropoffDataPoint, LiveCounts } from '$lib/types';
+  import type {
+    Survey,
+    SurveyQuestion,
+    SurveySection,
+    TimelineDataPoint,
+    DropoffDataPoint,
+    LiveCounts,
+  } from '$lib/types';
   import {
     getSurvey,
     getLiveResults,

@@ -1,6 +1,6 @@
 import { Kysely } from 'kysely';
 import { CloudflareD1Dialect } from '@immich/kysely-adapter-cloudflare';
-import type { ColumnType, Generated, Insertable, Selectable, Updateable } from 'kysely';
+import type { Selectable } from 'kysely';
 
 // --- Table types ---
 
@@ -121,10 +121,28 @@ export type AnswerRow = Selectable<AnswersTable>;
 export type TagRow = Selectable<TagsTable>;
 export type AuditLogRow = Selectable<AuditLogTable>;
 
-// --- Kysely instance factory ---
+// --- Database config ---
 
-export function createDatabase(d1: D1Database): Kysely<Database> {
+export type DbType = 'd1' | 'sqlite' | 'postgres';
+
+export interface DbConfig {
+  type: DbType;
+  url?: string;
+  d1?: D1Database;
+}
+
+export function detectDbType(url?: string): DbType {
+  if (!url) return 'sqlite';
+  if (url.startsWith('postgres://') || url.startsWith('postgresql://')) return 'postgres';
+  return 'sqlite';
+}
+
+// Sync factory for Workers (D1 dialect doesn't need async init)
+export function createD1Database(d1: D1Database): Kysely<Database> {
   return new Kysely<Database>({
     dialect: new CloudflareD1Dialect({ database: d1 as unknown as import('@cloudflare/workers-types').D1Database }),
   });
 }
+
+// Async multi-dialect factory is in server.ts (Node.js only)
+// to avoid bundling better-sqlite3/pg into the Workers build

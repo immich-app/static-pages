@@ -18,12 +18,21 @@ function constantTimeEqual(a: string, b: string): boolean {
  * Mirrors ALLOWED_COLUMNS from backend/src/repositories/survey.repository.ts
  */
 const SURVEY_ALLOWED_COLUMNS = new Set([
-  'title', 'description', 'slug', 'status',
-  'welcome_title', 'welcome_description',
-  'thank_you_title', 'thank_you_description',
-  'closes_at', 'max_responses',
-  'randomize_questions', 'randomize_options',
-  'password_hash', 'archived_at', 'updated_at',
+  'title',
+  'description',
+  'slug',
+  'status',
+  'welcome_title',
+  'welcome_description',
+  'thank_you_title',
+  'thank_you_description',
+  'closes_at',
+  'max_responses',
+  'randomize_questions',
+  'randomize_options',
+  'password_hash',
+  'archived_at',
+  'updated_at',
 ]);
 
 /**
@@ -183,12 +192,21 @@ describe('Column whitelist validation — SURVEY_ALLOWED_COLUMNS', () => {
 
   it('contains all 15 expected columns', () => {
     const expected = [
-      'title', 'description', 'slug', 'status',
-      'welcome_title', 'welcome_description',
-      'thank_you_title', 'thank_you_description',
-      'closes_at', 'max_responses',
-      'randomize_questions', 'randomize_options',
-      'password_hash', 'archived_at', 'updated_at',
+      'title',
+      'description',
+      'slug',
+      'status',
+      'welcome_title',
+      'welcome_description',
+      'thank_you_title',
+      'thank_you_description',
+      'closes_at',
+      'max_responses',
+      'randomize_questions',
+      'randomize_options',
+      'password_hash',
+      'archived_at',
+      'updated_at',
     ];
     for (const col of expected) {
       expect(SURVEY_ALLOWED_COLUMNS.has(col)).toBe(true);

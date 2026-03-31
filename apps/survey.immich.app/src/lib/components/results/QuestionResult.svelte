@@ -33,17 +33,11 @@
     })),
   );
 
-  const isChartType = $derived(
-    ['radio', 'checkbox', 'dropdown', 'rating', 'nps', 'likert'].includes(question.type),
-  );
+  const isChartType = $derived(['radio', 'checkbox', 'dropdown', 'rating', 'nps', 'likert'].includes(question.type));
 
   const isTextType = $derived(['text', 'textarea', 'email'].includes(question.type));
 
-  const wordCloudData = $derived(
-    isTextType
-      ? sortedAnswers.map((a) => ({ text: a.value, count: a.count }))
-      : [],
-  );
+  const wordCloudData = $derived(isTextType ? sortedAnswers.map((a) => ({ text: a.value, count: a.count })) : []);
 </script>
 
 <div class="rounded-xl border border-gray-300 p-5 dark:border-gray-600">

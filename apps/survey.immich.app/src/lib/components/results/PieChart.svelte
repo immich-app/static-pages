@@ -28,12 +28,14 @@
       type: 'doughnut',
       data: {
         labels: data.map((d) => d.label),
-        datasets: [{
-          data: data.map((d) => d.value),
-          backgroundColor: data.map((_, i) => CHART_PALETTE[i % CHART_PALETTE.length]),
-          borderWidth: 0,
-          hoverOffset: 4,
-        }],
+        datasets: [
+          {
+            data: data.map((d) => d.value),
+            backgroundColor: data.map((_, i) => CHART_PALETTE[i % CHART_PALETTE.length]),
+            borderWidth: 0,
+            hoverOffset: 4,
+          },
+        ],
       },
       options: {
         responsive: true,
