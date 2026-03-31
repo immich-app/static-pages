@@ -44,33 +44,33 @@
 
 ## Phase 3 — Analytics & Results
 
-- [ ] Individual response viewer — see each respondent's complete answers
-- [ ] Response timeline chart — responses per day/hour over time
-- [ ] Response filtering / cross-tabulation — filter by answer to a specific question
-- [ ] Drop-off analysis — which question has the highest exit rate
-- [ ] Text response search — search through open-ended answers
-- [ ] Pie / donut chart option — alternative to bar charts
-- [ ] Real-time results — live-updating via polling or SSE
-- [ ] NPS score calculation — automatic segmentation and scoring
-- [ ] Word cloud for text responses
-- [ ] PDF report export
+- [x] Individual response viewer — see each respondent's complete answers
+- [x] Response timeline chart — responses per day/hour over time
+- [x] Response filtering / cross-tabulation — filter by answer to a specific question
+- [x] Drop-off analysis — which question has the highest exit rate
+- [x] Text response search — search through open-ended answers
+- [x] Pie / donut chart option — alternative to bar charts
+- [x] Real-time results — live-updating via polling
+- [x] NPS score calculation — automatic segmentation and scoring
+- [x] Word cloud for text responses
+- [x] PDF report export
 
 ## Phase 4 — Sharing & Distribution
 
-- [ ] Social sharing links — pre-formatted for Twitter/X, LinkedIn, email
+- [x] Social sharing links — pre-formatted for Twitter/X, LinkedIn, email
+- [x] Survey password protection — simple access control
 - [ ] Custom branded URLs — vanity domains beyond /s/slug
-- [ ] Survey password protection — simple access control
 - [ ] Email distribution with open/click/complete tracking
 
 ## Phase 5 — Administration
 
-- [ ] Authentication — admin auth via Cloudflare Access, simple token, or OAuth
-- [ ] Survey archiving — declutter dashboard without deleting
-- [ ] Delete individual responses — remove test/spam submissions
-- [ ] Survey folders / tags — organize with 10+ surveys
-- [ ] Import/export survey definitions as JSON
-- [ ] Audit log
-- [ ] Role-based access for team use
+- [x] Authentication — password auth (default) + OIDC (optional SSO)
+- [x] Survey archiving — declutter dashboard without deleting
+- [x] Delete individual responses — remove test/spam submissions
+- [x] Survey folders / tags — organize with 10+ surveys
+- [x] Import/export survey definitions as JSON
+- [x] Audit log
+- [x] Role-based access — admin/editor/viewer synced from OIDC claims
 
 ## Phase 6 — Self-Hosting & Portability
 
