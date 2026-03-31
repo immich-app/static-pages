@@ -21,10 +21,12 @@
   import ResponseViewer from '$lib/components/results/ResponseViewer.svelte';
   import TextSearch from '$lib/components/results/TextSearch.svelte';
   import PdfExportButton from '$lib/components/results/PdfExportButton.svelte';
+  import SharePanel from '$lib/components/sharing/SharePanel.svelte';
 
   const surveyId = $derived(page.params.id!);
 
   let survey = $state<Survey | null>(null);
+  const surveyUrl = $derived(survey?.slug ? `https://survey.immich.app/s/${survey.slug}` : '');
   let questions = $state<SurveyQuestion[]>([]);
   let sections = $state<SurveySection[]>([]);
   let respondentCounts = $state({ total: 0, completed: 0 });
@@ -174,6 +176,9 @@
           <LiveIndicator counts={liveCounts} />
         </div>
         <div class="flex items-center gap-2">
+          {#if surveyUrl}
+            <SharePanel url={surveyUrl} title={survey.title} description={survey.description ?? ''} />
+          {/if}
           <PdfExportButton targetSelector="#results-content" filename="{survey.slug ?? survey.id}-results.pdf" />
           <button
             class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-200 disabled:opacity-50 dark:border-gray-700"

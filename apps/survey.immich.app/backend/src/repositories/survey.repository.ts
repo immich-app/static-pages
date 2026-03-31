@@ -12,6 +12,7 @@ export interface SurveyRow {
   max_responses: number | null;
   randomize_questions: number;
   randomize_options: number;
+  password_hash: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -61,8 +62,8 @@ export class SurveyRepository {
   async create(survey: SurveyRow): Promise<void> {
     await this.db
       .prepare(
-        `INSERT INTO surveys (id, title, description, slug, status, welcome_title, welcome_description, thank_you_title, thank_you_description, closes_at, max_responses, randomize_questions, randomize_options, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO surveys (id, title, description, slug, status, welcome_title, welcome_description, thank_you_title, thank_you_description, closes_at, max_responses, randomize_questions, randomize_options, password_hash, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .bind(
         survey.id,
@@ -78,6 +79,7 @@ export class SurveyRepository {
         survey.max_responses,
         survey.randomize_questions,
         survey.randomize_options,
+        survey.password_hash,
         survey.created_at,
         survey.updated_at,
       )

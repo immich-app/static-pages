@@ -34,12 +34,13 @@
   import SlugInput from './SlugInput.svelte';
   import QrCodeModal from './QrCodeModal.svelte';
   import SurveyPreview from './SurveyPreview.svelte';
+  import SharePanel from '$lib/components/sharing/SharePanel.svelte';
   import { tick, onMount, onDestroy } from 'svelte';
 
   interface Props {
     survey: Survey;
     sections: BuilderSection[];
-    onSaveSurvey: (survey: Partial<Survey>) => Promise<void>;
+    onSaveSurvey: (survey: Partial<Survey> & { password?: string | null }) => Promise<void>;
     onSaveSections: (sections: BuilderSection[]) => Promise<void>;
     onPublish: () => Promise<void>;
     onUnpublish: () => Promise<void>;
@@ -59,6 +60,8 @@
   let localMaxResponses = $state(survey.maxResponses != null ? String(survey.maxResponses) : '');
   let localRandomizeQuestions = $state(survey.randomizeQuestions ?? false);
   let localRandomizeOptions = $state(survey.randomizeOptions ?? false);
+  let localPasswordEnabled = $state(survey.hasPassword ?? false);
+  let localPassword = $state('');
   let localSections = $state(sections);
   let error = $state<string | null>(null);
   let success = $state(false);
@@ -219,7 +222,8 @@
         maxResponses: localMaxResponses ? Number(localMaxResponses) : null,
         randomizeQuestions: localRandomizeQuestions,
         randomizeOptions: localRandomizeOptions,
-      } as Partial<Survey>);
+        ...(localPasswordEnabled && localPassword ? { password: localPassword } : localPasswordEnabled ? {} : { password: null }),
+      } as Partial<Survey> & { password?: string | null });
       if (!isNew) {
         // Strip DnD-generated fake IDs before saving
         const cleanSections = localSections.map((s) => ({
@@ -384,6 +388,9 @@
         class="font-mono underline decoration-green-500/30 underline-offset-2 hover:decoration-green-400"
         >/s/{survey.slug}</a
       >
+      {#if surveyUrl}
+        <SharePanel url={surveyUrl} title={survey.title} description={survey.description ?? ''} />
+      {/if}
     </div>
 
     {#if survey.slug}
@@ -519,6 +526,26 @@
             />
             Randomize option order
           </label>
+        </div>
+        <div class="border-t border-gray-700/60 pt-4">
+          <label class="flex cursor-pointer items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              bind:checked={localPasswordEnabled}
+              class="accent-immich-primary"
+            />
+            Password protect this survey
+          </label>
+          {#if localPasswordEnabled}
+            <div class="mt-3 max-w-xs">
+              <Input
+                type="password"
+                bind:value={localPassword}
+                placeholder={survey.hasPassword ? 'Leave blank to keep current password' : 'Set a password'}
+              />
+              <p class="mt-1 text-[11px] text-gray-500">Respondents must enter this password to access the survey</p>
+            </div>
+          {/if}
         </div>
       </div>
     {/if}

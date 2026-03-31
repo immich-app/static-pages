@@ -15,6 +15,13 @@ export async function getPublishedSurvey(slug: string): Promise<SurveyWithDetail
   };
 }
 
+export async function authenticateSurvey(slug: string, password: string): Promise<void> {
+  await request(`/api/s/${slug}/auth`, {
+    method: 'POST',
+    body: JSON.stringify({ password }),
+  });
+}
+
 export async function sendHeartbeat(
   slug: string,
   viewerId: string,

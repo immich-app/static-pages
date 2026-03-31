@@ -20,3 +20,5 @@ export const ACTIVE_RESPONDENT_WINDOW_MS = 5 * 60 * 1000;
 export const SEARCH_RESULT_LIMIT = 100;
 
 export const MAX_PAGINATION_LIMIT = 100;
+
+export const PASSWORD_SESSION_MAX_AGE = 86400; // 24 hours

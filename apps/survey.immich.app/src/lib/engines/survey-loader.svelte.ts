@@ -1,6 +1,6 @@
 import { onMount } from 'svelte';
 import type { Survey, SurveySection, SurveyQuestion } from '../types';
-import { getPublishedSurvey, sendHeartbeat } from '../api/surveys';
+import { getPublishedSurvey, authenticateSurvey, sendHeartbeat } from '../api/surveys';
 import { createApiClient } from '../api/client';
 import { createSurveyEngine, randomizeQuestions, randomizeOptionOrder } from './survey-engine.svelte';
 
@@ -13,6 +13,7 @@ export function createSurveyLoader(slug: string) {
   let showWelcome = $state(false);
   let alreadyCompleted = $state(false);
   let surveyFinished = $state(false);
+  let needsPassword = $state(false);
 
   let engine: ReturnType<typeof createSurveyEngine> | null = $state(null);
   let client: ReturnType<typeof createApiClient> | null = null;
@@ -25,6 +26,13 @@ export function createSurveyLoader(slug: string) {
         survey = data.survey;
         sections = data.sections;
         questions = data.questions;
+
+        // Check if password protected (backend returns no questions/sections)
+        if (survey.requiresPassword && questions.length === 0) {
+          needsPassword = true;
+          loading = false;
+          return;
+        }
 
         // Sort questions by section sort order, then question sort order
         const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
@@ -106,6 +114,50 @@ export function createSurveyLoader(slug: string) {
     }
   }
 
+  async function submitPassword(password: string) {
+    await authenticateSurvey(slug, password);
+    // Re-load survey after successful auth
+    needsPassword = false;
+    loading = true;
+    error = null;
+    try {
+      const data = await getPublishedSurvey(slug);
+      survey = data.survey;
+      sections = data.sections;
+      questions = data.questions;
+
+      const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
+      const sortedQuestions: SurveyQuestion[] = [];
+      for (const section of sortedSections) {
+        sortedQuestions.push(
+          ...questions.filter((q) => q.section_id === section.id).sort((a, b) => a.sortOrder - b.sortOrder),
+        );
+      }
+      questions = sortedQuestions;
+
+      if (survey.randomizeQuestions) questions = randomizeQuestions(questions, sections, slug);
+      if (survey.randomizeOptions) questions = randomizeOptionOrder(questions, slug);
+
+      engine = createSurveyEngine(questions);
+      client = createApiClient(slug);
+      client.onSaveError((msg) => {
+        error = msg;
+      });
+
+      const resume = await client.fetchResume();
+      if (resume.isComplete) {
+        alreadyCompleted = true;
+      } else if (resume.answers && resume.nextQuestionIndex !== undefined && resume.nextQuestionIndex > 0) {
+        engine.initialize(resume.answers, resume.nextQuestionIndex);
+      } else {
+        showWelcome = true;
+      }
+    } catch (e) {
+      error = e instanceof Error ? e.message : 'Failed to load survey';
+    }
+    loading = false;
+  }
+
   function dismissError() {
     error = null;
   }
@@ -138,7 +190,11 @@ export function createSurveyLoader(slug: string) {
     get surveyFinished() {
       return surveyFinished;
     },
+    get needsPassword() {
+      return needsPassword;
+    },
     start,
+    submitPassword,
     handleAnswer,
     handleComplete,
     dismissError,

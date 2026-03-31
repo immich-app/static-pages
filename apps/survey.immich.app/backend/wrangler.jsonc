@@ -13,6 +13,9 @@
       "database_id": "local",
     },
   ],
+  "vars": {
+    "PASSWORD_SECRET": "dev-password-secret-change-in-production"
+  },
   "analytics_engine_datasets": [
     {
       "binding": "ANALYTICS",

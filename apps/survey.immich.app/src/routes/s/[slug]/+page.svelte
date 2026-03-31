@@ -5,6 +5,7 @@
   import WelcomeScreen from '$lib/components/survey/WelcomeScreen.svelte';
   import ThankYouScreen from '$lib/components/survey/ThankYouScreen.svelte';
   import AlreadyCompleted from '$lib/components/survey/AlreadyCompleted.svelte';
+  import PasswordGate from '$lib/components/survey/PasswordGate.svelte';
 
   const slug = $derived(page.params.slug!);
   const loader = createSurveyLoader(slug);
@@ -23,6 +24,8 @@
   <div class="flex min-h-screen items-center justify-center">
     <p class="text-gray-400">Loading...</p>
   </div>
+{:else if loader.needsPassword}
+  <PasswordGate surveyTitle={loader.survey?.title} onSubmit={loader.submitPassword} />
 {:else if loader.error && !loader.engine?.currentQuestion}
   <div class="flex min-h-screen items-center justify-center px-4">
     <div class="text-center">

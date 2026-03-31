@@ -40,7 +40,7 @@
     loading = false;
   });
 
-  async function handleSaveSurvey(updates: Partial<Survey>) {
+  async function handleSaveSurvey(updates: Partial<Survey> & { password?: string | null }) {
     if (!survey) return;
     saving = true;
     try {
@@ -56,6 +56,7 @@
         max_responses: updates.maxResponses !== undefined ? updates.maxResponses : undefined,
         randomize_questions: updates.randomizeQuestions !== undefined ? updates.randomizeQuestions : undefined,
         randomize_options: updates.randomizeOptions !== undefined ? updates.randomizeOptions : undefined,
+        password: updates.password,
       });
     } finally {
       saving = false;

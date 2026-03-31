@@ -72,6 +72,8 @@ export interface Survey {
   maxResponses: number | null;
   randomizeQuestions: boolean;
   randomizeOptions: boolean;
+  hasPassword: boolean;
+  requiresPassword?: boolean;
   createdAt: string;
   updatedAt: string;
 }

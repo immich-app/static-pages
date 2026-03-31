@@ -30,6 +30,7 @@
     maxResponses: null,
     randomizeQuestions: false,
     randomizeOptions: false,
+    hasPassword: false,
     createdAt: '',
     updatedAt: '',
   });

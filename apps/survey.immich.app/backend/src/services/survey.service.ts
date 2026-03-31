@@ -8,6 +8,7 @@ import {
 } from '../repositories/survey.repository';
 import { ServiceError } from './errors';
 import { VALID_QUESTION_TYPES, SLUG_PATTERN } from '../constants';
+import { hashPassword } from '../utils/crypto';
 
 export { ServiceError };
 
@@ -34,6 +35,7 @@ export interface UpdateSurveyInput {
   max_responses?: number | null;
   randomize_questions?: boolean;
   randomize_options?: boolean;
+  password?: string | null;
 }
 
 export interface CreateSectionInput {
@@ -134,6 +136,7 @@ export class SurveyService {
       max_responses: null,
       randomize_questions: 0,
       randomize_options: 0,
+      password_hash: null,
       created_at: now,
       updated_at: now,
     };
@@ -182,6 +185,14 @@ export class SurveyService {
     if (input.max_responses !== undefined) fields.max_responses = input.max_responses ?? null;
     if (input.randomize_questions !== undefined) fields.randomize_questions = input.randomize_questions ? 1 : 0;
     if (input.randomize_options !== undefined) fields.randomize_options = input.randomize_options ? 1 : 0;
+
+    if (input.password !== undefined) {
+      if (input.password && input.password.length > 0) {
+        fields.password_hash = await hashPassword(input.password);
+      } else {
+        fields.password_hash = null;
+      }
+    }
 
     await this.surveys.update(id, fields);
     return { ...existing, ...fields } as SurveyRow;
@@ -415,6 +426,7 @@ export class SurveyService {
       max_responses: survey.max_responses,
       randomize_questions: survey.randomize_questions,
       randomize_options: survey.randomize_options,
+      password_hash: null,
       created_at: now,
       updated_at: now,
     };
