@@ -28,7 +28,8 @@ from PIL import Image
 
 WEBP_QUALITY = 85
 BLOG_PREFIX = "blog"
-OUTPUT_BASE = Path("apps/root.immich.app/src/routes/blog")
+SCRIPT_DIR = Path(__file__).resolve().parent
+OUTPUT_BASE = SCRIPT_DIR / "apps/root.immich.app/src/routes/blog"
 
 
 def slugify(text: str) -> str:

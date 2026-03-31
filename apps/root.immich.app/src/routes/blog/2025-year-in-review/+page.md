@@ -13,8 +13,7 @@ We crossed the 1.5-year mark since becoming FUTOnians, and we still feel incredi
 
 This year, we brought on more people full-time, some from within the Immich core team and others from outside the community. The team is growing, and so is the project's scope as we work to make it the best self-hosted photo management system out there.
 
-![Immich Team (Chris, Zack, Jason, Alex, Paul, Daniel, Ganka, Mert, missing the Boet and the intern, Brandon :P)](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/3bd14c69eb2d20ea68a1b4d15325716e.webp 'Immich Team (Chris, Zack, Jason, Alex, Paul, Daniel, Ganka, Mert, missing the Boet and the intern, Brandon)')
-<i class="text-xs">Immich Team (LTR: Chris, Zack, Jason, Alex, Paul, Daniel, Ganka, Mert, missing the Boet and the intern, Brandon :P)</i>
+![Immich Team (Chris, Zack, Jason, Alex, Paul, Daniel, Ganka, Mert, missing the Boet and the intern, Brandon :P)](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/3bd14c69eb2d20ea68a1b4d15325716e.webp)
 
 So let us walk you through what "three years in one" actually looked like.
 
@@ -91,11 +90,11 @@ Here is a list of websites that we launched throughout the year:
 - https://data.immich.app/ — Data website with fancy charts
 - https://api.immich.app/ — New API documentation
 
-  ![api page](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/a10bde6c0546fd82843a08b003978d7e.webp ' api page')
+  ![API endpoints](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/a10bde6c0546fd82843a08b003978d7e.webp)
 
 - https://ui.immich.app/ — Svelte UI component library
 
-  ![immich ui library page](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/1a7ef7f4f4c322182d56bfd5a6b14ce5.webp 'immich ui library page')
+  ![Immich UI library](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/1a7ef7f4f4c322182d56bfd5a6b14ce5.webp)
 
 - https://awesome.immich.app/ — A list of awesome apps, integrations, tools, distributions, and guides
 

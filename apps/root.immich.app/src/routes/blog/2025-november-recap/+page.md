@@ -30,13 +30,13 @@ Alex has been hard at work building out the feature. The initial backend work wa
 
 Each workflow will run in response to a triggering event, like asset upload.
 
-![Workflow trigger](https://static.immich.cloud/blog/b5734354-7296-4289-b26a-2d8cfe402ef3/a045ca1e4befbcebb7a37143b48425a5.webp ' =1042x349')
+![Workflow trigger](https://static.immich.cloud/blog/b5734354-7296-4289-b26a-2d8cfe402ef3/a045ca1e4befbcebb7a37143b48425a5.webp)
 
 ### Filter
 
 Each workflow can include one of more filters, which can decide if the event should be processed or skipped.
 
-![Workflow filter](https://static.immich.cloud/blog/b5734354-7296-4289-b26a-2d8cfe402ef3/396dfe40a3b7e157c3a907f2f6324afe.webp ' =1045x850')
+![Workflow filter](https://static.immich.cloud/blog/b5734354-7296-4289-b26a-2d8cfe402ef3/396dfe40a3b7e157c3a907f2f6324afe.webp)
 
 ### Action
 
