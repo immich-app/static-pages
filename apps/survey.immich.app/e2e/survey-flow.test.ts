@@ -147,7 +147,7 @@ test.describe('Full survey with all 10 question types', () => {
 
     // Q1: Radio
     await expect(page.getByText('Pick a color')).toBeVisible({ timeout: 3000 });
-    await page.getByRole('button', { name: 'Blue' }).click();
+    await page.getByRole('radio', { name: 'Blue' }).click();
     // Auto-advances
     await expect(page.getByText('Select hobbies')).toBeVisible({ timeout: 3000 });
 
@@ -353,6 +353,8 @@ test.describe('Survey builder with new types', () => {
     // Create a survey first
     await page.goto('/');
     await page.getByRole('link', { name: 'New Survey' }).first().click();
+    // Template picker shows — click Blank Survey
+    await page.getByRole('button', { name: 'Blank Survey' }).click();
     await page.getByPlaceholder('Survey title...').fill('Builder Types Test');
     await page.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText('Edit Survey')).toBeVisible({ timeout: 5000 });
