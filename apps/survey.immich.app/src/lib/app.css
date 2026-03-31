@@ -1,0 +1,92 @@
+@import 'tailwindcss';
+@import '@immich/ui/theme/default.css';
+@import '$common/theme/theme.css';
+@source '../../node_modules/@immich/ui/dist';
+@source '../../../../common';
+
+@theme inline {
+  --color-immich-primary: rgb(var(--immich-primary));
+  --color-immich-primary-10: rgb(var(--immich-primary) / 0.1);
+  --color-immich-primary-5: rgb(var(--immich-primary) / 0.05);
+}
+
+/* Staggered fade-in for page content */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-in-delay-1 {
+  animation-delay: 60ms;
+}
+.animate-in-delay-2 {
+  animation-delay: 120ms;
+}
+.animate-in-delay-3 {
+  animation-delay: 180ms;
+}
+.animate-in-delay-4 {
+  animation-delay: 240ms;
+}
+
+/* Toast slide-in */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.toast-in {
+  animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Subtle card hover lift */
+.card-hover {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+  border-color: rgb(var(--immich-primary) / 0.4);
+  box-shadow:
+    0 0 0 1px rgb(var(--immich-primary) / 0.1),
+    0 4px 16px rgb(0 0 0 / 0.1);
+}
+
+/* Status dot pulse for published surveys */
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.status-published::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-right: 6px;
+  animation: pulse-dot 2s ease-in-out infinite;
+}

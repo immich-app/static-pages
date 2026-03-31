@@ -1,0 +1,469 @@
+import {
+  SurveyRepository,
+  SectionRepository,
+  QuestionRepository,
+  type SurveyRow,
+  type SectionRow,
+  type QuestionRow,
+} from '../repositories/survey.repository';
+
+export interface SurveyWithDetails {
+  survey: SurveyRow;
+  sections: SectionRow[];
+  questions: QuestionRow[];
+}
+
+export interface CreateSurveyInput {
+  title: string;
+  description?: string;
+}
+
+export interface UpdateSurveyInput {
+  title?: string;
+  description?: string;
+  slug?: string;
+  welcome_title?: string;
+  welcome_description?: string;
+  thank_you_title?: string;
+  thank_you_description?: string;
+}
+
+export interface CreateSectionInput {
+  title: string;
+  description?: string;
+}
+
+export interface UpdateSectionInput {
+  title?: string;
+  description?: string;
+}
+
+export interface CreateQuestionInput {
+  text: string;
+  description?: string;
+  type: string;
+  options?: Array<{ label: string; value: string }>;
+  required?: boolean;
+  has_other?: boolean;
+  other_prompt?: string;
+  max_length?: number;
+  placeholder?: string;
+  conditional?: { showIf: { questionId: string; condition: string } };
+  config?: Record<string, unknown>;
+}
+
+export interface UpdateQuestionInput {
+  section_id?: string;
+  text?: string;
+  description?: string;
+  type?: string;
+  options?: Array<{ label: string; value: string }>;
+  required?: boolean;
+  has_other?: boolean;
+  other_prompt?: string;
+  max_length?: number;
+  placeholder?: string;
+  conditional?: { showIf: { questionId: string; condition: string } } | null;
+  config?: Record<string, unknown> | null;
+}
+
+const VALID_QUESTION_TYPES = [
+  'radio',
+  'checkbox',
+  'text',
+  'textarea',
+  'email',
+  'rating',
+  'nps',
+  'number',
+  'dropdown',
+  'likert',
+];
+const SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{1,48}[a-z0-9]$/;
+
+export class SurveyService {
+  constructor(
+    private surveys: SurveyRepository,
+    private sections: SectionRepository,
+    private questions: QuestionRepository,
+  ) {}
+
+  async listSurveys(): Promise<SurveyRow[]> {
+    return this.surveys.listAll();
+  }
+
+  async getSurvey(id: string): Promise<SurveyWithDetails> {
+    const survey = await this.surveys.getById(id);
+    if (!survey) {
+      throw new ServiceError('Survey not found', 404);
+    }
+
+    const [sections, questions] = await Promise.all([
+      this.sections.getBySurveyId(id),
+      this.questions.getBySurveyId(id),
+    ]);
+
+    return { survey, sections, questions };
+  }
+
+  async getPublishedSurvey(slug: string): Promise<SurveyWithDetails> {
+    const survey = await this.surveys.getBySlug(slug);
+    if (!survey || survey.status !== 'published') {
+      throw new ServiceError('Survey not found', 404);
+    }
+
+    const [sections, questions] = await Promise.all([
+      this.sections.getBySurveyId(survey.id),
+      this.questions.getBySurveyId(survey.id),
+    ]);
+
+    return { survey, sections, questions };
+  }
+
+  async createSurvey(input: CreateSurveyInput): Promise<SurveyRow> {
+    if (!input.title?.trim()) {
+      throw new ServiceError('Title is required', 400);
+    }
+
+    const now = new Date().toISOString();
+    const survey: SurveyRow = {
+      id: crypto.randomUUID(),
+      title: input.title.trim(),
+      description: input.description?.trim() ?? null,
+      slug: null,
+      status: 'draft',
+      welcome_title: null,
+      welcome_description: null,
+      thank_you_title: null,
+      thank_you_description: null,
+      created_at: now,
+      updated_at: now,
+    };
+
+    await this.surveys.create(survey);
+    return survey;
+  }
+
+  async updateSurvey(id: string, input: UpdateSurveyInput): Promise<SurveyRow> {
+    const existing = await this.surveys.getById(id);
+    if (!existing) {
+      throw new ServiceError('Survey not found', 404);
+    }
+
+    const fields: Record<string, unknown> = { updated_at: new Date().toISOString() };
+
+    if (input.title !== undefined) {
+      if (!input.title.trim()) {
+        throw new ServiceError('Title cannot be empty', 400);
+      }
+      fields.title = input.title.trim();
+    }
+
+    if (input.slug !== undefined) {
+      if (input.slug !== null && input.slug !== '') {
+        if (!SLUG_PATTERN.test(input.slug)) {
+          throw new ServiceError('Slug must be 3-50 characters, lowercase alphanumeric and hyphens only', 400);
+        }
+        const slugOwner = await this.surveys.getBySlug(input.slug);
+        if (slugOwner && slugOwner.id !== id) {
+          throw new ServiceError('Slug is already in use', 409);
+        }
+        fields.slug = input.slug;
+      } else {
+        fields.slug = null;
+      }
+    }
+
+    if (input.description !== undefined) fields.description = input.description?.trim() ?? null;
+    if (input.welcome_title !== undefined) fields.welcome_title = input.welcome_title?.trim() ?? null;
+    if (input.welcome_description !== undefined) fields.welcome_description = input.welcome_description?.trim() ?? null;
+    if (input.thank_you_title !== undefined) fields.thank_you_title = input.thank_you_title?.trim() ?? null;
+    if (input.thank_you_description !== undefined)
+      fields.thank_you_description = input.thank_you_description?.trim() ?? null;
+
+    await this.surveys.update(id, fields);
+    return { ...existing, ...fields } as SurveyRow;
+  }
+
+  async deleteSurvey(id: string): Promise<void> {
+    const existing = await this.surveys.getById(id);
+    if (!existing) {
+      throw new ServiceError('Survey not found', 404);
+    }
+    await this.surveys.delete(id);
+  }
+
+  async publishSurvey(id: string): Promise<SurveyRow> {
+    const { survey, sections, questions } = await this.getSurvey(id);
+
+    if (!survey.slug) {
+      throw new ServiceError('Survey must have a slug before publishing', 400);
+    }
+
+    if (sections.length === 0) {
+      throw new ServiceError('Survey must have at least one section', 400);
+    }
+
+    if (questions.length === 0) {
+      throw new ServiceError('Survey must have at least one question', 400);
+    }
+
+    await this.surveys.update(id, {
+      status: 'published',
+      updated_at: new Date().toISOString(),
+    });
+    return { ...survey, status: 'published' };
+  }
+
+  async unpublishSurvey(id: string): Promise<SurveyRow> {
+    const survey = await this.surveys.getById(id);
+    if (!survey) {
+      throw new ServiceError('Survey not found', 404);
+    }
+
+    await this.surveys.update(id, {
+      status: 'draft',
+      updated_at: new Date().toISOString(),
+    });
+    return { ...survey, status: 'draft' };
+  }
+
+  async createSection(surveyId: string, input: CreateSectionInput): Promise<SectionRow> {
+    const survey = await this.surveys.getById(surveyId);
+    if (!survey) {
+      throw new ServiceError('Survey not found', 404);
+    }
+
+    if (!input.title?.trim()) {
+      throw new ServiceError('Section title is required', 400);
+    }
+
+    const maxOrder = await this.sections.getMaxSortOrder(surveyId);
+    const section: SectionRow = {
+      id: crypto.randomUUID(),
+      survey_id: surveyId,
+      title: input.title.trim(),
+      description: input.description?.trim() ?? null,
+      sort_order: maxOrder + 1,
+    };
+
+    await this.sections.create(section);
+    return section;
+  }
+
+  async updateSection(id: string, input: UpdateSectionInput): Promise<SectionRow> {
+    const existing = await this.sections.getById(id);
+    if (!existing) {
+      throw new ServiceError('Section not found', 404);
+    }
+
+    const fields: Record<string, unknown> = {};
+    if (input.title !== undefined) {
+      if (!input.title.trim()) {
+        throw new ServiceError('Section title cannot be empty', 400);
+      }
+      fields.title = input.title.trim();
+    }
+    if (input.description !== undefined) fields.description = input.description?.trim() ?? null;
+
+    if (Object.keys(fields).length === 0) return existing;
+
+    await this.sections.update(id, fields);
+    return { ...existing, ...fields } as SectionRow;
+  }
+
+  async deleteSection(id: string): Promise<void> {
+    const existing = await this.sections.getById(id);
+    if (!existing) {
+      throw new ServiceError('Section not found', 404);
+    }
+    await this.sections.delete(id);
+  }
+
+  async reorderSections(surveyId: string, items: Array<{ id: string; sort_order: number }>): Promise<void> {
+    const survey = await this.surveys.getById(surveyId);
+    if (!survey) {
+      throw new ServiceError('Survey not found', 404);
+    }
+    await this.sections.reorder(items);
+  }
+
+  async createQuestion(sectionId: string, input: CreateQuestionInput): Promise<QuestionRow> {
+    const section = await this.sections.getById(sectionId);
+    if (!section) {
+      throw new ServiceError('Section not found', 404);
+    }
+
+    if (!input.text?.trim()) {
+      throw new ServiceError('Question text is required', 400);
+    }
+
+    if (!VALID_QUESTION_TYPES.includes(input.type)) {
+      throw new ServiceError(`Invalid question type. Must be one of: ${VALID_QUESTION_TYPES.join(', ')}`, 400);
+    }
+
+    if (['radio', 'checkbox', 'dropdown'].includes(input.type) && (!input.options || input.options.length === 0)) {
+      throw new ServiceError('Radio, checkbox, and dropdown questions must have options', 400);
+    }
+
+    const maxOrder = await this.questions.getMaxSortOrder(sectionId);
+    const question: QuestionRow = {
+      id: crypto.randomUUID(),
+      survey_id: section.survey_id,
+      section_id: sectionId,
+      text: input.text.trim(),
+      description: input.description?.trim() ?? null,
+      type: input.type,
+      options: input.options ? JSON.stringify(input.options) : null,
+      required: input.required !== false ? 1 : 0,
+      has_other: input.has_other ? 1 : 0,
+      other_prompt: input.other_prompt?.trim() ?? null,
+      max_length: input.max_length ?? null,
+      placeholder: input.placeholder?.trim() ?? null,
+      sort_order: maxOrder + 1,
+      conditional: input.conditional ? JSON.stringify(input.conditional) : null,
+      config: input.config ? JSON.stringify(input.config) : null,
+    };
+
+    await this.questions.create(question);
+    return question;
+  }
+
+  async updateQuestion(id: string, input: UpdateQuestionInput): Promise<QuestionRow> {
+    const existing = await this.questions.getById(id);
+    if (!existing) {
+      throw new ServiceError('Question not found', 404);
+    }
+
+    const fields: Record<string, unknown> = {};
+
+    if (input.section_id !== undefined) {
+      const section = await this.sections.getById(input.section_id);
+      if (!section) {
+        throw new ServiceError('Target section not found', 404);
+      }
+      fields.section_id = input.section_id;
+    }
+
+    if (input.text !== undefined) {
+      if (!input.text.trim()) {
+        throw new ServiceError('Question text cannot be empty', 400);
+      }
+      fields.text = input.text.trim();
+    }
+
+    if (input.type !== undefined) {
+      if (!VALID_QUESTION_TYPES.includes(input.type)) {
+        throw new ServiceError(`Invalid question type. Must be one of: ${VALID_QUESTION_TYPES.join(', ')}`, 400);
+      }
+      fields.type = input.type;
+    }
+
+    if (input.options !== undefined) fields.options = input.options ? JSON.stringify(input.options) : null;
+    if (input.description !== undefined) fields.description = input.description?.trim() ?? null;
+    if (input.required !== undefined) fields.required = input.required ? 1 : 0;
+    if (input.has_other !== undefined) fields.has_other = input.has_other ? 1 : 0;
+    if (input.other_prompt !== undefined) fields.other_prompt = input.other_prompt?.trim() ?? null;
+    if (input.max_length !== undefined) fields.max_length = input.max_length;
+    if (input.placeholder !== undefined) fields.placeholder = input.placeholder?.trim() ?? null;
+    if (input.conditional !== undefined) {
+      fields.conditional = input.conditional ? JSON.stringify(input.conditional) : null;
+    }
+    if (input.config !== undefined) {
+      fields.config = input.config ? JSON.stringify(input.config) : null;
+    }
+
+    if (Object.keys(fields).length === 0) return existing;
+
+    await this.questions.update(id, fields);
+    return { ...existing, ...fields } as QuestionRow;
+  }
+
+  async deleteQuestion(id: string): Promise<void> {
+    const existing = await this.questions.getById(id);
+    if (!existing) {
+      throw new ServiceError('Question not found', 404);
+    }
+    await this.questions.delete(id);
+  }
+
+  async reorderQuestions(sectionId: string, items: Array<{ id: string; sort_order: number }>): Promise<void> {
+    const section = await this.sections.getById(sectionId);
+    if (!section) {
+      throw new ServiceError('Section not found', 404);
+    }
+    await this.questions.reorder(items);
+  }
+
+  async duplicateSurvey(id: string): Promise<SurveyWithDetails> {
+    const { survey, sections, questions } = await this.getSurvey(id);
+
+    const now = new Date().toISOString();
+    const newSurvey: SurveyRow = {
+      id: crypto.randomUUID(),
+      title: `${survey.title} (Copy)`,
+      description: survey.description,
+      slug: null,
+      status: 'draft',
+      welcome_title: survey.welcome_title,
+      welcome_description: survey.welcome_description,
+      thank_you_title: survey.thank_you_title,
+      thank_you_description: survey.thank_you_description,
+      created_at: now,
+      updated_at: now,
+    };
+
+    await this.surveys.create(newSurvey);
+
+    const sectionIdMap = new Map<string, string>();
+    const newSections: SectionRow[] = [];
+    for (const section of sections) {
+      const newSectionId = crypto.randomUUID();
+      sectionIdMap.set(section.id, newSectionId);
+      const newSection: SectionRow = {
+        id: newSectionId,
+        survey_id: newSurvey.id,
+        title: section.title,
+        description: section.description,
+        sort_order: section.sort_order,
+      };
+      newSections.push(newSection);
+      await this.sections.create(newSection);
+    }
+
+    const newQuestions: QuestionRow[] = [];
+    for (const question of questions) {
+      const newQuestion: QuestionRow = {
+        id: crypto.randomUUID(),
+        survey_id: newSurvey.id,
+        section_id: sectionIdMap.get(question.section_id)!,
+        text: question.text,
+        description: question.description,
+        type: question.type,
+        options: question.options,
+        required: question.required,
+        has_other: question.has_other,
+        other_prompt: question.other_prompt,
+        max_length: question.max_length,
+        placeholder: question.placeholder,
+        sort_order: question.sort_order,
+        conditional: question.conditional,
+        config: question.config,
+      };
+      newQuestions.push(newQuestion);
+      await this.questions.create(newQuestion);
+    }
+
+    return { survey: newSurvey, sections: newSections, questions: newQuestions };
+  }
+}
+
+export class ServiceError extends Error {
+  constructor(
+    message: string,
+    public status: number,
+  ) {
+    super(message);
+    this.name = 'ServiceError';
+  }
+}

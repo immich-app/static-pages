@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets', 'futo-backups-survey']
+        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets', 'futo-backups-survey', 'survey']
         include:
           - app_name: futo-backups-survey
             app_dir: futo-backups-survey.immich.app
@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app_name: ['datasets', 'futo-backups-survey']
+        app_name: ['datasets', 'futo-backups-survey', 'survey']
         include:
           - app_name: futo-backups-survey
             app_dir: futo-backups-survey.immich.app
@@ -114,7 +114,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets', 'futo-backups-survey']
+        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets', 'futo-backups-survey', 'survey']
         include:
           - app_name: futo-backups-survey
             app_dir: futo-backups-survey.immich.app
