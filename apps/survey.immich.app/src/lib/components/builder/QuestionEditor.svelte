@@ -18,6 +18,7 @@
     mdiPound,
     mdiMenuDown,
     mdiScaleBalance,
+    mdiDragVertical,
   } from '@mdi/js';
   import type { QuestionType } from '$lib/types';
   import type { BuilderQuestion } from '$lib/engines/builder-engine.svelte';
@@ -30,6 +31,7 @@
     total: number;
     expanded: boolean;
     allQuestions?: BuilderQuestion[];
+    dragHandle?: boolean;
     onChange: (question: BuilderQuestion) => void;
     onDelete: () => void;
     onDuplicate: () => void;
@@ -43,6 +45,7 @@
     total,
     expanded,
     allQuestions = [],
+    dragHandle = false,
     onChange,
     onDelete,
     onDuplicate,
@@ -128,7 +131,14 @@
     : 'border-gray-200 hover:border-gray-400 dark:border-gray-700 dark:hover:border-gray-500'}"
 >
   <!-- Collapsed header (always visible) -->
-  <button class="flex w-full items-center gap-3 px-4 py-3 text-left" onclick={onToggle}>
+  <div class="flex w-full items-center gap-1 px-4 py-3">
+    {#if dragHandle}
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
+      <div class="shrink-0 cursor-grab text-gray-500 hover:text-gray-300 active:cursor-grabbing" title="Drag to reorder">
+        <Icon icon={mdiDragVertical} size="16" />
+      </div>
+    {/if}
+    <button class="flex min-w-0 flex-1 items-center gap-3 text-left" onclick={onToggle}>
     <Icon icon={currentTypeInfo.icon} size="16" class="shrink-0 text-gray-400" />
     <span class="min-w-0 flex-1 truncate text-sm {question.text ? '' : 'text-gray-500 italic'}">
       {question.text || 'Untitled question'}
@@ -145,7 +155,8 @@
         <Icon icon={mdiChevronDown} size="18" class="text-gray-500" />
       </span>
     </div>
-  </button>
+    </button>
+  </div>
 
   <!-- Expanded editor -->
   {#if expanded}

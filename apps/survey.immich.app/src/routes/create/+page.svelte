@@ -3,7 +3,16 @@
   import { Icon } from '@immich/ui';
   import { mdiPlus, mdiFileDocumentOutline } from '@mdi/js';
   import type { Survey } from '$lib/types';
-  import { createSurvey, updateSurvey, publishSurvey, unpublishSurvey } from '$lib/api/surveys';
+  import {
+    createSurvey,
+    updateSurvey,
+    publishSurvey,
+    unpublishSurvey,
+    createSection,
+    createQuestion,
+    reorderSections,
+    reorderQuestions,
+  } from '$lib/api/surveys';
   import type { BuilderSection } from '$lib/engines/builder-engine.svelte';
   import { surveyTemplates, type SurveyTemplate } from '$lib/engines/survey-templates';
   import SurveyBuilderForm from '$lib/components/builder/SurveyBuilderForm.svelte';
@@ -55,6 +64,27 @@
           title: updates.title || 'Untitled Survey',
           description: updates.description ?? undefined,
         });
+
+        // Save initial sections and questions (from templates or user-added)
+        if (sections.length > 0) {
+          for (const section of sections) {
+            const createdSection = await createSection(created.id, {
+              title: section.title || 'Untitled Section',
+              description: section.description || undefined,
+            });
+            for (const q of section.questions) {
+              await createQuestion(createdSection.id, {
+                text: q.text || 'Untitled question',
+                type: q.type,
+                options: ['radio', 'checkbox', 'dropdown'].includes(q.type) ? q.options : undefined,
+                required: q.required,
+                has_other: q.hasOther,
+                description: q.description || undefined,
+              });
+            }
+          }
+        }
+
         goto(`/edit/${created.id}`, { replaceState: true });
         return;
       }

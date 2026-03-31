@@ -71,7 +71,7 @@
     </div>
 
     <div
-      class="relative h-[667px] w-[375px] overflow-hidden rounded-[2.5rem] border-4 border-gray-600 bg-gray-950 shadow-2xl"
+      class="relative h-[667px] w-[375px] overflow-hidden rounded-[2.5rem] border-4 border-gray-600 bg-gray-950 shadow-2xl [transform:translateZ(0)]"
     >
       <div class="h-full overflow-y-auto">
         {#if phase === 'welcome'}

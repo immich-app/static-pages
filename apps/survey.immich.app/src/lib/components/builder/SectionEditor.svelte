@@ -153,6 +153,9 @@
   <!-- Section header -->
   <div class="flex items-center justify-between border-b border-gray-200 px-5 py-4 dark:border-gray-700/60">
     <div class="flex items-center gap-3">
+      <div class="cursor-grab text-gray-500 hover:text-gray-300 active:cursor-grabbing" title="Drag to reorder">
+        <Icon icon={mdiDragVertical} size="18" />
+      </div>
       <span class="text-sm font-semibold text-gray-400">Section {index + 1}</span>
       <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500 dark:bg-gray-800">
         {section.questions.length} question{section.questions.length !== 1 ? 's' : ''}
@@ -238,13 +241,9 @@
       class="space-y-2"
     >
       {#each dndQuestions as question, qIndex (question.id)}
-        <div data-question-index="{index}-{qIndex}" class="relative">
-          <div
-            class="absolute top-3 -left-6 z-10 cursor-grab text-gray-500 hover:text-gray-300 active:cursor-grabbing"
-          >
-            <Icon icon={mdiDragVertical} size="16" />
-          </div>
+        <div data-question-index="{index}-{qIndex}">
           <QuestionEditor
+            dragHandle={true}
             bind:this={questionEditorRefs[qIndex]}
             {question}
             index={qIndex}

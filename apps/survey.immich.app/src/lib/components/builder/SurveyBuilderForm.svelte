@@ -60,7 +60,7 @@
   let localMaxResponses = $state(survey.maxResponses != null ? String(survey.maxResponses) : '');
   let localRandomizeQuestions = $state(survey.randomizeQuestions ?? false);
   let localRandomizeOptions = $state(survey.randomizeOptions ?? false);
-  let localSections = $derived(sections);
+  let localSections = $state(sections);
   let error = $state<string | null>(null);
   let success = $state(false);
   let showAdvanced = $state(false);
@@ -222,7 +222,16 @@
         randomizeOptions: localRandomizeOptions,
       } as Partial<Survey>);
       if (!isNew) {
-        await onSaveSections(localSections);
+        // Strip DnD-generated fake IDs before saving
+        const cleanSections = localSections.map((s) => ({
+          ...s,
+          id: s.id?.startsWith('new-section-') ? '' : s.id,
+          questions: s.questions.map((q) => ({
+            ...q,
+            id: q.id?.startsWith('new-q-') ? '' : q.id,
+          })),
+        }));
+        await onSaveSections(cleanSections);
       }
       success = true;
       setTimeout(() => {
@@ -480,7 +489,7 @@
                 localClosesAt = v ? new Date(v).toISOString() : '';
               }}
             />
-            <p class="mt-1 text-[11px] text-gray-600">Survey will stop accepting responses after this date</p>
+            <p class="mt-1 text-[11px] text-gray-500">Survey will stop accepting responses after this date</p>
           </div>
           <div>
             <label class="mb-1.5 block text-xs font-medium tracking-wider text-gray-500 uppercase"
@@ -491,7 +500,7 @@
               bind:value={localMaxResponses}
               placeholder="Unlimited"
             />
-            <p class="mt-1 text-[11px] text-gray-600">Stop accepting responses after this many completions</p>
+            <p class="mt-1 text-[11px] text-gray-500">Stop accepting responses after this many completions</p>
           </div>
         </div>
         <div class="flex flex-wrap gap-5">
@@ -527,10 +536,7 @@
       class="space-y-4"
     >
       {#each dndSections as section, i (section.id)}
-        <div data-section-index={i} class="relative">
-          <div class="absolute top-4 -left-8 z-10 cursor-grab text-gray-500 hover:text-gray-300 active:cursor-grabbing">
-            <Icon icon={mdiDragVertical} size="20" />
-          </div>
+        <div data-section-index={i}>
           <SectionEditor
             {section}
             index={i}
