@@ -98,6 +98,12 @@ export class RespondentRepository {
     }));
   }
 
+  async deleteWithAnswers(id: string): Promise<void> {
+    // D1 doesn't enforce FK cascades, so delete answers first
+    await this.db.prepare('DELETE FROM answers WHERE respondent_id = ?').bind(id).run();
+    await this.db.prepare('DELETE FROM respondents WHERE id = ?').bind(id).run();
+  }
+
   async listBySurveyId(surveyId: string, offset: number, limit: number): Promise<{ respondents: Array<{ id: string; created_at: string; completed_at: string | null; is_complete: number; answer_count: number }>; total: number }> {
     const countResult = await this.db
       .prepare('SELECT COUNT(*) as total FROM respondents WHERE survey_id = ?')

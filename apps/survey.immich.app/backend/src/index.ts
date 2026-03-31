@@ -1,13 +1,17 @@
 import { AutoRouter, cors, IRequest } from 'itty-router';
 import { ServiceError } from './services/errors';
+import { registerAuthRoutes } from './routes/auth';
 import { registerSurveyRoutes } from './routes/surveys';
 import { registerRespondentRoutes } from './routes/respondents';
 import { registerResultRoutes } from './routes/results';
+import { registerTagRoutes } from './routes/tags';
+import { registerAuditRoutes } from './routes/audit';
+import { authMiddleware } from './middleware/auth';
 
 const { preflight, corsify } = cors();
 
 const router = AutoRouter<IRequest, [Env, ExecutionContext]>({
-  before: [preflight],
+  before: [preflight, (request: IRequest, env: Env) => authMiddleware(env)(request)],
   finally: [corsify],
   catch: (error) => {
     if (error instanceof ServiceError) {
@@ -18,8 +22,11 @@ const router = AutoRouter<IRequest, [Env, ExecutionContext]>({
   },
 });
 
+registerAuthRoutes(router);
 registerSurveyRoutes(router);
 registerRespondentRoutes(router);
 registerResultRoutes(router);
+registerTagRoutes(router);
+registerAuditRoutes(router);
 
 export default router;

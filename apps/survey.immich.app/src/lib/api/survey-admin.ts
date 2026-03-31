@@ -2,8 +2,9 @@ import { request } from './request';
 import { surveyFromApi, questionsFromApi, sectionsFromApiRaw } from '../engines/builder-engine.svelte';
 import type { Survey, SurveyWithDetails } from '../types';
 
-export async function listSurveys(): Promise<Survey[]> {
-  const data = await request<Array<Record<string, unknown>>>('/api/surveys');
+export async function listSurveys(includeArchived = false): Promise<Survey[]> {
+  const url = includeArchived ? '/api/surveys?archived=true' : '/api/surveys';
+  const data = await request<Array<Record<string, unknown>>>(url);
   return data.map(surveyFromApi);
 }
 
@@ -78,6 +79,40 @@ export async function duplicateSurvey(id: string): Promise<SurveyWithDetails> {
     sections: Array<Record<string, unknown>>;
     questions: Array<Record<string, unknown>>;
   }>(`/api/surveys/${id}/duplicate`, { method: 'POST' });
+  return {
+    survey: surveyFromApi(data.survey),
+    sections: sectionsFromApiRaw(data.sections),
+    questions: questionsFromApi(data.questions),
+  };
+}
+
+export async function archiveSurvey(id: string): Promise<Survey> {
+  const data = await request<Record<string, unknown>>(`/api/surveys/${id}/archive`, {
+    method: 'PUT',
+  });
+  return surveyFromApi(data);
+}
+
+export async function unarchiveSurvey(id: string): Promise<Survey> {
+  const data = await request<Record<string, unknown>>(`/api/surveys/${id}/unarchive`, {
+    method: 'PUT',
+  });
+  return surveyFromApi(data);
+}
+
+export async function exportSurveyDefinition(id: string): Promise<Record<string, unknown>> {
+  return request<Record<string, unknown>>(`/api/surveys/${id}/definition`);
+}
+
+export async function importSurveyDefinition(definition: unknown): Promise<SurveyWithDetails> {
+  const data = await request<{
+    survey: Record<string, unknown>;
+    sections: Array<Record<string, unknown>>;
+    questions: Array<Record<string, unknown>>;
+  }>('/api/surveys/import', {
+    method: 'POST',
+    body: JSON.stringify(definition),
+  });
   return {
     survey: surveyFromApi(data.survey),
     sections: sectionsFromApiRaw(data.sections),

@@ -52,6 +52,7 @@ export function surveyFromApi(apiSurvey: Record<string, unknown>): Survey {
     randomizeOptions: !!(apiSurvey.randomize_options as number),
     hasPassword: !!(apiSurvey.password_hash as string),
     requiresPassword: !!(apiSurvey.requiresPassword as boolean),
+    archivedAt: (apiSurvey.archived_at as string) ?? null,
     createdAt: apiSurvey.created_at as string,
     updatedAt: apiSurvey.updated_at as string,
   };

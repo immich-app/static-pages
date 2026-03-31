@@ -65,6 +65,12 @@ export async function getLiveResults(id: string): Promise<{
   return request(`/api/surveys/${id}/results/live`);
 }
 
+export async function deleteRespondent(surveyId: string, respondentId: string): Promise<void> {
+  await request(`/api/surveys/${surveyId}/results/respondents/${respondentId}`, {
+    method: 'DELETE',
+  });
+}
+
 export async function exportResults(id: string, format: 'csv' | 'json'): Promise<void> {
   const res = await fetch(`/api/surveys/${id}/results/export?format=${format}`);
   if (!res.ok) throw new Error('Export failed');

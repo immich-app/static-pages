@@ -61,6 +61,12 @@ export function registerResultRoutes(router: AppRouter) {
     return Response.json(data);
   });
 
+  router.delete('/api/surveys/:id/results/respondents/:rid', async (request, env) => {
+    const service = createRespondentService(env);
+    await service.deleteRespondent(request.params.id, request.params.rid);
+    return new Response(null, { status: 204 });
+  });
+
   router.get('/api/surveys/:id/results/search', async (request, env) => {
     const service = createRespondentService(env);
     const url = new URL(request.url);

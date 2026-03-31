@@ -137,6 +137,14 @@ export class RespondentService {
     await this.respondents.markComplete(respondentId);
   }
 
+  async deleteRespondent(surveyId: string, respondentId: string): Promise<void> {
+    const respondent = await this.respondents.getById(respondentId);
+    if (!respondent || respondent.survey_id !== surveyId) {
+      throw new ServiceError('Respondent not found', 404);
+    }
+    await this.respondents.deleteWithAnswers(respondentId);
+  }
+
   async getResults(surveyId: string): Promise<{
     respondentCounts: { total: number; completed: number };
     results: AggregatedResult[];

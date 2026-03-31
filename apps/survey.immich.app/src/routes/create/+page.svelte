@@ -31,6 +31,7 @@
     randomizeQuestions: false,
     randomizeOptions: false,
     hasPassword: false,
+    archivedAt: null,
     createdAt: '',
     updatedAt: '',
   });

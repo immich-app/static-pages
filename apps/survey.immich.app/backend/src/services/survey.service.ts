@@ -77,6 +77,32 @@ export interface UpdateQuestionInput {
   config?: Record<string, unknown> | null;
 }
 
+export interface SurveyDefinition {
+  version: number;
+  title: string;
+  description?: string | null;
+  welcomeTitle?: string | null;
+  welcomeDescription?: string | null;
+  thankYouTitle?: string | null;
+  thankYouDescription?: string | null;
+  sections: Array<{
+    title: string;
+    description?: string | null;
+    questions?: Array<{
+      text: string;
+      description?: string | null;
+      type: string;
+      options?: Array<{ label: string; value: string }> | null;
+      required?: boolean;
+      hasOther?: boolean;
+      otherPrompt?: string | null;
+      maxLength?: number | null;
+      placeholder?: string | null;
+      config?: Record<string, unknown> | null;
+    }>;
+  }>;
+}
+
 export class SurveyService {
   constructor(
     private surveys: SurveyRepository,
@@ -84,8 +110,8 @@ export class SurveyService {
     private questions: QuestionRepository,
   ) {}
 
-  async listSurveys(): Promise<SurveyRow[]> {
-    return this.surveys.listAll();
+  async listSurveys(includeArchived = false): Promise<SurveyRow[]> {
+    return this.surveys.listAll(includeArchived);
   }
 
   async getSurvey(id: string): Promise<SurveyWithDetails> {
@@ -137,6 +163,7 @@ export class SurveyService {
       randomize_questions: 0,
       randomize_options: 0,
       password_hash: null,
+      archived_at: null,
       created_at: now,
       updated_at: now,
     };
@@ -427,6 +454,7 @@ export class SurveyService {
       randomize_questions: survey.randomize_questions,
       randomize_options: survey.randomize_options,
       password_hash: null,
+      archived_at: null,
       created_at: now,
       updated_at: now,
     };
@@ -473,6 +501,103 @@ export class SurveyService {
     }
 
     return { survey: newSurvey, sections: newSections, questions: newQuestions };
+  }
+
+  async archiveSurvey(id: string): Promise<SurveyRow> {
+    const survey = await this.surveys.getById(id);
+    if (!survey) {
+      throw new ServiceError('Survey not found', 404);
+    }
+    const now = new Date().toISOString();
+    await this.surveys.update(id, { archived_at: now, updated_at: now });
+    return { ...survey, archived_at: now, updated_at: now };
+  }
+
+  async unarchiveSurvey(id: string): Promise<SurveyRow> {
+    const survey = await this.surveys.getById(id);
+    if (!survey) {
+      throw new ServiceError('Survey not found', 404);
+    }
+    const now = new Date().toISOString();
+    await this.surveys.update(id, { archived_at: null, updated_at: now });
+    return { ...survey, archived_at: null, updated_at: now };
+  }
+
+  async exportDefinition(id: string): Promise<SurveyDefinition> {
+    const { survey, sections, questions } = await this.getSurvey(id);
+    return {
+      version: 1,
+      title: survey.title,
+      description: survey.description,
+      welcomeTitle: survey.welcome_title,
+      welcomeDescription: survey.welcome_description,
+      thankYouTitle: survey.thank_you_title,
+      thankYouDescription: survey.thank_you_description,
+      sections: sections
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map((s) => ({
+          title: s.title,
+          description: s.description,
+          questions: questions
+            .filter((q) => q.section_id === s.id)
+            .sort((a, b) => a.sort_order - b.sort_order)
+            .map((q) => ({
+              text: q.text,
+              description: q.description,
+              type: q.type,
+              options: q.options ? JSON.parse(q.options) : null,
+              required: q.required === 1,
+              hasOther: q.has_other === 1,
+              otherPrompt: q.other_prompt,
+              maxLength: q.max_length,
+              placeholder: q.placeholder,
+              config: q.config ? JSON.parse(q.config) : null,
+            })),
+        })),
+    };
+  }
+
+  async importDefinition(def: SurveyDefinition): Promise<SurveyWithDetails> {
+    if (!def.title?.trim()) {
+      throw new ServiceError('Import must have a title', 400);
+    }
+    if (!def.sections?.length) {
+      throw new ServiceError('Import must have at least one section', 400);
+    }
+
+    const survey = await this.createSurvey({ title: def.title, description: def.description ?? undefined });
+
+    if (def.welcomeTitle || def.welcomeDescription || def.thankYouTitle || def.thankYouDescription) {
+      await this.updateSurvey(survey.id, {
+        welcome_title: def.welcomeTitle ?? undefined,
+        welcome_description: def.welcomeDescription ?? undefined,
+        thank_you_title: def.thankYouTitle ?? undefined,
+        thank_you_description: def.thankYouDescription ?? undefined,
+      });
+    }
+
+    for (const sDef of def.sections) {
+      const section = await this.createSection(survey.id, {
+        title: sDef.title,
+        description: sDef.description ?? undefined,
+      });
+      for (const qDef of sDef.questions ?? []) {
+        await this.createQuestion(section.id, {
+          text: qDef.text,
+          description: qDef.description ?? undefined,
+          type: qDef.type,
+          options: qDef.options ?? undefined,
+          required: qDef.required,
+          has_other: qDef.hasOther,
+          other_prompt: qDef.otherPrompt ?? undefined,
+          max_length: qDef.maxLength ?? undefined,
+          placeholder: qDef.placeholder ?? undefined,
+          config: qDef.config ?? undefined,
+        });
+      }
+    }
+
+    return this.getSurvey(survey.id);
   }
 }
 

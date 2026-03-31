@@ -74,6 +74,7 @@ export interface Survey {
   randomizeOptions: boolean;
   hasPassword: boolean;
   requiresPassword?: boolean;
+  archivedAt: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -128,4 +129,11 @@ export interface SearchResult {
 export interface LiveCounts {
   activeViewers: number;
   activeRespondents: number;
+}
+
+export interface AuthUser {
+  sub: string;
+  email: string;
+  name: string;
+  role: 'admin' | 'editor' | 'viewer';
 }

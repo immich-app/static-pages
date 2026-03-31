@@ -2,9 +2,11 @@ import { createSurveyService } from '../services/factory';
 import type { AppRouter } from '../types';
 
 export function registerSurveyRoutes(router: AppRouter) {
-  router.get('/api/surveys', async (_request, env) => {
+  router.get('/api/surveys', async (request, env) => {
     const service = createSurveyService(env);
-    const surveys = await service.listSurveys();
+    const url = new URL(request.url);
+    const includeArchived = url.searchParams.get('archived') === 'true';
+    const surveys = await service.listSurveys(includeArchived);
     return Response.json(surveys);
   });
 
@@ -49,6 +51,31 @@ export function registerSurveyRoutes(router: AppRouter) {
   router.post('/api/surveys/:id/duplicate', async (request, env) => {
     const service = createSurveyService(env);
     const result = await service.duplicateSurvey(request.params.id);
+    return Response.json(result, { status: 201 });
+  });
+
+  router.put('/api/surveys/:id/archive', async (request, env) => {
+    const service = createSurveyService(env);
+    const survey = await service.archiveSurvey(request.params.id);
+    return Response.json(survey);
+  });
+
+  router.put('/api/surveys/:id/unarchive', async (request, env) => {
+    const service = createSurveyService(env);
+    const survey = await service.unarchiveSurvey(request.params.id);
+    return Response.json(survey);
+  });
+
+  router.get('/api/surveys/:id/definition', async (request, env) => {
+    const service = createSurveyService(env);
+    const def = await service.exportDefinition(request.params.id);
+    return Response.json(def);
+  });
+
+  router.post('/api/surveys/import', async (request, env) => {
+    const service = createSurveyService(env);
+    const body = await request.json();
+    const result = await service.importDefinition(body);
     return Response.json(result, { status: 201 });
   });
 

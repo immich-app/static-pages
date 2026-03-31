@@ -1,9 +1,9 @@
 <script lang="ts">
   import { Icon } from '@immich/ui';
   import { Button } from '@immich/ui';
-  import { mdiChevronLeft, mdiChevronRight, mdiCheckCircle, mdiClockOutline } from '@mdi/js';
+  import { mdiChevronLeft, mdiChevronRight, mdiCheckCircle, mdiClockOutline, mdiDeleteOutline } from '@mdi/js';
   import type { RespondentSummary, RespondentDetail } from '$lib/types';
-  import { listRespondents, getRespondent } from '$lib/api/surveys';
+  import { listRespondents, getRespondent, deleteRespondent } from '$lib/api/surveys';
   import ResponseDetailCard from './ResponseDetail.svelte';
 
   interface Props {
@@ -18,6 +18,7 @@
   let loading = $state(true);
   let selectedDetail = $state<RespondentDetail | null>(null);
   let loadingDetail = $state(false);
+  let deletingId = $state<string | null>(null);
   const limit = 20;
   const page = $derived(Math.floor(offset / limit) + 1);
   const totalPages = $derived(Math.ceil(total / limit));
@@ -48,6 +49,27 @@
     loadingDetail = false;
   }
 
+  async function handleDelete(event: MouseEvent, respondentId: string) {
+    event.stopPropagation();
+    if (!confirm('Delete this response and all its answers? This cannot be undone.')) return;
+    deletingId = respondentId;
+    try {
+      await deleteRespondent(surveyId, respondentId);
+      respondents = respondents.filter((r) => r.id !== respondentId);
+      total -= 1;
+      if (selectedDetail?.id === respondentId) {
+        selectedDetail = null;
+      }
+      // Reload if we deleted the last item on this page
+      if (respondents.length === 0 && offset > 0) {
+        offset = Math.max(0, offset - limit);
+      }
+    } catch {
+      // ignore
+    }
+    deletingId = null;
+  }
+
   $effect(() => {
     void surveyId;
     void offset;
@@ -69,6 +91,7 @@
             <th class="px-4 py-3">Status</th>
             <th class="px-4 py-3">Answers</th>
             <th class="px-4 py-3">Date</th>
+            <th class="px-4 py-3 text-right">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -91,10 +114,20 @@
               </td>
               <td class="px-4 py-3 text-gray-400">{r.answerCount}</td>
               <td class="px-4 py-3 text-gray-500">{new Date(r.createdAt).toLocaleDateString()}</td>
+              <td class="px-4 py-3 text-right">
+                <button
+                  class="inline-flex items-center rounded-md p-1.5 text-gray-500 transition-colors hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50"
+                  onclick={(e) => handleDelete(e, r.id)}
+                  disabled={deletingId === r.id}
+                  title="Delete response"
+                >
+                  <Icon icon={mdiDeleteOutline} size="16" />
+                </button>
+              </td>
             </tr>
             {#if selectedDetail?.id === r.id}
               <tr>
-                <td colspan="4" class="border-b border-gray-100 px-4 py-3 dark:border-gray-800">
+                <td colspan="5" class="border-b border-gray-100 px-4 py-3 dark:border-gray-800">
                   {#if loadingDetail}
                     <p class="py-4 text-center text-sm text-gray-500">Loading...</p>
                   {:else}

@@ -13,6 +13,7 @@ export interface SurveyRow {
   randomize_questions: number;
   randomize_options: number;
   password_hash: string | null;
+  archived_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -46,8 +47,11 @@ export interface QuestionRow {
 export class SurveyRepository {
   constructor(private db: D1Database) {}
 
-  async listAll(): Promise<SurveyRow[]> {
-    const result = await this.db.prepare('SELECT * FROM surveys ORDER BY created_at DESC').all<SurveyRow>();
+  async listAll(includeArchived = false): Promise<SurveyRow[]> {
+    const query = includeArchived
+      ? 'SELECT * FROM surveys ORDER BY created_at DESC'
+      : 'SELECT * FROM surveys WHERE archived_at IS NULL ORDER BY created_at DESC';
+    const result = await this.db.prepare(query).all<SurveyRow>();
     return result.results;
   }
 
@@ -62,8 +66,8 @@ export class SurveyRepository {
   async create(survey: SurveyRow): Promise<void> {
     await this.db
       .prepare(
-        `INSERT INTO surveys (id, title, description, slug, status, welcome_title, welcome_description, thank_you_title, thank_you_description, closes_at, max_responses, randomize_questions, randomize_options, password_hash, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO surveys (id, title, description, slug, status, welcome_title, welcome_description, thank_you_title, thank_you_description, closes_at, max_responses, randomize_questions, randomize_options, password_hash, archived_at, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .bind(
         survey.id,
@@ -80,6 +84,7 @@ export class SurveyRepository {
         survey.randomize_questions,
         survey.randomize_options,
         survey.password_hash,
+        survey.archived_at,
         survey.created_at,
         survey.updated_at,
       )
