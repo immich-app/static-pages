@@ -26,6 +26,10 @@ export interface UpdateSurveyInput {
   welcome_description?: string;
   thank_you_title?: string;
   thank_you_description?: string;
+  closes_at?: string | null;
+  max_responses?: number | null;
+  randomize_questions?: boolean;
+  randomize_options?: boolean;
 }
 
 export interface CreateSectionInput {
@@ -136,6 +140,10 @@ export class SurveyService {
       welcome_description: null,
       thank_you_title: null,
       thank_you_description: null,
+      closes_at: null,
+      max_responses: null,
+      randomize_questions: 0,
+      randomize_options: 0,
       created_at: now,
       updated_at: now,
     };
@@ -180,6 +188,10 @@ export class SurveyService {
     if (input.thank_you_title !== undefined) fields.thank_you_title = input.thank_you_title?.trim() ?? null;
     if (input.thank_you_description !== undefined)
       fields.thank_you_description = input.thank_you_description?.trim() ?? null;
+    if (input.closes_at !== undefined) fields.closes_at = input.closes_at ?? null;
+    if (input.max_responses !== undefined) fields.max_responses = input.max_responses ?? null;
+    if (input.randomize_questions !== undefined) fields.randomize_questions = input.randomize_questions ? 1 : 0;
+    if (input.randomize_options !== undefined) fields.randomize_options = input.randomize_options ? 1 : 0;
 
     await this.surveys.update(id, fields);
     return { ...existing, ...fields } as SurveyRow;
@@ -409,6 +421,10 @@ export class SurveyService {
       welcome_description: survey.welcome_description,
       thank_you_title: survey.thank_you_title,
       thank_you_description: survey.thank_you_description,
+      closes_at: survey.closes_at,
+      max_responses: survey.max_responses,
+      randomize_questions: survey.randomize_questions,
+      randomize_options: survey.randomize_options,
       created_at: now,
       updated_at: now,
     };

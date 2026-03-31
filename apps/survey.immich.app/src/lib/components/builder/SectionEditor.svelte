@@ -16,10 +16,14 @@
     mdiPound,
     mdiMenuDown,
     mdiScaleBalance,
+    mdiDragVertical,
+    mdiBookmarkOutline,
   } from '@mdi/js';
+  import { dndzone } from 'svelte-dnd-action';
   import type { QuestionType } from '$lib/types';
   import type { BuilderSection, BuilderQuestion } from '$lib/engines/builder-engine.svelte';
   import { createQuestionOfType, duplicateQuestion, moveItem } from '$lib/engines/builder-engine.svelte';
+  import { questionTemplates, getTemplatesByCategory } from '$lib/engines/question-templates';
   import QuestionEditor from './QuestionEditor.svelte';
   import { tick } from 'svelte';
 
@@ -37,6 +41,7 @@
 
   let expandedQuestionIndex = $state<number | null>(null);
   let confirmingDelete = $state(false);
+  let showTemplates = $state(false);
   let questionEditorRefs: (QuestionEditor | undefined)[] = [];
 
   const addQuestionTypes: { type: QuestionType; label: string; icon: string }[] = [
@@ -52,6 +57,8 @@
     { type: 'likert', label: 'Likert', icon: mdiScaleBalance },
   ];
 
+  const templatesByCategory = getTemplatesByCategory();
+
   function updateField<K extends keyof BuilderSection>(field: K, value: BuilderSection[K]) {
     onChange({ ...section, [field]: value });
   }
@@ -63,7 +70,25 @@
     expandedQuestionIndex = newIndex;
     tick().then(() => {
       questionEditorRefs[newIndex]?.focusText();
-      // scroll into view
+      const el = document.querySelector(`[data-question-index="${index}-${newIndex}"]`);
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
+
+  function addFromTemplate(templateId: string) {
+    const template = questionTemplates.find((t) => t.id === templateId);
+    if (!template) return;
+    const newQ: BuilderQuestion = {
+      ...template.question,
+      id: '',
+      sortOrder: section.questions.length,
+    };
+    const newIndex = section.questions.length;
+    onChange({ ...section, questions: [...section.questions, newQ] });
+    expandedQuestionIndex = newIndex;
+    showTemplates = false;
+    tick().then(() => {
+      questionEditorRefs[newIndex]?.focusText();
       const el = document.querySelector(`[data-question-index="${index}-${newIndex}"]`);
       el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
@@ -93,7 +118,6 @@
   function moveQuestion(qIndex: number, direction: 'up' | 'down') {
     const newQuestions = moveItem(section.questions, qIndex, direction);
     onChange({ ...section, questions: newQuestions });
-    // Track the expanded question through the move
     if (expandedQuestionIndex === qIndex) {
       expandedQuestionIndex = direction === 'up' ? qIndex - 1 : qIndex + 1;
     }
@@ -105,6 +129,23 @@
     } else {
       onDelete();
     }
+  }
+
+  // DnD for questions
+  const dndQuestions = $derived(
+    section.questions.map((q, i) => ({
+      ...q,
+      id: q.id || `new-q-${index}-${i}`,
+    })),
+  );
+
+  function handleQuestionDndConsider(e: CustomEvent<{ items: BuilderQuestion[] }>) {
+    onChange({ ...section, questions: e.detail.items });
+  }
+
+  function handleQuestionDndFinalize(e: CustomEvent<{ items: BuilderQuestion[] }>) {
+    const reordered = e.detail.items.map((q, i) => ({ ...q, sortOrder: i }));
+    onChange({ ...section, questions: reordered });
   }
 </script>
 
@@ -189,10 +230,20 @@
       </div>
     </div>
 
-    <!-- Questions -->
-    <div class="space-y-2">
-      {#each section.questions as question, qIndex (question.id || qIndex)}
-        <div data-question-index="{index}-{qIndex}">
+    <!-- Questions with DnD -->
+    <div
+      use:dndzone={{ items: dndQuestions, flipDurationMs: 200, dragDisabled: false, type: `questions-${section.id || index}` }}
+      onconsider={handleQuestionDndConsider}
+      onfinalize={handleQuestionDndFinalize}
+      class="space-y-2"
+    >
+      {#each dndQuestions as question, qIndex (question.id)}
+        <div data-question-index="{index}-{qIndex}" class="relative">
+          <div
+            class="absolute top-3 -left-6 z-10 cursor-grab text-gray-500 hover:text-gray-300 active:cursor-grabbing"
+          >
+            <Icon icon={mdiDragVertical} size="16" />
+          </div>
           <QuestionEditor
             bind:this={questionEditorRefs[qIndex]}
             {question}
@@ -226,7 +277,7 @@
         </div>
       </div>
     {:else}
-      <div class="flex flex-wrap gap-1.5">
+      <div class="flex flex-wrap items-center gap-1.5">
         {#each addQuestionTypes as qt (qt.type)}
           <button
             class="hover:border-immich-primary hover:bg-immich-primary-5 hover:text-immich-primary inline-flex items-center gap-1 rounded-md border border-gray-700 px-2.5 py-1.5 text-xs text-gray-500 transition-all"
@@ -236,6 +287,34 @@
             {qt.label}
           </button>
         {/each}
+        <div class="relative">
+          <button
+            class="hover:border-immich-primary hover:bg-immich-primary-5 hover:text-immich-primary inline-flex items-center gap-1 rounded-md border border-gray-700 px-2.5 py-1.5 text-xs text-gray-500 transition-all"
+            onclick={() => (showTemplates = !showTemplates)}
+          >
+            <Icon icon={mdiBookmarkOutline} size="13" />
+            Template
+          </button>
+          {#if showTemplates}
+            <div
+              class="absolute top-full left-0 z-30 mt-1 w-56 rounded-lg border border-gray-600 bg-gray-900 py-1 shadow-xl"
+            >
+              {#each [...templatesByCategory.entries()] as [category, templates] (category)}
+                <div class="px-3 pt-2 pb-1 text-[10px] font-semibold tracking-wider text-gray-500 uppercase">
+                  {category}
+                </div>
+                {#each templates as t (t.id)}
+                  <button
+                    class="w-full px-3 py-1.5 text-left text-sm text-gray-300 hover:bg-gray-800"
+                    onclick={() => addFromTemplate(t.id)}
+                  >
+                    {t.name}
+                  </button>
+                {/each}
+              {/each}
+            </div>
+          {/if}
+        </div>
       </div>
     {/if}
   </div>

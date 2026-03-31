@@ -1,4 +1,4 @@
-import type { SurveyAnswer, SurveyQuestion } from '../types';
+import type { SurveyAnswer, SurveyQuestion, SurveySection } from '../types';
 
 export function shouldShowQuestion(q: SurveyQuestion, answers: Record<string, SurveyAnswer>): boolean {
   if (!q.conditional) return true;
@@ -46,6 +46,46 @@ export function findPrevVisibleIndex(
 
 export function getVisibleQuestionCount(questions: SurveyQuestion[], answers: Record<string, SurveyAnswer>): number {
   return questions.filter((q) => shouldShowQuestion(q, answers)).length;
+}
+
+function seededShuffle<T>(arr: T[], seed: string): T[] {
+  const result = [...arr];
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = ((hash << 5) - hash + seed.charCodeAt(i)) | 0;
+  }
+  for (let i = result.length - 1; i > 0; i--) {
+    hash = ((hash << 5) - hash + i) | 0;
+    const j = Math.abs(hash) % (i + 1);
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+export function randomizeQuestions(
+  questions: SurveyQuestion[],
+  sections: SurveySection[],
+  seed: string,
+): SurveyQuestion[] {
+  const grouped: Record<string, SurveyQuestion[]> = {};
+  for (const q of questions) {
+    if (!grouped[q.section_id]) grouped[q.section_id] = [];
+    grouped[q.section_id].push(q);
+  }
+
+  const result: SurveyQuestion[] = [];
+  for (const section of [...sections].sort((a, b) => a.sortOrder - b.sortOrder)) {
+    const sectionQuestions = grouped[section.id] ?? [];
+    result.push(...seededShuffle(sectionQuestions, seed + section.id));
+  }
+  return result;
+}
+
+export function randomizeOptionOrder(questions: SurveyQuestion[], seed: string): SurveyQuestion[] {
+  return questions.map((q) => {
+    if (!q.options || q.options.length <= 1) return q;
+    return { ...q, options: seededShuffle(q.options, seed + q.id) };
+  });
 }
 
 export function createSurveyEngine(

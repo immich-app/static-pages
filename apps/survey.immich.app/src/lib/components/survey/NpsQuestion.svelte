@@ -31,10 +31,10 @@
 {/if}
 
 <div class="flex flex-col gap-2">
-  <div class="grid grid-cols-11 gap-1.5">
+  <div class="grid grid-cols-6 gap-1.5 sm:grid-cols-11">
     {#each Array.from({ length: 11 }, (_, i) => i) as n (n)}
       <button
-        class="flex h-10 items-center justify-center rounded-md border-2 text-sm font-semibold transition-all duration-150
+        class="flex min-h-[44px] items-center justify-center rounded-md border-2 text-sm font-semibold transition-all duration-150
           {getColor(n, selectedValue === n)}"
         onclick={() => onAnswer(String(n))}
         aria-label="Score {n}"

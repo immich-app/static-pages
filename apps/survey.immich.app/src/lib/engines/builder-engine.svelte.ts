@@ -214,6 +214,10 @@ export function surveyFromApi(apiSurvey: Record<string, unknown>): Survey {
     welcomeDescription: (apiSurvey.welcome_description as string) ?? null,
     thankYouTitle: (apiSurvey.thank_you_title as string) ?? null,
     thankYouDescription: (apiSurvey.thank_you_description as string) ?? null,
+    closesAt: (apiSurvey.closes_at as string) ?? null,
+    maxResponses: (apiSurvey.max_responses as number) ?? null,
+    randomizeQuestions: !!(apiSurvey.randomize_questions as number),
+    randomizeOptions: !!(apiSurvey.randomize_options as number),
     createdAt: apiSurvey.created_at as string,
     updatedAt: apiSurvey.updated_at as string,
   };

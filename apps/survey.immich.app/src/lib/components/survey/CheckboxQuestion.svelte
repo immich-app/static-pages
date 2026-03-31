@@ -43,7 +43,7 @@
 <div class="flex flex-col gap-3">
   {#each (question.options ?? []).filter((o) => !question.hasOther || o.value !== 'Other') as option (option.value)}
     <button
-      class="flex min-h-12 w-full items-center gap-3 rounded-lg border-2 p-4 text-left transition-all duration-150
+      class="flex min-h-[44px] w-full items-center gap-3 rounded-lg border-2 p-4 text-left transition-all duration-150
         {selectedValues.has(option.value)
         ? 'border-immich-primary bg-immich-primary-10'
         : 'border-gray-200 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400'}"
@@ -64,7 +64,7 @@
 
   {#if question.hasOther}
     <div
-      class="flex min-h-12 w-full items-center gap-3 rounded-lg border-2 p-4 transition-all duration-150
+      class="flex min-h-[44px] w-full items-center gap-3 rounded-lg border-2 p-4 transition-all duration-150
         {selectedValues.has('Other')
         ? 'border-immich-primary bg-immich-primary-10'
         : 'border-gray-200 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400'}"

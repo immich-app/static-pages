@@ -56,6 +56,10 @@ export async function updateSurvey(
     welcome_description?: string | null;
     thank_you_title?: string | null;
     thank_you_description?: string | null;
+    closes_at?: string | null;
+    max_responses?: number | null;
+    randomize_questions?: boolean;
+    randomize_options?: boolean;
   },
 ): Promise<Survey> {
   // Filter out undefined keys so we only send fields the user explicitly set

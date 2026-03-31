@@ -1,5 +1,5 @@
 import { RespondentRepository, AnswerRepository, type AnswerRow } from '../repositories/respondent.repository';
-import { SurveyRepository, QuestionRepository, type QuestionRow } from '../repositories/survey.repository';
+import { SurveyRepository, QuestionRepository, type QuestionRow, type SurveyRow } from '../repositories/survey.repository';
 import { ServiceError } from './survey.service';
 
 export interface ResumeResult {
@@ -29,11 +29,29 @@ export class RespondentService {
     private questions: QuestionRepository,
   ) {}
 
+  private checkSurveyClosed(survey: SurveyRow): void {
+    if (survey.closes_at && new Date(survey.closes_at) < new Date()) {
+      throw new ServiceError('This survey has closed', 403);
+    }
+  }
+
+  private async checkResponseLimit(survey: SurveyRow): Promise<void> {
+    if (survey.max_responses) {
+      const counts = await this.respondents.countBySurveyId(survey.id);
+      if (counts.completed >= survey.max_responses) {
+        throw new ServiceError('This survey has reached its maximum number of responses', 403);
+      }
+    }
+  }
+
   async resume(slug: string, respondentId: string | undefined, ipAddress: string): Promise<ResumeResult> {
     const survey = await this.surveys.getBySlug(slug);
     if (!survey || survey.status !== 'published') {
       throw new ServiceError('Survey not found', 404);
     }
+
+    this.checkSurveyClosed(survey);
+    await this.checkResponseLimit(survey);
 
     if (!respondentId) {
       return this.createNewRespondent(survey.id, ipAddress);
@@ -89,6 +107,8 @@ export class RespondentService {
     if (!survey || respondent.survey_id !== survey.id) {
       throw new ServiceError('Respondent does not belong to this survey', 400);
     }
+
+    this.checkSurveyClosed(survey);
 
     const now = new Date().toISOString();
     const answerRows: AnswerRow[] = inputs.map((a) => ({

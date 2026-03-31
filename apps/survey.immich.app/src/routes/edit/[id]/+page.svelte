@@ -52,6 +52,10 @@
         welcome_description: updates.welcomeDescription !== undefined ? updates.welcomeDescription : undefined,
         thank_you_title: updates.thankYouTitle !== undefined ? updates.thankYouTitle : undefined,
         thank_you_description: updates.thankYouDescription !== undefined ? updates.thankYouDescription : undefined,
+        closes_at: updates.closesAt !== undefined ? updates.closesAt : undefined,
+        max_responses: updates.maxResponses !== undefined ? updates.maxResponses : undefined,
+        randomize_questions: updates.randomizeQuestions !== undefined ? updates.randomizeQuestions : undefined,
+        randomize_options: updates.randomizeOptions !== undefined ? updates.randomizeOptions : undefined,
       });
     } finally {
       saving = false;

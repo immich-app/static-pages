@@ -1,7 +1,8 @@
 <script lang="ts">
   import { Icon } from '@immich/ui';
-  import { mdiClose, mdiArrowUp, mdiArrowDown, mdiPlus } from '@mdi/js';
+  import { mdiClose, mdiArrowUp, mdiArrowDown, mdiPlus, mdiContentPaste } from '@mdi/js';
   import type { QuestionOption } from '$lib/types';
+  import BulkPasteModal from './BulkPasteModal.svelte';
   import { tick } from 'svelte';
 
   interface Props {
@@ -12,6 +13,7 @@
   let { options, onChange }: Props = $props();
 
   let inputRefs: HTMLInputElement[] = [];
+  let showBulkPaste = $state(false);
 
   function addOptionAfter(index: number) {
     const num = options.length + 1;
@@ -55,12 +57,29 @@
     } else if (e.key === 'Backspace' && (e.target as HTMLInputElement).value === '' && options.length > 2) {
       e.preventDefault();
       removeOption(index);
+    } else if (e.key === 'v' && (e.ctrlKey || e.metaKey) && options.every((o) => !o.label.trim())) {
+      e.preventDefault();
+      showBulkPaste = true;
     }
+  }
+
+  function handleBulkPaste(newOptions: QuestionOption[]) {
+    onChange(newOptions);
+    showBulkPaste = false;
   }
 </script>
 
 <div class="space-y-1.5">
-  <label class="text-xs font-medium tracking-wider text-gray-500 uppercase">Options</label>
+  <div class="flex items-center justify-between">
+    <label class="text-xs font-medium tracking-wider text-gray-500 uppercase">Options</label>
+    <button
+      class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-300"
+      onclick={() => (showBulkPaste = true)}
+    >
+      <Icon icon={mdiContentPaste} size="13" />
+      Paste options
+    </button>
+  </div>
   {#each options as option, i (i)}
     <div class="group flex items-center gap-1.5">
       <span class="w-5 text-center text-xs text-gray-600">{i + 1}</span>
@@ -108,3 +127,7 @@
   </button>
   <p class="text-[11px] text-gray-600">Press Enter to add, Backspace on empty to remove</p>
 </div>
+
+{#if showBulkPaste}
+  <BulkPasteModal onSubmit={handleBulkPaste} onClose={() => (showBulkPaste = false)} />
+{/if}

@@ -68,6 +68,10 @@ export interface Survey {
   welcomeDescription: string | null;
   thankYouTitle: string | null;
   thankYouDescription: string | null;
+  closesAt: string | null;
+  maxResponses: number | null;
+  randomizeQuestions: boolean;
+  randomizeOptions: boolean;
   createdAt: string;
   updatedAt: string;
 }

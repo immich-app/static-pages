@@ -4,7 +4,7 @@
   import type { Survey, SurveySection, SurveyQuestion } from '$lib/types';
   import { getPublishedSurvey } from '$lib/api/surveys';
   import { createApiClient } from '$lib/api/client';
-  import { createSurveyEngine } from '$lib/engines/survey-engine.svelte';
+  import { createSurveyEngine, randomizeQuestions, randomizeOptionOrder } from '$lib/engines/survey-engine.svelte';
   import SurveyShell from '$lib/components/survey/SurveyShell.svelte';
   import WelcomeScreen from '$lib/components/survey/WelcomeScreen.svelte';
   import ThankYouScreen from '$lib/components/survey/ThankYouScreen.svelte';
@@ -43,6 +43,14 @@
           sortedQuestions.push(...sectionQuestions);
         }
         questions = sortedQuestions;
+
+        // Apply randomization if enabled
+        if (survey.randomizeQuestions) {
+          questions = randomizeQuestions(questions, sections, slug);
+        }
+        if (survey.randomizeOptions) {
+          questions = randomizeOptionOrder(questions, slug);
+        }
 
         // Create engine and client
         engine = createSurveyEngine(questions);
