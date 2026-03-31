@@ -26,22 +26,21 @@
 
 ### Builder UX
 
-- [ ] Drag-and-drop reordering for questions and sections
-- [ ] Preview mode — live preview of respondent view without publishing
-- [ ] Undo/redo with Ctrl+Z / Ctrl+Shift+Z
-- [ ] Question templates / bank — pre-built NPS, CSAT, demographic blocks
-- [ ] Survey templates — Customer Satisfaction, Event Feedback, etc.
-- [ ] Bulk option paste — paste multiple options (one per line)
+- [x] Drag-and-drop reordering for questions and sections
+- [x] Preview mode — live preview of respondent view without publishing
+- [x] Undo/redo with Ctrl+Z / Ctrl+Shift+Z
+- [x] Question templates / bank — pre-built NPS, CSAT, demographic blocks
+- [x] Survey templates — Customer Satisfaction, Event Feedback, etc.
+- [x] Bulk option paste — paste multiple options (one per line)
 
 ### Response Experience
 
-- [ ] One-question-at-a-time mode — Typeform-style conversational flow
-- [ ] Inline validation errors — show errors next to the specific question
-- [ ] Mobile-optimized response UI — proper touch targets, spacing
-- [ ] Keyboard navigation — arrow keys for radio, Enter to submit
-- [ ] Survey close date / scheduling — auto-close at a specified date
-- [ ] Response limit — cap number of responses
-- [ ] Randomize option / question order — reduce order bias
+- [x] Inline validation errors — show errors next to the specific question
+- [x] Mobile-optimized response UI — proper touch targets, spacing
+- [x] Keyboard navigation — arrow keys for radio, Enter to submit
+- [x] Survey close date / scheduling — auto-close at a specified date
+- [x] Response limit — cap number of responses
+- [x] Randomize option / question order — reduce order bias
 
 ## Phase 3 — Analytics & Results
 
