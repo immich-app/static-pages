@@ -251,6 +251,102 @@ export class RespondentService {
     return { data: rows.join('\n'), contentType: 'text/csv', filename: `${survey.slug ?? survey.id}-responses.csv` };
   }
 
+  async getTimeline(surveyId: string, granularity: 'day' | 'hour'): Promise<Array<{ period: string; started: number; completed: number }>> {
+    const survey = await this.surveys.getById(surveyId);
+    if (!survey) throw new ServiceError('Survey not found', 404);
+    return this.respondents.getTimelineData(surveyId, granularity);
+  }
+
+  async getDropoff(surveyId: string): Promise<Array<{ questionId: string; questionText: string; respondentsReached: number; respondentsAnswered: number; dropoffRate: number }>> {
+    const survey = await this.surveys.getById(surveyId);
+    if (!survey) throw new ServiceError('Survey not found', 404);
+
+    const counts = await this.respondents.countBySurveyId(surveyId);
+    const dropoffData = await this.answers.getDropoffData(surveyId);
+    const totalRespondents = counts.total;
+
+    return dropoffData.map((d, i) => {
+      const reached = i === 0 ? totalRespondents : dropoffData[i - 1].answer_count;
+      return {
+        questionId: d.question_id,
+        questionText: d.question_text,
+        respondentsReached: reached,
+        respondentsAnswered: d.answer_count,
+        dropoffRate: reached > 0 ? Math.round(((reached - d.answer_count) / reached) * 100) : 0,
+      };
+    });
+  }
+
+  async listRespondents(surveyId: string, offset: number, limit: number): Promise<{ respondents: Array<{ id: string; createdAt: string; completedAt: string | null; answerCount: number }>; total: number }> {
+    const survey = await this.surveys.getById(surveyId);
+    if (!survey) throw new ServiceError('Survey not found', 404);
+
+    const data = await this.respondents.listBySurveyId(surveyId, offset, limit);
+    return {
+      respondents: data.respondents.map(r => ({
+        id: r.id,
+        createdAt: r.created_at,
+        completedAt: r.completed_at,
+        answerCount: r.answer_count,
+      })),
+      total: data.total,
+    };
+  }
+
+  async getRespondentDetail(surveyId: string, respondentId: string): Promise<{ id: string; createdAt: string; completedAt: string | null; answers: Array<{ questionId: string; questionText: string; questionType: string; value: string; otherText: string | null }> }> {
+    const respondent = await this.respondents.getById(respondentId);
+    if (!respondent || respondent.survey_id !== surveyId) {
+      throw new ServiceError('Respondent not found', 404);
+    }
+
+    const answers = await this.answers.getAnswersForRespondent(respondentId);
+    return {
+      id: respondent.id,
+      createdAt: respondent.created_at,
+      completedAt: respondent.completed_at,
+      answers: answers.map(a => ({
+        questionId: a.question_id,
+        questionText: a.question_text,
+        questionType: a.question_type,
+        value: a.answer,
+        otherText: a.other_text,
+      })),
+    };
+  }
+
+  async searchAnswers(surveyId: string, query: string, questionId?: string): Promise<Array<{ respondentId: string; questionId: string; questionText: string; answer: string }>> {
+    const survey = await this.surveys.getById(surveyId);
+    if (!survey) throw new ServiceError('Survey not found', 404);
+
+    if (!query || query.trim().length < 2) {
+      throw new ServiceError('Search query must be at least 2 characters', 400);
+    }
+
+    const results = await this.answers.searchTextAnswers(surveyId, query.trim(), questionId);
+    return results.map(r => ({
+      respondentId: r.respondent_id,
+      questionId: r.question_id,
+      questionText: r.question_text,
+      answer: r.answer,
+    }));
+  }
+
+  async getLiveResults(surveyId: string): Promise<{
+    respondentCounts: { total: number; completed: number };
+    results: AggregatedResult[];
+    liveCounts: { activeViewers: number; activeRespondents: number };
+  }> {
+    const baseResults = await this.getResults(surveyId);
+
+    // Active respondents: created in last 5 minutes and not yet complete
+    const activeCount = await this.respondents.countActiveBySurveyId(surveyId);
+
+    return {
+      ...baseResults,
+      liveCounts: { activeViewers: 0, activeRespondents: activeCount },
+    };
+  }
+
   private csvSafe(value: string): string {
     return value.replace(/"/g, '""');
   }

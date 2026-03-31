@@ -81,3 +81,49 @@ export interface SurveyWithDetails {
   sections: SurveySection[];
   questions: SurveyQuestion[];
 }
+
+export interface TimelineDataPoint {
+  period: string;
+  started: number;
+  completed: number;
+}
+
+export interface DropoffDataPoint {
+  questionId: string;
+  questionText: string;
+  respondentsReached: number;
+  respondentsAnswered: number;
+  dropoffRate: number;
+}
+
+export interface RespondentSummary {
+  id: string;
+  createdAt: string;
+  completedAt: string | null;
+  answerCount: number;
+}
+
+export interface RespondentDetail {
+  id: string;
+  createdAt: string;
+  completedAt: string | null;
+  answers: Array<{
+    questionId: string;
+    questionText: string;
+    questionType: string;
+    value: string;
+    otherText: string | null;
+  }>;
+}
+
+export interface SearchResult {
+  respondentId: string;
+  questionId: string;
+  questionText: string;
+  answer: string;
+}
+
+export interface LiveCounts {
+  activeViewers: number;
+  activeRespondents: number;
+}

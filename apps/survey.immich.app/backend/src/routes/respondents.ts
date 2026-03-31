@@ -83,4 +83,21 @@ export function registerRespondentRoutes(router: AppRouter) {
     deleteRespondentCookie(headers, request.params.slug);
     return new Response(null, { status: 204, headers });
   });
+
+  router.post('/api/s/:slug/heartbeat', async (request, env) => {
+    try {
+      const body = await request.json() as { viewerId?: string; type?: string };
+      const survey = await createSurveyService(env).getPublishedSurvey(request.params.slug);
+      if (body.viewerId && body.type && env.ANALYTICS) {
+        env.ANALYTICS.writeDataPoint({
+          indexes: [survey.survey.id],
+          blobs: [body.viewerId, body.type],
+          doubles: [1],
+        });
+      }
+    } catch {
+      // heartbeat is best-effort, swallow errors
+    }
+    return new Response(null, { status: 204 });
+  });
 }

@@ -34,4 +34,48 @@ export function registerResultRoutes(router: AppRouter) {
       },
     });
   });
+
+  router.get('/api/surveys/:id/results/live', async (request, env) => {
+    const service = createService(env);
+    const results = await service.getLiveResults(request.params.id);
+    return Response.json(results);
+  });
+
+  router.get('/api/surveys/:id/results/timeline', async (request, env) => {
+    const service = createService(env);
+    const url = new URL(request.url);
+    const granularity = url.searchParams.get('granularity') === 'hour' ? 'hour' : 'day';
+    const data = await service.getTimeline(request.params.id, granularity);
+    return Response.json(data);
+  });
+
+  router.get('/api/surveys/:id/results/dropoff', async (request, env) => {
+    const service = createService(env);
+    const data = await service.getDropoff(request.params.id);
+    return Response.json(data);
+  });
+
+  router.get('/api/surveys/:id/results/respondents', async (request, env) => {
+    const service = createService(env);
+    const url = new URL(request.url);
+    const offset = Number(url.searchParams.get('offset')) || 0;
+    const limit = Math.min(Number(url.searchParams.get('limit')) || 20, 100);
+    const data = await service.listRespondents(request.params.id, offset, limit);
+    return Response.json(data);
+  });
+
+  router.get('/api/surveys/:id/results/respondents/:rid', async (request, env) => {
+    const service = createService(env);
+    const data = await service.getRespondentDetail(request.params.id, request.params.rid);
+    return Response.json(data);
+  });
+
+  router.get('/api/surveys/:id/results/search', async (request, env) => {
+    const service = createService(env);
+    const url = new URL(request.url);
+    const query = url.searchParams.get('q') ?? '';
+    const questionId = url.searchParams.get('questionId') ?? undefined;
+    const data = await service.searchAnswers(request.params.id, query, questionId);
+    return Response.json(data);
+  });
 }

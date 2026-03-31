@@ -1,6 +1,17 @@
 import type { QuestionOption, QuestionType } from '../types';
 import { surveyFromApi, questionsFromApi, sectionsFromApiRaw } from '../engines/builder-engine.svelte';
-import type { Survey, SurveySection, SurveyQuestion, SurveyWithDetails } from '../types';
+import type {
+  Survey,
+  SurveySection,
+  SurveyQuestion,
+  SurveyWithDetails,
+  TimelineDataPoint,
+  DropoffDataPoint,
+  RespondentSummary,
+  RespondentDetail,
+  SearchResult,
+  LiveCounts,
+} from '../types';
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, {
@@ -228,4 +239,64 @@ export async function getSurveyResults(id: string): Promise<{
   }>;
 }> {
   return request(`/api/surveys/${id}/results`);
+}
+
+export async function getSurveyTimeline(
+  id: string,
+  granularity: 'day' | 'hour' = 'day',
+): Promise<TimelineDataPoint[]> {
+  return request(`/api/surveys/${id}/results/timeline?granularity=${granularity}`);
+}
+
+export async function getSurveyDropoff(id: string): Promise<DropoffDataPoint[]> {
+  return request(`/api/surveys/${id}/results/dropoff`);
+}
+
+export async function listRespondents(
+  id: string,
+  offset = 0,
+  limit = 20,
+): Promise<{ respondents: RespondentSummary[]; total: number }> {
+  return request(`/api/surveys/${id}/results/respondents?offset=${offset}&limit=${limit}`);
+}
+
+export async function getRespondent(
+  surveyId: string,
+  respondentId: string,
+): Promise<RespondentDetail> {
+  return request(`/api/surveys/${surveyId}/results/respondents/${respondentId}`);
+}
+
+export async function searchAnswers(
+  id: string,
+  query: string,
+  questionId?: string,
+): Promise<SearchResult[]> {
+  const params = new URLSearchParams({ q: query });
+  if (questionId) params.set('questionId', questionId);
+  return request(`/api/surveys/${id}/results/search?${params}`);
+}
+
+export async function getLiveResults(id: string): Promise<{
+  respondentCounts: { total: number; completed: number };
+  results: Array<{
+    questionId: string;
+    answers: Array<{ value: string; otherText: string | null; count: number }>;
+  }>;
+  liveCounts: LiveCounts;
+}> {
+  return request(`/api/surveys/${id}/results/live`);
+}
+
+export async function sendHeartbeat(
+  slug: string,
+  viewerId: string,
+  type: 'viewer' | 'respondent',
+): Promise<void> {
+  // Fire-and-forget, no error handling
+  fetch(`/api/s/${slug}/heartbeat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ viewerId, type }),
+  }).catch(() => {});
 }

@@ -13,4 +13,10 @@
       "database_id": "local",
     },
   ],
+  "analytics_engine_datasets": [
+    {
+      "binding": "ANALYTICS",
+      "dataset": "survey_heartbeats",
+    },
+  ],
 }

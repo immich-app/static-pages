@@ -2,7 +2,7 @@
   import { page } from '$app/state';
   import { onMount } from 'svelte';
   import type { Survey, SurveySection, SurveyQuestion } from '$lib/types';
-  import { getPublishedSurvey } from '$lib/api/surveys';
+  import { getPublishedSurvey, sendHeartbeat } from '$lib/api/surveys';
   import { createApiClient } from '$lib/api/client';
   import { createSurveyEngine, randomizeQuestions, randomizeOptionOrder } from '$lib/engines/survey-engine.svelte';
   import SurveyShell from '$lib/components/survey/SurveyShell.svelte';
@@ -75,9 +75,15 @@
       loading = false;
     })();
 
+    // Heartbeat for live viewer tracking
+    const heartbeatViewerId = crypto.randomUUID();
+    sendHeartbeat(slug, heartbeatViewerId, 'respondent');
+    const heartbeatTimer = setInterval(() => sendHeartbeat(slug, heartbeatViewerId, 'respondent'), 15_000);
+
     const handleUnload = () => client?.flushBufferSync();
     window.addEventListener('beforeunload', handleUnload);
     return () => {
+      clearInterval(heartbeatTimer);
       window.removeEventListener('beforeunload', handleUnload);
       client?.destroy();
     };
