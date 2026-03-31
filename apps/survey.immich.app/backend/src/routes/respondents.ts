@@ -1,22 +1,7 @@
-import { RespondentService } from '../services/respondent.service';
-import { SurveyService } from '../services/survey.service';
-import { RespondentRepository, AnswerRepository } from '../repositories/respondent.repository';
-import { SurveyRepository, SectionRepository, QuestionRepository } from '../repositories/survey.repository';
+import { createRespondentService, createSurveyService } from '../services/factory';
+import { ServiceError } from '../services/errors';
 import { getRespondentId, setRespondentCookie, deleteRespondentCookie } from '../cookie';
 import type { AppRouter } from '../types';
-
-function createRespondentService(env: Env): RespondentService {
-  return new RespondentService(
-    new RespondentRepository(env.DB),
-    new AnswerRepository(env.DB),
-    new SurveyRepository(env.DB),
-    new QuestionRepository(env.DB),
-  );
-}
-
-function createSurveyService(env: Env): SurveyService {
-  return new SurveyService(new SurveyRepository(env.DB), new SectionRepository(env.DB), new QuestionRepository(env.DB));
-}
 
 export function registerRespondentRoutes(router: AppRouter) {
   router.get('/api/s/:slug', async (request, env) => {
@@ -54,7 +39,7 @@ export function registerRespondentRoutes(router: AppRouter) {
     const respondentId = getRespondentId(request, slug);
 
     if (!respondentId) {
-      return new Response('No respondent cookie', { status: 400 });
+      throw new ServiceError('No respondent cookie', 400);
     }
 
     const { answers } = (await request.json()) as {
@@ -71,7 +56,7 @@ export function registerRespondentRoutes(router: AppRouter) {
     const respondentId = getRespondentId(request, slug);
 
     if (!respondentId) {
-      return new Response('No respondent cookie', { status: 400 });
+      throw new ServiceError('No respondent cookie', 400);
     }
 
     await service.complete(slug, respondentId);

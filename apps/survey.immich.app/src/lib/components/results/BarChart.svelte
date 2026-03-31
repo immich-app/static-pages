@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Chart, BarController, CategoryScale, LinearScale, BarElement, Tooltip } from 'chart.js';
+  import { getChartColors } from './chart-utils';
 
   Chart.register(BarController, CategoryScale, LinearScale, BarElement, Tooltip);
 
@@ -24,11 +25,9 @@
     // Access reactive data to track it
     const labels = data.map((d) => `${d.label} (${d.percentage.toFixed(1)}%)`);
     const values = data.map((d) => d.value);
-    const isDark = document.documentElement.classList.contains('dark');
+    const { isDark, textColor, gridColor } = getChartColors();
 
     const barColor = isDark ? 'rgb(172, 203, 250)' : 'rgb(66, 80, 175)';
-    const textColor = isDark ? 'rgb(229, 231, 235)' : 'rgb(55, 65, 81)';
-    const gridColor = isDark ? 'rgb(55, 65, 81)' : 'rgb(229, 231, 235)';
 
     if (chart) {
       chart.destroy();

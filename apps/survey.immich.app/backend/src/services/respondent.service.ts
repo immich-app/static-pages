@@ -1,6 +1,7 @@
 import { RespondentRepository, AnswerRepository, type AnswerRow } from '../repositories/respondent.repository';
 import { SurveyRepository, QuestionRepository, type QuestionRow, type SurveyRow } from '../repositories/survey.repository';
-import { ServiceError } from './survey.service';
+import { ServiceError } from './errors';
+import { BATCH_ANSWER_LIMIT } from '../constants';
 
 export interface ResumeResult {
   answers: Record<string, { value: string; otherText?: string }>;
@@ -94,8 +95,8 @@ export class RespondentService {
   }
 
   async submitBatch(slug: string, respondentId: string, inputs: BatchAnswerInput[]): Promise<void> {
-    if (!inputs || !Array.isArray(inputs) || inputs.length === 0 || inputs.length > 20) {
-      throw new ServiceError('Invalid answers payload: must be 1-20 answers', 400);
+    if (!inputs || !Array.isArray(inputs) || inputs.length === 0 || inputs.length > BATCH_ANSWER_LIMIT) {
+      throw new ServiceError(`Invalid answers payload: must be 1-${BATCH_ANSWER_LIMIT} answers`, 400);
     }
 
     const respondent = await this.respondents.getById(respondentId);

@@ -18,7 +18,6 @@
     mdiCodeTags,
     mdiUndo,
     mdiRedo,
-    mdiDragVertical,
   } from '@mdi/js';
   import { dndzone } from 'svelte-dnd-action';
   import type { Survey } from '$lib/types';

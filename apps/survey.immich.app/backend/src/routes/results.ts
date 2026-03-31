@@ -1,30 +1,21 @@
-import { RespondentService } from '../services/respondent.service';
-import { RespondentRepository, AnswerRepository } from '../repositories/respondent.repository';
-import { SurveyRepository, QuestionRepository } from '../repositories/survey.repository';
+import { createRespondentService } from '../services/factory';
+import { ServiceError } from '../services/errors';
+import { MAX_PAGINATION_LIMIT } from '../constants';
 import type { AppRouter } from '../types';
-
-function createService(env: Env): RespondentService {
-  return new RespondentService(
-    new RespondentRepository(env.DB),
-    new AnswerRepository(env.DB),
-    new SurveyRepository(env.DB),
-    new QuestionRepository(env.DB),
-  );
-}
 
 export function registerResultRoutes(router: AppRouter) {
   router.get('/api/surveys/:id/results', async (request, env) => {
-    const service = createService(env);
+    const service = createRespondentService(env);
     const results = await service.getResults(request.params.id);
     return Response.json(results);
   });
 
   router.get('/api/surveys/:id/results/export', async (request, env) => {
-    const service = createService(env);
+    const service = createRespondentService(env);
     const url = new URL(request.url);
     const format = url.searchParams.get('format');
     if (format !== 'csv' && format !== 'json') {
-      return Response.json({ error: 'format must be csv or json' }, { status: 400 });
+      throw new ServiceError('format must be csv or json', 400);
     }
     const result = await service.exportResponses(request.params.id, format);
     return new Response(result.data, {
@@ -36,13 +27,13 @@ export function registerResultRoutes(router: AppRouter) {
   });
 
   router.get('/api/surveys/:id/results/live', async (request, env) => {
-    const service = createService(env);
+    const service = createRespondentService(env);
     const results = await service.getLiveResults(request.params.id);
     return Response.json(results);
   });
 
   router.get('/api/surveys/:id/results/timeline', async (request, env) => {
-    const service = createService(env);
+    const service = createRespondentService(env);
     const url = new URL(request.url);
     const granularity = url.searchParams.get('granularity') === 'hour' ? 'hour' : 'day';
     const data = await service.getTimeline(request.params.id, granularity);
@@ -50,28 +41,28 @@ export function registerResultRoutes(router: AppRouter) {
   });
 
   router.get('/api/surveys/:id/results/dropoff', async (request, env) => {
-    const service = createService(env);
+    const service = createRespondentService(env);
     const data = await service.getDropoff(request.params.id);
     return Response.json(data);
   });
 
   router.get('/api/surveys/:id/results/respondents', async (request, env) => {
-    const service = createService(env);
+    const service = createRespondentService(env);
     const url = new URL(request.url);
     const offset = Number(url.searchParams.get('offset')) || 0;
-    const limit = Math.min(Number(url.searchParams.get('limit')) || 20, 100);
+    const limit = Math.min(Number(url.searchParams.get('limit')) || 20, MAX_PAGINATION_LIMIT);
     const data = await service.listRespondents(request.params.id, offset, limit);
     return Response.json(data);
   });
 
   router.get('/api/surveys/:id/results/respondents/:rid', async (request, env) => {
-    const service = createService(env);
+    const service = createRespondentService(env);
     const data = await service.getRespondentDetail(request.params.id, request.params.rid);
     return Response.json(data);
   });
 
   router.get('/api/surveys/:id/results/search', async (request, env) => {
-    const service = createService(env);
+    const service = createRespondentService(env);
     const url = new URL(request.url);
     const query = url.searchParams.get('q') ?? '';
     const questionId = url.searchParams.get('questionId') ?? undefined;

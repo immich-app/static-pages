@@ -3,6 +3,7 @@
   import { mdiCheck } from '@mdi/js';
   import { SvelteSet } from 'svelte/reactivity';
   import type { SurveyQuestion, SurveyAnswer } from '$lib/types';
+  import QuestionHeader from './QuestionHeader.svelte';
 
   interface Props {
     question: SurveyQuestion;
@@ -31,12 +32,7 @@
   }
 </script>
 
-<h2 class="mb-2 text-xl font-bold sm:text-2xl">{question.text}</h2>
-
-{#if question.description}
-  <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-  <p class="mb-6 text-base text-gray-500">{@html question.description}</p>
-{/if}
+<QuestionHeader text={question.text} description={question.description} html />
 
 <p class="mb-4 text-sm text-gray-400">Select all that apply</p>
 

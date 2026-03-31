@@ -10,8 +10,6 @@
     unpublishSurvey,
     createSection,
     createQuestion,
-    reorderSections,
-    reorderQuestions,
   } from '$lib/api/surveys';
   import type { BuilderSection } from '$lib/engines/builder-engine.svelte';
   import { surveyTemplates, type SurveyTemplate } from '$lib/engines/survey-templates';

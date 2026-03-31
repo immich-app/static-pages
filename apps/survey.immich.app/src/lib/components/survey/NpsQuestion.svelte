@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { SurveyQuestion, SurveyAnswer } from '$lib/types';
+  import QuestionHeader from './QuestionHeader.svelte';
 
   interface Props {
     question: SurveyQuestion;
@@ -24,11 +25,7 @@
   }
 </script>
 
-<h2 class="mb-2 text-xl font-bold sm:text-2xl">{question.text}</h2>
-
-{#if question.description}
-  <p class="mb-6 text-base text-gray-500">{question.description}</p>
-{/if}
+<QuestionHeader text={question.text} description={question.description} />
 
 <div class="flex flex-col gap-2">
   <div class="grid grid-cols-6 gap-2 sm:grid-cols-11 sm:gap-1.5">

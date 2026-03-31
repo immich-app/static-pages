@@ -1,3 +1,5 @@
+import { ACTIVE_RESPONDENT_WINDOW_MS, SEARCH_RESULT_LIMIT } from '../constants';
+
 export interface RespondentRow {
   id: string;
   survey_id: string;
@@ -68,7 +70,7 @@ export class RespondentRepository {
   }
 
   async countActiveBySurveyId(surveyId: string): Promise<number> {
-    const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const fiveMinAgo = new Date(Date.now() - ACTIVE_RESPONDENT_WINDOW_MS).toISOString();
     const row = await this.db
       .prepare('SELECT COUNT(*) as count FROM respondents WHERE survey_id = ? AND is_complete = 0 AND created_at > ?')
       .bind(surveyId, fiveMinAgo)
@@ -218,9 +220,9 @@ export class AnswerRepository {
           JOIN survey_questions q ON a.question_id = q.id
           WHERE r.survey_id = ? AND a.question_id = ? AND a.answer LIKE ?
           ORDER BY a.answered_at DESC
-          LIMIT 100
+          LIMIT ?
         `)
-        .bind(surveyId, questionId, likeQuery)
+        .bind(surveyId, questionId, likeQuery, SEARCH_RESULT_LIMIT)
         .all<{ respondent_id: string; question_id: string; question_text: string; answer: string }>();
       return result.results;
     }
@@ -232,9 +234,9 @@ export class AnswerRepository {
         JOIN survey_questions q ON a.question_id = q.id
         WHERE r.survey_id = ? AND a.answer LIKE ?
         ORDER BY a.answered_at DESC
-        LIMIT 100
+        LIMIT ?
       `)
-      .bind(surveyId, likeQuery)
+      .bind(surveyId, likeQuery, SEARCH_RESULT_LIMIT)
       .all<{ respondent_id: string; question_id: string; question_text: string; answer: string }>();
     return result.results;
   }

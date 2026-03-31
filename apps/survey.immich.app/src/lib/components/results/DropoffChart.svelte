@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip } from 'chart.js';
+  import { getChartColors } from './chart-utils';
   import type { DropoffDataPoint } from '$lib/types';
 
   Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip);
@@ -17,14 +18,12 @@
   $effect(() => {
     if (!canvas || data.length === 0) return;
 
-    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const { isDark, textColor, gridColor } = getChartColors();
     const barColor = data.map((d) => {
       if (d.dropoffRate > 30) return isDark ? 'rgb(248, 113, 113)' : 'rgb(239, 68, 68)';
       if (d.dropoffRate > 15) return isDark ? 'rgb(251, 191, 36)' : 'rgb(245, 158, 11)';
       return isDark ? 'rgb(74, 222, 128)' : 'rgb(34, 197, 94)';
     });
-    const textColor = isDark ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)';
-    const gridColor = isDark ? 'rgb(55, 65, 81)' : 'rgb(229, 231, 235)';
 
     const labels = data.map((d, i) => `Q${i + 1}: ${d.questionText.length > 30 ? d.questionText.slice(0, 30) + '...' : d.questionText}`);
 

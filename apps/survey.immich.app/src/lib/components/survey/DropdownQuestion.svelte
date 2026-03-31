@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { SurveyQuestion, SurveyAnswer } from '$lib/types';
+  import QuestionHeader from './QuestionHeader.svelte';
 
   interface Props {
     question: SurveyQuestion;
@@ -16,11 +17,7 @@
   }
 </script>
 
-<h2 class="mb-2 text-xl font-bold sm:text-2xl">{question.text}</h2>
-
-{#if question.description}
-  <p class="mb-6 text-base text-gray-500">{question.description}</p>
-{/if}
+<QuestionHeader text={question.text} description={question.description} />
 
 <select
   class="focus:border-immich-primary dark:focus:border-immich-primary w-full appearance-none rounded-lg border-2 border-gray-200 bg-white px-4 py-3 text-base text-gray-900 transition-colors duration-150 outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"

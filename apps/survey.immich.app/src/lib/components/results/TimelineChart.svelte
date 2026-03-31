@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Chart, LineController, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend, Filler } from 'chart.js';
+  import { getChartColors } from './chart-utils';
   import type { TimelineDataPoint } from '$lib/types';
 
   Chart.register(LineController, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend, Filler);
@@ -17,11 +18,9 @@
   $effect(() => {
     if (!canvas || data.length === 0) return;
 
-    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const { isDark, textColor, gridColor } = getChartColors();
     const startedColor = isDark ? 'rgb(96, 165, 250)' : 'rgb(59, 130, 246)';
     const completedColor = isDark ? 'rgb(74, 222, 128)' : 'rgb(34, 197, 94)';
-    const textColor = isDark ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)';
-    const gridColor = isDark ? 'rgb(55, 65, 81)' : 'rgb(229, 231, 235)';
 
     chart?.destroy();
     chart = new Chart(canvas, {

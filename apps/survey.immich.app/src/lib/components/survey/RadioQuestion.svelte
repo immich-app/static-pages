@@ -2,6 +2,7 @@
   import { Icon } from '@immich/ui';
   import { mdiCheck } from '@mdi/js';
   import type { SurveyQuestion, SurveyAnswer } from '$lib/types';
+  import QuestionHeader from './QuestionHeader.svelte';
 
   interface Props {
     question: SurveyQuestion;
@@ -44,12 +45,7 @@
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div onkeydown={handleKeydown}>
-  <h2 class="mb-2 text-xl font-bold sm:text-2xl">{question.text}</h2>
-
-  {#if question.description}
-    <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-    <p class="mb-6 text-base text-gray-500">{@html question.description}</p>
-  {/if}
+  <QuestionHeader text={question.text} description={question.description} html />
 
   <div class="flex flex-col gap-3" role="radiogroup">
     {#each visibleOptions as option (option.value)}

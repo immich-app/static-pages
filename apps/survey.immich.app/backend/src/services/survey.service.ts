@@ -6,6 +6,10 @@ import {
   type SectionRow,
   type QuestionRow,
 } from '../repositories/survey.repository';
+import { ServiceError } from './errors';
+import { VALID_QUESTION_TYPES, SLUG_PATTERN } from '../constants';
+
+export { ServiceError };
 
 export interface SurveyWithDetails {
   survey: SurveyRow;
@@ -70,20 +74,6 @@ export interface UpdateQuestionInput {
   conditional?: { showIf: { questionId: string; condition: string } } | null;
   config?: Record<string, unknown> | null;
 }
-
-const VALID_QUESTION_TYPES = [
-  'radio',
-  'checkbox',
-  'text',
-  'textarea',
-  'email',
-  'rating',
-  'nps',
-  'number',
-  'dropdown',
-  'likert',
-];
-const SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{1,48}[a-z0-9]$/;
 
 export class SurveyService {
   constructor(
@@ -474,12 +464,3 @@ export class SurveyService {
   }
 }
 
-export class ServiceError extends Error {
-  constructor(
-    message: string,
-    public status: number,
-  ) {
-    super(message);
-    this.name = 'ServiceError';
-  }
-}

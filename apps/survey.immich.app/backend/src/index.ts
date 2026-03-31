@@ -1,5 +1,5 @@
 import { AutoRouter, cors, IRequest } from 'itty-router';
-import { ServiceError } from './services/survey.service';
+import { ServiceError } from './services/errors';
 import { registerSurveyRoutes } from './routes/surveys';
 import { registerRespondentRoutes } from './routes/respondents';
 import { registerResultRoutes } from './routes/results';

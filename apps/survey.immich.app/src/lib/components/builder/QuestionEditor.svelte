@@ -133,7 +133,6 @@
   <!-- Collapsed header (always visible) -->
   <div class="flex w-full items-center gap-1 px-4 py-3">
     {#if dragHandle}
-      <!-- svelte-ignore a11y_no_static_element_interactions -->
       <div class="shrink-0 cursor-grab text-gray-500 hover:text-gray-300 active:cursor-grabbing" title="Drag to reorder">
         <Icon icon={mdiDragVertical} size="16" />
       </div>
