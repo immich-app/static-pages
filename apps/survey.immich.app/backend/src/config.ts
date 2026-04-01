@@ -18,12 +18,19 @@ export interface AppConfig {
   cookieSecure: boolean;
 }
 
+export interface AnalyticsQueryConfig {
+  accountId: string;
+  apiToken: string;
+  dataset: string;
+}
+
 export interface AppContext {
   db: Kysely<Database>;
   config: AppConfig;
   analytics?: {
     writeDataPoint: (point: { indexes: string[]; blobs: string[]; doubles: number[] }) => void;
   };
+  analyticsQuery?: AnalyticsQueryConfig;
 }
 
 // Load config from Cloudflare Workers Env

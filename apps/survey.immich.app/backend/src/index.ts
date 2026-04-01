@@ -61,7 +61,15 @@ const router = AutoRouter<IRequest & { ctx?: AppContext }, [Env, ExecutionContex
     (request: IRequest & { ctx?: AppContext }, env: Env) => {
       const config = configFromEnv(env);
       const db = createD1Database(env.DB);
-      request.ctx = { db, config, analytics: env.ANALYTICS };
+      request.ctx = {
+        db,
+        config,
+        analytics: env.ANALYTICS,
+        analyticsQuery:
+          env.CF_ACCOUNT_ID && env.CF_ANALYTICS_API_TOKEN
+            ? { accountId: env.CF_ACCOUNT_ID, apiToken: env.CF_ANALYTICS_API_TOKEN, dataset: 'survey_heartbeats' }
+            : undefined,
+      };
     },
     (request: IRequest & { ctx?: AppContext }) => authMiddleware(request.ctx!)(request),
   ],

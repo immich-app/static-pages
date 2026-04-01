@@ -1,6 +1,8 @@
 interface Env {
   DB: D1Database;
   ANALYTICS: AnalyticsEngineDataset;
+  CF_ACCOUNT_ID?: string;
+  CF_ANALYTICS_API_TOKEN?: string;
   PASSWORD_SECRET: string;
   OIDC_ISSUER: string;
   OIDC_CLIENT_ID: string;

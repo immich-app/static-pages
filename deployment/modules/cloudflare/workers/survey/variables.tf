@@ -49,3 +49,9 @@ variable "oidc_role_map_editor" {
   type        = string
   default     = "survey-editor"
 }
+
+variable "cloudflare_api_token" {
+  description = "Cloudflare API token with permission to create API tokens (from 1Password op://tf/cloudflare/api_token)"
+  type        = string
+  sensitive   = true
+}

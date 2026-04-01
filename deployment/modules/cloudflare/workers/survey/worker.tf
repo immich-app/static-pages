@@ -73,6 +73,16 @@ resource "cloudflare_workers_script" "api" {
     name = "OIDC_ROLE_MAP_EDITOR"
     text = var.oidc_role_map_editor
   }
+
+  plain_text_binding {
+    name = "CF_ACCOUNT_ID"
+    text = var.cloudflare_account_id
+  }
+
+  secret_text_binding {
+    name = "CF_ANALYTICS_API_TOKEN"
+    text = cloudflare_api_token.analytics_read.value
+  }
 }
 
 data "cloudflare_zone" "immich_app" {
