@@ -23,7 +23,7 @@
   <div class="flex items-center gap-2 sm:gap-1">
     {#each Array.from({ length: scaleMax }, (_, i) => i + 1) as star (star)}
       <button
-        class="transition-transform duration-150 hover:scale-110 focus:outline-none"
+        class="rounded-sm transition-transform duration-150 hover:scale-110"
         data-rating-value={star}
         onmouseenter={() => (hoverValue = star)}
         onmouseleave={() => (hoverValue = 0)}

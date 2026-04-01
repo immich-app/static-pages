@@ -38,21 +38,61 @@ export async function getRespondent(surveyId: string, respondentId: string): Pro
   return request(`/api/surveys/${surveyId}/results/respondents/${respondentId}`);
 }
 
-export async function searchAnswers(id: string, query: string, questionId?: string): Promise<SearchResult[]> {
+export async function searchAnswers(
+  id: string,
+  query: string,
+  questionId?: string,
+  pagination?: { offset?: number; limit?: number },
+): Promise<{ results: SearchResult[]; total: number; offset: number; limit: number }> {
   const params = new URLSearchParams({ q: query });
   if (questionId) params.set('questionId', questionId);
+  if (pagination?.offset) params.set('offset', String(pagination.offset));
+  if (pagination?.limit) params.set('limit', String(pagination.limit));
   return request(`/api/surveys/${id}/results/search?${params}`);
 }
 
-export async function getLiveResults(id: string): Promise<{
+type LiveResults = {
   respondentCounts: { total: number; completed: number };
   results: Array<{
     questionId: string;
     answers: Array<{ value: string; otherText: string | null; count: number }>;
   }>;
   liveCounts: LiveCounts;
-}> {
-  return request(`/api/surveys/${id}/results/live`);
+};
+
+const liveResultsEtags = new Map<string, string>();
+
+export async function getLiveResults(id: string): Promise<LiveResults | null> {
+  const headers: Record<string, string> = {};
+  const cachedEtag = liveResultsEtags.get(id);
+  if (cachedEtag) {
+    headers['If-None-Match'] = cachedEtag;
+  }
+
+  const res = await fetch(`/api/surveys/${id}/results/live`, {
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json', ...headers },
+  });
+
+  if (res.status === 304) {
+    return null;
+  }
+
+  if (!res.ok) {
+    if (res.status === 401) {
+      window.location.reload();
+      throw new Error('Authentication required');
+    }
+    const body = await res.json().catch(() => ({ error: res.statusText }));
+    throw new Error((body as { error?: string }).error ?? `Request failed (${res.status})`);
+  }
+
+  const etag = res.headers.get('ETag');
+  if (etag) {
+    liveResultsEtags.set(id, etag);
+  }
+
+  return res.json() as Promise<LiveResults>;
 }
 
 export async function deleteRespondent(surveyId: string, respondentId: string): Promise<void> {

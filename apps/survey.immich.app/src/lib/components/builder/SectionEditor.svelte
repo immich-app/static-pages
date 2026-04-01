@@ -223,7 +223,7 @@
       </div>
       <div>
         <label class="mb-1.5 block text-xs font-medium tracking-wider text-gray-500 uppercase"
-          >Description <span class="tracking-normal text-gray-600 normal-case">(optional)</span></label
+          >Description <span class="tracking-normal text-gray-500 normal-case">(optional)</span></label
         >
         <Input
           value={section.description ?? ''}

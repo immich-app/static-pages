@@ -276,6 +276,7 @@ describe('API URL construction', () => {
     fetchSpy.mockResolvedValueOnce({
       ok: true,
       status: 200,
+      headers: new Headers({ ETag: '"0-0"' }),
       json: () =>
         Promise.resolve({
           respondentCounts: { total: 0, completed: 0 },
@@ -287,6 +288,32 @@ describe('API URL construction', () => {
     await getLiveResults('s1');
     const url = fetchSpy.mock.calls[0][0] as string;
     expect(url).toBe('/api/surveys/s1/results/live');
+  });
+
+  it('getLiveResults returns null on 304 Not Modified', async () => {
+    fetchSpy.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      headers: new Headers({ ETag: '"5-10"' }),
+      json: () =>
+        Promise.resolve({
+          respondentCounts: { total: 10, completed: 5 },
+          results: [],
+          liveCounts: { activeViewers: 0, activeRespondents: 0 },
+        }),
+    });
+    const { getLiveResults } = await import('../api/surveys');
+    // First call caches the ETag
+    await getLiveResults('s-etag');
+
+    fetchSpy.mockResolvedValueOnce({
+      ok: false,
+      status: 304,
+      headers: new Headers(),
+    });
+    // Second call sends If-None-Match and gets 304
+    const result = await getLiveResults('s-etag');
+    expect(result).toBeNull();
   });
 });
 

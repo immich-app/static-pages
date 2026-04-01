@@ -41,7 +41,7 @@
     </div>
 
     {#if passwordEnabled}
-      <form onsubmit={handlePasswordLogin} class="space-y-4">
+      <form onsubmit={handlePasswordLogin} class="space-y-4" aria-label="Sign in">
         <div>
           <Input type="password" bind:value={password} placeholder="Admin password" disabled={submitting} />
         </div>

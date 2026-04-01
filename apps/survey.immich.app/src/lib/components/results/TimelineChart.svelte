@@ -1,19 +1,7 @@
 <script lang="ts">
-  import {
-    Chart,
-    LineController,
-    LineElement,
-    PointElement,
-    CategoryScale,
-    LinearScale,
-    Tooltip,
-    Legend,
-    Filler,
-  } from 'chart.js';
+  import type { Chart as ChartType } from 'chart.js';
   import { getChartColors } from './chart-utils';
   import type { TimelineDataPoint } from '$lib/types';
-
-  Chart.register(LineController, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend, Filler);
 
   interface Props {
     data: TimelineDataPoint[];
@@ -23,7 +11,7 @@
 
   let { data, granularity, onGranularityChange }: Props = $props();
   let canvas: HTMLCanvasElement | undefined = $state();
-  let chart: Chart | undefined;
+  let chart: ChartType | undefined;
 
   $effect(() => {
     if (!canvas || data.length === 0) return;
@@ -32,45 +20,51 @@
     const startedColor = isDark ? 'rgb(96, 165, 250)' : 'rgb(59, 130, 246)';
     const completedColor = isDark ? 'rgb(74, 222, 128)' : 'rgb(34, 197, 94)';
 
-    chart?.destroy();
-    chart = new Chart(canvas, {
-      type: 'line',
-      data: {
-        labels: data.map((d) => d.period),
-        datasets: [
-          {
-            label: 'Started',
-            data: data.map((d) => d.started),
-            borderColor: startedColor,
-            backgroundColor: startedColor + '20',
-            fill: true,
-            tension: 0.3,
-            pointRadius: 3,
-          },
-          {
-            label: 'Completed',
-            data: data.map((d) => d.completed),
-            borderColor: completedColor,
-            backgroundColor: completedColor + '20',
-            fill: true,
-            tension: 0.3,
-            pointRadius: 3,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { position: 'top', labels: { color: textColor, usePointStyle: true, pointStyle: 'circle' } },
-          tooltip: { mode: 'index', intersect: false },
+    (async () => {
+      const { Chart, LineController, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend, Filler } =
+        await import('chart.js');
+      Chart.register(LineController, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend, Filler);
+
+      chart?.destroy();
+      chart = new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels: data.map((d) => d.period),
+          datasets: [
+            {
+              label: 'Started',
+              data: data.map((d) => d.started),
+              borderColor: startedColor,
+              backgroundColor: startedColor + '20',
+              fill: true,
+              tension: 0.3,
+              pointRadius: 3,
+            },
+            {
+              label: 'Completed',
+              data: data.map((d) => d.completed),
+              borderColor: completedColor,
+              backgroundColor: completedColor + '20',
+              fill: true,
+              tension: 0.3,
+              pointRadius: 3,
+            },
+          ],
         },
-        scales: {
-          x: { ticks: { color: textColor, maxRotation: 45 }, grid: { color: gridColor } },
-          y: { beginAtZero: true, ticks: { color: textColor, precision: 0 }, grid: { color: gridColor } },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top', labels: { color: textColor, usePointStyle: true, pointStyle: 'circle' } },
+            tooltip: { mode: 'index', intersect: false },
+          },
+          scales: {
+            x: { ticks: { color: textColor, maxRotation: 45 }, grid: { color: gridColor } },
+            y: { beginAtZero: true, ticks: { color: textColor, precision: 0 }, grid: { color: gridColor } },
+          },
         },
-      },
-    });
+      });
+    })();
 
     return () => chart?.destroy();
   });

@@ -86,9 +86,11 @@
   async function refreshResults() {
     try {
       const data = await getLiveResults(surveyId);
-      respondentCounts = data.respondentCounts;
-      results = data.results;
-      liveCounts = data.liveCounts;
+      if (data) {
+        respondentCounts = data.respondentCounts;
+        results = data.results;
+        liveCounts = data.liveCounts;
+      }
     } catch {
       // silently fail on poll
     }
@@ -123,9 +125,11 @@
       survey = surveyData.survey;
       questions = surveyData.questions;
       sections = surveyData.sections;
-      respondentCounts = resultsData.respondentCounts;
-      results = resultsData.results;
-      liveCounts = resultsData.liveCounts;
+      if (resultsData) {
+        respondentCounts = resultsData.respondentCounts;
+        results = resultsData.results;
+        liveCounts = resultsData.liveCounts;
+      }
       timelineData = timeline;
       dropoffData = dropoff;
     } catch (e) {

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Icon } from '@immich/ui';
   import { mdiClose, mdiFileUploadOutline } from '@mdi/js';
+  import { onMount } from 'svelte';
 
   interface Props {
     onImport: (definition: unknown) => void;
@@ -13,6 +14,15 @@
   let parseError = $state<string | null>(null);
   let importing = $state(false);
   let fileInput = $state<HTMLInputElement | null>(null);
+  let modalElement: HTMLDivElement | undefined = $state();
+  let previousFocus: HTMLElement | null = null;
+
+  onMount(() => {
+    previousFocus = document.activeElement as HTMLElement;
+    const firstFocusable = modalElement?.querySelector<HTMLElement>('input, button, textarea, [tabindex]');
+    firstFocusable?.focus();
+    return () => previousFocus?.focus();
+  });
 
   function handleFileSelect(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -67,14 +77,20 @@
 
 <svelte:window onkeydown={handleKeydown} />
 
-<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 <div
   class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
   onclick={handleBackdropClick}
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="import-modal-title"
+  tabindex="-1"
 >
-  <div class="mx-4 w-full max-w-lg rounded-xl border border-gray-700 bg-gray-900 p-6 shadow-2xl">
+  <div
+    bind:this={modalElement}
+    class="mx-4 w-full max-w-lg rounded-xl border border-gray-700 bg-gray-900 p-6 shadow-2xl"
+  >
     <div class="mb-4 flex items-center justify-between">
-      <h2 class="text-lg font-semibold">Import Survey Definition</h2>
+      <h2 id="import-modal-title" class="text-lg font-semibold">Import Survey Definition</h2>
       <button class="rounded-md p-1 text-gray-400 hover:bg-gray-800 hover:text-gray-200" onclick={onClose}>
         <Icon icon={mdiClose} size="20" />
       </button>

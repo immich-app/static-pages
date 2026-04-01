@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Icon } from '@immich/ui';
   import { mdiClose, mdiCellphone } from '@mdi/js';
+  import { onMount } from 'svelte';
   import type { Survey } from '$lib/types';
   import type { BuilderSection } from '$lib/engines/builder-engine.svelte';
   import { createSurveyEngine } from '$lib/engines/survey-engine.svelte';
@@ -15,6 +16,15 @@
   }
 
   let { survey, sections, onClose }: Props = $props();
+  let modalElement: HTMLDivElement | undefined = $state();
+  let previousFocus: HTMLElement | null = null;
+
+  onMount(() => {
+    previousFocus = document.activeElement as HTMLElement;
+    const firstFocusable = modalElement?.querySelector<HTMLElement>('input, button, [tabindex]');
+    firstFocusable?.focus();
+    return () => previousFocus?.focus();
+  });
 
   let phase = $state<'welcome' | 'survey' | 'thanks'>('welcome');
 
@@ -54,11 +64,15 @@
 <div
   class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
   onkeydown={(e) => e.key === 'Escape' && onClose()}
+  role="dialog"
+  aria-modal="true"
+  aria-label="Survey preview"
+  tabindex="-1"
 >
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   <div class="absolute inset-0" onclick={onClose}></div>
 
-  <div class="relative z-10 flex flex-col items-center gap-4">
+  <div bind:this={modalElement} class="relative z-10 flex flex-col items-center gap-4">
     <div class="flex items-center gap-3">
       <Icon icon={mdiCellphone} size="20" class="text-gray-400" />
       <span class="text-sm font-medium text-gray-300">Preview</span>

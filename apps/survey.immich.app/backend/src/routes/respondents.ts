@@ -40,7 +40,7 @@ export function registerRespondentRoutes(router: AppRouter) {
       const isAuthed = token ? await verifyToken(result.survey.id, token, ctx.config.passwordSecret) : false;
 
       if (!isAuthed) {
-        return Response.json({
+        const response = Response.json({
           survey: {
             id: result.survey.id,
             title: result.survey.title,
@@ -54,11 +54,15 @@ export function registerRespondentRoutes(router: AppRouter) {
           questions: [],
           requiresPassword: true,
         });
+        response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400');
+        return response;
       }
     }
 
     const { password_hash: _password_hash, ...safeSurvey } = result.survey;
-    return Response.json({ ...result, survey: safeSurvey });
+    const response = Response.json({ ...result, survey: safeSurvey });
+    response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400');
+    return response;
   });
 
   router.post('/api/s/:slug/auth', async (request) => {
@@ -112,7 +116,7 @@ export function registerRespondentRoutes(router: AppRouter) {
       setRespondentCookie(headers, slug, result.respondentId);
     }
 
-    return Response.json(
+    const response = Response.json(
       {
         answers: result.answers,
         nextQuestionIndex: result.nextQuestionIndex,
@@ -120,6 +124,8 @@ export function registerRespondentRoutes(router: AppRouter) {
       },
       { headers },
     );
+    response.headers.set('Cache-Control', 'private, no-store');
+    return response;
   });
 
   router.post('/api/s/:slug/answers/batch', async (request) => {
@@ -185,6 +191,9 @@ export function registerRespondentRoutes(router: AppRouter) {
     } catch {
       // heartbeat is best-effort, swallow errors
     }
-    return new Response(null, { status: 204 });
+    return new Response(null, {
+      status: 204,
+      headers: { 'Cache-Control': 'no-store' },
+    });
   });
 }

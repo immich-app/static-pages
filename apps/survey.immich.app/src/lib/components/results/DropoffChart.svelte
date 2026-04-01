@@ -1,9 +1,7 @@
 <script lang="ts">
-  import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip } from 'chart.js';
+  import type { Chart as ChartType } from 'chart.js';
   import { getChartColors } from './chart-utils';
   import type { DropoffDataPoint } from '$lib/types';
-
-  Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip);
 
   interface Props {
     data: DropoffDataPoint[];
@@ -11,7 +9,7 @@
 
   let { data }: Props = $props();
   let canvas: HTMLCanvasElement | undefined = $state();
-  let chart: Chart | undefined;
+  let chart: ChartType | undefined;
 
   const containerHeight = $derived(Math.max(200, data.length * 40 + 60));
 
@@ -29,41 +27,46 @@
       (d, i) => `Q${i + 1}: ${d.questionText.length > 30 ? d.questionText.slice(0, 30) + '...' : d.questionText}`,
     );
 
-    chart?.destroy();
-    chart = new Chart(canvas, {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [
-          {
-            data: data.map((d) => d.respondentsAnswered),
-            backgroundColor: barColor,
-            borderRadius: 4,
-            barThickness: 24,
-          },
-        ],
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: (ctx) => {
-                const d = data[ctx.dataIndex];
-                return `${d.respondentsAnswered} answered (${d.dropoffRate}% drop-off)`;
+    (async () => {
+      const { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip } = await import('chart.js');
+      Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip);
+
+      chart?.destroy();
+      chart = new Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            {
+              data: data.map((d) => d.respondentsAnswered),
+              backgroundColor: barColor,
+              borderRadius: 4,
+              barThickness: 24,
+            },
+          ],
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => {
+                  const d = data[ctx.dataIndex];
+                  return `${d.respondentsAnswered} answered (${d.dropoffRate}% drop-off)`;
+                },
               },
             },
           },
+          scales: {
+            x: { beginAtZero: true, ticks: { color: textColor, precision: 0 }, grid: { color: gridColor } },
+            y: { ticks: { color: textColor, font: { size: 11 } }, grid: { display: false } },
+          },
         },
-        scales: {
-          x: { beginAtZero: true, ticks: { color: textColor, precision: 0 }, grid: { color: gridColor } },
-          y: { ticks: { color: textColor, font: { size: 11 } }, grid: { display: false } },
-        },
-      },
-    });
+      });
+    })();
 
     return () => chart?.destroy();
   });

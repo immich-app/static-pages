@@ -82,7 +82,7 @@
   </div>
   {#each options as option, i (i)}
     <div class="group flex items-center gap-1.5">
-      <span class="w-5 text-center text-xs text-gray-600">{i + 1}</span>
+      <span class="w-5 text-center text-xs text-gray-500">{i + 1}</span>
       <input
         bind:this={inputRefs[i]}
         class="focus:border-immich-primary dark:focus:border-immich-primary flex-1 rounded-md border border-gray-200 bg-transparent px-3 py-1.5 text-sm transition-colors outline-none dark:border-gray-700"
@@ -125,7 +125,7 @@
     <Icon icon={mdiPlus} size="14" />
     Add option
   </button>
-  <p class="text-[11px] text-gray-600">Press Enter to add, Backspace on empty to remove</p>
+  <p class="text-[11px] text-gray-500">Press Enter to add, Backspace on empty to remove</p>
 </div>
 
 {#if showBulkPaste}

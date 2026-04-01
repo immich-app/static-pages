@@ -405,7 +405,7 @@
         </div>
         <div class="relative">
           <pre
-            class="overflow-x-auto rounded-lg bg-gray-100 p-3 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-300"><code
+            class="overflow-x-auto rounded-lg bg-gray-100 p-3 text-xs text-gray-500 dark:bg-gray-800 dark:text-gray-300"><code
               >{embedCode}</code
             ></pre>
           <button

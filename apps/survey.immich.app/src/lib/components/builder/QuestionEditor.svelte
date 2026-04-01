@@ -232,7 +232,7 @@
         <!-- Description -->
         <div>
           <label class="mb-1.5 block text-xs font-medium tracking-wider text-gray-500 uppercase"
-            >Description <span class="tracking-normal text-gray-600 normal-case">(optional)</span></label
+            >Description <span class="tracking-normal text-gray-500 normal-case">(optional)</span></label
           >
           <Textarea
             value={question.description}
@@ -497,7 +497,7 @@
                 {#if showLogicValuesInput}
                   <div>
                     <label class="mb-1.5 block text-xs font-medium tracking-wider text-gray-500 uppercase"
-                      >Values <span class="tracking-normal text-gray-600 normal-case">(comma-separated)</span></label
+                      >Values <span class="tracking-normal text-gray-500 normal-case">(comma-separated)</span></label
                     >
                     <Input
                       value={String(question.config.skipConditionValues ?? '')}

@@ -241,25 +241,39 @@ export class AnswerRepository {
     surveyId: string,
     query: string,
     questionId?: string,
-  ): Promise<Array<{ respondent_id: string; question_id: string; question_text: string; answer: string }>> {
+    offset = 0,
+    limit = SEARCH_RESULT_LIMIT,
+  ): Promise<{
+    results: Array<{ respondent_id: string; question_id: string; question_text: string; answer: string }>;
+    total: number;
+  }> {
     const escaped = query.replace(/[%_]/g, (ch) => `\\${ch}`);
     const likeQuery = `%${escaped}%`;
 
-    let qb = this.db
+    let baseQb = this.db
       .selectFrom('answers as a')
       .innerJoin('respondents as r', 'a.respondent_id', 'r.id')
       .innerJoin('survey_questions as q', 'a.question_id', 'q.id')
-      .select(['a.respondent_id', 'a.question_id', 'q.text as question_text', 'a.answer'])
       .where('r.survey_id', '=', surveyId)
-      .where(sql`a.answer LIKE ${likeQuery} ESCAPE '\\'`)
-      .orderBy('a.answered_at', 'desc')
-      .limit(SEARCH_RESULT_LIMIT);
+      .where(sql`a.answer LIKE ${likeQuery} ESCAPE '\\'`);
 
     if (questionId) {
-      qb = qb.where('a.question_id', '=', questionId);
+      baseQb = baseQb.where('a.question_id', '=', questionId);
     }
 
-    return qb.execute();
+    const countResult = await baseQb.select(({ fn }) => [fn.count('a.respondent_id').as('total')]).executeTakeFirst();
+
+    const results = await baseQb
+      .select(['a.respondent_id', 'a.question_id', 'q.text as question_text', 'a.answer'])
+      .orderBy('a.answered_at', 'desc')
+      .limit(Math.min(limit, SEARCH_RESULT_LIMIT))
+      .offset(offset)
+      .execute();
+
+    return {
+      results,
+      total: Number(countResult?.total ?? 0),
+    };
   }
 
   async getAnswersForRespondent(respondentId: string): Promise<

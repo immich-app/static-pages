@@ -44,7 +44,7 @@
       <p class="text-sm text-gray-500">Set up your admin password to get started.</p>
     </div>
 
-    <form onsubmit={handleSubmit} class="space-y-4">
+    <form onsubmit={handleSubmit} class="space-y-4" aria-label="Create admin account">
       <div>
         <label class="mb-1.5 block text-xs font-medium tracking-wider text-gray-500 uppercase">Password</label>
         <Input type="password" bind:value={password} placeholder="At least 8 characters" disabled={submitting} />

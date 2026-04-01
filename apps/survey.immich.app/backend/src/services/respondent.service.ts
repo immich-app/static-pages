@@ -376,7 +376,13 @@ export class RespondentService {
     surveyId: string,
     query: string,
     questionId?: string,
-  ): Promise<Array<{ respondentId: string; questionId: string; questionText: string; answer: string }>> {
+    pagination?: { offset: number; limit: number },
+  ): Promise<{
+    results: Array<{ respondentId: string; questionId: string; questionText: string; answer: string }>;
+    total: number;
+    offset: number;
+    limit: number;
+  }> {
     const survey = await this.surveys.getById(surveyId);
     if (!survey) throw new ServiceError('Survey not found', 404);
 
@@ -384,13 +390,26 @@ export class RespondentService {
       throw new ServiceError('Search query must be at least 2 characters', 400);
     }
 
-    const results = await this.answers.searchTextAnswers(surveyId, query.trim(), questionId);
-    return results.map((r) => ({
-      respondentId: r.respondent_id,
-      questionId: r.question_id,
-      questionText: r.question_text,
-      answer: r.answer,
-    }));
+    const offset = pagination?.offset ?? 0;
+    const limit = pagination?.limit ?? 50;
+    const { results: rawResults, total } = await this.answers.searchTextAnswers(
+      surveyId,
+      query.trim(),
+      questionId,
+      offset,
+      limit,
+    );
+    return {
+      results: rawResults.map((r) => ({
+        respondentId: r.respondent_id,
+        questionId: r.question_id,
+        questionText: r.question_text,
+        answer: r.answer,
+      })),
+      total,
+      offset,
+      limit,
+    };
   }
 
   async getLiveResults(surveyId: string): Promise<{

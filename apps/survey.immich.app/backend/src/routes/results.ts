@@ -37,7 +37,18 @@ export function registerResultRoutes(router: AppRouter) {
     const ctx = getContext(request);
     const service = createRespondentService(ctx.db);
     const results = await service.getLiveResults(request.params.id);
-    return Response.json(results);
+
+    const etag = `"${results.respondentCounts.completed}-${results.respondentCounts.total}"`;
+    const ifNoneMatch = request.headers.get('If-None-Match');
+
+    if (ifNoneMatch === etag) {
+      return new Response(null, { status: 304 });
+    }
+
+    const response = Response.json(results);
+    response.headers.set('ETag', etag);
+    response.headers.set('Cache-Control', 'private, no-cache');
+    return response;
   });
 
   router.get('/api/surveys/:id/results/timeline', async (request: AuthenticatedRequest) => {
@@ -92,7 +103,9 @@ export function registerResultRoutes(router: AppRouter) {
     const url = new URL(request.url);
     const query = url.searchParams.get('q') ?? '';
     const questionId = url.searchParams.get('questionId') ?? undefined;
-    const data = await service.searchAnswers(request.params.id, query, questionId);
+    const offset = Number(url.searchParams.get('offset')) || 0;
+    const limit = Math.min(Number(url.searchParams.get('limit')) || 50, MAX_PAGINATION_LIMIT);
+    const data = await service.searchAnswers(request.params.id, query, questionId, { offset, limit });
     return Response.json(data);
   });
 }

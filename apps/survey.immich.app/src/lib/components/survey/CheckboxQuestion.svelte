@@ -36,7 +36,7 @@
 
 <p class="mb-4 text-sm text-gray-400">Select all that apply</p>
 
-<div class="flex flex-col gap-3">
+<div class="flex flex-col gap-3" role="group" aria-label={question.text}>
   {#each (question.options ?? []).filter((o) => !question.hasOther || o.value !== 'Other') as option (option.value)}
     <button
       class="flex min-h-[44px] w-full items-center gap-3 rounded-lg border-2 p-4 text-left transition-all duration-150
@@ -44,6 +44,8 @@
         ? 'border-immich-primary bg-immich-primary-10'
         : 'border-gray-200 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400'}"
       onclick={() => toggle(option.value)}
+      role="checkbox"
+      aria-checked={selectedValues.has(option.value)}
     >
       <span
         class="flex h-6 w-6 shrink-0 items-center justify-center rounded-md {selectedValues.has(option.value)

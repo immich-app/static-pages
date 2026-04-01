@@ -5,9 +5,12 @@
   import type { Snippet } from 'svelte';
   import { page } from '$app/state';
   import { initAuth, getAuth } from '$lib/stores/auth.svelte';
+  import { getAnnouncement } from '$lib/stores/announcer.svelte';
   import UserMenu from '$lib/components/layout/UserMenu.svelte';
   import SetupScreen from '$lib/components/auth/SetupScreen.svelte';
   import LoginScreen from '$lib/components/auth/LoginScreen.svelte';
+
+  const announcer = getAnnouncement();
 
   interface Props {
     children?: Snippet;
@@ -23,6 +26,8 @@
     initAuth();
   });
 </script>
+
+<div class="sr-only" aria-live="polite" aria-atomic="true">{announcer.message}</div>
 
 <TooltipProvider>
   {#if isPublicRoute}

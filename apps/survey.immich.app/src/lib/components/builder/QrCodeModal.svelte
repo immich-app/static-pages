@@ -10,9 +10,17 @@
   let { url, onClose }: Props = $props();
 
   let dataUrl = $state<string | null>(null);
+  let modalElement: HTMLDivElement | undefined = $state();
+  let previousFocus: HTMLElement | null = null;
 
-  onMount(async () => {
-    dataUrl = await QRCode.toDataURL(url, { width: 400, margin: 2 });
+  onMount(() => {
+    previousFocus = document.activeElement as HTMLElement;
+    QRCode.toDataURL(url, { width: 400, margin: 2 }).then((result) => {
+      dataUrl = result;
+      const firstFocusable = modalElement?.querySelector<HTMLElement>('input, button, [tabindex]');
+      firstFocusable?.focus();
+    });
+    return () => previousFocus?.focus();
   });
 
   function handleDownload() {
@@ -28,16 +36,20 @@
   }
 </script>
 
-<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
   class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
   onclick={handleBackdropClick}
   onkeydown={(e) => e.key === 'Escape' && onClose()}
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="qr-code-title"
+  tabindex="-1"
 >
   <div
+    bind:this={modalElement}
     class="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl dark:border-gray-700 dark:bg-gray-900"
   >
-    <h2 class="mb-4 text-center text-lg font-semibold">QR Code</h2>
+    <h2 id="qr-code-title" class="mb-4 text-center text-lg font-semibold">QR Code</h2>
     <p class="mb-4 text-center text-xs break-all text-gray-500">{url}</p>
 
     {#if dataUrl}

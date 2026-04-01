@@ -47,7 +47,7 @@
 <div onkeydown={handleKeydown}>
   <QuestionHeader text={question.text} description={question.description} />
 
-  <div class="flex flex-col gap-3" role="radiogroup">
+  <div class="flex flex-col gap-3" role="radiogroup" aria-label={question.text}>
     {#each visibleOptions as option (option.value)}
       <button
         class="flex min-h-[44px] w-full items-center gap-3 rounded-lg border-2 p-4 text-left transition-all duration-150

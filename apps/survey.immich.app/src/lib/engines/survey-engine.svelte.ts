@@ -156,6 +156,9 @@ export function createSurveyEngine(
     get isLastQuestion() {
       return isLastQuestion;
     },
+    get totalQuestions() {
+      return surveyQuestions.length;
+    },
     next,
     previous,
     goTo,

@@ -60,7 +60,7 @@
 
   {#if isFiltered}
     <button
-      class="inline-flex items-center gap-1 rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-600 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+      class="inline-flex items-center gap-1 rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-500 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
       onclick={() => onFilterChange('', '')}
     >
       <Icon icon={mdiClose} size="12" />

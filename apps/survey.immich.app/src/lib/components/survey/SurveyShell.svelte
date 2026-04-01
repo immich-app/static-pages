@@ -6,6 +6,7 @@
   import type { createSurveyEngine } from '$lib/engines/survey-engine.svelte';
   import QuestionCard from './QuestionCard.svelte';
   import SectionHeader from './SectionHeader.svelte';
+  import { announce } from '$lib/stores/announcer.svelte';
 
   let {
     engine,
@@ -23,6 +24,9 @@
   let transitioning = $state(false);
   let seenSectionIds = new SvelteSet<string>();
   let dismissedSections = new SvelteSet<string>();
+
+  const reducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const flyDuration = reducedMotion ? 0 : 300;
 
   const sortedSections = $derived([...sections].sort((a, b) => a.sortOrder - b.sortOrder));
 
@@ -61,6 +65,8 @@
     engine.next();
     if (engine.isComplete) {
       onComplete();
+    } else {
+      announce(`Question ${engine.currentIndex + 1} of ${engine.totalQuestions}`);
     }
     window.scrollTo(0, 0);
     setTimeout(() => {
@@ -88,6 +94,7 @@
       engine.previous();
     }
 
+    announce(`Question ${engine.currentIndex + 1} of ${engine.totalQuestions}`);
     window.scrollTo(0, 0);
     setTimeout(() => {
       transitioning = false;
@@ -95,8 +102,15 @@
   }
 </script>
 
-<div class="relative flex h-full flex-1 flex-col">
-  <div class="fixed top-0 left-0 z-50 h-1 w-full bg-gray-700">
+<div class="relative flex h-full flex-1 flex-col" role="main">
+  <div
+    class="fixed top-0 left-0 z-50 h-1 w-full bg-gray-700"
+    role="progressbar"
+    aria-label="Survey progress"
+    aria-valuenow={Math.round(engine.progress)}
+    aria-valuemin={0}
+    aria-valuemax={100}
+  >
     <div class="bg-immich-primary h-full transition-all duration-300" style="width: {engine.progress}%"></div>
   </div>
 
@@ -104,8 +118,8 @@
     {#key `${engine.currentIndex}-${showingSectionHeader}`}
       <div
         class="flex flex-1 flex-col"
-        in:fly={{ y: direction * 50, duration: 300, easing: cubicOut }}
-        out:fly={{ y: direction * -50, duration: 300, easing: cubicOut }}
+        in:fly={{ y: direction * 50, duration: flyDuration, easing: cubicOut }}
+        out:fly={{ y: direction * -50, duration: flyDuration, easing: cubicOut }}
       >
         {#if showingSectionHeader && currentSectionHeader}
           <SectionHeader

@@ -12,6 +12,7 @@
   import DropdownQuestion from './DropdownQuestion.svelte';
   import LikertQuestion from './LikertQuestion.svelte';
   import { onMount, onDestroy } from 'svelte';
+  import { announce } from '$lib/stores/announcer.svelte';
 
   interface Props {
     question: SurveyQuestion;
@@ -28,6 +29,7 @@
   const hasAnswer = $derived(!!answer?.value);
   const isOptional = $derived(!question.required);
   let validationError = $state<string | null>(null);
+  const errorId = $derived(`error-${question.id}`);
 
   let autoNextTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -48,6 +50,7 @@
   function handleNext() {
     if (question.required && !hasAnswer) {
       validationError = 'This question is required';
+      announce('This question is required');
       return;
     }
     validationError = null;
@@ -75,7 +78,12 @@
   });
 </script>
 
-<div class="w-full max-w-[640px] px-4 sm:px-6">
+<div
+  class="w-full max-w-[640px] px-4 sm:px-6"
+  role="region"
+  aria-label="Question"
+  aria-describedby={validationError ? errorId : undefined}
+>
   <div class={validationError ? 'rounded-lg border-2 border-red-500/30 p-4' : ''}>
     {#if question.type === 'radio'}
       <RadioQuestion {question} {answer} onAnswer={handleRadioAnswer} />
@@ -101,7 +109,7 @@
   </div>
 
   {#if validationError}
-    <p class="mt-2 text-sm text-red-400">{validationError}</p>
+    <p id={errorId} class="mt-2 text-sm text-red-400" role="alert">{validationError}</p>
   {/if}
 </div>
 
