@@ -122,11 +122,12 @@ export function registerAuthRoutes(router: AppRouter) {
     const stateMatch = cookies.match(new RegExp(`(?:^|;\\s*)${AUTH_STATE_COOKIE_NAME}=([^;]*)`));
     if (!stateMatch) throw new ServiceError('Missing auth state cookie', 400);
 
-    const stateData = JSON.parse(decodeURIComponent(stateMatch[1])) as {
-      state: string;
-      nonce: string;
-      returnTo: string;
-    };
+    let stateData: { state: string; nonce: string; returnTo: string };
+    try {
+      stateData = JSON.parse(decodeURIComponent(stateMatch[1]));
+    } catch {
+      throw new ServiceError('Invalid auth state', 400);
+    }
     if (stateData.state !== returnedState) throw new ServiceError('State mismatch', 400);
 
     const ctx = getContext(request);

@@ -1,6 +1,18 @@
 import type { Kysely } from 'kysely';
 import type { Database } from '../db';
 
+const REQUIRED_TABLES = [
+  'surveys',
+  'survey_sections',
+  'survey_questions',
+  'respondents',
+  'answers',
+  'tags',
+  'survey_tags',
+  'audit_log',
+  'admin_credentials',
+] as const;
+
 export interface BackupData {
   version: number;
   exportedAt: string;
@@ -52,50 +64,64 @@ export class BackupService {
   }
 
   async importAll(backup: BackupData): Promise<{ counts: Record<string, number> }> {
+    if (!backup || typeof backup !== 'object') {
+      throw new Error('Invalid backup data');
+    }
     if (backup.version !== 1) {
       throw new Error(`Unsupported backup version: ${backup.version}`);
+    }
+    if (!backup.data || typeof backup.data !== 'object') {
+      throw new Error('Backup data is missing');
+    }
+
+    // Validate all required tables exist in backup
+    for (const table of REQUIRED_TABLES) {
+      if (!Array.isArray(backup.data[table])) {
+        throw new Error(`Backup is missing required table: ${table}`);
+      }
     }
 
     const counts: Record<string, number> = {};
 
-    // Delete in reverse FK order
-    await this.db.deleteFrom('answers').execute();
-    await this.db.deleteFrom('respondents').execute();
-    await this.db.deleteFrom('survey_tags').execute();
-    await this.db.deleteFrom('survey_questions').execute();
-    await this.db.deleteFrom('survey_sections').execute();
-    await this.db.deleteFrom('surveys').execute();
-    await this.db.deleteFrom('tags').execute();
-    await this.db.deleteFrom('audit_log').execute();
-    await this.db.deleteFrom('admin_credentials').execute();
+    // Use transaction for atomicity
+    await this.db.transaction().execute(async (trx) => {
+      // Delete in reverse FK order
+      await trx.deleteFrom('answers').execute();
+      await trx.deleteFrom('respondents').execute();
+      await trx.deleteFrom('survey_tags').execute();
+      await trx.deleteFrom('survey_questions').execute();
+      await trx.deleteFrom('survey_sections').execute();
+      await trx.deleteFrom('surveys').execute();
+      await trx.deleteFrom('tags').execute();
+      await trx.deleteFrom('audit_log').execute();
+      await trx.deleteFrom('admin_credentials').execute();
 
-    // Insert in FK order
-    const tables: Array<[keyof BackupData['data'], string]> = [
-      ['surveys', 'surveys'],
-      ['survey_sections', 'survey_sections'],
-      ['survey_questions', 'survey_questions'],
-      ['tags', 'tags'],
-      ['survey_tags', 'survey_tags'],
-      ['respondents', 'respondents'],
-      ['answers', 'answers'],
-      ['audit_log', 'audit_log'],
-      ['admin_credentials', 'admin_credentials'],
-    ];
+      // Insert in FK order
+      const tables: Array<[keyof BackupData['data'], string]> = [
+        ['surveys', 'surveys'],
+        ['survey_sections', 'survey_sections'],
+        ['survey_questions', 'survey_questions'],
+        ['tags', 'tags'],
+        ['survey_tags', 'survey_tags'],
+        ['respondents', 'respondents'],
+        ['answers', 'answers'],
+        ['audit_log', 'audit_log'],
+        ['admin_credentials', 'admin_credentials'],
+      ];
 
-    for (const [key, table] of tables) {
-      const rows = backup.data[key] as Record<string, unknown>[];
-      if (rows && rows.length > 0) {
-        for (const row of rows) {
-          await this.db
-            .insertInto(table as any)
-            .values(row as any)
-            .execute();
+      for (const [key, table] of tables) {
+        const rows = backup.data[key] as Record<string, unknown>[];
+        if (rows.length > 0) {
+          for (const row of rows) {
+            await trx
+              .insertInto(table as any)
+              .values(row as any)
+              .execute();
+          }
         }
         counts[table] = rows.length;
-      } else {
-        counts[table] = 0;
       }
-    }
+    });
 
     return { counts };
   }

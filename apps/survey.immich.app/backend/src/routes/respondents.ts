@@ -113,7 +113,7 @@ export function registerRespondentRoutes(router: AppRouter) {
     const headers = new Headers();
 
     if (result.isNewRespondent) {
-      setRespondentCookie(headers, slug, result.respondentId);
+      setRespondentCookie(headers, slug, result.respondentId, ctx.config.cookieSecure);
     }
 
     const response = Response.json(
@@ -172,7 +172,8 @@ export function registerRespondentRoutes(router: AppRouter) {
 
   router.post('/api/s/:slug/reset', async (request) => {
     const headers = new Headers();
-    deleteRespondentCookie(headers, request.params.slug);
+    const ctx = getContext(request);
+    deleteRespondentCookie(headers, request.params.slug, ctx.config.cookieSecure);
     return new Response(null, { status: 204, headers });
   });
 

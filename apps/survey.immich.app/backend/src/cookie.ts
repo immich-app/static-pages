@@ -11,15 +11,17 @@ export function getRespondentId(request: Request, slug: string): string | undefi
   return match?.[1];
 }
 
-export function setRespondentCookie(headers: Headers, slug: string, respondentId: string): void {
+export function setRespondentCookie(headers: Headers, slug: string, respondentId: string, secure = true): void {
   const cookieName = getCookieName(slug);
+  const secureFlag = secure ? 'Secure; ' : '';
   headers.set(
     'Set-Cookie',
-    `${cookieName}=${respondentId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${COOKIE_MAX_AGE}`,
+    `${cookieName}=${respondentId}; Path=/; HttpOnly; ${secureFlag}SameSite=Lax; Max-Age=${COOKIE_MAX_AGE}`,
   );
 }
 
-export function deleteRespondentCookie(headers: Headers, slug: string): void {
+export function deleteRespondentCookie(headers: Headers, slug: string, secure = true): void {
   const cookieName = getCookieName(slug);
-  headers.set('Set-Cookie', `${cookieName}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`);
+  const secureFlag = secure ? 'Secure; ' : '';
+  headers.set('Set-Cookie', `${cookieName}=; Path=/; HttpOnly; ${secureFlag}SameSite=Lax; Max-Age=0`);
 }
