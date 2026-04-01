@@ -65,7 +65,7 @@ const getFrontMatterExample = (missingAttributes: string[]) => {
 
 const asPost = (filename: string, attributes: PostFrontMatter) => {
   const requiredAttributes = ['id', 'title', 'description', 'publishedAt', 'authors'];
-  const missingAttributes = requiredAttributes.filter((attr) => !(attr in attributes));
+  const missingAttributes = requiredAttributes.filter((attribute) => !(attribute in attributes));
   if (missingAttributes.length > 0) {
     throw new Error(
       `${filename} is missing ${missingAttributes.join(', ')}.\n${getFrontMatterExample(missingAttributes)}`,
@@ -103,6 +103,10 @@ const getPosts = () => {
     }
 
     idMap.set(post.id, path);
+
+    if (post.publishedAt < DateTime.now().minus({ years: 1 }) && post.title.endsWith(' recap')) {
+      post.title = post.title.replaceAll(' recap', ` ${post.publishedAt.year} recap`);
+    }
 
     if (PUBLIC_IMMICH_ENV === 'development' || (post.publishedAt <= DateTime.now() && !post.draft)) {
       posts.push(post);
