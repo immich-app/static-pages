@@ -133,11 +133,6 @@
     "name": "Tools",
     "projects": [
       {
-        "title": "Immich-Tools",
-        "description": "Provides scripts for handling problems on the repair page.",
-        "href": "https://github.com/clumsyCoder00/Immich-Tools"
-      },
-      {
         "title": "Immich-Tiktok-Remover",
         "description": "Script to search for and remove TikTok videos from your Immich library.",
         "href": "https://github.com/mxc2/immich-tiktok-remover"
