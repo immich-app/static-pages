@@ -98,7 +98,7 @@ jobs:
         run: pnpm install
 
       - name: Build backend
-        run: npx wrangler build
+        run: pnpm exec wrangler build
 
       - name: Upload build output
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
