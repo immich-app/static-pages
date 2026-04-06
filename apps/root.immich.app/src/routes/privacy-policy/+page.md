@@ -20,7 +20,7 @@ This Privacy Policy applies to the Immich app ("we", "our", or "us") and covers 
 
 ### 3. Use of Your Information
 
-**Tax Calculation\***: The country of origin and postal code (for users from Canada or the United States) are collected solely for determining the applicable tax rates on your purchase.
+**Tax Calculation**: The country of origin and postal code (for users from Canada or the United States) are collected solely for determining the applicable tax rates on your purchase.
 
 ### 4. Sharing of Your Information
 
