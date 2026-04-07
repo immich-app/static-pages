@@ -1,6 +1,7 @@
 import { AuthService } from '../services/auth.service';
 import { ServiceError } from '../services/errors';
 import { SESSION_COOKIE_NAME, AUTH_STATE_COOKIE_NAME, SESSION_MAX_AGE } from '../constants';
+import { getCookie } from '../cookie';
 import { getContext } from '../config';
 import type { AppRouter } from '../types';
 
@@ -18,13 +19,12 @@ export function registerAuthRoutes(router: AppRouter) {
       return Response.json({ authenticated: false, needsSetup: true, passwordEnabled, oidcEnabled });
     }
 
-    const cookies = request.headers.get('cookie') ?? '';
-    const match = cookies.match(new RegExp(`(?:^|;\\s*)${SESSION_COOKIE_NAME}=([^;]*)`));
-    if (!match) {
+    const sessionToken = getCookie(request, SESSION_COOKIE_NAME);
+    if (!sessionToken) {
       return Response.json({ authenticated: false, passwordEnabled, oidcEnabled });
     }
 
-    const user = await authService.validateSessionToken(match[1]);
+    const user = await authService.validateSessionToken(sessionToken);
     if (!user) {
       return Response.json({ authenticated: false, passwordEnabled, oidcEnabled });
     }
@@ -118,13 +118,12 @@ export function registerAuthRoutes(router: AppRouter) {
     if (error) throw new ServiceError('Authentication failed', 400);
     if (!code || !returnedState) throw new ServiceError('Missing code or state', 400);
 
-    const cookies = request.headers.get('cookie') ?? '';
-    const stateMatch = cookies.match(new RegExp(`(?:^|;\\s*)${AUTH_STATE_COOKIE_NAME}=([^;]*)`));
-    if (!stateMatch) throw new ServiceError('Missing auth state cookie', 400);
+    const stateCookie = getCookie(request, AUTH_STATE_COOKIE_NAME);
+    if (!stateCookie) throw new ServiceError('Missing auth state cookie', 400);
 
     let stateData: { state: string; nonce: string; returnTo: string };
     try {
-      stateData = JSON.parse(decodeURIComponent(stateMatch[1]));
+      stateData = JSON.parse(decodeURIComponent(stateCookie));
     } catch {
       throw new ServiceError('Invalid auth state', 400);
     }

@@ -108,4 +108,36 @@ export async function createPublishedSurvey(options?: {
   return { surveyId: survey.id, slug, sectionId: section.id, questionIds };
 }
 
+const DEV_SESSION_SECRET = 'dev-session-secret-DO-NOT-USE-IN-PRODUCTION';
+const SESSION_COOKIE_NAME = 'survey_session';
+
+export async function createCookieForRole(role: 'admin' | 'editor' | 'viewer'): Promise<string> {
+  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const payload = btoa(
+    JSON.stringify({
+      sub: `test-${role}`,
+      email: `${role}@test.local`,
+      name: `Test ${role.charAt(0).toUpperCase() + role.slice(1)}`,
+      role,
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + 8 * 60 * 60,
+    }),
+  );
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(DEV_SESSION_SECRET),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(`${header}.${payload}`));
+  const signature = btoa(String.fromCharCode(...new Uint8Array(sig)))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+
+  return `${SESSION_COOKIE_NAME}=${header}.${payload}.${signature}`;
+}
+
 export { ADMIN_PASSWORD };

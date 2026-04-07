@@ -1,8 +1,5 @@
 <script lang="ts">
-  interface AnswerData {
-    value: string;
-    count: number;
-  }
+  import { computeNps, npsLabel, type AnswerData } from './analytics-utils';
 
   interface Props {
     answers: AnswerData[];
@@ -10,37 +7,8 @@
 
   let { answers }: Props = $props();
 
-  const stats = $derived.by(() => {
-    let total = 0,
-      promoters = 0,
-      passives = 0,
-      detractors = 0;
-    for (const a of answers) {
-      const score = Number(a.value);
-      if (Number.isNaN(score)) continue;
-      total += a.count;
-      if (score >= 9) promoters += a.count;
-      else if (score >= 7) passives += a.count;
-      else detractors += a.count;
-    }
-    const npsScore = total > 0 ? Math.round(((promoters - detractors) / total) * 100) : null;
-    const pPct = total > 0 ? (promoters / total) * 100 : 0;
-    const paPct = total > 0 ? (passives / total) * 100 : 0;
-    const dPct = total > 0 ? (detractors / total) * 100 : 0;
-    return { total, promoters, passives, detractors, npsScore, pPct, paPct, dPct };
-  });
-
-  const label = $derived(
-    stats.npsScore === null
-      ? ''
-      : stats.npsScore >= 50
-        ? 'Excellent'
-        : stats.npsScore >= 0
-          ? 'Good'
-          : stats.npsScore >= -50
-            ? 'Needs improvement'
-            : 'Critical',
-  );
+  const stats = $derived(computeNps(answers));
+  const label = $derived(npsLabel(stats.npsScore));
 </script>
 
 {#if stats.npsScore !== null}

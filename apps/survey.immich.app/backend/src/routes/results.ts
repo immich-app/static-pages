@@ -40,7 +40,11 @@ export function registerResultRoutes(router: AppRouter) {
     const results = await service.getLiveResults(request.params.id);
 
     if (ctx.analyticsQuery) {
-      results.liveCounts = await queryLiveCounts(ctx.analyticsQuery, request.params.id);
+      try {
+        results.liveCounts = await queryLiveCounts(ctx.analyticsQuery, request.params.id);
+      } catch {
+        // Gracefully degrade to database-only counts if analytics query fails
+      }
     }
 
     const etag = `"${results.respondentCounts.completed}-${results.respondentCounts.total}-${results.liveCounts.activeRespondents}-${results.liveCounts.activeViewers}"`;

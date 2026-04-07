@@ -350,6 +350,128 @@ test.describe('Embed page', () => {
   });
 });
 
+test.describe('Survey with skip logic across question types', () => {
+  let setup: { surveyId: string; slug: string };
+
+  test.beforeAll(async () => {
+    const survey = await apiPost('/api/surveys', { title: 'Skip Logic Flow Test' });
+    const section = await apiPost(`/api/surveys/${survey.id}/sections`, { title: 'Feedback' });
+
+    // Q1: Radio trigger
+    const q1 = await apiPost(`/api/sections/${section.id}/questions`, {
+      text: 'Have you used our product?',
+      type: 'radio',
+      required: true,
+      options: [
+        { label: 'Yes', value: 'Yes' },
+        { label: 'No', value: 'No' },
+      ],
+    });
+
+    // Q2: Rating - only if Q1 = Yes
+    await apiPost(`/api/sections/${section.id}/questions`, {
+      text: 'Rate your experience',
+      type: 'rating',
+      required: true,
+      config: { scaleMax: 5 },
+      conditional: { showIf: { questionId: q1.id, condition: 'equals', value: 'Yes' } },
+    });
+
+    // Q3: Text - only if Q1 = No
+    await apiPost(`/api/sections/${section.id}/questions`, {
+      text: 'What prevented you from trying it?',
+      type: 'text',
+      required: true,
+      placeholder: 'Tell us why',
+      conditional: { showIf: { questionId: q1.id, condition: 'equals', value: 'No' } },
+    });
+
+    // Q4: NPS - always shown
+    await apiPost(`/api/sections/${section.id}/questions`, {
+      text: 'How likely to recommend?',
+      type: 'nps',
+      required: true,
+    });
+
+    const slug = `e2e-skip-flow-${Date.now()}`;
+    await apiPut(`/api/surveys/${survey.id}`, { slug });
+    await apiPut(`/api/surveys/${survey.id}/publish`);
+    setup = { surveyId: survey.id, slug };
+  });
+
+  test('skip logic works: Yes path shows rating, skips text', async ({ page }) => {
+    await page.goto(`/s/${setup.slug}`);
+    await page.getByRole('button', { name: 'Get Started' }).click();
+    await dismissSectionHeader(page);
+
+    // Q1: select Yes
+    await expect(page.getByText('Have you used our product?')).toBeVisible({ timeout: 3000 });
+    await page.getByRole('radio', { name: 'Yes' }).click();
+
+    // Should show Q2 (rating), not Q3 (text)
+    await expect(page.getByText('Rate your experience')).toBeVisible({ timeout: 3000 });
+    await expect(page.getByText('What prevented you from trying it?')).not.toBeVisible();
+
+    // Rate and continue
+    await page.locator('[data-rating-value="4"]').click();
+    await clickNext(page);
+
+    // Should show Q4 (NPS) - Q3 was skipped
+    await expect(page.getByText('How likely to recommend?')).toBeVisible({ timeout: 3000 });
+    await page.getByLabel('Score 8').click();
+    await clickNext(page, 'Submit');
+
+    await expect(page.getByText('Thank you!')).toBeVisible({ timeout: 5000 });
+  });
+
+  test('skip logic works: No path shows text, skips rating', async ({ page }) => {
+    await page.goto(`/s/${setup.slug}`);
+    await page.getByRole('button', { name: 'Get Started' }).click();
+    await dismissSectionHeader(page);
+
+    // Q1: select No
+    await expect(page.getByText('Have you used our product?')).toBeVisible({ timeout: 3000 });
+    await page.getByRole('radio', { name: 'No' }).click();
+
+    // Should show Q3 (text), not Q2 (rating)
+    await expect(page.getByText('What prevented you from trying it?')).toBeVisible({ timeout: 3000 });
+    await expect(page.getByText('Rate your experience')).not.toBeVisible();
+
+    // Fill text and continue
+    await page.getByPlaceholder('Tell us why').fill('No time');
+    await clickNext(page);
+
+    // Should show Q4 (NPS) - Q2 was skipped
+    await expect(page.getByText('How likely to recommend?')).toBeVisible({ timeout: 3000 });
+    await page.getByLabel('Score 5').click();
+    await clickNext(page, 'Submit');
+
+    await expect(page.getByText('Thank you!')).toBeVisible({ timeout: 5000 });
+  });
+
+  test('skipped questions are not in results', async () => {
+    // Check results - the "No" path respondent should not have a rating answer
+    const res = await fetch(`${API}/api/surveys/${setup.surveyId}/results`, {
+      headers: getAuthHeaders(),
+    });
+    const data = await res.json();
+    expect(data.respondentCounts.completed).toBe(2);
+
+    // Rating question should have 1 response (only the "Yes" path respondent)
+    const ratingResult = data.results.find(
+      (r: { questionId: string }) =>
+        r.questionId ===
+        data.results.find((x: { answers: Array<{ value: string }> }) =>
+          x.answers?.some((a: { value: string }) => a.value === '4'),
+        )?.questionId,
+    );
+    if (ratingResult) {
+      const totalRatingResponses = ratingResult.answers.reduce((sum: number, a: { count: number }) => sum + a.count, 0);
+      expect(totalRatingResponses).toBe(1);
+    }
+  });
+});
+
 test.describe('Survey builder with new types', () => {
   test('can add all question types in the builder', async ({ page }) => {
     // Create a survey first

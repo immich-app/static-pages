@@ -543,3 +543,60 @@ test.describe('Undo/redo', () => {
     await expect(titleInput).toHaveValue('Undo Redo Test', { timeout: 3000 });
   });
 });
+
+// ──────────────────────────────────────────────────────────────────────────────
+// 11. Skip logic builder UI
+// ──────────────────────────────────────────────────────────────────────────────
+test.describe('Skip logic builder UI', () => {
+  test('skip logic dropdown shows preceding questions from the same section', async ({ page }) => {
+    // Create a survey with 3 questions via API
+    const setup = await createSimpleSurvey({
+      title: 'Skip Logic Builder Test',
+      questionCount: 3,
+    });
+
+    await page.goto(`/edit/${setup.surveyId}`);
+    await expect(page.getByText('Edit Survey')).toBeVisible({ timeout: 5000 });
+
+    // Expand the third question (index 2) by clicking its header
+    await page.getByRole('button', { name: /Question 3/ }).click();
+    await waitForTransition(page);
+
+    // Open the skip logic section
+    await page.getByText('Skip Logic').click();
+    await waitForTransition(page);
+
+    // Should NOT show "No preceding questions" since Q3 has Q1 and Q2 before it
+    await expect(page.getByText('No preceding questions')).not.toBeVisible();
+
+    // Should show a "Source question" select with the preceding questions
+    await expect(page.getByText('Source question')).toBeVisible({ timeout: 3000 });
+    const select = page.locator('select').last();
+    await expect(select).toBeVisible();
+
+    // The select should contain Q1 and Q2 as options
+    await expect(select.locator('option', { hasText: 'Q1:' })).toBeAttached();
+    await expect(select.locator('option', { hasText: 'Q2:' })).toBeAttached();
+  });
+
+  test('first question shows no preceding questions message', async ({ page }) => {
+    const setup = await createSimpleSurvey({
+      title: 'Skip Logic First Q Test',
+      questionCount: 2,
+    });
+
+    await page.goto(`/edit/${setup.surveyId}`);
+    await expect(page.getByText('Edit Survey')).toBeVisible({ timeout: 5000 });
+
+    // Expand the first question
+    await page.getByRole('button', { name: /Question 1/ }).click();
+    await waitForTransition(page);
+
+    // Open skip logic
+    await page.getByText('Skip Logic').click();
+    await waitForTransition(page);
+
+    // First question should show the "no preceding questions" message
+    await expect(page.getByText('No preceding questions')).toBeVisible({ timeout: 3000 });
+  });
+});

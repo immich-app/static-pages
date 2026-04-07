@@ -1,32 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { DropoffDataPoint } from '$lib/types';
-
-// ── NPS computation (mirrors NpsScoreCard.svelte inline logic) ───────────
-
-interface AnswerData {
-  value: string;
-  count: number;
-}
-
-function computeNps(answers: AnswerData[]) {
-  let total = 0,
-    promoters = 0,
-    passives = 0,
-    detractors = 0;
-  for (const a of answers) {
-    const score = Number(a.value);
-    if (Number.isNaN(score)) continue;
-    total += a.count;
-    if (score >= 9) promoters += a.count;
-    else if (score >= 7) passives += a.count;
-    else detractors += a.count;
-  }
-  const npsScore = total > 0 ? Math.round(((promoters - detractors) / total) * 100) : null;
-  const pPct = total > 0 ? (promoters / total) * 100 : 0;
-  const paPct = total > 0 ? (passives / total) * 100 : 0;
-  const dPct = total > 0 ? (detractors / total) * 100 : 0;
-  return { total, promoters, passives, detractors, npsScore, pPct, paPct, dPct };
-}
+import { computeNps, computeDropoffRate, type AnswerData } from './analytics-utils';
 
 // ── Chart data mapping (mirrors QuestionResult.svelte inline logic) ──────
 
@@ -43,13 +17,6 @@ function toChartData(answers: ChartAnswer[], totalResponses: number) {
     value: a.count,
     percentage: totalResponses > 0 ? (a.count / totalResponses) * 100 : 0,
   }));
-}
-
-// ── Drop-off rate computation ────────────────────────────────────────────
-
-function computeDropoffRate(reached: number, answered: number): number {
-  if (reached === 0) return 0;
-  return Math.round(((reached - answered) / reached) * 100);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

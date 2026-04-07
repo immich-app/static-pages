@@ -18,6 +18,8 @@ export function createSurveyLoader(slug: string) {
   let engine: ReturnType<typeof createSurveyEngine> | null = $state(null);
   let client: ReturnType<typeof createApiClient> | null = null;
 
+  let heartbeatTimer: ReturnType<typeof setInterval> | undefined;
+
   onMount(() => {
     (async () => {
       try {
@@ -27,6 +29,11 @@ export function createSurveyLoader(slug: string) {
         sections = data.sections;
         questions = data.questions;
 
+        // Start heartbeat now that we have the survey ID
+        const heartbeatViewerId = crypto.randomUUID();
+        sendHeartbeat(slug, survey.id, heartbeatViewerId, 'respondent');
+        heartbeatTimer = setInterval(() => sendHeartbeat(slug, survey!.id, heartbeatViewerId, 'respondent'), 15_000);
+
         // Check if password protected (backend returns no questions/sections)
         if (survey.requiresPassword && questions.length === 0) {
           needsPassword = true;
@@ -34,52 +41,12 @@ export function createSurveyLoader(slug: string) {
           return;
         }
 
-        // Sort questions by section sort order, then question sort order
-        const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
-        const sortedQuestions: SurveyQuestion[] = [];
-        for (const section of sortedSections) {
-          const sectionQuestions = questions
-            .filter((q) => q.section_id === section.id)
-            .sort((a, b) => a.sortOrder - b.sortOrder);
-          sortedQuestions.push(...sectionQuestions);
-        }
-        questions = sortedQuestions;
-
-        // Apply randomization if enabled
-        if (survey.randomizeQuestions) {
-          questions = randomizeQuestions(questions, sections, slug);
-        }
-        if (survey.randomizeOptions) {
-          questions = randomizeOptionOrder(questions, slug);
-        }
-
-        // Create engine and client
-        engine = createSurveyEngine(questions);
-        client = createApiClient(slug);
-
-        client.onSaveError((msg) => {
-          error = msg;
-        });
-
-        // Resume
-        const resume = await client.fetchResume();
-        if (resume.isComplete) {
-          alreadyCompleted = true;
-        } else if (resume.answers && resume.nextQuestionIndex !== undefined && resume.nextQuestionIndex > 0) {
-          engine.initialize(resume.answers, resume.nextQuestionIndex);
-        } else {
-          showWelcome = true;
-        }
+        await initializeSurvey();
       } catch (e) {
         error = e instanceof Error ? e.message : 'Failed to load survey';
       }
       loading = false;
     })();
-
-    // Heartbeat for live viewer tracking
-    const heartbeatViewerId = crypto.randomUUID();
-    sendHeartbeat(slug, heartbeatViewerId, 'respondent');
-    const heartbeatTimer = setInterval(() => sendHeartbeat(slug, heartbeatViewerId, 'respondent'), 15_000);
 
     const handleUnload = () => client?.flushBufferSync();
     window.addEventListener('beforeunload', handleUnload);
@@ -89,6 +56,43 @@ export function createSurveyLoader(slug: string) {
       client?.destroy();
     };
   });
+
+  async function initializeSurvey() {
+    // Sort questions by section sort order, then question sort order
+    const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
+    const sortedQuestions: SurveyQuestion[] = [];
+    for (const section of sortedSections) {
+      sortedQuestions.push(
+        ...questions.filter((q) => q.section_id === section.id).sort((a, b) => a.sortOrder - b.sortOrder),
+      );
+    }
+    questions = sortedQuestions;
+
+    // Apply randomization if enabled
+    if (survey!.randomizeQuestions) {
+      questions = randomizeQuestions(questions, sections, slug);
+    }
+    if (survey!.randomizeOptions) {
+      questions = randomizeOptionOrder(questions, slug);
+    }
+
+    // Create engine and client
+    engine = createSurveyEngine(questions);
+    client = createApiClient(slug);
+    client.onSaveError((msg) => {
+      error = msg;
+    });
+
+    // Resume
+    const resume = await client.fetchResume();
+    if (resume.isComplete) {
+      alreadyCompleted = true;
+    } else if (resume.answers && resume.nextQuestionIndex !== undefined && resume.nextQuestionIndex > 0) {
+      engine.initialize(resume.answers, resume.nextQuestionIndex);
+    } else {
+      showWelcome = true;
+    }
+  }
 
   function start() {
     showWelcome = false;
@@ -126,32 +130,7 @@ export function createSurveyLoader(slug: string) {
       sections = data.sections;
       questions = data.questions;
 
-      const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
-      const sortedQuestions: SurveyQuestion[] = [];
-      for (const section of sortedSections) {
-        sortedQuestions.push(
-          ...questions.filter((q) => q.section_id === section.id).sort((a, b) => a.sortOrder - b.sortOrder),
-        );
-      }
-      questions = sortedQuestions;
-
-      if (survey.randomizeQuestions) questions = randomizeQuestions(questions, sections, slug);
-      if (survey.randomizeOptions) questions = randomizeOptionOrder(questions, slug);
-
-      engine = createSurveyEngine(questions);
-      client = createApiClient(slug);
-      client.onSaveError((msg) => {
-        error = msg;
-      });
-
-      const resume = await client.fetchResume();
-      if (resume.isComplete) {
-        alreadyCompleted = true;
-      } else if (resume.answers && resume.nextQuestionIndex !== undefined && resume.nextQuestionIndex > 0) {
-        engine.initialize(resume.answers, resume.nextQuestionIndex);
-      } else {
-        showWelcome = true;
-      }
+      await initializeSurvey();
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to load survey';
     }

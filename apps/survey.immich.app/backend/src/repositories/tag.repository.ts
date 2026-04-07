@@ -40,8 +40,11 @@ export class TagRepository {
 
   async setTagsForSurvey(surveyId: string, tagIds: string[]): Promise<void> {
     await this.db.deleteFrom('survey_tags').where('survey_id', '=', surveyId).execute();
-    for (const tagId of tagIds) {
-      await this.db.insertInto('survey_tags').values({ survey_id: surveyId, tag_id: tagId }).execute();
+    if (tagIds.length > 0) {
+      await this.db
+        .insertInto('survey_tags')
+        .values(tagIds.map((tagId) => ({ survey_id: surveyId, tag_id: tagId })))
+        .execute();
     }
   }
 }

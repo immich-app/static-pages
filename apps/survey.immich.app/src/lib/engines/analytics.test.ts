@@ -10,6 +10,8 @@ import type {
   QuestionType,
 } from '../types';
 
+import { computeNps, npsLabel, computeDropoffRate } from '../components/results/analytics-utils';
+
 // ── Helpers ──────────────────────────────────────────────────────────────
 
 function makeQuestion(overrides: Partial<SurveyQuestion> & { id: string }): SurveyQuestion {
@@ -21,45 +23,6 @@ function makeQuestion(overrides: Partial<SurveyQuestion> & { id: string }): Surv
     sortOrder: 0,
     ...overrides,
   };
-}
-
-// ── NPS computation (extracted from NpsScoreCard logic) ──────────────────
-
-interface AnswerData {
-  value: string;
-  count: number;
-}
-
-function computeNps(answers: AnswerData[]) {
-  let total = 0,
-    promoters = 0,
-    passives = 0,
-    detractors = 0;
-  for (const a of answers) {
-    const score = Number(a.value);
-    if (Number.isNaN(score)) continue;
-    total += a.count;
-    if (score >= 9) promoters += a.count;
-    else if (score >= 7) passives += a.count;
-    else detractors += a.count;
-  }
-  const npsScore = total > 0 ? Math.round(((promoters - detractors) / total) * 100) : null;
-  return { total, promoters, passives, detractors, npsScore };
-}
-
-function npsLabel(npsScore: number | null): string {
-  if (npsScore === null) return '';
-  if (npsScore >= 50) return 'Excellent';
-  if (npsScore >= 0) return 'Good';
-  if (npsScore >= -50) return 'Needs improvement';
-  return 'Critical';
-}
-
-// ── Drop-off rate computation ────────────────────────────────────────────
-
-function computeDropoffRate(reached: number, answered: number): number {
-  if (reached === 0) return 0;
-  return Math.round(((reached - answered) / reached) * 100);
 }
 
 // ── Chart data mapping (from QuestionResult component) ───────────────────
@@ -322,15 +285,15 @@ describe('sendHeartbeat', () => {
     vi.restoreAllMocks();
   });
 
-  it('sends POST with correct body', async () => {
+  it('sends POST with correct body including surveyId', async () => {
     const fetchSpy = vi.fn().mockResolvedValue({ ok: true });
     vi.stubGlobal('fetch', fetchSpy);
     const { sendHeartbeat } = await import('../api/surveys');
-    await sendHeartbeat('my-slug', 'v123', 'viewer');
+    await sendHeartbeat('my-slug', 'survey-abc', 'v123', 'viewer');
     expect(fetchSpy).toHaveBeenCalledWith('/api/s/my-slug/heartbeat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ viewerId: 'v123', type: 'viewer' }),
+      body: JSON.stringify({ surveyId: 'survey-abc', viewerId: 'v123', type: 'viewer' }),
     });
   });
 
@@ -339,16 +302,17 @@ describe('sendHeartbeat', () => {
     vi.stubGlobal('fetch', fetchSpy);
     const { sendHeartbeat } = await import('../api/surveys');
     // Should not throw
-    await expect(sendHeartbeat('slug', 'v1', 'respondent')).resolves.toBeUndefined();
+    await expect(sendHeartbeat('slug', 's1', 'v1', 'respondent')).resolves.toBeUndefined();
   });
 
   it('sends respondent type correctly', async () => {
     const fetchSpy = vi.fn().mockResolvedValue({ ok: true });
     vi.stubGlobal('fetch', fetchSpy);
     const { sendHeartbeat } = await import('../api/surveys');
-    await sendHeartbeat('slug', 'v2', 'respondent');
+    await sendHeartbeat('slug', 's1', 'v2', 'respondent');
     const body = JSON.parse(fetchSpy.mock.calls[0][1].body);
     expect(body.type).toBe('respondent');
+    expect(body.surveyId).toBe('s1');
   });
 });
 

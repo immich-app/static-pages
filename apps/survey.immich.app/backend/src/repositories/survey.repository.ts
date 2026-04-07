@@ -69,13 +69,15 @@ export class SectionRepository {
   }
 
   async reorder(items: Array<{ id: string; sort_order: number }>): Promise<void> {
-    for (const item of items) {
-      await this.db
-        .updateTable('survey_sections')
-        .set({ sort_order: item.sort_order })
-        .where('id', '=', item.id)
-        .execute();
-    }
+    await this.db.transaction().execute(async (trx) => {
+      for (const item of items) {
+        await trx
+          .updateTable('survey_sections')
+          .set({ sort_order: item.sort_order })
+          .where('id', '=', item.id)
+          .execute();
+      }
+    });
   }
 
   async getMaxSortOrder(surveyId: string): Promise<number> {
@@ -128,13 +130,15 @@ export class QuestionRepository {
   }
 
   async reorder(items: Array<{ id: string; sort_order: number }>): Promise<void> {
-    for (const item of items) {
-      await this.db
-        .updateTable('survey_questions')
-        .set({ sort_order: item.sort_order })
-        .where('id', '=', item.id)
-        .execute();
-    }
+    await this.db.transaction().execute(async (trx) => {
+      for (const item of items) {
+        await trx
+          .updateTable('survey_questions')
+          .set({ sort_order: item.sort_order })
+          .where('id', '=', item.id)
+          .execute();
+      }
+    });
   }
 
   async getMaxSortOrder(sectionId: string): Promise<number> {

@@ -12,7 +12,7 @@
 
   let { options, onChange }: Props = $props();
 
-  let inputRefs: HTMLInputElement[] = [];
+  let inputRefs = $state<HTMLInputElement[]>([]);
   let showBulkPaste = $state(false);
 
   function addOptionAfter(index: number) {

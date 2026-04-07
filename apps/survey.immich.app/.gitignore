@@ -1,3 +1,4 @@
 backend/.wrangler
 test-results
 playwright-report
+dogfood-output

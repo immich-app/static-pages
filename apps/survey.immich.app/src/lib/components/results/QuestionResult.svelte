@@ -33,6 +33,7 @@
     })),
   );
 
+  const responseCount = $derived(answers.reduce((sum, a) => sum + a.count, 0));
   const isChartType = $derived(['radio', 'checkbox', 'dropdown', 'rating', 'nps', 'likert'].includes(question.type));
 
   const isTextType = $derived(['text', 'textarea', 'email'].includes(question.type));
@@ -47,7 +48,7 @@
       <ChartTypeToggle value={chartType} onChange={(t) => (chartType = t)} />
     {/if}
   </div>
-  <p class="mb-4 text-sm text-gray-500">{answers.reduce((sum, a) => sum + a.count, 0)} responses</p>
+  <p class="mb-4 text-sm text-gray-500">{responseCount} {responseCount === 1 ? 'response' : 'responses'}</p>
 
   {#if isChartType}
     {#if chartType === 'bar'}

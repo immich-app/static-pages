@@ -7,9 +7,10 @@ export async function getPublishedSurvey(slug: string): Promise<SurveyWithDetail
     survey: Record<string, unknown>;
     sections: Array<Record<string, unknown>>;
     questions: Array<Record<string, unknown>>;
+    requiresPassword?: boolean;
   }>(`/api/s/${slug}`);
   return {
-    survey: surveyFromApi(data.survey),
+    survey: surveyFromApi({ ...data.survey, requiresPassword: data.requiresPassword }),
     sections: sectionsFromApiRaw(data.sections),
     questions: questionsFromApi(data.questions),
   };
@@ -22,11 +23,16 @@ export async function authenticateSurvey(slug: string, password: string): Promis
   });
 }
 
-export async function sendHeartbeat(slug: string, viewerId: string, type: 'viewer' | 'respondent'): Promise<void> {
+export async function sendHeartbeat(
+  slug: string,
+  surveyId: string,
+  viewerId: string,
+  type: 'viewer' | 'respondent',
+): Promise<void> {
   // Fire-and-forget, no error handling
   fetch(`/api/s/${slug}/heartbeat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ viewerId, type }),
+    body: JSON.stringify({ surveyId, viewerId, type }),
   }).catch(() => {});
 }

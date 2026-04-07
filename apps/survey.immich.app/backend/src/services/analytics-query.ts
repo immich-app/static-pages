@@ -10,7 +10,7 @@ export async function queryLiveCounts(config: AnalyticsQueryConfig, surveyId: st
     SELECT blob2 AS type, COUNT(DISTINCT blob1) AS unique_count
     FROM ${config.dataset}
     WHERE index1 = '${surveyId.replace(/'/g, "''")}'
-      AND timestamp >= NOW() - INTERVAL '60' SECOND
+      AND timestamp >= NOW() - INTERVAL '5' MINUTE
     GROUP BY blob2
   `;
 
@@ -47,7 +47,7 @@ export async function queryLiveCounts(config: AnalyticsQueryConfig, surveyId: st
   return { activeViewers, activeRespondents };
 }
 
-function parseAnalyticsResponse(text: string): Array<{ type: string; unique_count: number }> {
+export function parseAnalyticsResponse(text: string): Array<{ type: string; unique_count: number }> {
   // Analytics Engine SQL API returns JSON: { meta: [...], data: [...], rows: N }
   // Values like unique_count come back as strings (e.g. "1")
   try {

@@ -1,18 +1,11 @@
 import { createRespondentService, createSurveyService } from '../services/factory';
 import { ServiceError } from '../services/errors';
-import { getRespondentId, setRespondentCookie, deleteRespondentCookie } from '../cookie';
+import { getCookie, getRespondentId, setRespondentCookie, deleteRespondentCookie } from '../cookie';
 import { verifyPassword, signToken, verifyToken } from '../utils/crypto';
 import { PASSWORD_SESSION_MAX_AGE } from '../constants';
 import { getContext, type AppContext } from '../config';
 import type { SurveyRow } from '../repositories/survey.repository';
 import type { AppRouter } from '../types';
-
-function getPasswordCookie(request: Request, slug: string): string | undefined {
-  const cookieName = `spw_${slug}`;
-  const header = request.headers.get('Cookie') ?? '';
-  const match = header.match(new RegExp(`(?:^|;\\s*)${cookieName}=([^;]+)`));
-  return match?.[1];
-}
 
 async function validatePasswordSession(
   request: Request,
@@ -22,7 +15,7 @@ async function validatePasswordSession(
 ): Promise<void> {
   if (!survey.password_hash) return;
 
-  const token = getPasswordCookie(request, slug);
+  const token = getCookie(request, `spw_${slug}`);
   if (!token || !(await verifyToken(survey.id, token, ctx.config.passwordSecret))) {
     throw new ServiceError('Authentication required', 403);
   }
@@ -36,7 +29,7 @@ export function registerRespondentRoutes(router: AppRouter) {
     const slug = request.params.slug;
 
     if (result.survey.password_hash) {
-      const token = getPasswordCookie(request, slug);
+      const token = getCookie(request, `spw_${slug}`);
       const isAuthed = token ? await verifyToken(result.survey.id, token, ctx.config.passwordSecret) : false;
 
       if (!isAuthed) {
@@ -180,11 +173,10 @@ export function registerRespondentRoutes(router: AppRouter) {
   router.post('/api/s/:slug/heartbeat', async (request) => {
     try {
       const ctx = getContext(request);
-      const body = (await request.json()) as { viewerId?: string; type?: string };
-      const survey = await createSurveyService(ctx.db).getPublishedSurvey(request.params.slug);
-      if (body.viewerId && body.type && ctx.analytics) {
+      const body = (await request.json()) as { surveyId?: string; viewerId?: string; type?: string };
+      if (body.surveyId && body.viewerId && body.type && ctx.analytics) {
         ctx.analytics.writeDataPoint({
-          indexes: [survey.survey.id],
+          indexes: [body.surveyId],
           blobs: [body.viewerId, body.type],
           doubles: [1],
         });

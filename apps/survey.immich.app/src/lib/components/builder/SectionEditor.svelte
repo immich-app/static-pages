@@ -42,7 +42,7 @@
   let expandedQuestionIndex = $state<number | null>(null);
   let confirmingDelete = $state(false);
   let showTemplates = $state(false);
-  let questionEditorRefs: (QuestionEditor | undefined)[] = [];
+  let questionEditorRefs = $state<(QuestionEditor | undefined)[]>([]);
 
   const addQuestionTypes: { type: QuestionType; label: string; icon: string }[] = [
     { type: 'radio', label: 'Single Choice', icon: mdiRadioboxMarked },
@@ -254,6 +254,7 @@
             index={qIndex}
             total={section.questions.length}
             expanded={expandedQuestionIndex === qIndex}
+            allQuestions={section.questions}
             onChange={(q) => updateQuestion(qIndex, q)}
             onDelete={() => deleteQuestion(qIndex)}
             onDuplicate={() => handleDuplicateQuestion(qIndex)}
