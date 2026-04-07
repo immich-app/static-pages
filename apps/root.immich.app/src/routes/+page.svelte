@@ -16,7 +16,7 @@
     playStoreBadge,
     SiteMetadata,
     Text,
-    theme,
+    themeManager,
     VStack,
   } from '@immich/ui';
   import { mdiKeyOutline, mdiOpenInNew, mdiShoppingOutline } from '@mdi/js';
@@ -64,7 +64,7 @@
     </div>
 
     <div class="relative -z-10">
-      <img src={theme.value === 'dark' ? screenshotDark : screenshotLight} alt="Immich application" />
+      <img src={themeManager.value === 'dark' ? screenshotDark : screenshotLight} alt="Immich application" />
 
       <div class="absolute -top-[55%] left-0 -z-10 h-[200%] w-full overflow-visible">
         <Logo size="giant" class="z-10 mb-2 h-full w-full antialiased opacity-20 blur-3xl" />
@@ -87,7 +87,7 @@
       </Button>
     </div>
 
-    <img src={theme.value === 'dark' ? qrCodeDark : qrCodeLight} alt="QRCode" class="h-36 rounded-xl" />
+    <img src={themeManager.value === 'dark' ? qrCodeDark : qrCodeLight} alt="QRCode" class="h-36 rounded-xl" />
 
     <hr class="m-8 w-full max-w-(--breakpoint-sm) border-t" />
     <Heading size="title" tag="h2">Support the project</Heading>
