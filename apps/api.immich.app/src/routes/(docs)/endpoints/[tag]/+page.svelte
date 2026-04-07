@@ -22,7 +22,6 @@
       {
         icon: mdiArrowLeft,
         title: 'Previous tag',
-        type: 'Navigation',
         iconClass: '',
         text: 'previous',
         $if: () => !!tag.previous,
@@ -32,7 +31,6 @@
       {
         icon: mdiArrowRight,
         title: 'Next tag',
-        type: 'Navigation',
         iconClass: '',
         text: 'next',
         $if: () => !!tag.next,
