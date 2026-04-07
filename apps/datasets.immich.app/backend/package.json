@@ -10,7 +10,7 @@
     "cf-typegen": "wrangler types"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.13.2",
+    "@cloudflare/vitest-pool-workers": "^0.14.0",
     "@types/luxon": "^3.6.2",
     "typescript": "^6.0.0",
     "vitest": "^4.1.0",

@@ -20,7 +20,7 @@
   "devDependencies": {
     "@eslint/compat": "^2.0.0",
     "@eslint/js": "^10.0.0",
-    "@immich/svelte-markdown-preprocess": "^0.3.0",
+    "@immich/svelte-markdown-preprocess": "^0.4.0",
     "@sveltejs/adapter-static": "^3.0.9",
     "@sveltejs/kit": "^2.55.0",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
