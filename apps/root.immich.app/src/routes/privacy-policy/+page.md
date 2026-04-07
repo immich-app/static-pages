@@ -2,7 +2,7 @@
 title: Privacy Policy
 description: Welcome to Immich. We are committed to respecting your privacy. This Privacy Policy sets out how we collect, use, and share information when you use our Immich app.
 layout: PrivacyPolicyPage
-updatedAt: 2025-04-06
+updatedAt: 2026-04-06
 ---
 
 ### 1. Scope of This Policy
