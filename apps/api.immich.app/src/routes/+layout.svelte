@@ -7,8 +7,9 @@
   import { getOpenApi } from '$lib/services/open-api';
   import {
     asText,
-    CommandPaletteDefaultProvider,
     commandPaletteManager,
+    CommandPaletteProvider,
+    defaultProvider,
     initializeTheme,
     onThemeChange,
     siteCommands,
@@ -35,24 +36,78 @@
 
   commandPaletteManager.enable();
 
-  const actions = $state<ActionItem[]>([]);
+  const commands: ActionItem[] = [
+    {
+      icon: mdiSend,
+      iconClass: 'text-purple-800 dark:text-purple-200',
+      title: 'Toggle theme',
+      description: 'Toggle between light and dark theme',
+      onAction: () => handleToggleTheme(),
+      searchText: asText('theme', 'toggle', 'dark', 'light'),
+    },
+  ];
+
+  const pageCommands: ActionItem[] = [
+    {
+      title: 'Introduction',
+      description: 'Overview of Immich API',
+      href: ApiPage.Introduction,
+    },
+    {
+      title: 'Getting started',
+      description: 'Learn how to get started with Immich API',
+      href: ApiPage.GettingStarted,
+    },
+    {
+      title: 'Authentication',
+      description: 'Learn how authentication works in the Immich API',
+      href: ApiPage.Authentication,
+    },
+    {
+      title: 'Permissions',
+      description: 'Learn how permissions work with the Immich API',
+      href: ApiPage.Permissions,
+    },
+    {
+      title: 'SDK',
+      description: 'Learn about the @immich/sdk generated client',
+      href: ApiPage.Sdk,
+    },
+    {
+      title: 'Endpoints',
+      description: 'A list of all the endpoints in the Immich API',
+      href: ApiPage.Endpoints,
+    },
+    {
+      title: 'Models',
+      description: 'A list of all the models in the Immich API',
+      href: ApiPage.Models,
+    },
+  ].map(({ href, ...item }) => ({
+    icon: mdiScriptText,
+    iconClass: 'text-teal-800 dark:text-teal-200',
+    onAction: () => goto(href),
+    ...item,
+  }));
+
+  const endpointCommands = $state<ActionItem[]>([]);
+  const tagActions = $state<ActionItem[]>([]);
+  const modelCommands = $state<ActionItem[]>([]);
 
   try {
     const { tags, models } = getOpenApi();
 
     for (const tag of tags) {
-      actions.push({
+      tagActions.push({
         icon: mdiTagMultiple,
         iconClass: 'text-pink-700 dark:text-pink-200',
-        type: 'Tag',
         title: tag.name,
         onAction: () => goto(tag.href),
       });
 
       for (const endpoint of tag.endpoints) {
-        actions.push({
+        endpointCommands.push({
           icon: mdiApi,
-          type: 'Endpoint',
           iconClass: 'text-indigo-700 dark:text-indigo-200',
           title: endpoint.operationId,
           description: endpoint.description,
@@ -63,10 +118,9 @@
     }
 
     for (const model of models) {
-      actions.push({
+      modelCommands.push({
         icon: mdiTag,
         iconClass: 'text-violet-700 dark:text-violet-200',
-        type: 'Model',
         title: model.name,
         description: model.description,
         onAction: () => goto(model.href),
@@ -76,69 +130,17 @@
   } catch {
     // noop
   }
-
-  actions.push(
-    ...[
-      {
-        title: 'Introduction',
-        description: 'Overview of Immich API',
-        href: ApiPage.Introduction,
-      },
-      {
-        title: 'Getting started',
-        description: 'Learn how to get started with Immich API',
-        href: ApiPage.GettingStarted,
-      },
-      {
-        title: 'Authentication',
-        description: 'Learn how authentication works in the Immich API',
-        href: ApiPage.Authentication,
-      },
-      {
-        title: 'Permissions',
-        description: 'Learn how permissions work with the Immich API',
-        href: ApiPage.Permissions,
-      },
-      {
-        title: 'SDK',
-        description: 'Learn about the @immich/sdk generated client',
-        href: ApiPage.Sdk,
-      },
-      {
-        title: 'Endpoints',
-        description: 'A list of all the endpoints in the Immich API',
-        href: ApiPage.Endpoints,
-      },
-      {
-        title: 'Models',
-        description: 'A list of all the models in the Immich API',
-        href: ApiPage.Models,
-      },
-    ].map(({ href, ...item }) => ({
-      icon: mdiScriptText,
-      iconClass: 'text-teal-800 dark:text-teal-200',
-      type: 'Page',
-      onAction: () => goto(href),
-      ...item,
-    })),
-    ...[
-      {
-        title: 'Toggle theme',
-        description: 'Toggle between light and dark theme',
-        onAction: () => handleToggleTheme(),
-        searchText: asText('theme', 'toggle', 'dark', 'light'),
-      },
-    ].map((item) => ({
-      icon: mdiSend,
-      iconClass: 'text-purple-800 dark:text-purple-200',
-      type: 'Action',
-      ...item,
-    })),
-    ...siteCommands,
-  );
 </script>
 
-<CommandPaletteDefaultProvider {actions} name="Global" />
+<CommandPaletteProvider
+  providers={[
+    defaultProvider({ name: 'Command', actions: commands }),
+    defaultProvider({ name: 'Page', actions: pageCommands }),
+    defaultProvider({ name: 'Link', actions: siteCommands }),
+    defaultProvider({ name: 'Endpoint', actions: endpointCommands }),
+    defaultProvider({ name: 'Model', actions: modelCommands }),
+  ]}
+/>
 
 <TooltipProvider>
   {#if page.data.error}

@@ -34,7 +34,6 @@
       {
         icon: mdiArrowLeft,
         title: 'Previous endpoint',
-        type: 'Navigation',
         iconClass: '',
         text: 'previous',
         $if: () => !!endpoint.previous,
@@ -44,7 +43,6 @@
       {
         icon: mdiArrowRight,
         title: 'Next endpoint',
-        type: 'Navigation',
         iconClass: '',
         text: 'next',
         $if: () => !!endpoint.next,
