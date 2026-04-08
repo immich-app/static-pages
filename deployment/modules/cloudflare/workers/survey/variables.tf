@@ -50,8 +50,10 @@ variable "oidc_role_map_editor" {
   default     = "survey-editor"
 }
 
+# Temporary: needed to destroy orphaned analytics token resource
 variable "cloudflare_api_token" {
-  description = "Cloudflare API token with permission to create API tokens (from 1Password op://tf/cloudflare/api_token)"
+  description = "Cloudflare API token (temporary, remove after analytics token is destroyed from state)"
   type        = string
   sensitive   = true
 }
+

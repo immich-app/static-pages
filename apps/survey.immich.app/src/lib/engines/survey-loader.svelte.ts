@@ -1,6 +1,7 @@
 import { onMount } from 'svelte';
 import type { Survey, SurveySection, SurveyQuestion } from '../types';
-import { getPublishedSurvey, authenticateSurvey, sendHeartbeat } from '../api/surveys';
+import { getPublishedSurvey, authenticateSurvey } from '../api/surveys';
+import { connectPresence, type PresenceConnection } from '../api/presence';
 import { createApiClient } from '../api/client';
 import { createSurveyEngine, randomizeQuestions, randomizeOptionOrder } from './survey-engine.svelte';
 
@@ -17,8 +18,7 @@ export function createSurveyLoader(slug: string) {
 
   let engine: ReturnType<typeof createSurveyEngine> | null = $state(null);
   let client: ReturnType<typeof createApiClient> | null = null;
-
-  let heartbeatTimer: ReturnType<typeof setInterval> | undefined;
+  let presenceConn: PresenceConnection | undefined;
 
   onMount(() => {
     (async () => {
@@ -29,10 +29,8 @@ export function createSurveyLoader(slug: string) {
         sections = data.sections;
         questions = data.questions;
 
-        // Start heartbeat now that we have the survey ID
-        const heartbeatViewerId = crypto.randomUUID();
-        sendHeartbeat(slug, survey.id, heartbeatViewerId, 'respondent');
-        heartbeatTimer = setInterval(() => sendHeartbeat(slug, survey!.id, heartbeatViewerId, 'respondent'), 15_000);
+        // Connect for live presence tracking
+        presenceConn = connectPresence(slug, 'respondent');
 
         // Check if password protected (backend returns no questions/sections)
         if (survey.requiresPassword && questions.length === 0) {
@@ -51,7 +49,7 @@ export function createSurveyLoader(slug: string) {
     const handleUnload = () => client?.flushBufferSync();
     window.addEventListener('beforeunload', handleUnload);
     return () => {
-      clearInterval(heartbeatTimer);
+      presenceConn?.close();
       window.removeEventListener('beforeunload', handleUnload);
       client?.destroy();
     };

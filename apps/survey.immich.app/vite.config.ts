@@ -12,7 +12,10 @@ export default defineConfig({
       allow: ['../../common'],
     },
     proxy: {
-      '/api': 'http://localhost:8787',
+      '/api': {
+        target: 'http://localhost:8787',
+        ws: true,
+      },
     },
     watch: {
       ignored: ['**/backend/**'],

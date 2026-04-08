@@ -11,6 +11,7 @@ import { authMiddleware } from './middleware/auth';
 import { configFromEnv, type AppContext } from './config';
 import { createD1Database } from './db';
 
+
 const { preflight, corsify } = cors();
 
 function securityHeaders(response: Response): Response {
@@ -61,15 +62,7 @@ const router = AutoRouter<IRequest & { ctx?: AppContext }, [Env, ExecutionContex
     (request: IRequest & { ctx?: AppContext }, env: Env) => {
       const config = configFromEnv(env);
       const db = createD1Database(env.DB);
-      request.ctx = {
-        db,
-        config,
-        analytics: env.ANALYTICS,
-        analyticsQuery:
-          env.CF_ACCOUNT_ID && env.CF_ANALYTICS_API_TOKEN
-            ? { accountId: env.CF_ACCOUNT_ID, apiToken: env.CF_ANALYTICS_API_TOKEN, dataset: 'survey_heartbeats' }
-            : undefined,
-      };
+      request.ctx = { db, config };
     },
     (request: IRequest & { ctx?: AppContext }) => authMiddleware(request.ctx!)(request),
   ],
@@ -85,4 +78,21 @@ const router = AutoRouter<IRequest & { ctx?: AppContext }, [Env, ExecutionContex
 
 registerAllRoutes(router);
 
-export default router;
+export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    // Route WebSocket upgrades to Durable Object
+    const url = new URL(request.url);
+    const wsMatch = url.pathname.match(/^\/api\/s\/([^/]+)\/ws$/);
+    if (wsMatch && request.headers.get('Upgrade') === 'websocket') {
+      if (!env.SURVEY_SESSIONS) {
+        return new Response('WebSocket not available', { status: 501 });
+      }
+      const slug = wsMatch[1];
+      const id = env.SURVEY_SESSIONS.idFromName(slug);
+      const stub = env.SURVEY_SESSIONS.get(id);
+      return stub.fetch(request);
+    }
+
+    return router.fetch(request, env, ctx);
+  },
+};

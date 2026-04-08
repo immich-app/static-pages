@@ -4,9 +4,11 @@ import { Hono } from 'hono';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Kysely } from 'kysely';
+import { WebSocketServer } from 'ws';
 import { configFromProcessEnv, type AppContext } from './config';
 import { detectDbType, type Database, type DbConfig } from './db';
 import { runMigrations } from './migrator';
+import { handlePresenceUpgrade } from './services/in-memory-presence';
 
 async function createDatabase(dbConfig: DbConfig): Promise<Kysely<Database>> {
   if (dbConfig.type === 'sqlite') {
@@ -74,8 +76,31 @@ async function main() {
   console.log(`Survey server starting on port ${port}`);
   console.log(`Database: ${dbType} (${process.env.DATABASE_URL ?? 'default SQLite'})`);
 
-  serve({ fetch: app.fetch, port });
+  const server = serve({ fetch: app.fetch, port });
   console.log(`Server ready at http://localhost:${port}`);
+
+  // WebSocket server for live presence tracking
+  const wss = new WebSocketServer({ noServer: true });
+
+  (server as import('node:http').Server).on('upgrade', (req, socket, head) => {
+    const url = new URL(req.url ?? '', `http://localhost:${port}`);
+    const wsMatch = url.pathname.match(/^\/api\/s\/([^/]+)\/ws$/);
+    if (!wsMatch) {
+      socket.destroy();
+      return;
+    }
+
+    const slug = wsMatch[1];
+    const type = url.searchParams.get('type');
+    if (type !== 'viewer' && type !== 'respondent') {
+      socket.destroy();
+      return;
+    }
+
+    wss.handleUpgrade(req, socket, head, (ws) => {
+      handlePresenceUpgrade(ws as any, slug, type);
+    });
+  });
 }
 
 main().catch((e) => {

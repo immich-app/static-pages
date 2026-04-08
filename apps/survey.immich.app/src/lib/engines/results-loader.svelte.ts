@@ -1,14 +1,8 @@
 import { onMount, onDestroy } from 'svelte';
 import { SvelteMap } from 'svelte/reactivity';
 import type { Survey, SurveyQuestion, SurveySection, TimelineDataPoint, DropoffDataPoint, LiveCounts } from '../types';
-import {
-  getSurvey,
-  getLiveResults,
-  exportResults,
-  getSurveyTimeline,
-  getSurveyDropoff,
-  sendHeartbeat,
-} from '../api/surveys';
+import { getSurvey, getLiveResults, exportResults, getSurveyTimeline, getSurveyDropoff } from '../api/surveys';
+import { connectPresence, type PresenceConnection } from '../api/presence';
 
 export function createResultsLoader(surveyId: string) {
   let survey = $state<Survey | null>(null);
@@ -30,8 +24,7 @@ export function createResultsLoader(surveyId: string) {
   let exporting = $state(false);
 
   let pollInterval: ReturnType<typeof setInterval> | undefined;
-  let heartbeatInterval: ReturnType<typeof setInterval> | undefined;
-  const viewerId = crypto.randomUUID();
+  let presenceConn: PresenceConnection | undefined;
 
   const sortedQuestions = $derived.by(() => {
     const sectionOrder = new SvelteMap(sections.map((s) => [s.id, s.sortOrder]));
@@ -58,7 +51,6 @@ export function createResultsLoader(surveyId: string) {
       if (data) {
         respondentCounts = data.respondentCounts;
         results = data.results;
-        liveCounts = data.liveCounts;
       }
     } catch {
       // silently fail on poll
@@ -116,25 +108,22 @@ export function createResultsLoader(surveyId: string) {
     }
     loading = false;
 
-    // Start polling
+    // Start polling for results data (charts, answers)
     pollInterval = setInterval(() => {
       refreshResults();
     }, 15_000);
 
-    // Start viewer heartbeat
+    // Connect WebSocket for real-time live counts
     if (survey?.slug) {
-      const slug = survey.slug;
-      const sid = survey.id;
-      sendHeartbeat(slug, sid, viewerId, 'viewer');
-      heartbeatInterval = setInterval(() => {
-        sendHeartbeat(slug, sid, viewerId, 'viewer');
-      }, 15_000);
+      presenceConn = connectPresence(survey.slug, 'viewer', (counts) => {
+        liveCounts = counts;
+      });
     }
   });
 
   onDestroy(() => {
     clearInterval(pollInterval);
-    clearInterval(heartbeatInterval);
+    presenceConn?.close();
   });
 
   return {

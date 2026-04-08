@@ -3,7 +3,6 @@ import { ServiceError } from '../services/errors';
 import { MAX_PAGINATION_LIMIT } from '../constants';
 import { requireRole, type AuthenticatedRequest } from '../middleware/auth';
 import { getContext } from '../config';
-import { queryLiveCounts } from '../services/analytics-query';
 import type { AppRouter } from '../types';
 
 export function registerResultRoutes(router: AppRouter) {
@@ -38,14 +37,6 @@ export function registerResultRoutes(router: AppRouter) {
     const ctx = getContext(request);
     const service = createRespondentService(ctx.db);
     const results = await service.getLiveResults(request.params.id);
-
-    if (ctx.analyticsQuery) {
-      try {
-        results.liveCounts = await queryLiveCounts(ctx.analyticsQuery, request.params.id);
-      } catch {
-        // Gracefully degrade to database-only counts if analytics query fails
-      }
-    }
 
     const etag = `"${results.respondentCounts.completed}-${results.respondentCounts.total}-${results.liveCounts.activeRespondents}-${results.liveCounts.activeViewers}"`;
     const ifNoneMatch = request.headers.get('If-None-Match');

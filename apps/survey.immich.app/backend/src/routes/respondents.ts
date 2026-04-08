@@ -170,23 +170,4 @@ export function registerRespondentRoutes(router: AppRouter) {
     return new Response(null, { status: 204, headers });
   });
 
-  router.post('/api/s/:slug/heartbeat', async (request) => {
-    try {
-      const ctx = getContext(request);
-      const body = (await request.json()) as { surveyId?: string; viewerId?: string; type?: string };
-      if (body.surveyId && body.viewerId && body.type && ctx.analytics) {
-        ctx.analytics.writeDataPoint({
-          indexes: [body.surveyId],
-          blobs: [body.viewerId, body.type],
-          doubles: [1],
-        });
-      }
-    } catch {
-      // heartbeat is best-effort, swallow errors
-    }
-    return new Response(null, {
-      status: 204,
-      headers: { 'Cache-Control': 'no-store' },
-    });
-  });
 }

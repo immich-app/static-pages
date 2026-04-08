@@ -1,6 +1,10 @@
 resource "cloudflare_d1_database" "survey" {
   account_id = var.cloudflare_account_id
   name       = "survey${local.resource_suffix}"
+
+  read_replication = {
+    mode = "disabled"
+  }
 }
 
 resource "null_resource" "d1_migrations" {

@@ -280,42 +280,6 @@ describe('API URL construction', () => {
   });
 });
 
-describe('sendHeartbeat', () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  it('sends POST with correct body including surveyId', async () => {
-    const fetchSpy = vi.fn().mockResolvedValue({ ok: true });
-    vi.stubGlobal('fetch', fetchSpy);
-    const { sendHeartbeat } = await import('../api/surveys');
-    await sendHeartbeat('my-slug', 'survey-abc', 'v123', 'viewer');
-    expect(fetchSpy).toHaveBeenCalledWith('/api/s/my-slug/heartbeat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ surveyId: 'survey-abc', viewerId: 'v123', type: 'viewer' }),
-    });
-  });
-
-  it('does not throw when fetch rejects', async () => {
-    const fetchSpy = vi.fn().mockRejectedValue(new Error('network error'));
-    vi.stubGlobal('fetch', fetchSpy);
-    const { sendHeartbeat } = await import('../api/surveys');
-    // Should not throw
-    await expect(sendHeartbeat('slug', 's1', 'v1', 'respondent')).resolves.toBeUndefined();
-  });
-
-  it('sends respondent type correctly', async () => {
-    const fetchSpy = vi.fn().mockResolvedValue({ ok: true });
-    vi.stubGlobal('fetch', fetchSpy);
-    const { sendHeartbeat } = await import('../api/surveys');
-    await sendHeartbeat('slug', 's1', 'v2', 'respondent');
-    const body = JSON.parse(fetchSpy.mock.calls[0][1].body);
-    expect(body.type).toBe('respondent');
-    expect(body.surveyId).toBe('s1');
-  });
-});
-
 describe('NPS score calculation', () => {
   it('returns null for empty answers', () => {
     const result = computeNps([]);

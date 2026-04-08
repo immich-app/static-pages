@@ -13,6 +13,15 @@
       "database_id": "local",
     },
   ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "SURVEY_SESSIONS",
+        "class_name": "SurveySession",
+        "script_name": "survey-sessions",
+      },
+    ],
+  },
   // DEV ONLY — override with `wrangler secret put` in production
   "vars": {
     "PASSWORD_SECRET": "dev-password-secret-DO-NOT-USE-IN-PRODUCTION",
@@ -25,10 +34,4 @@
     "OIDC_ROLE_MAP_EDITOR": "survey-editor",
     "SESSION_SECRET": "dev-session-secret-DO-NOT-USE-IN-PRODUCTION",
   },
-  "analytics_engine_datasets": [
-    {
-      "binding": "ANALYTICS",
-      "dataset": "survey_heartbeats",
-    },
-  ],
 }
