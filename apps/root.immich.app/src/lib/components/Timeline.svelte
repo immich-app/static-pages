@@ -56,7 +56,7 @@
               <div class="hidden md:flex">
                 <Text color="primary">
                   {#if item.link}
-                    <Link href={item.link.url}>
+                    <Link href={item.link.href}>
                       [{item.link.text}]
                     </Link>
                   {/if}
@@ -74,7 +74,7 @@
               </Text>
               <Text color="primary">
                 {#if item.link}
-                  <Link href={item.link.url}>
+                  <Link href={item.link.href}>
                     [{item.link.text}]
                   </Link>
                 {/if}

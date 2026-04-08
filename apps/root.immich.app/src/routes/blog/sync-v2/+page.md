@@ -8,7 +8,7 @@ authors: [Jason Rasmussen]
 
 <script>
   import mediumTests from '$lib/assets/img/medium-tests.webp';
-  import GithubReference from '$lib/components/GithubReference.svelte';
+  import { GithubLink } from '@immich/ui';
 </script>
 
 For some time now it has been painfully obvious to the team (and its users 😂), that the mobile app needs a new synchronization implementation. This is also one of the last roadblocks for a stable release. This post is a deep dive into the core issues of syncing large volumes of data with a mobile client, the technical details of the new implementation, as well as our thought process behind the decisions that led to the current design.
@@ -49,7 +49,7 @@ Off the bat we realized that having end-to-end streaming would be a huge win in 
 
 #### Database streaming
 
-Reading from PostgreSQL in chunks was easy enough. Having just migrated to Kysely from TypeORM, we were already seeing massive improvements with regard to speed and memory usage in other parts of the application as we migrated queries to use the [streaming](https://kysely-org.github.io/kysely-apidoc/interfaces/Streamable.html) interface (see <GithubReference number={16600} />, <GithubReference number={16666} />, <GithubReference number={16700} />, <GithubReference number={16706} />, etc.).
+Reading from PostgreSQL in chunks was easy enough. Having just migrated to Kysely from TypeORM, we were already seeing massive improvements with regard to speed and memory usage in other parts of the application as we migrated queries to use the [streaming](https://kysely-org.github.io/kysely-apidoc/interfaces/Streamable.html) interface (see <GithubLink number={16600} size="large" />, <GithubLink number={16666} size="large" />, <GithubLink number={16700} size="large" />, <GithubLink number={16706} size="large" />, etc.).
 
 Here is an example of what streaming looks like when querying albums:
 

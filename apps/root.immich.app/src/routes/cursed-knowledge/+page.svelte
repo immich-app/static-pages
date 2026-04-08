@@ -2,7 +2,7 @@
   import type { TimelineItem } from '$lib';
   import { posts, siteMetadata } from '$lib';
   import Timeline from '$lib/components/Timeline.svelte';
-  import { Heading, SiteMetadata, Stack, Text } from '@immich/ui';
+  import { asGithubLink, Heading, SiteMetadata, Stack, Text } from '@immich/ui';
   import {
     mdiAccountOutline,
     mdiBug,
@@ -23,41 +23,51 @@
     mdiSecurity,
     mdiSpeedometerSlow,
     mdiTrashCan,
+    mdiVideoOutline,
     mdiWeb,
     mdiWrap,
   } from '@mdi/js';
+
+  const withBlog = ({ id, ...item }: Omit<Item, 'date' | 'link'> & { id: string }) => {
+    const post = posts.find((post) => post.id === id);
+    if (!post) {
+      throw new Error('Unable to resolve blog post');
+    }
+
+    return {
+      ...item,
+      link: { href: post.url, text: 'Blog' },
+      date: post.publishedAt.toJSDate(),
+    };
+  };
 
   const withLanguage = (date: Date) => (language: string) => date.toLocaleDateString(language);
 
   type Item = Omit<TimelineItem, 'done' | 'getDateLabel'> & { date: Date };
 
-  const dangerousPost = posts.find((post) => post.id === '019a01e1-4dc0-73db-aebd-623726a62335');
-  if (!dangerousPost) {
-    throw new Error('Unable to resolve blog post');
-  }
-
   const items: Item[] = [
     {
+      icon: mdiVideoOutline,
+      title: 'Stabilized videos are cursed',
+      description:
+        'Video stabilization is cursed because it is implemented via crop metadata which impacts video dimensions and is sometimes automatically applied (depending on the tool), which can make dimension-based calculations wrong.',
+      link: asGithubLink({ number: 27251 }),
+      date: new Date(2026, 2, 25),
+    },
+    withBlog({
+      id: '019a01e1-4dc0-73db-aebd-623726a62335',
       icon: mdiCloseOctagon,
       title: "Google's safe browsing is cursed",
       iconClass: 'text-danger',
       description:
         'Google\'s safe browsing service is cursed because it can flag legitimate sites as "dangerous" without any human review and continue to do so indefinitely.',
-      link: {
-        url: dangerousPost.url,
-        text: 'Blog',
-      },
-      date: dangerousPost.publishedAt.toJSDate(),
-    },
+    }),
     {
       icon: mdiClockOutline,
       title: 'setTimeout is cursed',
       description:
         'The setTimeout method in JavaScript is cursed when used with small values because the implementation may or may not actually wait the specified time.',
-      link: {
-        url: 'https://github.com/immich-app/immich/pull/20655',
-        text: '#20655',
-      },
+      link: asGithubLink(20655),
       date: new Date(2025, 7, 4),
     },
     {
@@ -65,10 +75,7 @@
       title: 'PostgreSQL USER is cursed',
       description:
         'The USER keyword in PostgreSQL is cursed because you can select from it like a table, which leads to confusion if you have a table name user as well.',
-      link: {
-        url: 'https://github.com/immich-app/immich/pull/19891',
-        text: '#19891',
-      },
+      link: asGithubLink(19891),
       date: new Date(2025, 7, 4),
     },
     {
@@ -76,10 +83,7 @@
       title: 'PostgreSQL RESET is cursed',
       description:
         'PostgreSQL RESET is cursed because it is impossible to RESET a PostgreSQL extension parameter if the extension has been uninstalled.',
-      link: {
-        url: 'https://github.com/immich-app/immich/pull/19363',
-        text: '#19363',
-      },
+      link: asGithubLink(19363),
       date: new Date(2025, 5, 20),
     },
     {
@@ -88,7 +92,7 @@
       description:
         "Zitadel is cursed because its custom scripting feature is executed with a JS engine that doesn't support regex named capture groups.",
       link: {
-        url: 'https://github.com/dop251/goja',
+        href: 'https://github.com/dop251/goja',
         text: 'Go JS engine',
       },
       date: new Date(2025, 5, 4),
@@ -98,10 +102,7 @@
       title: 'Entra is cursed',
       description:
         "Microsoft Entra supports PKCE, but doesn't include it in its OpenID discovery document. This leads to clients thinking PKCE isn't available.",
-      link: {
-        url: 'https://github.com/immich-app/immich/pull/18725',
-        text: '#18725',
-      },
+      link: asGithubLink(18725),
       date: new Date(2025, 4, 30),
     },
     {
@@ -109,20 +110,14 @@
       title: 'Image dimensions in EXIF metadata are cursed',
       description:
         'The dimensions in EXIF metadata can be different from the actual dimensions of the image, causing issues with cropping and resizing.',
-      link: {
-        url: 'https://github.com/immich-app/immich/pull/17974',
-        text: '#17974',
-      },
+      link: asGithubLink(17974),
       date: new Date(2025, 4, 5),
     },
     {
       icon: mdiCodeJson,
       title: 'YAML whitespace is cursed',
       description: 'YAML whitespaces are often handled in unintuitive ways.',
-      link: {
-        url: 'https://github.com/immich-app/immich/pull/17309',
-        text: '#17309',
-      },
+      link: asGithubLink(17309),
       date: new Date(2025, 3, 1),
     },
     {
@@ -130,10 +125,7 @@
       title: 'Hidden files in Windows are cursed',
       description:
         'Hidden files in Windows cannot be opened with the "w" flag. That, combined with SMB option "hide dot files" leads to a lot of confusion.',
-      link: {
-        url: 'https://github.com/immich-app/immich/pull/12812',
-        text: '#12812',
-      },
+      link: asGithubLink(12812),
       date: new Date(2024, 8, 20),
     },
     {
@@ -141,10 +133,7 @@
       title: 'Carriage returns in bash scripts are cursed',
       description:
         'Git can be configured to automatically convert LF to CRLF on checkout and CRLF breaks bash scripts.',
-      link: {
-        url: 'https://github.com/immich-app/immich/pull/11613',
-        text: '#11613',
-      },
+      link: asGithubLink(11613),
       date: new Date(2024, 7, 7),
     },
     {
@@ -153,7 +142,7 @@
       description:
         'Fetch requests in Cloudflare Workers use http by default, even if you explicitly specify https, which can often cause redirect loops.',
       link: {
-        url: 'https://community.cloudflare.com/t/does-cloudflare-worker-allow-secure-https-connection-to-fetch-even-on-flexible-ssl/68051/5',
+        href: 'https://community.cloudflare.com/t/does-cloudflare-worker-allow-secure-https-connection-to-fetch-even-on-flexible-ssl/68051/5',
         text: 'Cloudflare',
       },
       date: new Date(2024, 7, 7),
@@ -163,10 +152,7 @@
       title: 'GPS sharing on mobile is cursed',
       description:
         'Some phones will silently strip GPS data from images when apps without location permission try to access them.',
-      link: {
-        url: 'https://github.com/immich-app/immich/discussions/11268',
-        text: '#11268',
-      },
+      link: asGithubLink({ number: 11268, type: 'discussion' }),
       date: new Date(2024, 6, 21),
     },
     {
@@ -174,7 +160,7 @@
       title: 'PostgreSQL NOTIFY is cursed',
       description:
         'PostgreSQL does everything in a transaction, including NOTIFY. This means using the socket.io postgres-adapter writes to WAL every 5 seconds.',
-      link: { url: 'https://github.com/immich-app/immich/pull/10801', text: '#10801' },
+      link: asGithubLink(10801),
       date: new Date(2024, 6, 3),
     },
     {
@@ -182,7 +168,7 @@
       title: 'npm scripts are cursed',
       description:
         'npm scripts make a http call to the npm registry each time they run, which means they are a terrible way to execute a health check.',
-      link: { url: 'https://github.com/immich-app/immich/issues/10796', text: '#10796' },
+      link: asGithubLink({ number: 10796, type: 'issue' }),
       date: new Date(2024, 6, 3),
     },
     {
@@ -190,7 +176,7 @@
       title: '50 extra packages are cursed',
       description:
         'There is a user in the JavaScript community who goes around adding "backwards compatibility" to projects. They do this by adding 50 extra package dependencies to your project, which are maintained by them.',
-      link: { url: 'https://github.com/immich-app/immich/pull/10690', text: '#10690' },
+      link: asGithubLink(10690),
       date: new Date(2024, 5, 28),
     },
     {
@@ -205,7 +191,7 @@
       icon: mdiCalendarToday,
       title: 'JavaScript Date objects are cursed',
       description: 'JavaScript date objects are 1 indexed for years and days, but 0 indexed for months.',
-      link: { url: 'https://github.com/immich-app/immich/pull/6787', text: '#6787' },
+      link: asGithubLink(6787),
       date: new Date(2024, 0, 31),
     },
     {
@@ -213,30 +199,21 @@
       title: 'ESM imports are cursed',
       description:
         'Prior to Node.js v20.8 using --experimental-vm-modules in a CommonJS project that imported an ES module that imported a CommonJS modules would create a segfault and crash Node.js',
-      link: {
-        url: 'https://github.com/immich-app/immich/pull/6719',
-        text: '#6179',
-      },
+      link: asGithubLink(6719),
       date: new Date(2024, 0, 9),
     },
     {
       icon: mdiDatabase,
       title: 'PostgreSQL parameters are cursed',
       description: `PostgresSQL has a limit of ${Number(65535).toLocaleString()} parameters, so bulk inserts can fail with large datasets.`,
-      link: {
-        url: 'https://github.com/immich-app/immich/pull/6034',
-        text: '#6034',
-      },
+      link: asGithubLink(6034),
       date: new Date(2023, 11, 28),
     },
     {
       icon: mdiSecurity,
       title: 'Secure contexts are cursed',
       description: `Some web features like the clipboard API only work in "secure contexts" (ie. https or localhost)`,
-      link: {
-        url: 'https://github.com/immich-app/immich/issues/2981',
-        text: '#2981',
-      },
+      link: asGithubLink({ type: 'issue', number: 2981 }),
       date: new Date(2023, 5, 26),
     },
     {
@@ -244,7 +221,7 @@
       title: 'TypeORM deletes are cursed',
       description: `The remove implementation in TypeORM mutates the input, deleting the id property from the original object.`,
       link: {
-        url: 'https://github.com/typeorm/typeorm/issues/7024#issuecomment-948519328',
+        href: 'https://github.com/typeorm/typeorm/issues/7024#issuecomment-948519328',
         text: 'typeorm#6034',
       },
       date: new Date(2023, 1, 23),
