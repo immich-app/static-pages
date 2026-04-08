@@ -9,8 +9,8 @@
     ControlBar,
     ControlBarHeader,
     ControlBarOverflow,
-    initializeTheme,
     Logo,
+    themeManager,
     ThemeSwitcher,
     TooltipProvider,
   } from '@immich/ui';
@@ -23,7 +23,7 @@
 
   const { children }: Props = $props();
 
-  initializeTheme({ selector: 'html', lightClass: 'light', darkClass: 'dark' });
+  themeManager.initialize();
 </script>
 
 <TooltipProvider>

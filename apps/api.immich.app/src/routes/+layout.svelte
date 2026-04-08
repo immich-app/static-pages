@@ -10,11 +10,8 @@
     commandPaletteManager,
     CommandPaletteProvider,
     defaultProvider,
-    initializeTheme,
-    onThemeChange,
     siteCommands,
-    Theme,
-    theme,
+    themeManager,
     TooltipProvider,
     type ActionItem,
   } from '@immich/ui';
@@ -27,12 +24,7 @@
 
   let { children }: Props = $props();
 
-  initializeTheme({ selector: 'body' });
-
-  const handleToggleTheme = () => {
-    theme.value = theme.value === Theme.Dark ? Theme.Light : Theme.Dark;
-    onThemeChange();
-  };
+  themeManager.initialize();
 
   commandPaletteManager.enable();
 
@@ -42,7 +34,7 @@
       iconClass: 'text-purple-800 dark:text-purple-200',
       title: 'Toggle theme',
       description: 'Toggle between light and dark theme',
-      onAction: () => handleToggleTheme(),
+      onAction: () => themeManager.toggle(),
       searchText: asText('theme', 'toggle', 'dark', 'light'),
     },
   ];

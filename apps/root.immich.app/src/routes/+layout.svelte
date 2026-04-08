@@ -16,14 +16,13 @@
     Constants,
     defaultProvider,
     IconButton,
-    initializeTheme,
     Link,
     Logo,
     NavbarItem,
     siteCommands,
     Text,
+    themeManager,
     ThemeSwitcher,
-    toggleTheme,
     TooltipProvider,
     type ActionItem,
   } from '@immich/ui';
@@ -49,7 +48,7 @@
 
   const { children }: Props = $props();
 
-  initializeTheme({ selector: 'html', lightClass: 'light', darkClass: 'dark' });
+  themeManager.initialize();
 
   let pathname = '';
   onMount(() => {
@@ -96,7 +95,7 @@
       iconClass: 'text-purple-800 dark:text-purple-200',
       title: 'Toggle theme',
       description: 'Toggle between light and dark theme',
-      onAction: () => toggleTheme(),
+      onAction: () => themeManager.toggle(),
       searchText: asText('theme', 'toggle', 'dark', 'light'),
     },
   ];
