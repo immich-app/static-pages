@@ -58,6 +58,7 @@
     mdiMagnify,
     mdiMagnifyScan,
     mdiMap,
+    mdiMapOutline,
     mdiMaterialDesign,
     mdiMatrix,
     mdiMerge,
@@ -89,6 +90,7 @@
     mdiThemeLightDark,
     mdiTrashCanOutline,
     mdiTune,
+    mdiUpdate,
     mdiUploadMultipleOutline,
     mdiVectorCombine,
     mdiVideo,
@@ -96,6 +98,8 @@
   } from '@mdi/js';
 
   const releases = {
+    'v2.7.0': new Date(2026, 3, 7),
+    'v2.6.0': new Date(2026, 2, 19),
     'v2.5.0': new Date(2026, 0, 28),
     'v2.3.0': new Date(2025, 10, 19),
     'v2.2.0': new Date(2025, 9, 30),
@@ -193,7 +197,7 @@
       title,
       description,
       link: {
-        url: `https://github.com/immich-app/immich/releases/tag/${weirdTags[version as keyof typeof weirdTags] ?? version}`,
+        href: `https://github.com/immich-app/immich/releases/tag/${weirdTags[version as keyof typeof weirdTags] ?? version}`,
         text: version,
       },
       getDateLabel: withLanguage(releases[version]),
@@ -257,6 +261,24 @@
   }));
 
   const milestones: TimelineItem[] = [
+    releaseItem({
+      icon: mdiSecurity,
+      title: 'Content Security Policy',
+      description: 'Harden Immich with a default Content Security Policy',
+      release: 'v2.7.0',
+    }),
+    releaseItem({
+      icon: mdiUpdate,
+      title: 'Deploy version.immich.cloud',
+      description: 'Dedicated version service for Immich',
+      release: 'v2.7.0',
+    }),
+    releaseItem({
+      icon: mdiMapOutline,
+      title: 'Map side panel (web)',
+      description: 'View a timeline of assets while using the map',
+      release: 'v2.6.0',
+    }),
     releaseItem({
       icon: mdiBroom,
       title: 'Free up space',

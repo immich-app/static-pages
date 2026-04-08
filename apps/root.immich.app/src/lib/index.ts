@@ -19,7 +19,7 @@ export type TimelineItem = {
   iconClass?: string;
   title: string;
   description?: string;
-  link?: { url: string; text: string };
+  link?: { href: string; text: string };
   done?: false;
   getDateLabel: (language: string) => string;
 };
