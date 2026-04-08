@@ -49,11 +49,7 @@ function cleanupRoom(slug: string, room: SurveyRoom) {
   }
 }
 
-export function handlePresenceUpgrade(
-  ws: ServerWebSocket,
-  slug: string,
-  type: 'viewer' | 'respondent',
-): void {
+export function handlePresenceUpgrade(ws: ServerWebSocket, slug: string, type: 'viewer' | 'respondent'): void {
   const room = getRoom(slug);
   const set = type === 'viewer' ? room.viewers : room.respondents;
   set.add(ws);

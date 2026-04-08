@@ -73,7 +73,7 @@
               description: section.description || undefined,
             });
             for (const q of section.questions) {
-              await createQuestion(createdSection.id, {
+              await createQuestion(created.id, createdSection.id, {
                 text: q.text || 'Untitled question',
                 type: q.type,
                 options: ['radio', 'checkbox', 'dropdown'].includes(q.type) ? q.options : undefined,

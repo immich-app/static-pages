@@ -1,7 +1,7 @@
 import { onMount } from 'svelte';
 import type { Survey, SurveySection, SurveyQuestion } from '../types';
 import { getPublishedSurvey, authenticateSurvey } from '../api/surveys';
-import { connectPresence, type PresenceConnection } from '../api/presence';
+import { createSurveyWsClient, type SurveyWsClient } from '../api/survey-ws';
 import { createApiClient } from '../api/client';
 import { createSurveyEngine, randomizeQuestions, randomizeOptionOrder } from './survey-engine.svelte';
 
@@ -18,19 +18,19 @@ export function createSurveyLoader(slug: string) {
 
   let engine: ReturnType<typeof createSurveyEngine> | null = $state(null);
   let client: ReturnType<typeof createApiClient> | null = null;
-  let presenceConn: PresenceConnection | undefined;
+  let wsClient: SurveyWsClient | undefined;
 
   onMount(() => {
     (async () => {
       try {
-        // Load survey definition
+        // Connect WebSocket for presence + data
+        wsClient = createSurveyWsClient(slug, 'respondent');
+
+        // Load survey definition (HTTP for initial load — needed before WS is ready)
         const data = await getPublishedSurvey(slug);
         survey = data.survey;
         sections = data.sections;
         questions = data.questions;
-
-        // Connect for live presence tracking
-        presenceConn = connectPresence(slug, 'respondent');
 
         // Check if password protected (backend returns no questions/sections)
         if (survey.requiresPassword && questions.length === 0) {
@@ -49,7 +49,7 @@ export function createSurveyLoader(slug: string) {
     const handleUnload = () => client?.flushBufferSync();
     window.addEventListener('beforeunload', handleUnload);
     return () => {
-      presenceConn?.close();
+      wsClient?.close();
       window.removeEventListener('beforeunload', handleUnload);
       client?.destroy();
     };
@@ -81,7 +81,7 @@ export function createSurveyLoader(slug: string) {
       error = msg;
     });
 
-    // Resume
+    // Resume (HTTP — sets respondent cookie)
     const resume = await client.fetchResume();
     if (resume.isComplete) {
       alreadyCompleted = true;
@@ -118,7 +118,6 @@ export function createSurveyLoader(slug: string) {
 
   async function submitPassword(password: string) {
     await authenticateSurvey(slug, password);
-    // Re-load survey after successful auth
     needsPassword = false;
     loading = true;
     error = null;

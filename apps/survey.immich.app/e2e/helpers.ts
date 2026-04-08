@@ -1,5 +1,5 @@
 const API = process.env.API_URL || 'http://localhost:8787';
-const TEST_PASSWORD = 'e2e-test-password-12345';
+const TEST_PASSWORD = process.env.TEST_PASSWORD || 'e2e-test-password-12345';
 
 let sessionCookie: string | null = null;
 
@@ -49,19 +49,26 @@ export function getAuthHeaders(): Record<string, string> {
   return headers;
 }
 
-export async function apiPost(path: string, body?: unknown) {
+export async function apiPost(path: string, body?: unknown, retries = 3) {
   await ensureAuth();
-  const res = await fetch(`${API}${path}`, {
-    method: 'POST',
-    headers: getAuthHeaders(),
-    ...(body ? { body: JSON.stringify(body) } : {}),
-  });
-  if (!res.ok && res.status !== 201) {
-    const text = await res.text();
-    throw new Error(`POST ${path} failed (${res.status}): ${text}`);
+  for (let attempt = 0; attempt < retries; attempt++) {
+    const res = await fetch(`${API}${path}`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      ...(body ? { body: JSON.stringify(body) } : {}),
+    });
+    if (res.status === 503 && attempt < retries - 1) {
+      // Retry on 503 (transient DO initialization failure)
+      await new Promise((r) => setTimeout(r, 1000));
+      continue;
+    }
+    if (!res.ok && res.status !== 201) {
+      const text = await res.text();
+      throw new Error(`POST ${path} failed (${res.status}): ${text}`);
+    }
+    if (res.status === 204) return undefined;
+    return res.json();
   }
-  if (res.status === 204) return undefined;
-  return res.json();
 }
 
 export async function apiPut(path: string, body?: unknown) {

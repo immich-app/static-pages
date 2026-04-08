@@ -17,7 +17,7 @@
     "bindings": [
       {
         "name": "SURVEY_SESSIONS",
-        "class_name": "SurveySession",
+        "class_name": "SurveyDO",
         "script_name": "survey-sessions",
       },
     ],

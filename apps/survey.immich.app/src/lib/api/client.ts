@@ -37,7 +37,12 @@ export function createApiClient(slug: string) {
     }
   }
 
-  async function saveBatch(answers: PendingSave[]): Promise<boolean> {
+  async function saveBatchWs(answers: PendingSave[]): Promise<boolean> {
+    // Answer submission uses HTTP because the respondent is identified by an HttpOnly cookie
+    return saveBatchHttp(answers);
+  }
+
+  async function saveBatchHttp(answers: PendingSave[]): Promise<boolean> {
     for (let attempt = 0; attempt <= BACKOFF_DELAYS.length; attempt++) {
       try {
         const res = await fetch(`${base}/answers/batch`, {
@@ -69,7 +74,7 @@ export function createApiClient(slug: string) {
     const batch = [...answerBuffer.values()];
     answerBuffer.clear();
 
-    const success = await saveBatch(batch);
+    const success = await saveBatchWs(batch);
     if (success) {
       unflushedCount = 0;
     } else {
@@ -95,10 +100,12 @@ export function createApiClient(slug: string) {
     const batch = [...answerBuffer.values()];
     answerBuffer.clear();
 
+    // sendBeacon is HTTP-only (last resort on page unload)
     const blob = new Blob([JSON.stringify({ answers: batch })], { type: 'application/json' });
     navigator.sendBeacon(`${base}/answers/batch`, blob);
   }
 
+  // Resume stays HTTP — sets respondent cookie
   async function fetchResume(): Promise<{
     answers?: Record<string, SurveyAnswer>;
     nextQuestionIndex?: number;
@@ -111,6 +118,7 @@ export function createApiClient(slug: string) {
     return res.json();
   }
 
+  // Complete uses HTTP because the respondent is identified by an HttpOnly cookie
   async function postComplete(): Promise<void> {
     const res = await fetch(`${base}/complete`, {
       method: 'POST',

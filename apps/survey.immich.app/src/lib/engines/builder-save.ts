@@ -22,7 +22,7 @@ export async function saveSections(
   // 1. Delete removed sections
   for (const s of currentSections) {
     if (s.id && !newSectionIds.has(s.id)) {
-      await apiDeleteSection(s.id);
+      await apiDeleteSection(surveyId, s.id);
     }
   }
 
@@ -35,7 +35,7 @@ export async function saveSections(
       });
       section.id = created.id;
     } else {
-      await apiUpdateSection(section.id, {
+      await apiUpdateSection(surveyId, section.id, {
         title: section.title,
         description: section.description ?? undefined,
       });
@@ -59,14 +59,14 @@ export async function saveSections(
     // Delete removed questions
     for (const qId of existingQuestionIds) {
       if (!newQuestionIds.has(qId)) {
-        await apiDeleteQuestion(qId);
+        await apiDeleteQuestion(surveyId, qId);
       }
     }
 
     // Create/update questions
     for (const q of section.questions) {
       if (!q.id) {
-        const created = await apiCreateQuestion(sectionId, {
+        const created = await apiCreateQuestion(surveyId, sectionId, {
           text: q.text,
           description: q.description || undefined,
           type: q.type,
@@ -79,7 +79,7 @@ export async function saveSections(
         });
         q.id = created.id;
       } else {
-        await apiUpdateQuestion(q.id, {
+        await apiUpdateQuestion(surveyId, q.id, {
           section_id: sectionId,
           text: q.text,
           description: q.description || undefined,
@@ -97,6 +97,7 @@ export async function saveSections(
     // Reorder questions in this section
     if (section.questions.length > 0) {
       await apiReorderQuestions(
+        surveyId,
         sectionId,
         section.questions.map((q, idx) => ({ id: q.id, sort_order: idx })),
       );

@@ -1,6 +1,7 @@
 import { request } from './request';
 import { surveyFromApi, questionsFromApi, sectionsFromApiRaw } from '../engines/builder-engine.svelte';
 import type { Survey, SurveyWithDetails } from '../types';
+import { getWsClientById } from './survey-ws';
 
 export async function listSurveys(includeArchived = false): Promise<Survey[]> {
   const url = includeArchived ? '/api/surveys?archived=true' : '/api/surveys';
@@ -9,6 +10,19 @@ export async function listSurveys(includeArchived = false): Promise<Survey[]> {
 }
 
 export async function getSurvey(id: string): Promise<SurveyWithDetails> {
+  const ws = getWsClientById(id);
+  if (ws?.connected) {
+    const data = (await ws.request('get-survey', {})) as unknown as {
+      survey: Record<string, unknown>;
+      sections: Array<Record<string, unknown>>;
+      questions: Array<Record<string, unknown>>;
+    };
+    return {
+      survey: surveyFromApi(data.survey),
+      sections: sectionsFromApiRaw(data.sections),
+      questions: questionsFromApi(data.questions),
+    };
+  }
   const data = await request<{
     survey: Record<string, unknown>;
     sections: Array<Record<string, unknown>>;
@@ -101,6 +115,10 @@ export async function unarchiveSurvey(id: string): Promise<Survey> {
 }
 
 export async function exportSurveyDefinition(id: string): Promise<Record<string, unknown>> {
+  const ws = getWsClientById(id);
+  if (ws?.connected) {
+    return ws.request('export-definition', {}) as unknown as Promise<Record<string, unknown>>;
+  }
   return request<Record<string, unknown>>(`/api/surveys/${id}/definition`);
 }
 

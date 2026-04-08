@@ -13,6 +13,8 @@ const config = {
     alias: {
       $common: '../../common',
       '$common/*': '../../common/*',
+      $shared: './shared',
+      '$shared/*': './shared/*',
       '@immich/ui': resolve('./node_modules/@immich/ui/dist'),
       '@mdi/js': resolve('./node_modules/@mdi/js'),
     },

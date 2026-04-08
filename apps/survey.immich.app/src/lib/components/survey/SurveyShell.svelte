@@ -42,9 +42,10 @@
   const showingSectionHeader = $derived(!!currentSectionHeader);
 
   function dismissSection() {
-    if (currentSectionHeader) {
-      dismissedSections.add(currentSectionHeader.id);
-      seenSectionIds.add(currentSectionHeader.id);
+    const header = currentSectionHeader;
+    if (header) {
+      dismissedSections.add(header.id);
+      seenSectionIds.add(header.id);
     }
     window.scrollTo(0, 0);
   }
@@ -79,9 +80,10 @@
     transitioning = true;
     direction = -1;
 
-    if (showingSectionHeader && currentSectionHeader) {
-      dismissedSections.delete(currentSectionHeader.id);
-      seenSectionIds.delete(currentSectionHeader.id);
+    const backHeader = currentSectionHeader;
+    if (showingSectionHeader && backHeader) {
+      dismissedSections.delete(backHeader.id);
+      seenSectionIds.delete(backHeader.id);
       engine.previous();
     } else {
       const currentQ = engine.currentQuestion;
@@ -116,11 +118,7 @@
 
   <div class="relative flex flex-1 flex-col overflow-hidden">
     {#key `${engine.currentIndex}-${showingSectionHeader}`}
-      <div
-        class="flex flex-1 flex-col"
-        in:fly={{ y: direction * 50, duration: flyDuration, easing: cubicOut }}
-        out:fly={{ y: direction * -50, duration: flyDuration, easing: cubicOut }}
-      >
+      <div class="flex flex-1 flex-col" in:fly={{ y: direction * 50, duration: flyDuration, easing: cubicOut }}>
         {#if showingSectionHeader && currentSectionHeader}
           <SectionHeader
             section={currentSectionHeader}
@@ -131,11 +129,12 @@
             canGoBack={engine.currentIndex > 0}
           />
         {:else if engine.currentQuestion}
+          {@const snapshotQuestion = engine.currentQuestion}
           <div class="flex flex-1 flex-col items-center justify-center px-4 pt-6 pb-28 sm:pb-24">
             <QuestionCard
-              question={engine.currentQuestion}
-              answer={engine.answers[engine.currentQuestion.id]}
-              onAnswer={(value, otherText) => onAnswer(engine.currentQuestion!.id, value, otherText)}
+              question={snapshotQuestion}
+              answer={engine.answers[snapshotQuestion.id]}
+              onAnswer={(value, otherText) => onAnswer(snapshotQuestion.id, value, otherText)}
               onNext={handleNext}
               onBack={handleBack}
               canGoBack={engine.currentIndex > 0}

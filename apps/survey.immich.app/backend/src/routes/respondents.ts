@@ -169,5 +169,4 @@ export function registerRespondentRoutes(router: AppRouter) {
     deleteRespondentCookie(headers, request.params.slug, ctx.config.cookieSecure);
     return new Response(null, { status: 204, headers });
   });
-
 }

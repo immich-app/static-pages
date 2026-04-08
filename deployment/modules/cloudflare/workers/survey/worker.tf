@@ -32,7 +32,7 @@ locals {
       {
         name        = "SURVEY_SESSIONS"
         type        = "durable_object_namespace"
-        class_name  = "SurveySession"
+        class_name  = "SurveyDO"
         script_name = cloudflare_worker.sessions.name
       },
       {
@@ -86,8 +86,8 @@ resource "cloudflare_worker_version" "sessions" {
   }]
 
   migrations = {
-    old_tag = "v1"
-    new_tag = "v1"
+    old_tag = "v2"
+    new_tag = "v2"
   }
 }
 

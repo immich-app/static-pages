@@ -105,7 +105,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     return Response.json(result, { status: 201 });
   });
 
-  // Sections
+  // Sections — nested under /api/surveys/:surveyId/sections
   router.post('/api/surveys/:id/sections', async (request: AuthenticatedRequest) => {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
@@ -115,7 +115,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     return Response.json(section, { status: 201 });
   });
 
-  router.put('/api/sections/:id', async (request: AuthenticatedRequest) => {
+  router.put('/api/surveys/:surveyId/sections/:id', async (request: AuthenticatedRequest) => {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
@@ -124,7 +124,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     return Response.json(section);
   });
 
-  router.delete('/api/sections/:id', async (request: AuthenticatedRequest) => {
+  router.delete('/api/surveys/:surveyId/sections/:id', async (request: AuthenticatedRequest) => {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
@@ -141,8 +141,8 @@ export function registerSurveyRoutes(router: AppRouter) {
     return new Response(null, { status: 204 });
   });
 
-  // Questions
-  router.post('/api/sections/:id/questions', async (request: AuthenticatedRequest) => {
+  // Questions — nested under /api/surveys/:surveyId/
+  router.post('/api/surveys/:surveyId/sections/:id/questions', async (request: AuthenticatedRequest) => {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
@@ -151,7 +151,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     return Response.json(question, { status: 201 });
   });
 
-  router.put('/api/questions/:id', async (request: AuthenticatedRequest) => {
+  router.put('/api/surveys/:surveyId/questions/:id', async (request: AuthenticatedRequest) => {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
@@ -160,7 +160,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     return Response.json(question);
   });
 
-  router.delete('/api/questions/:id', async (request: AuthenticatedRequest) => {
+  router.delete('/api/surveys/:surveyId/questions/:id', async (request: AuthenticatedRequest) => {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
@@ -168,7 +168,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     return new Response(null, { status: 204 });
   });
 
-  router.put('/api/sections/:id/questions/reorder', async (request: AuthenticatedRequest) => {
+  router.put('/api/surveys/:surveyId/sections/:id/questions/reorder', async (request: AuthenticatedRequest) => {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);

@@ -1,10 +1,11 @@
 <script lang="ts">
   import { page } from '$app/state';
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import type { Survey, SurveyQuestion } from '$lib/types';
   import { getSurvey, updateSurvey, publishSurvey, unpublishSurvey } from '$lib/api/surveys';
   import { sectionsFromApi, saveSections, type BuilderSection } from '$lib/engines/builder-engine.svelte';
   import SurveyBuilderForm from '$lib/components/builder/SurveyBuilderForm.svelte';
+  import { createSurveyWsClient, registerWsClient, type SurveyWsClient } from '$lib/api/survey-ws';
 
   let survey = $state<Survey | null>(null);
   let sections = $state<BuilderSection[]>([]);
@@ -12,6 +13,7 @@
   let loading = $state(true);
   let saving = $state(false);
   let error = $state<string | null>(null);
+  let wsClient: SurveyWsClient | undefined;
 
   const surveyId = $derived(page.params.id!);
 
@@ -21,10 +23,20 @@
       survey = data.survey;
       allQuestions = data.questions;
       sections = sectionsFromApi(data.sections, data.questions);
+
+      // Establish WS connection for editor operations (section/question CRUD)
+      if (survey.slug) {
+        wsClient = createSurveyWsClient(survey.slug, 'editor');
+        registerWsClient(surveyId, wsClient);
+      }
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to load survey';
     }
     loading = false;
+  });
+
+  onDestroy(() => {
+    wsClient?.close();
   });
 
   async function handleSaveSurvey(updates: Partial<Survey> & { password?: string | null }) {

@@ -2,7 +2,7 @@ import { onMount, onDestroy } from 'svelte';
 import { SvelteMap } from 'svelte/reactivity';
 import type { Survey, SurveyQuestion, SurveySection, TimelineDataPoint, DropoffDataPoint, LiveCounts } from '../types';
 import { getSurvey, getLiveResults, exportResults, getSurveyTimeline, getSurveyDropoff } from '../api/surveys';
-import { connectPresence, type PresenceConnection } from '../api/presence';
+import { createSurveyWsClient, registerWsClient, type SurveyWsClient } from '../api/survey-ws';
 
 export function createResultsLoader(surveyId: string) {
   let survey = $state<Survey | null>(null);
@@ -24,7 +24,7 @@ export function createResultsLoader(surveyId: string) {
   let exporting = $state(false);
 
   let pollInterval: ReturnType<typeof setInterval> | undefined;
-  let presenceConn: PresenceConnection | undefined;
+  let wsClient: SurveyWsClient | undefined;
 
   const sortedQuestions = $derived.by(() => {
     const sectionOrder = new SvelteMap(sections.map((s) => [s.id, s.sortOrder]));
@@ -108,22 +108,34 @@ export function createResultsLoader(surveyId: string) {
     }
     loading = false;
 
-    // Start polling for results data (charts, answers)
-    pollInterval = setInterval(() => {
-      refreshResults();
-    }, 15_000);
-
-    // Connect WebSocket for real-time live counts
+    // Connect WebSocket for real-time updates
     if (survey?.slug) {
-      presenceConn = connectPresence(survey.slug, 'viewer', (counts) => {
-        liveCounts = counts;
+      wsClient = createSurveyWsClient(survey.slug, 'viewer');
+      registerWsClient(surveyId, wsClient);
+
+      wsClient.on('counts', (data) => {
+        liveCounts = data;
+      });
+
+      wsClient.on('stats', (data) => {
+        respondentCounts = { total: data.total, completed: data.completed };
+      });
+
+      wsClient.on('results', (data) => {
+        respondentCounts = data.respondentCounts;
+        results = data.results;
       });
     }
+
+    // HTTP polling as fallback (less frequent since WS handles live updates)
+    pollInterval = setInterval(() => {
+      refreshResults();
+    }, 30_000);
   });
 
   onDestroy(() => {
     clearInterval(pollInterval);
-    presenceConn?.close();
+    wsClient?.close();
   });
 
   return {
