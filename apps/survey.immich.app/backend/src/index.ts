@@ -34,8 +34,18 @@ function registerAllRoutes(router: ReturnType<typeof AutoRouter>) {
 }
 
 // Factory for Node.js server: creates a router with pre-built context
+// In Node.js, Response.json() returns an undici Response that fails `instanceof Response`
+// checks in itty-router. This custom format handler detects Response-like objects by
+// checking for the `status` and `headers` properties instead of using instanceof.
+const nodeFormat = (value: unknown) => {
+  if (value === undefined || value === null) return value;
+  if (typeof value === 'object' && 'status' in (value as object) && 'headers' in (value as object)) return value;
+  return new Response(JSON.stringify(value), { headers: { 'content-type': 'application/json; charset=utf-8' } });
+};
+
 export function createRouter(ctx: AppContext) {
   const nodeRouter = AutoRouter<IRequest & { ctx?: AppContext }>({
+    format: nodeFormat,
     before: [
       preflight,
       (request: IRequest & { ctx?: AppContext }) => {

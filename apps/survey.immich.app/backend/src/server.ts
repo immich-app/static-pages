@@ -64,7 +64,7 @@ async function main() {
   // Delegate API requests to itty-router
   app.all('/api/*', async (c) => {
     const response = await router.fetch(c.req.raw);
-    return response;
+    return new Response(response.body, response);
   });
 
   // SPA fallback

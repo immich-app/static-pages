@@ -65,7 +65,11 @@ const configuration: Configuration = {
     {
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
-      redirect_uris: ['http://localhost:8787/api/auth/callback'],
+      redirect_uris: [
+        'http://localhost:8787/api/auth/callback',
+        'http://localhost:3000/api/auth/callback',
+        'http://localhost:4444/api/auth/callback',
+      ],
       grant_types: ['authorization_code'],
       response_types: ['code'],
       token_endpoint_auth_method: 'client_secret_post',

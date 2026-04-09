@@ -230,7 +230,7 @@ test.describe.serial('OIDC auth', () => {
     }
 
     // Should redirect back to the app
-    await page.waitForURL(/localhost:(5173|8787)/, { timeout: 10_000 });
+    await page.waitForURL(/localhost:(5173|8787|3000)/, { timeout: 10_000 });
 
     // Should be authenticated with the admin role
     await expect(page.locator('header').getByText('FUTO Surveys')).toBeVisible({ timeout: 10_000 });
@@ -262,7 +262,7 @@ test.describe.serial('OIDC auth', () => {
       // No consent screen
     }
 
-    await page.waitForURL(/localhost:(5173|8787)/, { timeout: 10_000 });
+    await page.waitForURL(/localhost:(5173|8787|3000)/, { timeout: 10_000 });
 
     // Should show editor role
     await expect(page.getByText('Test Editor')).toBeVisible({ timeout: 5000 });

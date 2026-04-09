@@ -1,0 +1,43 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "survey-api-dev",
+  "main": "src/dev-entry.ts",
+  "compatibility_date": "2025-06-03",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "survey",
+      "database_id": "local",
+    },
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "SURVEY_SESSIONS",
+        "class_name": "SurveyDO",
+      },
+    ],
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_classes": ["SurveySession"],
+    },
+    {
+      "tag": "v2",
+      "new_sqlite_classes": ["SurveyDO"],
+    },
+  ],
+  // DEV ONLY — override with `wrangler secret put` in production
+  "vars": {
+    "PASSWORD_SECRET": "dev-password-secret-DO-NOT-USE-IN-PRODUCTION",
+    "OIDC_ISSUER": "http://localhost:9090",
+    "OIDC_CLIENT_ID": "survey-app",
+    "OIDC_CLIENT_SECRET": "test-client-secret",
+    "OIDC_REDIRECT_URI": "http://localhost:8787/api/auth/callback",
+    "OIDC_ROLE_CLAIM": "groups",
+    "OIDC_ROLE_MAP_ADMIN": "survey-admin",
+    "OIDC_ROLE_MAP_EDITOR": "survey-editor",
+    "SESSION_SECRET": "dev-session-secret-DO-NOT-USE-IN-PRODUCTION",
+  },
+}
