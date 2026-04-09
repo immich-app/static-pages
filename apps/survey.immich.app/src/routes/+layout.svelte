@@ -43,7 +43,7 @@
     <LoginScreen oidcEnabled={auth.oidcEnabled} passwordEnabled={auth.passwordEnabled} />
   {:else}
     <header class="flex items-center justify-between border-b border-gray-200 px-6 py-3 dark:border-gray-700/80">
-      <a href="/" class="text-lg font-semibold tracking-tight">Immich Surveys</a>
+      <a href="/" class="text-lg font-semibold tracking-tight">FUTO Surveys</a>
       <UserMenu />
     </header>
     {@render children?.()}

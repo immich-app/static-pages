@@ -37,7 +37,7 @@
       <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-800">
         <Icon icon={mdiLock} size="28" class="text-gray-400" />
       </div>
-      <h1 class="text-xl font-bold">Sign in to Immich Surveys</h1>
+      <h1 class="text-xl font-bold">Sign in to FUTO Surveys</h1>
     </div>
 
     {#if passwordEnabled}

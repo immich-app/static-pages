@@ -40,7 +40,7 @@
       <div class="flex h-16 w-16 items-center justify-center rounded-full bg-gray-800">
         <Icon icon={mdiShieldLock} size="32" class="text-immich-primary" />
       </div>
-      <h1 class="text-2xl font-bold">Welcome to Immich Surveys</h1>
+      <h1 class="text-2xl font-bold">Welcome to FUTO Surveys</h1>
       <p class="text-sm text-gray-500">Set up your admin password to get started.</p>
     </div>
 
