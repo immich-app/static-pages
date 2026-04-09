@@ -347,9 +347,17 @@ export default {
       return dupResponse;
     }
 
-    // Handle delete: also remove D1 catalog row
+    // Handle delete: also remove D1 catalog row (and dependent rows lacking ON DELETE CASCADE)
     if (method === 'DELETE' && doResponse.status === 204 && doMatch.surveyId && !pathname.includes('/results/')) {
-      ctx.waitUntil(env.DB.prepare('DELETE FROM surveys WHERE id = ?').bind(surveyId).run());
+      ctx.waitUntil(
+        (async () => {
+          await env.DB.batch([
+            env.DB.prepare('DELETE FROM answers WHERE respondent_id IN (SELECT id FROM respondents WHERE survey_id = ?)').bind(surveyId),
+            env.DB.prepare('DELETE FROM respondents WHERE survey_id = ?').bind(surveyId),
+            env.DB.prepare('DELETE FROM surveys WHERE id = ?').bind(surveyId),
+          ]);
+        })(),
+      );
     }
 
     // Sync catalog back to D1 (for mutations)

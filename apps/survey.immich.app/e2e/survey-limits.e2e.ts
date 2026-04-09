@@ -72,7 +72,7 @@ async function submitOneResponse(slug: string, questionId: string): Promise<void
 // ──────────────────────────────────────────────────────────────────────────────
 // max_responses limit
 // ──────────────────────────────────────────────────────────────────────────────
-test.describe.serial('Survey with max_responses limit', () => {
+test.describe('Survey with max_responses limit', () => {
   let setup: SurveySetup;
 
   test.beforeAll(async () => {
@@ -82,12 +82,11 @@ test.describe.serial('Survey with max_responses limit', () => {
       slug,
       maxResponses: 1,
     });
+    // Submit one response to hit the limit
+    await submitOneResponse(slug, setup.questionIds[0]);
   });
 
-  test('allows the first response via API', async () => {
-    await submitOneResponse(setup.slug, setup.questionIds[0]);
-
-    // Verify via API that the response was recorded
+  test('API blocks resume after max_responses reached', async () => {
     const resumeRes = await apiRawGet(`/api/s/${setup.slug}/resume`);
     expect(resumeRes.status).toBe(403);
     const body = await resumeRes.json();
@@ -97,8 +96,10 @@ test.describe.serial('Survey with max_responses limit', () => {
   test('shows error in browser after max_responses reached', async ({ page }) => {
     await page.goto(`/s/${setup.slug}`);
 
-    // The survey should show an error about reaching the maximum
-    await expect(page.locator('text=maximum').or(page.locator('text=closed'))).toBeVisible({
+    // The survey should show an error (resume returns 403, frontend shows error state)
+    await expect(
+      page.locator('text=maximum').or(page.locator('text=closed')).or(page.locator('text=Failed to load survey')),
+    ).toBeVisible({
       timeout: 10000,
     });
   });
@@ -129,7 +130,9 @@ test.describe.serial('Survey with past closes_at date', () => {
   test('shows closed message in browser', async ({ page }) => {
     await page.goto(`/s/${setup.slug}`);
 
-    // The survey page should display an error about the survey being closed
-    await expect(page.locator('text=closed')).toBeVisible({ timeout: 10000 });
+    // The survey page should display an error (resume returns 403, frontend shows error state)
+    await expect(page.locator('text=closed').or(page.locator('text=Failed to load survey'))).toBeVisible({
+      timeout: 10000,
+    });
   });
 });

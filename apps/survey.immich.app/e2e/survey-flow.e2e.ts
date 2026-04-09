@@ -455,21 +455,79 @@ test.describe('Survey with skip logic across question types', () => {
   });
 
   test('skipped questions are not in results', async () => {
-    // Check results - the "No" path respondent should not have a rating answer
-    const res = await fetch(`${API}/api/surveys/${setup.surveyId}/results`, {
+    // Create a fresh survey to avoid interference from browser tests
+    const survey = await apiPost('/api/surveys', { title: 'Skip Results Test' });
+    const section = await apiPost(`/api/surveys/${survey.id}/sections`, { title: 'S1' });
+    const q1 = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
+      text: 'Used product?',
+      type: 'radio',
+      required: true,
+      options: [
+        { label: 'Yes', value: 'Yes' },
+        { label: 'No', value: 'No' },
+      ],
+    });
+    const qRating = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
+      text: 'Rate it',
+      type: 'rating',
+      required: true,
+      config: { scaleMax: 5 },
+      conditional: { showIf: { questionId: q1.id, condition: 'equals', value: 'Yes' } },
+    });
+    const qText = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
+      text: 'Why not?',
+      type: 'text',
+      required: true,
+      conditional: { showIf: { questionId: q1.id, condition: 'equals', value: 'No' } },
+    });
+    const qNps = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
+      text: 'Recommend?',
+      type: 'nps',
+      required: true,
+    });
+    const slug = `e2e-skip-results-${Date.now()}`;
+    await apiPut(`/api/surveys/${survey.id}`, { slug });
+    await apiPut(`/api/surveys/${survey.id}/publish`);
+
+    // Submit two responses via API
+    async function submitResponse(answers: Array<{ questionId: string; value: string }>) {
+      const resumeRes = await fetch(`${API}/api/s/${slug}/resume`);
+      const cookies = resumeRes.headers.get('set-cookie') ?? '';
+      const ridMatch = cookies.match(/rid_[^=]+=([^;]+)/);
+      const rid = ridMatch?.[1];
+      expect(rid).toBeTruthy();
+      const cookie = `rid_${slug}=${rid}`;
+      await fetch(`${API}/api/s/${slug}/answers/batch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Cookie: cookie },
+        body: JSON.stringify({ answers }),
+      });
+      await fetch(`${API}/api/s/${slug}/complete`, {
+        method: 'POST',
+        headers: { Cookie: cookie },
+      });
+    }
+
+    await submitResponse([
+      { questionId: q1.id, value: 'Yes' },
+      { questionId: qRating.id, value: '4' },
+      { questionId: qNps.id, value: '8' },
+    ]);
+    await submitResponse([
+      { questionId: q1.id, value: 'No' },
+      { questionId: qText.id, value: 'No time' },
+      { questionId: qNps.id, value: '5' },
+    ]);
+
+    // Check results
+    const res = await fetch(`${API}/api/surveys/${survey.id}/results`, {
       headers: getAuthHeaders(),
     });
     const data = await res.json();
     expect(data.respondentCounts.completed).toBe(2);
 
     // Rating question should have 1 response (only the "Yes" path respondent)
-    const ratingResult = data.results.find(
-      (r: { questionId: string }) =>
-        r.questionId ===
-        data.results.find((x: { answers: Array<{ value: string }> }) =>
-          x.answers?.some((a: { value: string }) => a.value === '4'),
-        )?.questionId,
-    );
+    const ratingResult = data.results.find((r: { questionId: string }) => r.questionId === qRating.id);
     if (ratingResult) {
       const totalRatingResponses = ratingResult.answers.reduce((sum: number, a: { count: number }) => sum + a.count, 0);
       expect(totalRatingResponses).toBe(1);

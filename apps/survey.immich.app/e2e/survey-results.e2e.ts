@@ -164,8 +164,8 @@ test.describe.serial('Results page features', () => {
     // Wait for debounced search results
     await expect(page.getByText('Alice Johnson')).toBeVisible({ timeout: 5000 });
 
-    // Verify result card shows the question text context
-    await expect(page.getByText('Your name')).toBeVisible();
+    // Verify result card shows the question text context (within search results, not the filter dropdown)
+    await expect(page.locator('.space-y-2 >> text=Your name')).toBeVisible();
 
     // Verify showing result count
     await expect(page.getByText(/Showing \d+ of \d+ result/)).toBeVisible();

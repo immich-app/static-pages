@@ -260,7 +260,7 @@ test.describe('Inline validation errors', () => {
     await waitForTransition(page);
 
     // Verify validation error
-    await expect(page.getByText('This question is required')).toBeVisible({ timeout: 3000 });
+    await expect(page.getByRole('alert').getByText('This question is required')).toBeVisible({ timeout: 3000 });
   });
 });
 
@@ -571,7 +571,8 @@ test.describe('Skip logic builder UI', () => {
 
     // Should show a "Source question" select with the preceding questions
     await expect(page.getByText('Source question')).toBeVisible({ timeout: 3000 });
-    const select = page.locator('select').last();
+    const sourceLabel = page.getByText('Source question');
+    const select = sourceLabel.locator('..').locator('select');
     await expect(select).toBeVisible();
 
     // The select should contain Q1 and Q2 as options
