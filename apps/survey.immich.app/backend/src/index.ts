@@ -270,6 +270,12 @@ export default {
       }
     }
 
+    // WebSocket upgrade — forward original request directly to preserve upgrade semantics
+    const stub = getDOStub(env, surveyId);
+    if (request.headers.get('Upgrade') === 'websocket') {
+      return stub.fetch(request);
+    }
+
     // Build headers for the DO request
     const doHeaders = new Headers(request.headers);
 
@@ -290,18 +296,12 @@ export default {
     }
 
     // Forward to DO
-    const stub = getDOStub(env, surveyId);
     const doRequest = new Request(request.url, {
       method: request.method,
       headers: doHeaders,
       body: request.body,
     });
     const doResponse = await stub.fetch(doRequest);
-
-    // WebSocket upgrade — return the DO response directly (don't wrap it)
-    if (doResponse.webSocket) {
-      return doResponse;
-    }
 
     // Handle duplicate: DO returns new survey data, we create D1 entry + new DO
     const isDuplicate = method === 'POST' && pathname.endsWith('/duplicate') && doResponse.status === 201;
@@ -379,19 +379,33 @@ export default {
   },
 };
 
-// Simple auth check for admin routes (outside itty-router)
-function authenticateRequest(request: Request, _config: import('./config').AppConfig): Response | null {
+// Auth check for admin routes (outside itty-router) — verifies HMAC signature
+async function authenticateRequest(request: Request, config: import('./config').AppConfig): Promise<Response | null> {
   const sessionCookie = getCookie(request, 'survey_session');
   if (!sessionCookie) {
     return Response.json({ error: 'Authentication required' }, { status: 401 });
   }
-  // The session token is a JWT signed with sessionSecret
-  // For simplicity, we verify it exists — the role check happens at the route level
-  // The itty-router auth middleware is more thorough, but for DO forwarding we just need to verify the session
   try {
-    // Parse the JWT payload (it's base64url encoded)
     const parts = sessionCookie.split('.');
     if (parts.length !== 3) return Response.json({ error: 'Invalid session' }, { status: 401 });
+
+    // Verify HMAC signature
+    const key = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(config.sessionSecret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['verify'],
+    );
+    const sigBytes = Uint8Array.from(atob(parts[2].replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0));
+    const valid = await crypto.subtle.verify(
+      'HMAC',
+      key,
+      sigBytes,
+      new TextEncoder().encode(`${parts[0]}.${parts[1]}`),
+    );
+    if (!valid) return Response.json({ error: 'Invalid session' }, { status: 401 });
+
     const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
     if (!payload.sub || !payload.exp || payload.exp * 1000 < Date.now()) {
       return Response.json({ error: 'Session expired' }, { status: 401 });

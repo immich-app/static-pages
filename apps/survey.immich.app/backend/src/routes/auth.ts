@@ -93,7 +93,8 @@ export function registerAuthRoutes(router: AppRouter) {
     const state = crypto.randomUUID();
     const nonce = crypto.randomUUID();
     const url = new URL(request.url);
-    const returnTo = url.searchParams.get('returnTo') ?? '/';
+    const rawReturnTo = url.searchParams.get('returnTo') ?? '/';
+    const returnTo = rawReturnTo.startsWith('/') && !rawReturnTo.startsWith('//') ? rawReturnTo : '/';
 
     const authUrl = await authService.getAuthorizationUrl(state, nonce);
     const stateData = JSON.stringify({ state, nonce, returnTo });
