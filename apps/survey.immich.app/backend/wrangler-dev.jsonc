@@ -34,7 +34,7 @@
     "OIDC_ISSUER": "http://localhost:9090",
     "OIDC_CLIENT_ID": "survey-app",
     "OIDC_CLIENT_SECRET": "test-client-secret",
-    "OIDC_REDIRECT_URI": "http://localhost:8787/api/auth/callback",
+    "OIDC_REDIRECT_URI": "http://localhost:5173/api/auth/callback",
     "OIDC_ROLE_CLAIM": "groups",
     "OIDC_ROLE_MAP_ADMIN": "survey-admin",
     "OIDC_ROLE_MAP_EDITOR": "survey-editor",

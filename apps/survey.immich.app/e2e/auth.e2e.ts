@@ -266,7 +266,7 @@ test.describe.serial('OIDC auth', () => {
 
     // Should show editor role
     await expect(page.getByText('Test Editor')).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('editor', { exact: false })).toBeVisible();
+    await expect(page.getByText('editor', { exact: true })).toBeVisible();
 
     await context.close();
   });

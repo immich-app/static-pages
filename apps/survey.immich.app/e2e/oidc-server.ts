@@ -67,6 +67,7 @@ const configuration: Configuration = {
       client_secret: CLIENT_SECRET,
       redirect_uris: [
         'http://localhost:8787/api/auth/callback',
+        'http://localhost:5173/api/auth/callback',
         'http://localhost:3000/api/auth/callback',
         'http://localhost:4444/api/auth/callback',
       ],
@@ -85,6 +86,8 @@ const configuration: Configuration = {
   features: {
     devInteractions: { enabled: false },
   },
+  // Include all claims in the id_token (not just via userinfo endpoint)
+  conformIdTokenClaims: false,
   pkce: {
     required: () => false,
   },
@@ -96,25 +99,7 @@ const configuration: Configuration = {
   cookies: {
     keys: ['oidc-test-secret-key-1'],
   },
-  jwks: {
-    keys: [
-      {
-        kty: 'RSA',
-        kid: 'test-key-1',
-        use: 'sig',
-        alg: 'RS256',
-        // 2048-bit RSA key for test purposes only
-        n: 'wJENwS-k8fVpSPGSVMD1RGUPVdGO0g1iQLRWUEQ2rFelPg5J8KxqRN9JqnFCBCXmj5yNqvagBJ_lTFRKQkMiCxOzG9eo-LXJrQiCj7RzfOPNOSTh9F9JBXvdKNO0UdAy_VNFPhQGLUqBVKZmMOBg3P7bqVXOTfz7WJLhx6QFWBEP2EHkfVJZGfxJb2M_5W-3F_0x3Cs1oSDq_I92T1qrfp1k5O0Rn18Rp7M0ev9L3P6nGUbw4qKy1JBPFHC-9e-P5M2XNPV3g4pYJqz7E_j5fLJKq0KZgGnPb8PVA0wL8CqVs2xQNaWK6l5I7fM5j0rG51xfANKd4b2z7N0Qqb8IW0Q',
-        e: 'AQAB',
-        d: 'Dj5lsVLsMP0I1PjS-OchNGAN2E3I9KHD_FnrES3lXCrSxPzF8Dv5UZjDLYf4gMsK7dD4r7p7Qy_0uJIiIIaY0w5V3DkQnLfH1Kv-YWFNV0lZUvG8X_DKBXBQ7t8Dx1DLT7P1p3oZwqDR3QZplKD5UXNYnY3R7nTqFmW3-w7AKi3u2JLGPCZV1Rt6p3BoLHtZPfOp-A4QdB6X0Y_LkvOS3g39v8oq8OHxNr5JlX8aA7dA7W9LpF3p4w3LOm9dMeXb4fWlFnQXP--pBUP5JWRH-fD-_J-Y5qJKkj1e78Bxh9HMXadZhQVBk-T7d-9XkQV3RlnXN4BqR3W51T4Dt-AeEQ',
-        p: '5ym0E-vxKSPAJ9LZ0qyEl4I0GIqHCz5SBSFiDArmulJO7nrjR_0DUf3gAoj8pz7E-qs-x0fjdT_RTUBN3JNgVrV10j4PczWk8PBzrhJ7YAXWBR6phIvSVeU0alK5OxjPVi8BQLZ-F1pK9F3uMOkbWv8GZQh-ChLSzNgJ-A8Y5_U',
-        q: '1gy3xIX0jPb7VkPRHSbePTFC_vkJlquU2axCisjj3YbZOfuVDe-bMjEUCTN9LHFr4Q0ID8_rFJqIbYI_-GfaJ-sP_0X8S2a3ERtbo0Z_qqPdhHPPNXcXS-WqG5nfDL5k6gDK_WTHNCn3Y7GXR1Ocufem_pREVG0fHXJf9ib52UlQ',
-        dp: 'Xh0JcWNdPPgjQ_5F1hI0vVIJjcewky0WlV5uZPO3hJVF_lOvYD8JI-u-dPRqGJsHe_Y1Cv9z1WOYqFJ5RQWJKSqn7v7OkFD_4eYW7P2QReHqMYVVc3dNHYDn04SyaFjxIoV7eN-mMPjwPb-JqAS8BHQB4tQXtLQT0j7MYFhnIU',
-        dq: 'GjHbbU0fHJgJ3EGTpw-E6k7J4b4MBq0Q0rVJkp-PFN3Jdl3RMz9SEtR9fA15PmLJAhJxS7ERjE-aB5EKQ7d0EkxXN2X6w7-cLWnE-J5yfqBZqUnAOSHR0LE7EFXG0q_aJ6tEsH2JHrR93HduZ-S7Gqo-GyJdBwJlI7C7FPC2PaQ',
-        qi: 'xL_JyNwXfU3LJ_2SdGASB_r31lVTu_bJxzVdTLR4hFQFV4H2Sw0r0g7JQJJIFKZiG9BVO3FP-0HXagc3mPGPWncZA9WJXu9Jv_vAfJ7V_XZAL_DR0zxKP4RBWWJ7tu4NKQJV_h9VNB9C2gb3LDsYX_a6GNN3jRIoSV3oyWPdps',
-      },
-    ],
-  },
+  // Let oidc-provider generate keys at startup (avoids Node.js v24 crypto compat issues with static keys)
 };
 
 export async function startOidcServer(): Promise<{
@@ -249,6 +234,14 @@ export async function startOidcServer(): Promise<{
 
     // Everything else falls through to oidc-provider's built-in routes
     await next();
+  });
+
+  // Log errors from the provider
+  provider.on('server_error', (ctx: unknown, err: Error) => {
+    console.error('[OIDC server_error]', err.message, err.stack);
+  });
+  provider.on('grant.error', (ctx: unknown, err: Error) => {
+    console.error('[OIDC grant.error]', err.message);
   });
 
   const server = provider.listen(9090);
