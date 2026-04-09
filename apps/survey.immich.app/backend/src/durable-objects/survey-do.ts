@@ -41,7 +41,7 @@ export class SurveyDO extends DurableObject {
 
     // WebSocket upgrade
     if (request.headers.get('Upgrade') === 'websocket') {
-      return this.handleWebSocketUpgrade(url);
+      return this.handleWebSocketUpgrade(url, request);
     }
 
     // HTTP routes (only for operations that stay HTTP)
@@ -60,15 +60,19 @@ export class SurveyDO extends DurableObject {
   // WebSocket lifecycle
   // ============================================================
 
-  private handleWebSocketUpgrade(url: URL): Response {
+  private handleWebSocketUpgrade(url: URL, request: Request): Response {
     const type = url.searchParams.get('type');
     if (type !== 'viewer' && type !== 'respondent' && type !== 'editor') {
       return new Response('type must be viewer, respondent, or editor', { status: 400 });
     }
 
+    // Use the verified role from the API worker (set after authentication)
+    const verifiedRole = request.headers.get('X-WS-Role') ?? 'public';
+
     const pair = new WebSocketPair();
     const [client, server] = Object.values(pair);
-    this.ctx.acceptWebSocket(server, [type]);
+    // Tag with both presence type and verified auth role
+    this.ctx.acceptWebSocket(server, [type, `role:${verifiedRole}`]);
 
     // Send initial counts
     const counts = getPresenceCounts(this.ctx);

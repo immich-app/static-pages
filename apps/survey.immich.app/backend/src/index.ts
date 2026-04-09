@@ -283,7 +283,19 @@ export default {
     // WebSocket upgrade — forward original request directly to preserve upgrade semantics
     const stub = getDOStub(env, surveyId);
     if (request.headers.get('Upgrade') === 'websocket') {
-      return stub.fetch(request);
+      const wsUrl = new URL(request.url);
+      const wsType = wsUrl.searchParams.get('type');
+
+      // Editor WebSocket connections require admin authentication
+      if (wsType === 'editor') {
+        const authResult = await authenticateRequest(request, config);
+        if (authResult) return authResult;
+      }
+
+      // Tag the connection with its verified role so the DO can enforce authorization
+      const wsHeaders = new Headers(request.headers);
+      wsHeaders.set('X-WS-Role', wsType === 'editor' ? 'editor' : 'public');
+      return stub.fetch(new Request(request.url, { method: request.method, headers: wsHeaders }));
     }
 
     // Build headers for the DO request
@@ -362,7 +374,9 @@ export default {
       ctx.waitUntil(
         (async () => {
           await env.DB.batch([
-            env.DB.prepare('DELETE FROM answers WHERE respondent_id IN (SELECT id FROM respondents WHERE survey_id = ?)').bind(surveyId),
+            env.DB.prepare(
+              'DELETE FROM answers WHERE respondent_id IN (SELECT id FROM respondents WHERE survey_id = ?)',
+            ).bind(surveyId),
             env.DB.prepare('DELETE FROM respondents WHERE survey_id = ?').bind(surveyId),
             env.DB.prepare('DELETE FROM surveys WHERE id = ?').bind(surveyId),
           ]);

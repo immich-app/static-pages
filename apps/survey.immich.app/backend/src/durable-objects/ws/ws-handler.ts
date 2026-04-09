@@ -31,6 +31,33 @@ function respondError(ws: WebSocket, requestId: string, op: string, message: str
   send(ws, { type: 'response', requestId, op, error: message });
 }
 
+// Operations that require editor authentication
+const EDITOR_OPS = new Set<string>([
+  'get-survey',
+  'export-definition',
+  'create-section',
+  'update-section',
+  'delete-section',
+  'reorder-sections',
+  'create-question',
+  'update-question',
+  'delete-question',
+  'reorder-questions',
+  'get-results',
+  'get-live-results',
+  'get-timeline',
+  'get-dropoff',
+  'list-respondents',
+  'get-respondent',
+  'delete-respondent',
+  'search-answers',
+]);
+
+function hasEditorRole(ws: WebSocket, ctx: DurableObjectState): boolean {
+  const tags = ctx.getTags(ws);
+  return tags.includes('role:editor');
+}
+
 export async function dispatch(
   ws: WebSocket,
   message: string,
@@ -58,6 +85,12 @@ export async function dispatch(
 
   const { requestId, op, data } = parsed;
   const d = data ?? {};
+
+  // Enforce authorization: editor operations require authenticated editor connection
+  if (EDITOR_OPS.has(op) && !hasEditorRole(ws, ctx)) {
+    respondError(ws, requestId, op, 'Insufficient permissions');
+    return;
+  }
 
   try {
     const result = await handleOp(op as keyof WsOperations, d, services, cache, ctx);
