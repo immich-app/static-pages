@@ -64,7 +64,7 @@ async function createSimpleSurvey(opts?: {
         { label: 'Gamma', value: 'Gamma' },
       ];
     }
-    const q = await apiPost(`/api/sections/${section.id}/questions`, body);
+    const q = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, body);
     questionIds.push(q.id);
   }
 
@@ -250,7 +250,7 @@ test.describe('Inline validation errors', () => {
     await waitForTransition(page);
 
     // Verify question is visible
-    await expect(page.getByText('Question 1')).toBeVisible({ timeout: 3000 });
+    await expect(page.getByRole('heading', { name: 'Question 1' })).toBeVisible({ timeout: 3000 });
 
     // Click Submit/Next without answering
     await page
@@ -289,7 +289,7 @@ test.describe('Keyboard navigation', () => {
     await waitForTransition(page);
 
     // Verify question is visible
-    await expect(page.getByText('Question 1')).toBeVisible({ timeout: 3000 });
+    await expect(page.getByRole('heading', { name: 'Question 1' })).toBeVisible({ timeout: 3000 });
 
     // Tab to focus into the radio group area, then press ArrowDown
     await page.keyboard.press('Tab');
@@ -297,7 +297,7 @@ test.describe('Keyboard navigation', () => {
     await waitForTransition(page);
 
     // Verify Alpha is selected — radio auto-advances to Question 2
-    await expect(page.getByText('Question 2')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('heading', { name: 'Question 2' })).toBeVisible({ timeout: 5000 });
   });
 });
 
@@ -411,7 +411,7 @@ test.describe('Question templates in builder', () => {
   test.beforeAll(async () => {
     const survey = await apiPost('/api/surveys', { title: 'Template Q Test' });
     const section = await apiPost(`/api/surveys/${survey.id}/sections`, { title: 'Template Section' });
-    await apiPost(`/api/sections/${section.id}/questions`, {
+    await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
       text: 'Placeholder Q',
       type: 'text',
     });
@@ -452,7 +452,7 @@ test.describe('Bulk option paste', () => {
   test.beforeAll(async () => {
     const survey = await apiPost('/api/surveys', { title: 'Bulk Paste Test' });
     const section = await apiPost(`/api/surveys/${survey.id}/sections`, { title: 'S1' });
-    await apiPost(`/api/sections/${section.id}/questions`, {
+    await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
       text: 'Paste Q',
       type: 'radio',
       options: [

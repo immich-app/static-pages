@@ -27,7 +27,7 @@ async function createResultsSurvey(): Promise<SetupResult> {
 
   const questionIds: Record<string, string> = {};
 
-  const q1 = await apiPost(`/api/sections/${section.id}/questions`, {
+  const q1 = await apiPost(`/api/surveys/${surveyId}/sections/${section.id}/questions`, {
     text: 'Favorite color',
     type: 'radio',
     required: true,
@@ -39,7 +39,7 @@ async function createResultsSurvey(): Promise<SetupResult> {
   });
   questionIds['color'] = q1.id;
 
-  const q2 = await apiPost(`/api/sections/${section.id}/questions`, {
+  const q2 = await apiPost(`/api/surveys/${surveyId}/sections/${section.id}/questions`, {
     text: 'Your name',
     type: 'text',
     required: true,
@@ -47,7 +47,7 @@ async function createResultsSurvey(): Promise<SetupResult> {
   });
   questionIds['name'] = q2.id;
 
-  const q3 = await apiPost(`/api/sections/${section.id}/questions`, {
+  const q3 = await apiPost(`/api/surveys/${surveyId}/sections/${section.id}/questions`, {
     text: 'Rate our service',
     type: 'rating',
     required: true,

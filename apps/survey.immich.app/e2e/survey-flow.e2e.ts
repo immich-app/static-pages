@@ -101,7 +101,7 @@ async function createFullSurvey(): Promise<SetupResult> {
 
   const questionIds: Record<string, string> = {};
   for (const q of questions) {
-    const created = await apiPost(`/api/sections/${q.sectionId}/questions`, q.body);
+    const created = await apiPost(`/api/surveys/${surveyId}/sections/${q.sectionId}/questions`, q.body);
     questionIds[q.key] = created.id;
   }
 
@@ -147,8 +147,8 @@ test.describe('Full survey with all 10 question types', () => {
 
     // Q2: Checkbox
     await waitForTransition(page);
-    await page.getByRole('button', { name: 'Reading' }).click();
-    await page.getByRole('button', { name: 'Gaming' }).click();
+    await page.getByRole('checkbox', { name: 'Reading' }).click();
+    await page.getByRole('checkbox', { name: 'Gaming' }).click();
     await clickNext(page);
 
     // Q3: Dropdown
@@ -288,7 +288,7 @@ test.describe('Survey duplication', () => {
   test('duplicates a survey via API', async () => {
     const survey = await apiPost('/api/surveys', { title: 'Original Survey' });
     const section = await apiPost(`/api/surveys/${survey.id}/sections`, { title: 'Section 1' });
-    await apiPost(`/api/sections/${section.id}/questions`, {
+    await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
       text: 'Q1',
       type: 'radio',
       options: [
@@ -303,11 +303,16 @@ test.describe('Survey duplication', () => {
     expect(dup.status).toBe('draft');
     expect(dup.id).not.toBe(survey.id);
 
-    // Verify the duplicate has sections and questions
-    const res = await fetch(`${API}/api/surveys/${dup.id}`, {
-      headers: getAuthHeaders(),
-    });
-    const data = await res.json();
+    // Verify the duplicate has sections and questions (retry — DO init is async)
+    let data: Record<string, unknown[]> = { sections: [], questions: [] };
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const res = await fetch(`${API}/api/surveys/${dup.id}`, {
+        headers: getAuthHeaders(),
+      });
+      data = await res.json();
+      if (data.sections?.length > 0) break;
+      await new Promise((r) => setTimeout(r, 1000));
+    }
     expect(data.sections.length).toBe(1);
     expect(data.questions.length).toBe(1);
   });
@@ -335,7 +340,7 @@ test.describe('Embed page', () => {
   test.beforeAll(async () => {
     const survey = await apiPost('/api/surveys', { title: 'Embed Test' });
     const section = await apiPost(`/api/surveys/${survey.id}/sections`, { title: 'S1' });
-    await apiPost(`/api/sections/${section.id}/questions`, { text: 'Quick Q', type: 'text', required: true });
+    await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, { text: 'Quick Q', type: 'text', required: true });
     slug = `embed-test-${Date.now()}`;
     await apiPut(`/api/surveys/${survey.id}`, { slug });
     await apiPut(`/api/surveys/${survey.id}/publish`);
@@ -358,7 +363,7 @@ test.describe('Survey with skip logic across question types', () => {
     const section = await apiPost(`/api/surveys/${survey.id}/sections`, { title: 'Feedback' });
 
     // Q1: Radio trigger
-    const q1 = await apiPost(`/api/sections/${section.id}/questions`, {
+    const q1 = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
       text: 'Have you used our product?',
       type: 'radio',
       required: true,
@@ -369,7 +374,7 @@ test.describe('Survey with skip logic across question types', () => {
     });
 
     // Q2: Rating - only if Q1 = Yes
-    await apiPost(`/api/sections/${section.id}/questions`, {
+    await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
       text: 'Rate your experience',
       type: 'rating',
       required: true,
@@ -378,7 +383,7 @@ test.describe('Survey with skip logic across question types', () => {
     });
 
     // Q3: Text - only if Q1 = No
-    await apiPost(`/api/sections/${section.id}/questions`, {
+    await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
       text: 'What prevented you from trying it?',
       type: 'text',
       required: true,
@@ -387,7 +392,7 @@ test.describe('Survey with skip logic across question types', () => {
     });
 
     // Q4: NPS - always shown
-    await apiPost(`/api/sections/${section.id}/questions`, {
+    await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
       text: 'How likely to recommend?',
       type: 'nps',
       required: true,

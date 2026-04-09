@@ -34,7 +34,7 @@ async function createPasswordProtectedSurvey(): Promise<SetupResult> {
   const slug = `e2e-pwd-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
   const survey = await apiPost('/api/surveys', { title: 'Password Protected Survey' });
   const section = await apiPost(`/api/surveys/${survey.id}/sections`, { title: 'Section 1' });
-  const question = await apiPost(`/api/sections/${section.id}/questions`, {
+  const question = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
     text: 'What is your name?',
     type: 'text',
     required: true,

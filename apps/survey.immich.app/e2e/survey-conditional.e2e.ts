@@ -39,7 +39,7 @@ async function createConditionalSurvey(): Promise<SetupResult> {
   const section = await apiPost(`/api/surveys/${survey.id}/sections`, { title: 'Section 1' });
 
   // Q1: Radio question with Yes/No options
-  const q1 = await apiPost(`/api/sections/${section.id}/questions`, {
+  const q1 = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
     text: 'Do you like testing?',
     type: 'radio',
     required: true,
@@ -50,7 +50,7 @@ async function createConditionalSurvey(): Promise<SetupResult> {
   });
 
   // Q2: Text question shown only if Q1 equals "Yes"
-  const q2 = await apiPost(`/api/sections/${section.id}/questions`, {
+  const q2 = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
     text: 'What do you like about testing?',
     type: 'text',
     required: true,
@@ -65,7 +65,7 @@ async function createConditionalSurvey(): Promise<SetupResult> {
   });
 
   // Q3: Text question shown only if Q1 equals "No"
-  const q3 = await apiPost(`/api/sections/${section.id}/questions`, {
+  const q3 = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
     text: 'What would make testing better?',
     type: 'text',
     required: true,
@@ -80,7 +80,7 @@ async function createConditionalSurvey(): Promise<SetupResult> {
   });
 
   // Q4: Unconditional text question
-  const q4 = await apiPost(`/api/sections/${section.id}/questions`, {
+  const q4 = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
     text: 'Any final thoughts?',
     type: 'text',
     required: false,

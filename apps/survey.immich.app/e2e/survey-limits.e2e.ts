@@ -27,7 +27,7 @@ async function createSurveyWithQuestion(opts: {
 }): Promise<SurveySetup> {
   const survey = await apiPost('/api/surveys', { title: opts.title });
   const section = await apiPost(`/api/surveys/${survey.id}/sections`, { title: 'Section 1' });
-  const question = await apiPost(`/api/sections/${section.id}/questions`, {
+  const question = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
     text: 'Pick one',
     type: 'radio',
     required: true,

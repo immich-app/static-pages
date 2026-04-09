@@ -10,13 +10,13 @@ const BASE = process.env.BASE_URL || 'http://localhost:5173';
 test.describe.serial('Password auth', () => {
   test('first visit shows setup screen', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('Welcome to Immich Surveys')).toBeVisible();
+    await expect(page.getByText('Welcome to FUTO Surveys')).toBeVisible();
     await expect(page.getByText('Set up your admin password')).toBeVisible();
   });
 
   test('short password is rejected', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('Welcome to Immich Surveys')).toBeVisible();
+    await expect(page.getByText('Welcome to FUTO Surveys')).toBeVisible();
 
     await page.getByPlaceholder('At least 8 characters').fill('short');
     await page.getByPlaceholder('Confirm password').fill('short');
@@ -27,7 +27,7 @@ test.describe.serial('Password auth', () => {
 
   test('mismatched passwords are rejected', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('Welcome to Immich Surveys')).toBeVisible();
+    await expect(page.getByText('Welcome to FUTO Surveys')).toBeVisible();
 
     await page.getByPlaceholder('At least 8 characters').fill('validpassword1');
     await page.getByPlaceholder('Confirm password').fill('differentpassword');
@@ -38,14 +38,14 @@ test.describe.serial('Password auth', () => {
 
   test('can create admin password and auto-login', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('Welcome to Immich Surveys')).toBeVisible();
+    await expect(page.getByText('Welcome to FUTO Surveys')).toBeVisible();
 
     await page.getByPlaceholder('At least 8 characters').fill(TEST_PASSWORD);
     await page.getByPlaceholder('Confirm password').fill(TEST_PASSWORD);
     await page.getByRole('button', { name: 'Create Admin Account' }).click();
 
     // After setup, user is auto-logged-in and sees the dashboard header
-    await expect(page.getByText('Immich Surveys')).toBeVisible();
+    await expect(page.getByText('FUTO Surveys')).toBeVisible();
     await expect(page.getByText('admin', { exact: false })).toBeVisible();
   });
 
@@ -55,7 +55,7 @@ test.describe.serial('Password auth', () => {
     await page.goto(BASE);
 
     // Should show the login screen (not setup)
-    await expect(page.getByText('Sign in to Immich Surveys')).toBeVisible();
+    await expect(page.getByText('Sign in to FUTO Surveys')).toBeVisible();
     await expect(page.getByPlaceholder('Admin password')).toBeVisible();
 
     await context.close();
@@ -65,7 +65,7 @@ test.describe.serial('Password auth', () => {
     const context = await browser.newContext();
     const page = await context.newPage();
     await page.goto(BASE);
-    await expect(page.getByText('Sign in to Immich Surveys')).toBeVisible();
+    await expect(page.getByText('Sign in to FUTO Surveys')).toBeVisible();
 
     await page.getByPlaceholder('Admin password').fill('wrong-password');
     await page.getByRole('button', { name: 'Sign in' }).click();
@@ -79,13 +79,13 @@ test.describe.serial('Password auth', () => {
     const context = await browser.newContext();
     const page = await context.newPage();
     await page.goto(BASE);
-    await expect(page.getByText('Sign in to Immich Surveys')).toBeVisible();
+    await expect(page.getByText('Sign in to FUTO Surveys')).toBeVisible();
 
     await page.getByPlaceholder('Admin password').fill(TEST_PASSWORD);
     await page.getByRole('button', { name: 'Sign in' }).click();
 
     // Should see the authenticated header
-    await expect(page.getByText('Immich Surveys')).toBeVisible();
+    await expect(page.getByText('FUTO Surveys')).toBeVisible();
     await expect(page.getByText('admin', { exact: false })).toBeVisible();
 
     await context.close();
@@ -97,16 +97,16 @@ test.describe.serial('Password auth', () => {
     await page.goto(BASE);
 
     // Log in first
-    await expect(page.getByText('Sign in to Immich Surveys')).toBeVisible();
+    await expect(page.getByText('Sign in to FUTO Surveys')).toBeVisible();
     await page.getByPlaceholder('Admin password').fill(TEST_PASSWORD);
     await page.getByRole('button', { name: 'Sign in' }).click();
-    await expect(page.getByText('Immich Surveys')).toBeVisible();
+    await expect(page.getByText('FUTO Surveys')).toBeVisible();
 
     // Click logout
     await page.getByTitle('Log out').click();
 
     // Should redirect to login screen
-    await expect(page.getByText('Sign in to Immich Surveys')).toBeVisible();
+    await expect(page.getByText('Sign in to FUTO Surveys')).toBeVisible();
 
     await context.close();
   });
@@ -117,7 +117,7 @@ test.describe.serial('Password auth', () => {
     await page.goto(`${BASE}/create`);
 
     // Should show login instead of create page
-    await expect(page.getByText('Sign in to Immich Surveys')).toBeVisible();
+    await expect(page.getByText('Sign in to FUTO Surveys')).toBeVisible();
 
     await context.close();
   });
@@ -221,7 +221,7 @@ test.describe.serial('OIDC auth', () => {
     await page.waitForURL(/localhost:(5173|8787)/, { timeout: 10_000 });
 
     // Should be authenticated with the admin role
-    await expect(page.getByText('Immich Surveys')).toBeVisible();
+    await expect(page.getByText('FUTO Surveys')).toBeVisible();
     await expect(page.getByText('Test Admin')).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('admin', { exact: false })).toBeVisible();
 
