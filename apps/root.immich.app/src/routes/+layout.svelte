@@ -1,30 +1,28 @@
 <script lang="ts">
-  import { afterNavigate, beforeNavigate, goto } from '$app/navigation';
+  import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/state';
   import PageContent from '$common/components/PageContent.svelte';
-  import { blogMetadata, posts } from '$lib';
+  import { getBlogProvider } from '$lib';
   import '$lib/app.css';
   import {
     AnnouncementBanner,
     AppShell,
     AppShellHeader,
     AppShellSidebar,
-    asText,
     Button,
+    CommandPaletteButton,
     commandPaletteManager,
     CommandPaletteProvider,
     Constants,
-    defaultProvider,
+    getSiteProviders,
     IconButton,
     Link,
     Logo,
     NavbarItem,
-    siteCommands,
+    ScreencastOverlay,
     Text,
-    themeManager,
     ThemeSwitcher,
     TooltipProvider,
-    type ActionItem,
   } from '@immich/ui';
   import {
     mdiChartGantt,
@@ -33,7 +31,6 @@
     mdiOpenInNew,
     mdiPostOutline,
     mdiScriptTextOutline,
-    mdiSend,
     mdiShoppingOutline,
   } from '@mdi/js';
   import { DateTime } from 'luxon';
@@ -47,8 +44,6 @@
   };
 
   const { children }: Props = $props();
-
-  themeManager.initialize();
 
   let pathname = '';
   onMount(() => {
@@ -82,76 +77,12 @@
     return active ? 'primary' : 'secondary';
   };
 
-  const linkToAction = (item: Omit<ActionItem, 'onAction'> & { href: string }) => ({
-    ...item,
-    onAction: () => goto(item.href),
-  });
-
   commandPaletteManager.enable();
-
-  const commands: ActionItem[] = [
-    {
-      icon: mdiSend,
-      iconClass: 'text-purple-800 dark:text-purple-200',
-      title: 'Toggle theme',
-      description: 'Toggle between light and dark theme',
-      onAction: () => themeManager.toggle(),
-      searchText: asText('theme', 'toggle', 'dark', 'light'),
-    },
-  ];
-
-  const ignoredLinks = new Set(['cursed knowledge', 'roadmap', 'blog']);
-  const linkCommands = siteCommands.filter((command) => !ignoredLinks.has(command.title.toLowerCase()));
-
-  const pageCommands: ActionItem[] = [
-    {
-      title: 'Home',
-      description: 'Welcome to Immich',
-      href: '/',
-    },
-    {
-      title: 'Download',
-      description: 'Download Immich and start backing up your photos and videos securely to your own server',
-      href: '/download',
-    },
-    {
-      title: 'Privacy policy',
-      description: 'See how we collect, use, and share information when you use Immich',
-      href: '/privacy-policy',
-    },
-    {
-      title: 'Roadmap',
-      description: 'View our project roadmap',
-      href: '/roadmap',
-    },
-    {
-      title: 'Cursed Knowledge',
-      description: 'View our collection of cursed knowledge',
-      href: '/cursed-knowledge',
-    },
-    {
-      title: 'Blog',
-      description: blogMetadata.description,
-      href: '/blog',
-    },
-  ].map(linkToAction);
-
-  const blogCommands: ActionItem[] = posts.map((post) => ({
-    title: post.title,
-    description: `${post.publishedAt.toLocaleString(DateTime.DATE_MED)} — ${post.description}`,
-    searchText: asText(post.title, post.description, post.url),
-    onAction: () => goto(post.url),
-  }));
 </script>
 
-<CommandPaletteProvider
-  providers={[
-    defaultProvider({ name: 'Command', actions: commands }),
-    defaultProvider({ name: 'Page', actions: pageCommands }),
-    defaultProvider({ name: 'Blog', actions: blogCommands }),
-    defaultProvider({ name: 'Link', actions: linkCommands }),
-  ]}
-/>
+<CommandPaletteProvider providers={[getBlogProvider(), ...getSiteProviders()]} />
+
+<ScreencastOverlay />
 
 <TooltipProvider>
   <AppShell>
@@ -208,6 +139,7 @@
           </div>
           <div class="flex place-items-center justify-end gap-2">
             <Button href={Constants.Sites.Buy} color="primary" size="small">Buy Immich</Button>
+            <CommandPaletteButton />
             <ThemeSwitcher />
           </div>
         </nav>

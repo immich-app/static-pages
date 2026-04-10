@@ -1,3 +1,4 @@
+import { defaultProvider, linkCommands, type ActionProvider } from '@immich/ui';
 import items from '../data/items.json';
 
 export const siteMetadata = {
@@ -20,3 +21,19 @@ export type Project = {
 };
 
 export const categories = items;
+
+export const getCategoryProviders = () => {
+  const providers: ActionProvider[] = [];
+
+  for (const category of categories) {
+    providers.push(
+      defaultProvider({
+        name: category.name,
+        types: category.types,
+        actions: linkCommands(category.projects),
+      }),
+    );
+  }
+
+  return providers;
+};

@@ -4,6 +4,7 @@
   import {
     Button,
     commandPaletteManager,
+    CommandPaletteButton,
     HStack,
     Icon,
     IconButton,
@@ -57,27 +58,7 @@
         color={item.color ?? (isActive(item.href) ? 'primary' : 'secondary')}>{item.title}</Button
       >
     {/each}
-    {#if commandPaletteManager.isEnabled}
-      <div class="hidden place-items-center lg:flex">
-        <button
-          onclick={() => commandPaletteManager.open()}
-          class="border-light flex cursor-pointer place-items-center gap-2 rounded-full bg-gray-200 px-4 py-2 text-sm dark:bg-neutral-700"
-        >
-          <Icon icon={mdiMagnify} size="1.25rem" />
-          <Text>Search</Text>
-          <span class="rounded-lg bg-white px-2 py-0.5 dark:bg-neutral-900">/</span>
-        </button>
-      </div>
-      <IconButton
-        icon={mdiMagnify}
-        shape="round"
-        variant="ghost"
-        color="secondary"
-        aria-label="Search"
-        class="lg:hidden"
-        onclick={() => commandPaletteManager.open()}
-      />
-    {/if}
+    <CommandPaletteButton />
     <ThemeSwitcher />
   </HStack>
 </nav>

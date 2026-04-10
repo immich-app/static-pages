@@ -1,3 +1,4 @@
+import { goto } from '$app/navigation';
 import type { Pathname } from '$app/types';
 import { PUBLIC_IMMICH_SPEC_URL } from '$env/static/public';
 import { ApiPage } from '$lib';
@@ -11,6 +12,8 @@ import type {
   SchemaObject,
   State,
 } from '$lib/services/open-api.d';
+import { defaultProvider, type ActionItem } from '@immich/ui';
+import { mdiApi, mdiTag, mdiTagMultiple } from '@mdi/js/mdi';
 
 export type ApiMethod = 'GET' | 'PUT' | 'POST' | 'DELETE' | 'OPTIONS' | 'HEAD' | 'PATCH';
 export type AuthenticationMethod = 'ApiKey' | 'Cookie' | 'Bearer';
@@ -303,4 +306,53 @@ export const getOpenApi = () => {
   }
 
   return openApi;
+};
+
+export const getOpenApiProviders = () => {
+  const endpointCommands: ActionItem[] = [];
+  const tagCommands: ActionItem[] = [];
+  const modelCommands: ActionItem[] = [];
+
+  try {
+    const { tags, models } = getOpenApi();
+
+    for (const tag of tags) {
+      tagCommands.push({
+        icon: mdiTagMultiple,
+        iconClass: 'text-pink-700 dark:text-pink-200',
+        title: tag.name,
+        onAction: () => goto(tag.href),
+      });
+
+      for (const endpoint of tag.endpoints) {
+        endpointCommands.push({
+          icon: mdiApi,
+          iconClass: 'text-indigo-700 dark:text-indigo-200',
+          title: endpoint.operationId,
+          description: endpoint.description,
+          onAction: () => goto(endpoint.href),
+          extraText: [endpoint.name],
+        });
+      }
+    }
+
+    for (const model of models) {
+      modelCommands.push({
+        icon: mdiTag,
+        iconClass: 'text-violet-700 dark:text-violet-200',
+        title: model.name,
+        description: model.description,
+        onAction: () => goto(model.href),
+        extraText: model.title,
+      });
+    }
+  } catch {
+    // noop
+  }
+
+  return [
+    defaultProvider({ name: 'Endpoints', types: ['endpoint', 'endpoints'], actions: endpointCommands }),
+    defaultProvider({ name: 'Tags', types: ['tag', 'tags'], actions: tagCommands }),
+    defaultProvider({ name: 'Models', types: ['model', 'models'], actions: modelCommands }),
+  ];
 };

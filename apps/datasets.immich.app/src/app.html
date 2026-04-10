@@ -19,9 +19,12 @@
     <meta name="twitter:title" content="Immich Dataset Uploader" />
     <meta name="twitter:description" content="Help improve Immich by contributing to our dataset" />
     <meta name="twitter:image" content="/img/social-preview.png" />
+
     <script>
       try {
-        if (JSON.parse(localStorage.getItem('immich-ui-theme')) === 'light') {
+        const preference = JSON.parse(localStorage.getItem('immich-ui-theme'));
+        const prefersDark = globalThis.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (preference === 'light' || (preference !== 'dark' && !prefersDark)) {
           document.documentElement.classList.remove('dark');
           document.documentElement.classList.add('light');
         }

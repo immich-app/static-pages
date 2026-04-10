@@ -1,3 +1,4 @@
+import { defaultProvider, linkCommands } from '@immich/ui';
 import {
   mdiAccountMultipleOutline,
   mdiAccountOutline,
@@ -68,3 +69,47 @@ const icons: Record<string, string> = {
 };
 
 export const getIcon = (name: string) => icons[name] || mdiCodeJson;
+
+export const getPageProvider = () => {
+  return defaultProvider({
+    name: 'Pages',
+    types: ['page', 'pages'],
+    actions: linkCommands([
+      {
+        title: 'Introduction',
+        description: 'Overview of Immich API',
+        href: ApiPage.Introduction,
+      },
+      {
+        title: 'Getting started',
+        description: 'Learn how to get started with Immich API',
+        href: ApiPage.GettingStarted,
+      },
+      {
+        title: 'Authentication',
+        description: 'Learn how authentication works in the Immich API',
+        href: ApiPage.Authentication,
+      },
+      {
+        title: 'Permissions',
+        description: 'Learn how permissions work with the Immich API',
+        href: ApiPage.Permissions,
+      },
+      {
+        title: 'SDK',
+        description: 'Learn about the @immich/sdk generated client',
+        href: ApiPage.Sdk,
+      },
+      {
+        title: 'Endpoints',
+        description: 'A list of all the endpoints in the Immich API',
+        href: ApiPage.Endpoints,
+      },
+      {
+        title: 'Models',
+        description: 'A list of all the models in the Immich API',
+        href: ApiPage.Models,
+      },
+    ]),
+  });
+};
