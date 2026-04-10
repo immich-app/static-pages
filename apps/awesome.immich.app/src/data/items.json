@@ -38,6 +38,11 @@
         "title": "View-Only Web Interface",
         "description": "Display Immich photos publicly while allowing for the ability to filter and search for images.",
         "href": "https://github.com/JimmyeJones/Immich-View-Only-Web-Interface"
+      },
+      {
+        "title": "Mimick",
+        "description": "Unofficial GTK4 Immich client for Linux with persistent background sync.",
+        "href": "https://github.com/nicx17/mimick"
       }
     ]
   },
