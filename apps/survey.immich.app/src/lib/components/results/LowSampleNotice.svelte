@@ -14,9 +14,7 @@
   let { count, threshold, metricName = 'chart' }: Props = $props();
 </script>
 
-<div
-  class="rounded-md border border-amber-400/30 bg-amber-400/5 px-3 py-2 text-xs text-amber-300/90"
->
+<div class="rounded-md border border-amber-400/30 bg-amber-400/5 px-3 py-2 text-xs text-amber-300/90">
   <span class="font-medium">Need {threshold}+ responses</span>
   for a meaningful {metricName}. Showing raw data instead ({count}
   {count === 1 ? 'response' : 'responses'}).

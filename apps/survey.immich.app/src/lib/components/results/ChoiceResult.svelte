@@ -91,10 +91,7 @@
   {/if}
 
   {#if rows.length > 0}
-    <HorizontalBar
-      {rows}
-      countLabel={isCheckbox ? 'respondents' : 'responses'}
-    />
+    <HorizontalBar {rows} countLabel={isCheckbox ? 'respondents' : 'responses'} />
     {#if isCheckbox}
       <p class="text-xs text-gray-500">
         Percentages are of {totalRespondentCount}

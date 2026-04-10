@@ -42,7 +42,7 @@
         <span class="truncate text-sm {r.highlight ? 'font-semibold text-gray-200' : 'text-gray-300'}">
           {r.label}
         </span>
-        <span class="shrink-0 text-xs tabular-nums text-gray-400">
+        <span class="shrink-0 text-xs text-gray-400 tabular-nums">
           {r.value}
           <span class="text-gray-500">({r.percent.toFixed(1)}%)</span>
         </span>

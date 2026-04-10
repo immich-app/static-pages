@@ -72,9 +72,9 @@ interface QuestionRow {
 // ============================================================
 
 function uuid(): string {
-  return [8, 4, 4, 4, 12].map((n) =>
-    Array.from({ length: n }, () => Math.floor(Math.random() * 16).toString(16)).join(''),
-  ).join('-');
+  return [8, 4, 4, 4, 12]
+    .map((n) => Array.from({ length: n }, () => Math.floor(Math.random() * 16).toString(16)).join(''))
+    .join('-');
 }
 
 function generateSurvey(): SurveyRow {
@@ -109,7 +109,18 @@ function generateSections(count: number, surveyId: string): SectionRow[] {
   }));
 }
 
-const QUESTION_TYPES = ['radio', 'checkbox', 'text', 'textarea', 'email', 'rating', 'nps', 'number', 'dropdown', 'likert'];
+const QUESTION_TYPES = [
+  'radio',
+  'checkbox',
+  'text',
+  'textarea',
+  'email',
+  'rating',
+  'nps',
+  'number',
+  'dropdown',
+  'likert',
+];
 
 function generateQuestions(count: number, surveyId: string, sections: SectionRow[]): QuestionRow[] {
   return Array.from({ length: count }, (_, i) => {
@@ -144,7 +155,10 @@ function generateQuestions(count: number, surveyId: string, sections: SectionRow
   });
 }
 
-function generateAnswer(question: QuestionRow, fillLevel: 'short' | 'medium' | 'long'): { value: string; otherText: string | null } {
+function generateAnswer(
+  question: QuestionRow,
+  fillLevel: 'short' | 'medium' | 'long',
+): { value: string; otherText: string | null } {
   switch (question.type) {
     case 'text':
       return { value: 'John Doe', otherText: null };
@@ -173,7 +187,11 @@ function generateAnswer(question: QuestionRow, fillLevel: 'short' | 'medium' | '
   }
 }
 
-function generateRespondentState(questions: QuestionRow[], answerCount: number, fillLevel: 'short' | 'medium' | 'long'): RespondentState {
+function generateRespondentState(
+  questions: QuestionRow[],
+  answerCount: number,
+  fillLevel: 'short' | 'medium' | 'long',
+): RespondentState {
   // Matches the real cache: only keep choice answers in memory
   const choiceAnswers = new Map<string, { value: string; otherText: string | null }>();
   const actualCount = Math.min(answerCount, questions.length);
@@ -256,7 +274,9 @@ function profileScenario(scenario: Scenario) {
     return { survey, sections, questions, tallies, counters };
   });
 
-  console.log(`\n  Static data (survey + ${scenario.sectionCount} sections + ${scenario.questionCount} questions + tallies):`);
+  console.log(
+    `\n  Static data (survey + ${scenario.sectionCount} sections + ${scenario.questionCount} questions + tallies):`,
+  );
   console.log(`    ${fmt(staticMeasure.bytes)}`);
 
   // Keep reference so GC doesn't collect
@@ -281,9 +301,11 @@ function profileScenario(scenario: Scenario) {
         // Mix: 30% just started, 40% halfway, 30% almost done
         const progress = i % 10;
         const answerCount =
-          progress < 3 ? Math.floor(scenario.questionCount * 0.1) :
-          progress < 7 ? Math.floor(scenario.questionCount * 0.5) :
-          Math.floor(scenario.questionCount * 0.9);
+          progress < 3
+            ? Math.floor(scenario.questionCount * 0.1)
+            : progress < 7
+              ? Math.floor(scenario.questionCount * 0.5)
+              : Math.floor(scenario.questionCount * 0.9);
         states.set(uuid(), generateRespondentState(questions, answerCount, scenario.fillLevel));
       }
       return states;

@@ -1,12 +1,6 @@
 <script lang="ts">
   import LowSampleNotice from './LowSampleNotice.svelte';
-  import {
-    computeNps,
-    npsDistribution,
-    npsLabel,
-    NPS_MIN_SAMPLE,
-    type AnswerData,
-  } from './analytics-utils';
+  import { computeNps, npsDistribution, npsLabel, NPS_MIN_SAMPLE, type AnswerData } from './analytics-utils';
 
   interface Props {
     answers: AnswerData[];
@@ -53,7 +47,7 @@
 
     <div>
       <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Promoters</div>
-      <div class="mt-0.5 text-xl font-bold tabular-nums text-green-400">
+      <div class="mt-0.5 text-xl font-bold text-green-400 tabular-nums">
         {stats.pPct.toFixed(0)}%
       </div>
       <div class="text-[11px] text-gray-500">{stats.promoters} · score 9–10</div>
@@ -61,7 +55,7 @@
 
     <div>
       <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Passives</div>
-      <div class="mt-0.5 text-xl font-bold tabular-nums text-amber-400">
+      <div class="mt-0.5 text-xl font-bold text-amber-400 tabular-nums">
         {stats.paPct.toFixed(0)}%
       </div>
       <div class="text-[11px] text-gray-500">{stats.passives} · score 7–8</div>
@@ -69,7 +63,7 @@
 
     <div>
       <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Detractors</div>
-      <div class="mt-0.5 text-xl font-bold tabular-nums text-red-400">
+      <div class="mt-0.5 text-xl font-bold text-red-400 tabular-nums">
         {stats.dPct.toFixed(0)}%
       </div>
       <div class="text-[11px] text-gray-500">{stats.detractors} · score 0–6</div>
@@ -77,7 +71,7 @@
 
     <div class="ml-auto">
       <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Responses</div>
-      <div class="mt-0.5 text-xl font-bold tabular-nums text-gray-200">{stats.total}</div>
+      <div class="mt-0.5 text-xl font-bold text-gray-200 tabular-nums">{stats.total}</div>
     </div>
   </div>
 
@@ -121,19 +115,17 @@
 
     <!-- Per-score distribution -->
     <div>
-      <div class="mb-1 text-[10px] font-medium tracking-wider text-gray-500 uppercase">
-        Score distribution
-      </div>
+      <div class="mb-1 text-[10px] font-medium tracking-wider text-gray-500 uppercase">Score distribution</div>
       <div class="flex h-20 items-end gap-1">
         {#each dist as bucket (bucket.score)}
           <div class="flex flex-1 flex-col items-center gap-1" title="{bucket.count} respondents rated {bucket.score}">
-            <div class="flex-1 w-full flex items-end">
+            <div class="flex w-full flex-1 items-end">
               <div
                 class="w-full rounded-sm {bucketColour(bucket.score)} transition-all"
                 style="height: {(bucket.count / maxBucket) * 100}%"
               ></div>
             </div>
-            <span class="text-[10px] tabular-nums text-gray-500">{bucket.score}</span>
+            <span class="text-[10px] text-gray-500 tabular-nums">{bucket.score}</span>
           </div>
         {/each}
       </div>

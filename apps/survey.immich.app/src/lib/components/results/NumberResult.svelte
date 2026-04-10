@@ -41,7 +41,7 @@
     <!-- Show raw values as a dot list for very small samples -->
     <div class="flex flex-wrap gap-1.5">
       {#each stats.values as v, i (i + '-' + v)}
-        <span class="rounded-md bg-gray-800 px-2 py-0.5 text-xs tabular-nums text-gray-300">
+        <span class="rounded-md bg-gray-800 px-2 py-0.5 text-xs text-gray-300 tabular-nums">
           {v}
         </span>
       {/each}
@@ -53,10 +53,7 @@
     <div>
       <div class="flex h-32 items-end gap-1">
         {#each buckets as bucket, i (i)}
-          <div
-            class="flex flex-1 flex-col items-center gap-1"
-            title="{bucket.label}: {bucket.count} responses"
-          >
+          <div class="flex flex-1 flex-col items-center gap-1" title="{bucket.label}: {bucket.count} responses">
             <div class="flex w-full flex-1 items-end">
               <div
                 class="w-full rounded-t bg-blue-500/70 transition-all"

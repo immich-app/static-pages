@@ -87,7 +87,9 @@
       {#if loader.activeTab === 'overview'}
         <!-- KPI strip -->
         <div class="animate-in animate-in-delay-1 mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
-          <div class="rounded-xl border border-gray-200 bg-gradient-to-br from-gray-50 to-transparent p-4 dark:border-gray-700/80 dark:from-gray-800/40">
+          <div
+            class="rounded-xl border border-gray-200 bg-gradient-to-br from-gray-50 to-transparent p-4 dark:border-gray-700/80 dark:from-gray-800/40"
+          >
             <div class="flex items-center gap-1.5 text-gray-500">
               <Icon icon={mdiAccountGroup} size="14" />
               <span class="text-[10px] font-medium tracking-wider uppercase">Total</span>
@@ -95,37 +97,36 @@
             <p class="mt-1.5 text-2xl font-bold tabular-nums">{loader.respondentCounts.total}</p>
             <p class="text-[11px] text-gray-500">respondents</p>
           </div>
-          <div class="rounded-xl border border-gray-200 bg-gradient-to-br from-green-50/40 to-transparent p-4 dark:border-gray-700/80 dark:from-green-900/20">
+          <div
+            class="rounded-xl border border-gray-200 bg-gradient-to-br from-green-50/40 to-transparent p-4 dark:border-gray-700/80 dark:from-green-900/20"
+          >
             <div class="flex items-center gap-1.5 text-gray-500">
               <Icon icon={mdiCheckCircle} size="14" />
               <span class="text-[10px] font-medium tracking-wider uppercase">Completed</span>
             </div>
-            <p class="mt-1.5 text-2xl font-bold tabular-nums text-green-400">
+            <p class="mt-1.5 text-2xl font-bold text-green-400 tabular-nums">
               {loader.respondentCounts.completed}
             </p>
             <p class="text-[11px] text-gray-500">
               {loader.respondentCounts.total - loader.respondentCounts.completed} in progress
             </p>
           </div>
-          <div class="rounded-xl border border-gray-200 bg-gradient-to-br from-blue-50/40 to-transparent p-4 dark:border-gray-700/80 dark:from-blue-900/20">
-            <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">
-              Completion
-            </div>
-            <p class="mt-1.5 text-2xl font-bold tabular-nums text-blue-400">
+          <div
+            class="rounded-xl border border-gray-200 bg-gradient-to-br from-blue-50/40 to-transparent p-4 dark:border-gray-700/80 dark:from-blue-900/20"
+          >
+            <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Completion</div>
+            <p class="mt-1.5 text-2xl font-bold text-blue-400 tabular-nums">
               {loader.completionRate}%
             </p>
             <div class="mt-1.5 h-1 overflow-hidden rounded-full bg-gray-800">
-              <div
-                class="h-full rounded-full bg-blue-400 transition-all"
-                style="width: {loader.completionRate}%"
-              ></div>
+              <div class="h-full rounded-full bg-blue-400 transition-all" style="width: {loader.completionRate}%"></div>
             </div>
           </div>
-          <div class="rounded-xl border border-gray-200 bg-gradient-to-br from-purple-50/40 to-transparent p-4 dark:border-gray-700/80 dark:from-purple-900/20">
-            <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">
-              Live now
-            </div>
-            <p class="mt-1.5 text-2xl font-bold tabular-nums text-purple-400">
+          <div
+            class="rounded-xl border border-gray-200 bg-gradient-to-br from-purple-50/40 to-transparent p-4 dark:border-gray-700/80 dark:from-purple-900/20"
+          >
+            <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Live now</div>
+            <p class="mt-1.5 text-2xl font-bold text-purple-400 tabular-nums">
               {loader.liveCounts.activeRespondents}
             </p>
             <p class="text-[11px] text-gray-500">

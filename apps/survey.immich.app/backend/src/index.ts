@@ -147,9 +147,21 @@ function getDOStub(env: Env, surveyId: string): DurableObjectStub {
 }
 
 const CATALOG_SYNC_COLUMNS = new Set([
-  'title', 'slug', 'status', 'description', 'password_hash', 'archived_at', 'updated_at',
-  'welcome_title', 'welcome_description', 'thank_you_title', 'thank_you_description',
-  'closes_at', 'max_responses', 'randomize_questions', 'randomize_options',
+  'title',
+  'slug',
+  'status',
+  'description',
+  'password_hash',
+  'archived_at',
+  'updated_at',
+  'welcome_title',
+  'welcome_description',
+  'thank_you_title',
+  'thank_you_description',
+  'closes_at',
+  'max_responses',
+  'randomize_questions',
+  'randomize_options',
 ]);
 
 /** After forwarding a mutation to the DO, sync catalog fields back to D1 */
@@ -500,7 +512,10 @@ function getRequiredDORole(method: string, subPath: string): UserRole {
 }
 
 // Auth check for admin routes (outside itty-router) — verifies HMAC signature and returns user role
-async function authenticateRequest(request: Request, config: import('./config').AppConfig): Promise<Response | UserRole> {
+async function authenticateRequest(
+  request: Request,
+  config: import('./config').AppConfig,
+): Promise<Response | UserRole> {
   const sessionCookie = getCookie(request, 'survey_session');
   if (!sessionCookie) {
     return Response.json({ error: 'Authentication required' }, { status: 401 });

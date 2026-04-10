@@ -52,32 +52,32 @@
   <div class="flex flex-wrap items-end gap-x-8 gap-y-3">
     <div>
       <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Agree</div>
-      <div class="mt-0.5 text-2xl font-bold tabular-nums text-green-400">
+      <div class="mt-0.5 text-2xl font-bold text-green-400 tabular-nums">
         {stats.agreePct.toFixed(0)}%
       </div>
     </div>
     <div>
       <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Neutral</div>
-      <div class="mt-0.5 text-2xl font-bold tabular-nums text-gray-300">
+      <div class="mt-0.5 text-2xl font-bold text-gray-300 tabular-nums">
         {stats.neutralPct.toFixed(0)}%
       </div>
     </div>
     <div>
       <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Disagree</div>
-      <div class="mt-0.5 text-2xl font-bold tabular-nums text-red-400">
+      <div class="mt-0.5 text-2xl font-bold text-red-400 tabular-nums">
         {stats.disagreePct.toFixed(0)}%
       </div>
     </div>
     <div>
       <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Mean</div>
-      <div class="mt-0.5 text-2xl font-bold tabular-nums text-gray-200">
+      <div class="mt-0.5 text-2xl font-bold text-gray-200 tabular-nums">
         {stats.mean !== null ? stats.mean.toFixed(2) : '–'}
       </div>
       <div class="text-[11px] text-gray-500">1–5 scale</div>
     </div>
     <div class="ml-auto">
       <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Responses</div>
-      <div class="mt-0.5 text-2xl font-bold tabular-nums text-gray-200">{stats.total}</div>
+      <div class="mt-0.5 text-2xl font-bold text-gray-200 tabular-nums">{stats.total}</div>
     </div>
   </div>
 
@@ -121,10 +121,7 @@
           ></div>
         {/if}
         {#if nPosWidth > 0}
-          <div
-            class="bg-gray-400/60"
-            style="width: {nPosWidth}%"
-          ></div>
+          <div class="bg-gray-400/60" style="width: {nPosWidth}%"></div>
         {/if}
         {#if aWidth > 0}
           <div
@@ -148,11 +145,15 @@
 
       <!-- Legend -->
       <div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-gray-400">
-        <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-sm bg-red-600/85"></span>Strongly Disagree</span>
+        <span class="flex items-center gap-1.5"
+          ><span class="h-2 w-2 rounded-sm bg-red-600/85"></span>Strongly Disagree</span
+        >
         <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-sm bg-red-400/85"></span>Disagree</span>
         <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-sm bg-gray-400/60"></span>Neutral</span>
         <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-sm bg-green-400/85"></span>Agree</span>
-        <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-sm bg-green-600/85"></span>Strongly Agree</span>
+        <span class="flex items-center gap-1.5"
+          ><span class="h-2 w-2 rounded-sm bg-green-600/85"></span>Strongly Agree</span
+        >
       </div>
     </div>
   {:else}

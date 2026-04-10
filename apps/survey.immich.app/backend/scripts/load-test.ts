@@ -106,7 +106,9 @@ class Metrics {
     console.log('LOAD TEST RESULTS');
     console.log('='.repeat(70));
 
-    console.log(`\nDuration: ${elapsed.toFixed(1)}s | Total requests: ${total} | Errors: ${errors} (${((errors / total) * 100).toFixed(1)}%)`);
+    console.log(
+      `\nDuration: ${elapsed.toFixed(1)}s | Total requests: ${total} | Errors: ${errors} (${((errors / total) * 100).toFixed(1)}%)`,
+    );
     console.log(`Throughput: ${(total / elapsed).toFixed(1)} req/s`);
 
     // Per-endpoint breakdown
@@ -117,7 +119,9 @@ class Metrics {
       endpoints.set(m.endpoint, group);
     }
 
-    console.log(`\n${'Endpoint'.padEnd(30)} ${'Count'.padStart(6)} ${'Errs'.padStart(5)} ${'p50'.padStart(7)} ${'p90'.padStart(7)} ${'p95'.padStart(7)} ${'p99'.padStart(7)}`);
+    console.log(
+      `\n${'Endpoint'.padEnd(30)} ${'Count'.padStart(6)} ${'Errs'.padStart(5)} ${'p50'.padStart(7)} ${'p90'.padStart(7)} ${'p95'.padStart(7)} ${'p99'.padStart(7)}`,
+    );
     console.log('-'.repeat(70));
 
     for (const [endpoint, metrics] of endpoints) {
@@ -150,20 +154,27 @@ class Metrics {
       answers: failures.filter((o) => o.failure === 'answers').length,
       complete: failures.filter((o) => o.failure === 'complete').length,
     };
-    const realFailures = failureBreakdown.load + failureBreakdown.session + failureBreakdown.answers + failureBreakdown.complete;
+    const realFailures =
+      failureBreakdown.load + failureBreakdown.session + failureBreakdown.answers + failureBreakdown.complete;
     const deadlineCutoffs = this.outcomes.filter((o) => o.failure === 'deadline').length;
 
     console.log(`\n${'='.repeat(70)}`);
     console.log(`USER OUTCOMES (${total_users} total)`);
     console.log('='.repeat(70));
-    console.log(`  Completed successfully:  ${String(completed).padStart(5)}  (${((completed / total_users) * 100).toFixed(1)}%)`);
-    console.log(`  Abandoned (intentional): ${String(abandoned).padStart(5)}  (${((abandoned / total_users) * 100).toFixed(1)}%)`);
+    console.log(
+      `  Completed successfully:  ${String(completed).padStart(5)}  (${((completed / total_users) * 100).toFixed(1)}%)`,
+    );
+    console.log(
+      `  Abandoned (intentional): ${String(abandoned).padStart(5)}  (${((abandoned / total_users) * 100).toFixed(1)}%)`,
+    );
     if (deadlineCutoffs > 0) {
       console.log(
         `  Cut off by --duration:   ${String(deadlineCutoffs).padStart(5)}  (${((deadlineCutoffs / total_users) * 100).toFixed(1)}%)  ← NOT a failure, test config`,
       );
     }
-    console.log(`  FAILED (server issue):   ${String(realFailures).padStart(5)}  (${((realFailures / total_users) * 100).toFixed(1)}%)`);
+    console.log(
+      `  FAILED (server issue):   ${String(realFailures).padStart(5)}  (${((realFailures / total_users) * 100).toFixed(1)}%)`,
+    );
     if (realFailures > 0) {
       console.log(`    - load failed (never saw survey):     ${failureBreakdown.load}`);
       console.log(`    - session failed (couldn't resume):   ${failureBreakdown.session}`);
@@ -181,17 +192,23 @@ class Metrics {
     }
 
     if (deadlineCutoffs > 0) {
-      console.log(`\n  ⚠  ${deadlineCutoffs} user${deadlineCutoffs === 1 ? '' : 's'} were cut off by the test duration.`);
+      console.log(
+        `\n  ⚠  ${deadlineCutoffs} user${deadlineCutoffs === 1 ? '' : 's'} were cut off by the test duration.`,
+      );
       console.log(`     Increase --duration to let them finish, or these could also skew completion rate.`);
     }
 
     console.log(`\n${'-'.repeat(70)}`);
     console.log('WS RESILIENCE');
     console.log('-'.repeat(70));
-    console.log(`  Users with WS connect failures:      ${wsConnectFailed}  (${((wsConnectFailed / total_users) * 100).toFixed(1)}%)`);
+    console.log(
+      `  Users with WS connect failures:      ${wsConnectFailed}  (${((wsConnectFailed / total_users) * 100).toFixed(1)}%)`,
+    );
     console.log(`    → successfully completed anyway:   ${wsFailedButCompleted}  (fallback worked)`);
     console.log(`    → ultimately failed:               ${wsFailedAndFailed}`);
-    console.log(`  Users who used HTTP fallback at all: ${usedHttpFallback}  (${((usedHttpFallback / total_users) * 100).toFixed(1)}%)`);
+    console.log(
+      `  Users who used HTTP fallback at all: ${usedHttpFallback}  (${((usedHttpFallback / total_users) * 100).toFixed(1)}%)`,
+    );
 
     // Error breakdown — grouped by endpoint and error message, with counts
     const errorGroups = new Map<string, number>();
@@ -693,7 +710,12 @@ function createWsClient(url: string, metrics: Metrics, initialCookie?: string): 
           },
           reject: (err) => {
             clearTimeout(timeout);
-            metrics.record({ endpoint: `WS ${op}`, status: 400, latencyMs: performance.now() - start, error: err.message });
+            metrics.record({
+              endpoint: `WS ${op}`,
+              status: 400,
+              latencyMs: performance.now() - start,
+              error: err.message,
+            });
             reject(err);
           },
         });
@@ -870,7 +892,10 @@ async function simulateUser(
   const MAX_FLUSH_FAILURES = 5; // give up after this many consecutive failed flushes
 
   const clearInactivity = () => {
-    if (inactivityTimer) { clearTimeout(inactivityTimer); inactivityTimer = null; }
+    if (inactivityTimer) {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = null;
+    }
   };
 
   const saveBatchWs = async (batch: PendingSave[]): Promise<boolean> => {
@@ -910,7 +935,9 @@ async function simulateUser(
 
   const scheduleInactivityFlush = () => {
     clearInactivity();
-    inactivityTimer = setTimeout(() => { void flushBuffer(); }, INACTIVITY_MS);
+    inactivityTimer = setTimeout(() => {
+      void flushBuffer();
+    }, INACTIVITY_MS);
   };
 
   const bufferAnswer = (answer: PendingSave) => {
@@ -1074,12 +1101,8 @@ async function main() {
     console.log(
       `\n⚠  Warning: --duration ${config.durationSeconds}s may be too short for ${questions.length} questions.`,
     );
-    console.log(
-      `   Slow users need up to ~${worstCaseSecsPerUser}s to answer, plus ${config.rampSeconds}s ramp.`,
-    );
-    console.log(
-      `   Recommended: --duration ${minRecommendedDuration} (or higher). Users cut short will be`,
-    );
+    console.log(`   Slow users need up to ~${worstCaseSecsPerUser}s to answer, plus ${config.rampSeconds}s ramp.`);
+    console.log(`   Recommended: --duration ${minRecommendedDuration} (or higher). Users cut short will be`);
     console.log(`   reported under "Cut off by --duration" in the results.`);
   }
 

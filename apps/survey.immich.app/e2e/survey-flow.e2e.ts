@@ -340,7 +340,11 @@ test.describe('Embed page', () => {
   test.beforeAll(async () => {
     const survey = await apiPost('/api/surveys', { title: 'Embed Test' });
     const section = await apiPost(`/api/surveys/${survey.id}/sections`, { title: 'S1' });
-    await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, { text: 'Quick Q', type: 'text', required: true });
+    await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
+      text: 'Quick Q',
+      type: 'text',
+      required: true,
+    });
     slug = `embed-test-${Date.now()}`;
     await apiPut(`/api/surveys/${survey.id}`, { slug });
     await apiPut(`/api/surveys/${survey.id}/publish`);

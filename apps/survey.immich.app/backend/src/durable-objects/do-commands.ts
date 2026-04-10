@@ -20,11 +20,7 @@ export interface CommandContext {
   cache: SurveyCache;
 }
 
-export async function execute(
-  op: string,
-  data: Record<string, unknown>,
-  ctx: CommandContext,
-): Promise<unknown | null> {
+export async function execute(op: string, data: Record<string, unknown>, ctx: CommandContext): Promise<unknown | null> {
   const surveyId = ctx.cache.survey.id;
 
   switch (op) {

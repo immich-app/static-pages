@@ -1,12 +1,7 @@
 <script lang="ts">
   import type { SurveyQuestion } from '$lib/types';
   import StatStrip from './StatStrip.svelte';
-  import {
-    computeNgrams,
-    computeTextStats,
-    computeEmailStats,
-    type AnswerData,
-  } from './analytics-utils';
+  import { computeNgrams, computeTextStats, computeEmailStats, type AnswerData } from './analytics-utils';
 
   interface Props {
     question: SurveyQuestion;
@@ -97,9 +92,7 @@
   {#if isEmail && emailStats && emailStats.topDomains.length > 0}
     <!-- Top email domains -->
     <div>
-      <div class="mb-2 text-[10px] font-medium tracking-wider text-gray-500 uppercase">
-        Top domains
-      </div>
+      <div class="mb-2 text-[10px] font-medium tracking-wider text-gray-500 uppercase">Top domains</div>
       <div class="space-y-1.5">
         {#each emailStats.topDomains as d (d.domain)}
           <div class="flex items-center gap-3">
@@ -107,7 +100,7 @@
             <div class="h-2 flex-1 overflow-hidden rounded-full bg-gray-800">
               <div class="h-full bg-blue-500/70" style="width: {(d.count / maxDomainCount) * 100}%"></div>
             </div>
-            <span class="w-10 shrink-0 text-right text-xs tabular-nums text-gray-400">{d.count}</span>
+            <span class="w-10 shrink-0 text-right text-xs text-gray-400 tabular-nums">{d.count}</span>
           </div>
         {/each}
       </div>
@@ -117,9 +110,7 @@
   {#if !isEmail && ngrams.length > 0}
     <!-- Common phrases (bigrams/trigrams) -->
     <div>
-      <div class="mb-2 text-[10px] font-medium tracking-wider text-gray-500 uppercase">
-        Common phrases
-      </div>
+      <div class="mb-2 text-[10px] font-medium tracking-wider text-gray-500 uppercase">Common phrases</div>
       <div class="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
         {#each ngrams as ng (ng.phrase)}
           <div class="flex items-center gap-3">
@@ -127,7 +118,7 @@
             <div class="h-1.5 w-20 overflow-hidden rounded-full bg-gray-800">
               <div class="h-full bg-purple-500/70" style="width: {(ng.count / maxNgramCount) * 100}%"></div>
             </div>
-            <span class="w-8 shrink-0 text-right text-xs tabular-nums text-gray-400">{ng.count}</span>
+            <span class="w-8 shrink-0 text-right text-xs text-gray-400 tabular-nums">{ng.count}</span>
           </div>
         {/each}
       </div>
@@ -138,9 +129,7 @@
   {#if flat.length > 0}
     <div>
       <div class="mb-2 flex items-center justify-between gap-2">
-        <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">
-          Responses
-        </div>
+        <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Responses</div>
         <input
           type="search"
           bind:value={searchTerm}

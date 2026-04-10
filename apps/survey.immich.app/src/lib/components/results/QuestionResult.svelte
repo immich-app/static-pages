@@ -26,7 +26,7 @@
 
   // Question type badge
   const typeLabel = $derived(
-    ({
+    {
       radio: 'Single choice',
       checkbox: 'Multi-select',
       dropdown: 'Dropdown',
@@ -37,7 +37,7 @@
       rating: 'Rating',
       nps: 'NPS',
       likert: 'Likert',
-    })[question.type] ?? question.type,
+    }[question.type] ?? question.type,
   );
 </script>
 
@@ -45,8 +45,10 @@
   <!-- Header -->
   <div class="mb-4">
     <div class="mb-1 flex items-start justify-between gap-3">
-      <h3 class="text-base font-semibold leading-snug">{question.text}</h3>
-      <span class="shrink-0 rounded-full border border-gray-700 px-2 py-0.5 text-[10px] uppercase tracking-wider text-gray-500">
+      <h3 class="text-base leading-snug font-semibold">{question.text}</h3>
+      <span
+        class="shrink-0 rounded-full border border-gray-700 px-2 py-0.5 text-[10px] tracking-wider text-gray-500 uppercase"
+      >
         {typeLabel}
       </span>
     </div>

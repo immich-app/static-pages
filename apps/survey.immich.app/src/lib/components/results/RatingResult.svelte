@@ -52,7 +52,7 @@
     <div>
       <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Average</div>
       <div class="mt-0.5 flex items-baseline gap-2">
-        <span class="text-3xl font-bold tabular-nums text-gray-200">
+        <span class="text-3xl font-bold text-gray-200 tabular-nums">
           {stats.mean !== null ? stats.mean.toFixed(1) : '–'}
         </span>
         <span class="text-sm text-gray-500">/ {scaleMax}</span>
@@ -72,7 +72,7 @@
 
     <div>
       <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Satisfaction</div>
-      <div class="mt-0.5 text-2xl font-bold tabular-nums text-green-400">
+      <div class="mt-0.5 text-2xl font-bold text-green-400 tabular-nums">
         {stats.topBoxPct.toFixed(0)}%
       </div>
       <div class="mt-0.5 text-[11px] text-gray-500">
@@ -82,7 +82,7 @@
 
     <div>
       <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Responses</div>
-      <div class="mt-0.5 text-2xl font-bold tabular-nums text-gray-200">{stats.total}</div>
+      <div class="mt-0.5 text-2xl font-bold text-gray-200 tabular-nums">{stats.total}</div>
     </div>
   </div>
 

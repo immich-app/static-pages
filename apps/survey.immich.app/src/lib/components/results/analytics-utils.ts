@@ -82,9 +82,10 @@ export function computeRating(answers: AnswerData[], scaleMax = 5): RatingStats 
   }
   const mean = total > 0 ? sum / total : null;
   // "Top box" = highest rating; we also count scaleMax - 1 as "top 2 box" when scaleMax >= 5
-  const topBoxCount = scaleMax >= 5
-    ? distribution[scaleMax - 1].count + distribution[scaleMax - 2].count
-    : distribution[scaleMax - 1].count;
+  const topBoxCount =
+    scaleMax >= 5
+      ? distribution[scaleMax - 1].count + distribution[scaleMax - 2].count
+      : distribution[scaleMax - 1].count;
   const topBoxPct = total > 0 ? (topBoxCount / total) * 100 : 0;
   return { total, mean, topBoxPct, distribution };
 }
@@ -94,13 +95,7 @@ export function computeRating(answers: AnswerData[], scaleMax = 5): RatingStats 
 // ============================================================
 
 // Ordered from most negative to most positive. Used for diverging bar rendering.
-export const LIKERT_VALUES = [
-  'Strongly Disagree',
-  'Disagree',
-  'Neutral',
-  'Agree',
-  'Strongly Agree',
-] as const;
+export const LIKERT_VALUES = ['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree'] as const;
 
 export interface LikertStats {
   total: number;
@@ -218,9 +213,7 @@ export function bucketNumbers(values: number[], maxBuckets = 10): NumberBucket[]
     const start = min + i * bucketSize;
     const end = i === bucketCount - 1 ? max : start + bucketSize;
     const label =
-      allIntegers && bucketSize === 1
-        ? `${Math.round(start)}`
-        : `${formatNumber(start)}–${formatNumber(end)}`;
+      allIntegers && bucketSize === 1 ? `${Math.round(start)}` : `${formatNumber(start)}–${formatNumber(end)}`;
     return { label, rangeStart: start, rangeEnd: end, count: 0 };
   });
 
@@ -247,14 +240,105 @@ function formatNumber(n: number): string {
 // ============================================================
 
 const STOPWORDS = new Set([
-  'a', 'an', 'and', 'are', 'as', 'at', 'be', 'been', 'by', 'for', 'from', 'has', 'have', 'i', 'in',
-  'is', 'it', 'its', 'of', 'on', 'or', 'that', 'the', 'this', 'to', 'was', 'were', 'will', 'with',
-  "i'm", "it's", 'but', 'not', 'so', 'if', 'we', 'you', 'they', 'he', 'she', 'my', 'your', 'their',
-  'me', 'us', 'them', 'his', 'her', 'our', 'do', 'does', 'did', 'had', 'would', 'could', 'should',
-  'can', 'just', 'also', 'all', 'no', 'yes', "don't", "doesn't", "didn't", 'about', 'what', 'when',
-  'where', 'why', 'how', 'there', 'here', 'than', 'then', 'some', 'any', 'one', 'two', 'very', 'more',
-  'most', 'much', 'many', 'really', 'quite', 'over', 'out', 'up', 'down', 'into', 'only', 'other',
-  "isn't", "wasn't", "weren't", "aren't", "haven't", "hasn't",
+  'a',
+  'an',
+  'and',
+  'are',
+  'as',
+  'at',
+  'be',
+  'been',
+  'by',
+  'for',
+  'from',
+  'has',
+  'have',
+  'i',
+  'in',
+  'is',
+  'it',
+  'its',
+  'of',
+  'on',
+  'or',
+  'that',
+  'the',
+  'this',
+  'to',
+  'was',
+  'were',
+  'will',
+  'with',
+  "i'm",
+  "it's",
+  'but',
+  'not',
+  'so',
+  'if',
+  'we',
+  'you',
+  'they',
+  'he',
+  'she',
+  'my',
+  'your',
+  'their',
+  'me',
+  'us',
+  'them',
+  'his',
+  'her',
+  'our',
+  'do',
+  'does',
+  'did',
+  'had',
+  'would',
+  'could',
+  'should',
+  'can',
+  'just',
+  'also',
+  'all',
+  'no',
+  'yes',
+  "don't",
+  "doesn't",
+  "didn't",
+  'about',
+  'what',
+  'when',
+  'where',
+  'why',
+  'how',
+  'there',
+  'here',
+  'than',
+  'then',
+  'some',
+  'any',
+  'one',
+  'two',
+  'very',
+  'more',
+  'most',
+  'much',
+  'many',
+  'really',
+  'quite',
+  'over',
+  'out',
+  'up',
+  'down',
+  'into',
+  'only',
+  'other',
+  "isn't",
+  "wasn't",
+  "weren't",
+  "aren't",
+  "haven't",
+  "hasn't",
 ]);
 
 function tokenize(text: string): string[] {
@@ -403,7 +487,10 @@ export function computeCheckboxStats(answers: AnswerData[]): CheckboxStats {
 
   for (const a of answers) {
     total += a.count;
-    const picks = a.value.split(',').map((s) => s.trim()).filter(Boolean);
+    const picks = a.value
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
     totalSelections += picks.length * a.count;
     for (const p of picks) {
       perOption.set(p, (perOption.get(p) ?? 0) + a.count);

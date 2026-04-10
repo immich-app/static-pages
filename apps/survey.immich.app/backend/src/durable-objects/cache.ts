@@ -129,9 +129,7 @@ export class SurveyCache {
   /** Pre-computed set of choice question IDs — used to filter which answers to cache */
   get choiceQuestionIds(): Set<string> {
     if (this._choiceQuestionIds) return this._choiceQuestionIds;
-    this._choiceQuestionIds = new Set(
-      this.questions.filter((q) => CHOICE_TYPES.has(q.type)).map((q) => q.id),
-    );
+    this._choiceQuestionIds = new Set(this.questions.filter((q) => CHOICE_TYPES.has(q.type)).map((q) => q.id));
     return this._choiceQuestionIds;
   }
 
