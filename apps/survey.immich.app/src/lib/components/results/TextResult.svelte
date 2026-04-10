@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { SurveyQuestion } from '$lib/types';
   import StatStrip from './StatStrip.svelte';
-  import { computeNgrams, computeTextStats, computeEmailStats, type AnswerData } from './analytics-utils';
+  import { computeNgrams, computeTextStats, type AnswerData } from './analytics-utils';
 
   interface Props {
     question: SurveyQuestion;
@@ -15,12 +15,10 @@
   const SAMPLE_SIZE = 5;
   const TEXTAREA_PREVIEW_CHARS = 240;
 
-  const isEmail = $derived(question.type === 'email');
   const isTextarea = $derived(question.type === 'textarea');
 
   const textStats = $derived(computeTextStats(answers));
-  const emailStats = $derived(isEmail ? computeEmailStats(answers) : null);
-  const ngrams = $derived(!isEmail ? computeNgrams(answers, 12) : []);
+  const ngrams = $derived(computeNgrams(answers, 12));
 
   interface SampleEntry {
     text: string;
@@ -47,18 +45,13 @@
   });
 
   /**
-   * Small curated sample — the 5 most substantive responses plus any that
-   * were submitted by multiple people (duplicates are a signal the answer is
-   * worth showing). Length-sorted to surface richer answers first; emails are
-   * shown in insertion order since length is meaningless.
+   * Small curated sample — the 5 most substantive responses. Ranked by
+   * submission count first (duplicates are a signal the answer resonates)
+   * then by text length (longer usually = more substantive).
    */
-  const sample = $derived.by<SampleEntry[]>(() => {
-    if (isEmail) return uniqueResponses.slice(0, SAMPLE_SIZE);
-    // Rank: higher count wins ties, otherwise longer text wins.
-    return [...uniqueResponses]
-      .sort((a, b) => b.count - a.count || b.text.length - a.text.length)
-      .slice(0, SAMPLE_SIZE);
-  });
+  const sample = $derived.by<SampleEntry[]>(() =>
+    [...uniqueResponses].sort((a, b) => b.count - a.count || b.text.length - a.text.length).slice(0, SAMPLE_SIZE),
+  );
 
   const totalVisible = $derived(textStats.total);
   const uniqueCount = $derived(uniqueResponses.length);
@@ -72,17 +65,6 @@
   }
 
   const stats = $derived.by<StatEntry[]>(() => {
-    if (isEmail && emailStats) {
-      return [
-        { label: 'Responses', value: String(emailStats.total) },
-        { label: 'Unique', value: String(emailStats.unique), tone: 'positive' },
-        {
-          label: 'Duplicates',
-          value: String(emailStats.duplicates),
-          tone: emailStats.duplicates > 0 ? 'warning' : 'default',
-        },
-      ];
-    }
     const base: StatEntry[] = [
       { label: 'Responses', value: String(textStats.total) },
       { label: 'Avg length', value: `${textStats.avgLength} chars` },
@@ -98,33 +80,12 @@
   });
 
   const maxNgramCount = $derived(Math.max(1, ...ngrams.map((n) => n.count)));
-  const maxDomainCount = $derived(
-    isEmail && emailStats ? Math.max(1, ...emailStats.topDomains.map((d) => d.count)) : 1,
-  );
 </script>
 
 <div class="space-y-5">
   <StatStrip {stats} />
 
-  {#if isEmail && emailStats && emailStats.topDomains.length > 0}
-    <!-- Top email domains -->
-    <div>
-      <div class="mb-2 text-[10px] font-medium tracking-wider text-gray-500 uppercase">Top domains</div>
-      <div class="space-y-1.5">
-        {#each emailStats.topDomains as d (d.domain)}
-          <div class="flex items-center gap-3">
-            <span class="w-32 shrink-0 truncate text-xs text-gray-300">{d.domain}</span>
-            <div class="h-2 flex-1 overflow-hidden rounded-full bg-gray-800">
-              <div class="h-full bg-blue-500/70" style="width: {(d.count / maxDomainCount) * 100}%"></div>
-            </div>
-            <span class="w-10 shrink-0 text-right text-xs text-gray-400 tabular-nums">{d.count}</span>
-          </div>
-        {/each}
-      </div>
-    </div>
-  {/if}
-
-  {#if !isEmail && ngrams.length > 0}
+  {#if ngrams.length > 0}
     <!-- Common phrases (bigrams/trigrams) -->
     <div>
       <div class="mb-2 text-[10px] font-medium tracking-wider text-gray-500 uppercase">Common phrases</div>
@@ -146,9 +107,7 @@
   {#if sample.length > 0}
     <div>
       <div class="mb-2 flex items-center justify-between gap-2">
-        <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">
-          Sample responses
-        </div>
+        <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Sample responses</div>
         <span class="text-[11px] text-gray-500 tabular-nums">
           {sample.length} of {uniqueCount} unique
         </span>

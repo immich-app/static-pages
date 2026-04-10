@@ -6,6 +6,7 @@
   import LikertResult from './LikertResult.svelte';
   import NumberResult from './NumberResult.svelte';
   import TextResult from './TextResult.svelte';
+  import EmailResult from './EmailResult.svelte';
   import type { AnswerData } from './analytics-utils';
 
   interface Props {
@@ -76,7 +77,9 @@
     <LikertResult {answers} />
   {:else if question.type === 'number'}
     <NumberResult {answers} />
-  {:else if question.type === 'text' || question.type === 'textarea' || question.type === 'email'}
+  {:else if question.type === 'email'}
+    <EmailResult {answers} />
+  {:else if question.type === 'text' || question.type === 'textarea'}
     <TextResult {question} {answers} {onViewAllResponses} />
   {:else}
     <p class="text-sm text-gray-500">No visualization available for type "{question.type}".</p>

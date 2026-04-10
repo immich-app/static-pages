@@ -422,9 +422,232 @@ export function computeTextStats(answers: AnswerData[]): TextStats {
 }
 
 // ============================================================
-// Email domain breakdown
+// Email analysis
 // ============================================================
 
+/**
+ * Known disposable / throwaway email providers. These are strong bot signals
+ * and almost never represent a real lead.
+ */
+export const DISPOSABLE_EMAIL_DOMAINS: ReadonlySet<string> = new Set([
+  'mailinator.com',
+  'tempmail.com',
+  '10minutemail.com',
+  'guerrillamail.com',
+  'throwaway.email',
+  'trashmail.com',
+  'yopmail.com',
+  'getnada.com',
+  'maildrop.cc',
+  'sharklasers.com',
+  'dispostable.com',
+  'fakeinbox.com',
+  'tempmailaddress.com',
+  'mohmal.com',
+  'emailondeck.com',
+  'temp-mail.org',
+  'mintemail.com',
+  'spamgourmet.com',
+  'mailnesia.com',
+  'inboxkitten.com',
+  'tempmail.net',
+  'mytemp.email',
+  'tempinbox.com',
+  'throwawaymail.com',
+  'trbvm.com',
+]);
+
+/**
+ * Free consumer email providers. Anything not in this set and not disposable
+ * is treated as a "corporate" / custom-domain address.
+ */
+export const FREE_EMAIL_DOMAINS: ReadonlySet<string> = new Set([
+  'gmail.com',
+  'googlemail.com',
+  'outlook.com',
+  'hotmail.com',
+  'hotmail.co.uk',
+  'live.com',
+  'msn.com',
+  'yahoo.com',
+  'yahoo.co.uk',
+  'yahoo.co.jp',
+  'ymail.com',
+  'icloud.com',
+  'me.com',
+  'mac.com',
+  'aol.com',
+  'proton.me',
+  'protonmail.com',
+  'pm.me',
+  'gmx.com',
+  'gmx.net',
+  'zoho.com',
+  'yandex.com',
+  'yandex.ru',
+  'mail.com',
+  'fastmail.com',
+  'tutanota.com',
+  'hey.com',
+]);
+
+/**
+ * Email local-parts that indicate a role-based mailbox rather than a human.
+ */
+export const ROLE_EMAIL_PREFIXES: ReadonlySet<string> = new Set([
+  'admin',
+  'administrator',
+  'info',
+  'contact',
+  'hello',
+  'hi',
+  'support',
+  'help',
+  'sales',
+  'marketing',
+  'noreply',
+  'no-reply',
+  'donotreply',
+  'do-not-reply',
+  'postmaster',
+  'webmaster',
+  'root',
+  'abuse',
+  'billing',
+  'office',
+  'team',
+  'enquiries',
+  'inquiries',
+  'mail',
+  'feedback',
+]);
+
+export type EmailKind = 'corporate' | 'free' | 'disposable';
+
+/**
+ * Normalize an email address for duplicate detection:
+ *   - lowercase, trimmed
+ *   - gmail/googlemail: strip dots and "+tag" suffixes from the local part
+ *
+ * Returns null if the value doesn't parse as an email.
+ */
+export function normalizeEmail(raw: string): { normalized: string; local: string; domain: string } | null {
+  const trimmed = raw.trim().toLowerCase();
+  const at = trimmed.lastIndexOf('@');
+  if (at <= 0 || at >= trimmed.length - 1) return null;
+  let local = trimmed.slice(0, at);
+  const domain = trimmed.slice(at + 1);
+  if (!/^[a-z0-9.-]+\.[a-z]{2,}$/.test(domain)) return null;
+  if (domain === 'gmail.com' || domain === 'googlemail.com') {
+    const plus = local.indexOf('+');
+    if (plus >= 0) local = local.slice(0, plus);
+    local = local.replaceAll('.', '');
+  }
+  return { normalized: `${local}@${domain}`, local, domain };
+}
+
+export function classifyDomain(domain: string): EmailKind {
+  if (DISPOSABLE_EMAIL_DOMAINS.has(domain)) return 'disposable';
+  if (FREE_EMAIL_DOMAINS.has(domain)) return 'free';
+  return 'corporate';
+}
+
+export interface EmailEntry {
+  /** Original casing as submitted (first seen). */
+  raw: string;
+  /** Normalized form used for dedupe. */
+  normalized: string;
+  local: string;
+  domain: string;
+  kind: EmailKind;
+  isRoleBased: boolean;
+  /** How many respondents submitted this (deduped) address. */
+  count: number;
+}
+
+export interface EmailSummary {
+  total: number;
+  unique: number;
+  duplicates: number;
+  disposableCount: number;
+  freeCount: number;
+  corporateCount: number;
+  roleBasedCount: number;
+  invalidCount: number;
+  topDomains: Array<{ domain: string; count: number; kind: EmailKind }>;
+  entries: EmailEntry[];
+}
+
+export function computeEmailSummary(answers: AnswerData[]): EmailSummary {
+  const byNormalized = new Map<string, EmailEntry>();
+  const domains = new Map<string, number>();
+  let total = 0;
+  let invalidCount = 0;
+
+  for (const a of answers) {
+    total += a.count;
+    const parsed = normalizeEmail(a.value);
+    if (!parsed) {
+      invalidCount += a.count;
+      continue;
+    }
+    const { normalized, local, domain } = parsed;
+    let entry = byNormalized.get(normalized);
+    if (!entry) {
+      entry = {
+        raw: a.value.trim(),
+        normalized,
+        local,
+        domain,
+        kind: classifyDomain(domain),
+        isRoleBased: ROLE_EMAIL_PREFIXES.has(local),
+        count: 0,
+      };
+      byNormalized.set(normalized, entry);
+    }
+    entry.count += a.count;
+    domains.set(domain, (domains.get(domain) ?? 0) + a.count);
+  }
+
+  const entries = [...byNormalized.values()].sort(
+    (a, b) => b.count - a.count || a.normalized.localeCompare(b.normalized),
+  );
+
+  let disposableCount = 0;
+  let freeCount = 0;
+  let corporateCount = 0;
+  let roleBasedCount = 0;
+  for (const e of entries) {
+    if (e.kind === 'disposable') disposableCount += e.count;
+    else if (e.kind === 'free') freeCount += e.count;
+    else corporateCount += e.count;
+    if (e.isRoleBased) roleBasedCount += e.count;
+  }
+
+  const topDomains = [...domains.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([domain, count]) => ({ domain, count, kind: classifyDomain(domain) }));
+
+  return {
+    total,
+    unique: entries.length,
+    duplicates: total - entries.length - invalidCount,
+    disposableCount,
+    freeCount,
+    corporateCount,
+    roleBasedCount,
+    invalidCount,
+    topDomains,
+    entries,
+  };
+}
+
+/**
+ * Legacy alias — TextResult still uses this shape. Prefer `computeEmailSummary`
+ * for new code; this wraps it and exposes just the fields the old call sites
+ * need.
+ */
 export interface EmailStats {
   total: number;
   unique: number;
@@ -433,33 +656,13 @@ export interface EmailStats {
 }
 
 export function computeEmailStats(answers: AnswerData[]): EmailStats {
-  const seen = new Set<string>();
-  let total = 0;
-  let duplicates = 0;
-  const domains = new Map<string, number>();
-
-  for (const a of answers) {
-    total += a.count;
-    const v = a.value.toLowerCase().trim();
-    if (seen.has(v)) {
-      duplicates += a.count;
-    } else {
-      seen.add(v);
-      if (a.count > 1) duplicates += a.count - 1;
-    }
-    const atIdx = v.lastIndexOf('@');
-    if (atIdx >= 0 && atIdx < v.length - 1) {
-      const domain = v.slice(atIdx + 1);
-      domains.set(domain, (domains.get(domain) ?? 0) + a.count);
-    }
-  }
-
-  const topDomains = [...domains.entries()]
-    .map(([domain, count]) => ({ domain, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 8);
-
-  return { total, unique: seen.size, duplicates, topDomains };
+  const s = computeEmailSummary(answers);
+  return {
+    total: s.total,
+    unique: s.unique,
+    duplicates: s.duplicates,
+    topDomains: s.topDomains.map(({ domain, count }) => ({ domain, count })),
+  };
 }
 
 // ============================================================
