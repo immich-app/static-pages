@@ -170,6 +170,7 @@
                 {question}
                 answers={result?.answers ?? []}
                 totalResponses={loader.respondentCounts.completed}
+                onViewAllResponses={() => (loader.activeTab = 'responses')}
               />
             </div>
           {/each}

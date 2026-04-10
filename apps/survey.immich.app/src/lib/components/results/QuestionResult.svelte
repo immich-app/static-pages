@@ -13,9 +13,11 @@
     answers: AnswerData[];
     /** Total number of completed respondents for this survey (denominator for % calculations). */
     totalResponses: number;
+    /** Called when the user wants to browse all individual responses. */
+    onViewAllResponses?: () => void;
   }
 
-  let { question, answers, totalResponses }: Props = $props();
+  let { question, answers, totalResponses, onViewAllResponses }: Props = $props();
 
   // Response count for THIS specific question — sum of all answer counts.
   // For checkbox this is the total combinations, not total selections; ChoiceResult
@@ -75,7 +77,7 @@
   {:else if question.type === 'number'}
     <NumberResult {answers} />
   {:else if question.type === 'text' || question.type === 'textarea' || question.type === 'email'}
-    <TextResult {question} {answers} />
+    <TextResult {question} {answers} {onViewAllResponses} />
   {:else}
     <p class="text-sm text-gray-500">No visualization available for type "{question.type}".</p>
   {/if}

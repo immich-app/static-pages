@@ -6,46 +6,63 @@
   interface Props {
     question: SurveyQuestion;
     answers: AnswerData[];
+    /** Called when the user wants to browse all individual responses. */
+    onViewAllResponses?: () => void;
   }
 
-  let { question, answers }: Props = $props();
+  let { question, answers, onViewAllResponses }: Props = $props();
+
+  const SAMPLE_SIZE = 5;
+  const TEXTAREA_PREVIEW_CHARS = 240;
 
   const isEmail = $derived(question.type === 'email');
   const isTextarea = $derived(question.type === 'textarea');
 
   const textStats = $derived(computeTextStats(answers));
   const emailStats = $derived(isEmail ? computeEmailStats(answers) : null);
-  const ngrams = $derived(!isEmail ? computeNgrams(answers, 15) : []);
+  const ngrams = $derived(!isEmail ? computeNgrams(answers, 12) : []);
 
-  // Flattened list of all responses for the paginated viewer
-  const flat = $derived.by(() => {
-    const out: string[] = [];
+  interface SampleEntry {
+    text: string;
+    count: number;
+  }
+
+  /**
+   * Unique responses with their combined counts. Used to build the sample so
+   * the summary never shows the same answer twice in a row.
+   */
+  const uniqueResponses = $derived.by<SampleEntry[]>(() => {
+    const counts: Record<string, number> = {};
+    const order: string[] = [];
     for (const a of answers) {
-      const trimmed = a.value.trim();
-      if (!trimmed) continue;
-      for (let i = 0; i < a.count; i++) out.push(trimmed);
+      const text = a.value.trim();
+      if (!text) continue;
+      if (counts[text] === undefined) {
+        counts[text] = 0;
+        order.push(text);
+      }
+      counts[text] += a.count;
     }
-    return out;
+    return order.map((text) => ({ text, count: counts[text] }));
   });
 
-  const PAGE_SIZE = 10;
-  let page = $state(0);
-  let searchTerm = $state('');
-
-  const filtered = $derived.by(() => {
-    if (!searchTerm.trim()) return flat;
-    const q = searchTerm.toLowerCase();
-    return flat.filter((r) => r.toLowerCase().includes(q));
+  /**
+   * Small curated sample — the 5 most substantive responses plus any that
+   * were submitted by multiple people (duplicates are a signal the answer is
+   * worth showing). Length-sorted to surface richer answers first; emails are
+   * shown in insertion order since length is meaningless.
+   */
+  const sample = $derived.by<SampleEntry[]>(() => {
+    if (isEmail) return uniqueResponses.slice(0, SAMPLE_SIZE);
+    // Rank: higher count wins ties, otherwise longer text wins.
+    return [...uniqueResponses]
+      .sort((a, b) => b.count - a.count || b.text.length - a.text.length)
+      .slice(0, SAMPLE_SIZE);
   });
 
-  const totalPages = $derived(Math.max(1, Math.ceil(filtered.length / PAGE_SIZE)));
-  const pagedResponses = $derived(filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE));
-
-  // Reset page when search changes
-  $effect(() => {
-    void searchTerm;
-    page = 0;
-  });
+  const totalVisible = $derived(textStats.total);
+  const uniqueCount = $derived(uniqueResponses.length);
+  const hasMore = $derived(uniqueCount > sample.length);
 
   interface StatEntry {
     label: string;
@@ -125,62 +142,57 @@
     </div>
   {/if}
 
-  <!-- Paginated response list with search -->
-  {#if flat.length > 0}
+  <!-- Curated sample of responses. The full list lives in the Responses tab. -->
+  {#if sample.length > 0}
     <div>
       <div class="mb-2 flex items-center justify-between gap-2">
-        <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Responses</div>
-        <input
-          type="search"
-          bind:value={searchTerm}
-          placeholder="Search..."
-          class="w-48 rounded-md border border-gray-700 bg-gray-900/60 px-2 py-1 text-xs text-gray-200 placeholder:text-gray-600 focus:border-blue-500 focus:outline-none"
-        />
+        <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">
+          Sample responses
+        </div>
+        <span class="text-[11px] text-gray-500 tabular-nums">
+          {sample.length} of {uniqueCount} unique
+        </span>
       </div>
       <div class="space-y-1.5">
-        {#each pagedResponses as r, i (page + '-' + i)}
-          <div class="rounded-md bg-gray-100/60 px-3 py-2 text-sm text-gray-200 dark:bg-gray-800/60">
-            {#if isTextarea && r.length > 200}
+        {#each sample as r, i (i)}
+          <div class="rounded-md bg-gray-100/60 px-3 py-2 text-sm text-gray-700 dark:bg-gray-800/60 dark:text-gray-200">
+            {#if isTextarea && r.text.length > TEXTAREA_PREVIEW_CHARS}
               <details>
-                <summary class="cursor-pointer">
-                  {r.slice(0, 200)}…
+                <summary class="cursor-pointer list-none">
+                  <span>{r.text.slice(0, TEXTAREA_PREVIEW_CHARS)}…</span>
                   <span class="text-[11px] text-gray-500"> show more</span>
                 </summary>
-                <p class="mt-2 whitespace-pre-wrap">{r}</p>
+                <p class="mt-2 whitespace-pre-wrap">{r.text}</p>
               </details>
             {:else}
-              {r}
+              <span class="whitespace-pre-wrap">{r.text}</span>
+            {/if}
+            {#if r.count > 1}
+              <span
+                class="ml-1 inline-flex items-center rounded-full bg-purple-500/10 px-1.5 py-0.5 text-[10px] font-medium text-purple-300 tabular-nums"
+                title="Submitted by {r.count} respondents"
+              >
+                ×{r.count}
+              </span>
             {/if}
           </div>
         {/each}
-        {#if pagedResponses.length === 0}
-          <p class="text-sm text-gray-500">No responses match "{searchTerm}".</p>
-        {/if}
       </div>
-      {#if totalPages > 1}
-        <div class="mt-3 flex items-center justify-between text-xs text-gray-400">
+      {#if hasMore || totalVisible > sample.length}
+        <div class="mt-3 flex items-center justify-between text-[11px] text-gray-500">
           <span>
-            Page {page + 1} of {totalPages} · {filtered.length}
-            {filtered.length === 1 ? 'response' : 'responses'}
+            Showing {sample.length} of {totalVisible} total
+            {totalVisible === 1 ? 'response' : 'responses'}
           </span>
-          <div class="flex gap-1">
+          {#if onViewAllResponses}
             <button
-              class="rounded-md border border-gray-700 px-2 py-0.5 disabled:opacity-40"
-              disabled={page === 0}
-              onclick={() => (page = Math.max(0, page - 1))}
-              aria-label="Previous page"
+              type="button"
+              class="rounded-md border border-gray-300 px-2 py-1 text-[11px] text-gray-600 transition-colors hover:border-blue-500 hover:text-blue-500 dark:border-gray-700 dark:text-gray-400"
+              onclick={onViewAllResponses}
             >
-              ← Prev
+              Browse all in Responses tab →
             </button>
-            <button
-              class="rounded-md border border-gray-700 px-2 py-0.5 disabled:opacity-40"
-              disabled={page >= totalPages - 1}
-              onclick={() => (page = Math.min(totalPages - 1, page + 1))}
-              aria-label="Next page"
-            >
-              Next →
-            </button>
-          </div>
+          {/if}
         </div>
       {/if}
     </div>
