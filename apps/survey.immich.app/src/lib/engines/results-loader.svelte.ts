@@ -123,7 +123,12 @@ export function createResultsLoader(surveyId: string) {
 
       wsClient.on('results', (data) => {
         respondentCounts = data.respondentCounts;
-        results = data.results;
+        // The broadcast only contains choice question results (no SQL on the
+        // server for periodic pushes). Merge them with the existing results
+        // so text/textarea/email/number answers from the initial HTTP load
+        // stay intact.
+        const updates = new Map(data.results.map((r) => [r.questionId, r]));
+        results = results.map((r) => updates.get(r.questionId) ?? r);
       });
     }
 

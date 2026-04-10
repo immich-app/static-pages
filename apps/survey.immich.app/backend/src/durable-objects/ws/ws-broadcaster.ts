@@ -37,12 +37,15 @@ export function broadcastToViewers(ctx: DurableObjectState, cache: SurveyCache):
       completionRate: counters.total > 0 ? Math.round((counters.completed / counters.total) * 100) : 0,
     },
   };
+  // Broadcast results use buildChoiceResults (in-memory only, no SQL).
+  // Text/textarea/email/number questions are NOT included — the frontend merges
+  // these with the existing results from the initial HTTP load.
   const results = {
     type: 'push' as const,
     event: 'results' as const,
     data: {
       respondentCounts: counters,
-      results: cache.buildAggregatedResults(),
+      results: cache.buildChoiceResults(),
     },
   };
 

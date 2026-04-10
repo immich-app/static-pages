@@ -226,6 +226,23 @@ export class SurveyCache {
     }
   }
 
+  /**
+   * Build results for CHOICE questions only, entirely from the in-memory tallies
+   * Map. No SQL queries — used by the 5-second broadcast loop so periodic pushes
+   * stay fully in-memory. Text/textarea/email/number questions are omitted; the
+   * frontend merges these with the existing results from the initial HTTP load.
+   */
+  buildChoiceResults(): Array<{ questionId: string; answers: AnswerTally[] }> {
+    const tallies = this.tallies;
+    const results: Array<{ questionId: string; answers: AnswerTally[] }> = [];
+    for (const q of this.questions) {
+      if (CHOICE_TYPES.has(q.type)) {
+        results.push({ questionId: q.id, answers: tallies.get(q.id) ?? [] });
+      }
+    }
+    return results;
+  }
+
   /** Build aggregated results from cache (choice questions) + SQLite (text questions) */
   buildAggregatedResults(): Array<{ questionId: string; answers: AnswerTally[] }> {
     const tallies = this.tallies;
