@@ -73,17 +73,17 @@ jobs:
           pnpm test
 
       - name: Install Playwright browsers
-        if: ${{ matrix.app_name == 'survey' }}
+        if: ${{ matrix.app_name == 'survey' && !cancelled() }}
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Start wrangler and Vite
-        if: ${{ matrix.app_name == 'survey' }}
+        if: ${{ matrix.app_name == 'survey' && !cancelled() }}
         run: |
-          cd backend && npx wrangler d1 migrations apply survey --local --config wrangler-dev.jsonc
-          cd backend && npx wrangler dev --config wrangler-dev.jsonc --port 8787 &
+          (cd backend && npx wrangler d1 migrations apply survey --local --config wrangler-dev.jsonc)
+          (cd backend && npx wrangler dev --config wrangler-dev.jsonc --port 8787) &
           pnpm dev &
-          timeout 30 bash -c 'until curl -sf http://localhost:8787/api/auth/me; do sleep 1; done'
-          timeout 30 bash -c 'until curl -sf http://localhost:5173 >/dev/null 2>&1; do sleep 1; done'
+          timeout 60 bash -c 'until curl -sf http://localhost:8787/api/auth/me; do sleep 1; done'
+          timeout 60 bash -c 'until curl -sf http://localhost:5173 >/dev/null 2>&1; do sleep 1; done'
 
       - name: E2E tests
         if: ${{ matrix.app_name == 'survey' && !cancelled() }}
