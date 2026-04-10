@@ -97,7 +97,7 @@ class Metrics {
     this.outcomes.push(o);
   }
 
-  report() {
+  report(actualCounts?: { total: number; completed: number } | null) {
     const elapsed = (performance.now() - this.startTime) / 1000;
     const total = this.data.length;
     const errors = this.data.filter((m) => m.status >= 400 || m.status === 0).length;
@@ -171,6 +171,14 @@ class Metrics {
       console.log(`    - couldn't submit complete:           ${failureBreakdown.complete}`);
     }
     console.log(`  Returning users: ${returning} | Avg session: ${avgDuration.toFixed(1)}s`);
+
+    if (actualCounts) {
+      const expected = total_users;
+      const match = actualCounts.total === expected ? '✓' : `✗ (expected ${expected})`;
+      console.log(
+        `  Server-side respondents: ${actualCounts.total} total, ${actualCounts.completed} completed  ${match}`,
+      );
+    }
 
     if (deadlineCutoffs > 0) {
       console.log(`\n  ⚠  ${deadlineCutoffs} user${deadlineCutoffs === 1 ? '' : 's'} were cut off by the test duration.`);
@@ -387,7 +395,24 @@ async function createSurvey(baseUrl: string, sessionCookie: string): Promise<{ s
   if (!pubRes.ok) throw new Error(`Publish failed: ${await pubRes.text()}`);
 
   console.log(`Survey created: ${slug} (${imported.questions.length} questions)`);
-  return { slug, questions: imported.questions };
+  return { slug, questions: imported.questions, surveyId };
+}
+
+async function fetchActualRespondentCount(
+  baseUrl: string,
+  sessionCookie: string,
+  surveyId: string,
+): Promise<{ total: number; completed: number } | null> {
+  try {
+    const res = await fetch(`${baseUrl}/api/surveys/${surveyId}/results`, {
+      headers: { Cookie: sessionCookie },
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { respondentCounts?: { total: number; completed: number } };
+    return data.respondentCounts ?? null;
+  } catch {
+    return null;
+  }
 }
 
 // ============================================================
@@ -480,11 +505,14 @@ function generateAnswer(q: Question): { questionId: string; value: string; other
 }
 
 // ============================================================
-// WebSocket client (mirrors src/lib/api/survey-ws.ts behavior:
-//   - Auto-reconnect with 3 attempts, 3s delay
-//   - Typed request/response with 30s timeout
-//   - Graceful close)
+// WebSocket client using the `ws` package for real Error objects and
+// Cookie header support (Node's built-in WebSocket doesn't let you set
+// either, which gives generic 'WS error' diagnostics and means returning
+// users can't reuse their respondent cookie on reconnect).
 // ============================================================
+
+import WebSocketClass from 'ws';
+type WsInstance = InstanceType<typeof WebSocketClass>;
 
 let wsRequestCounter = 0;
 
@@ -494,13 +522,20 @@ interface WsClient {
   close(): void;
 }
 
-function createWsClient(url: string, metrics: Metrics): WsClient {
-  let ws: WebSocket | null = null;
+function createWsClient(url: string, metrics: Metrics, initialCookie?: string): WsClient {
+  let ws: WsInstance | null = null;
   let closed = false;
   let failures = 0;
   let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
-  const MAX_FAILURES = 5; // was 3 — more retries to ride out transient overload
+  const MAX_FAILURES = 5;
   const pending = new Map<string, { resolve: (v: unknown) => void; reject: (e: Error) => void }>();
+  // Track whether the connection was ever established — if not, upcoming close
+  // events count as connect failures, not mid-session drops
+  let everConnected = false;
+  // Cookie used on reconnects. Starts with the caller-supplied cookie (if any),
+  // and is updated from the server's Set-Cookie on successful upgrades so that
+  // retries reuse the same respondent identity.
+  let cookie = initialCookie;
 
   // Exponential backoff with jitter to avoid thundering-herd on shared failure modes.
   // Base delays: 0.5s, 1s, 2s, 4s, 8s — each ±50% jitter applied on top.
@@ -513,16 +548,33 @@ function createWsClient(url: string, metrics: Metrics): WsClient {
   function connect() {
     if (closed) return;
     const start = performance.now();
-    ws = new WebSocket(url);
+    const opts: ConstructorParameters<typeof WebSocketClass>[2] = {};
+    if (cookie) opts.headers = { Cookie: cookie };
+    ws = new WebSocketClass(url, opts);
 
-    ws.onopen = () => {
+    // Capture Set-Cookie from the upgrade response so reconnects reuse the
+    // same respondent instead of creating a fresh one each time.
+    ws.on('upgrade', (res) => {
+      const setCookie = res.headers['set-cookie'];
+      const headers = Array.isArray(setCookie) ? setCookie : setCookie ? [setCookie] : [];
+      for (const h of headers) {
+        const match = h.match(/(rid_[^=]+=[^;]+)/);
+        if (match) {
+          cookie = match[1];
+          break;
+        }
+      }
+    });
+
+    ws.on('open', () => {
+      everConnected = true;
       metrics.record({ endpoint: 'WS connect', status: 101, latencyMs: performance.now() - start });
       failures = 0;
-    };
+    });
 
-    ws.onmessage = (event) => {
+    ws.on('message', (data) => {
       try {
-        const msg = JSON.parse(String(event.data));
+        const msg = JSON.parse(data.toString());
         if (msg.type === 'response' && msg.requestId) {
           const req = pending.get(msg.requestId);
           if (req) {
@@ -532,76 +584,95 @@ function createWsClient(url: string, metrics: Metrics): WsClient {
           }
         }
         // push events (counts, stats, results) are ignored by respondent clients
-      } catch {}
-    };
+      } catch {
+        // ignore malformed messages
+      }
+    });
 
-    ws.onclose = (evt: { code?: number; reason?: string }) => {
+    // The `ws` package emits 'unexpected-response' with the HTTP status when the
+    // server returns non-101 (e.g. 429 rate limited, 500 server error, 503).
+    // This gives us much better diagnostics than generic connect failures.
+    ws.on('unexpected-response', (_req, res) => {
+      metrics.record({
+        endpoint: 'WS connect',
+        status: res.statusCode ?? 0,
+        latencyMs: performance.now() - start,
+        error: `HTTP ${res.statusCode} ${res.statusMessage ?? ''}`.trim(),
+      });
+    });
+
+    ws.on('error', (err: Error) => {
+      // Only record connect errors here — mid-session errors are captured via 'close'
+      if (!everConnected) {
+        metrics.record({
+          endpoint: 'WS connect',
+          status: 0,
+          latencyMs: performance.now() - start,
+          error: err.message || 'WS error',
+        });
+      }
+    });
+
+    ws.on('close', (code: number, reason: Buffer) => {
       // Reject all pending requests on close
       for (const [, req] of pending) req.reject(new Error('WebSocket closed'));
       pending.clear();
 
       if (closed) return;
+
+      // Distinguish connect failure vs mid-session drop
+      const wasConnected = everConnected;
+      everConnected = false; // reset for the next connect attempt
+
       failures++;
-      // Record the close code for diagnostics (1006 = abnormal, 1011 = server error,
-      // 4xx/5xx mapped via ws lib, etc.)
-      const code = evt?.code ?? 0;
+      const reasonStr = reason.length > 0 ? reason.toString() : '';
       if (failures < MAX_FAILURES) {
         const delay = computeBackoff(failures);
         metrics.record({
-          endpoint: 'WS close',
+          endpoint: wasConnected ? 'WS close' : 'WS connect close',
           status: code,
           latencyMs: 0,
-          error: `close code ${code}${evt?.reason ? ' ' + evt.reason : ''}; retry in ${Math.round(delay)}ms`,
+          error: `close ${code}${reasonStr ? ' ' + reasonStr : ''}; retry`,
         });
         reconnectTimer = setTimeout(connect, delay);
       } else {
         metrics.record({
-          endpoint: 'WS reconnect',
+          endpoint: 'WS max retries',
           status: code,
           latencyMs: 0,
           error: `max retries exceeded (last code: ${code})`,
         });
       }
-    };
-
-    ws.onerror = (err: { message?: string }) => {
-      metrics.record({
-        endpoint: 'WS connect',
-        status: 0,
-        latencyMs: performance.now() - start,
-        error: err?.message ?? 'WS error',
-      });
-      ws?.close();
-    };
+    });
   }
 
   connect();
 
   return {
     get connected() {
-      return ws?.readyState === WebSocket.OPEN;
+      return ws?.readyState === WebSocketClass.OPEN;
     },
 
     async request(op: string, data: Record<string, unknown>): Promise<unknown> {
       // Wait for connection if still connecting
-      if (ws?.readyState === WebSocket.CONNECTING) {
+      if (ws?.readyState === WebSocketClass.CONNECTING) {
         await new Promise<void>((resolve, reject) => {
           const onOpen = () => {
-            ws?.removeEventListener('open', onOpen);
-            ws?.removeEventListener('error', onError);
+            ws?.removeListener('open', onOpen);
+            ws?.removeListener('error', onError);
             resolve();
           };
           const onError = () => {
-            ws?.removeEventListener('open', onOpen);
-            ws?.removeEventListener('error', onError);
+            ws?.removeListener('open', onOpen);
+            ws?.removeListener('error', onError);
             reject(new Error('WebSocket connection failed'));
           };
-          ws?.addEventListener('open', onOpen);
-          ws?.addEventListener('error', onError);
+          ws?.on('open', onOpen);
+          ws?.on('error', onError);
         });
       }
 
-      if (!ws || ws.readyState !== WebSocket.OPEN) {
+      if (!ws || ws.readyState !== WebSocketClass.OPEN) {
         throw new Error('WebSocket not connected');
       }
 
@@ -781,6 +852,10 @@ async function simulateUser(
     };
   }
 
+  // Build the cookie string so reconnects (returning users) reuse the same
+  // respondent instead of creating a new one on each WS upgrade.
+  const respondentCookie = resumeState.respondentId ? `rid_${slug}=${resumeState.respondentId}` : undefined;
+
   let startIdx = resumeState.nextQuestionIndex;
 
   // ============================================================
@@ -877,16 +952,14 @@ async function simulateUser(
       await answerQuestions(startIdx, leavePoint);
 
       if (!isExpired() && questionsAnswered < questions.length && consecutiveFailures < MAX_FLUSH_FAILURES) {
-        // Simulate leaving: close WS, wait, reconnect
-        // (Node's built-in WebSocket doesn't send cookies, so reconnect creates
-        // a fresh respondent — acceptable for load measurement since the server
-        // work is equivalent.)
+        // Simulate leaving: close WS, wait, reconnect with the cookie so the
+        // server recognises the same respondent instead of creating a new one.
         wsClient.close();
         wsClient = null;
         await randomDelay(5000, 20000);
 
         if (!isExpired()) {
-          wsClient = createWsClient(wsUrl, metrics);
+          wsClient = createWsClient(wsUrl, metrics, respondentCookie);
           if (await waitForConnect(wsClient)) {
             try {
               const state2 = (await wsClient.request('resume', {})) as {
@@ -985,7 +1058,7 @@ async function main() {
 
   // Create fresh survey
   console.log('Creating survey...');
-  const { slug, questions } = await createSurvey(config.baseUrl, sessionCookie);
+  const { slug, questions, surveyId } = await createSurvey(config.baseUrl, sessionCookie);
 
   // Calculate deadline and ramp interval
   const deadline = Date.now() + config.durationSeconds * 1000;
@@ -1026,7 +1099,11 @@ async function main() {
   }
 
   await Promise.all(promises);
-  metrics.report();
+
+  // Query the actual respondent count from the server so we can verify the
+  // load test's expected count matches what was persisted.
+  const actualCounts = await fetchActualRespondentCount(config.baseUrl, sessionCookie, surveyId);
+  metrics.report(actualCounts);
 }
 
 main().catch((e) => {
