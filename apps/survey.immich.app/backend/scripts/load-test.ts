@@ -36,13 +36,27 @@ interface Metric {
   error?: string;
 }
 
+type FailureMode =
+  | 'none' // success or intentional abandon
+  | 'load' // HTTP GET /api/s/:slug failed — never saw the survey
+  | 'session' // couldn't establish a session (neither WS nor HTTP resume worked)
+  | 'answers' // session started but no answers went through
+  | 'complete'; // answered everything but complete call failed (WS + HTTP both failed)
+
 interface UserOutcome {
   answered: number;
   total: number;
   completed: boolean;
-  abandoned: boolean;
+  abandoned: boolean; // intentional (profile-driven), not a failure
   returning: boolean;
   durationMs: number;
+
+  // Failure categorization — what blocked this user from completing
+  failure: FailureMode;
+
+  // WS observability
+  wsConnectFailed: boolean; // WS never connected despite retries
+  usedHttpFallback: boolean; // HTTP was used at least once as a fallback
 }
 
 // ============================================================
@@ -115,13 +129,49 @@ class Metrics {
     }
 
     // User outcomes
+    const total_users = this.outcomes.length;
     const completed = this.outcomes.filter((o) => o.completed).length;
-    const abandoned = this.outcomes.filter((o) => o.abandoned).length;
+    const abandoned = this.outcomes.filter((o) => o.abandoned && !o.completed).length;
     const returning = this.outcomes.filter((o) => o.returning).length;
-    const avgDuration = this.outcomes.reduce((s, o) => s + o.durationMs, 0) / this.outcomes.length / 1000;
+    const avgDuration = this.outcomes.reduce((s, o) => s + o.durationMs, 0) / total_users / 1000;
 
-    console.log(`\nUsers: ${this.outcomes.length} | Completed: ${completed} | Abandoned: ${abandoned} | Returning: ${returning}`);
-    console.log(`Completion rate: ${((completed / this.outcomes.length) * 100).toFixed(0)}% | Avg session: ${avgDuration.toFixed(1)}s`);
+    // WS observability
+    const wsConnectFailed = this.outcomes.filter((o) => o.wsConnectFailed).length;
+    const usedHttpFallback = this.outcomes.filter((o) => o.usedHttpFallback).length;
+    const wsFailedButCompleted = this.outcomes.filter((o) => o.wsConnectFailed && o.completed).length;
+    const wsFailedAndFailed = this.outcomes.filter((o) => o.wsConnectFailed && o.failure !== 'none').length;
+
+    // Failure breakdown
+    const failures = this.outcomes.filter((o) => o.failure !== 'none');
+    const failureBreakdown = {
+      load: failures.filter((o) => o.failure === 'load').length,
+      session: failures.filter((o) => o.failure === 'session').length,
+      answers: failures.filter((o) => o.failure === 'answers').length,
+      complete: failures.filter((o) => o.failure === 'complete').length,
+    };
+    const totalFailures = failureBreakdown.load + failureBreakdown.session + failureBreakdown.answers + failureBreakdown.complete;
+
+    console.log(`\n${'='.repeat(70)}`);
+    console.log(`USER OUTCOMES (${total_users} total)`);
+    console.log('='.repeat(70));
+    console.log(`  Completed successfully:  ${String(completed).padStart(5)}  (${((completed / total_users) * 100).toFixed(1)}%)`);
+    console.log(`  Abandoned (intentional): ${String(abandoned).padStart(5)}  (${((abandoned / total_users) * 100).toFixed(1)}%)`);
+    console.log(`  FAILED (couldn't complete): ${String(totalFailures).padStart(2)}  (${((totalFailures / total_users) * 100).toFixed(1)}%)`);
+    if (totalFailures > 0) {
+      console.log(`    - load failed (never saw survey):     ${failureBreakdown.load}`);
+      console.log(`    - session failed (couldn't resume):   ${failureBreakdown.session}`);
+      console.log(`    - couldn't submit any answers:        ${failureBreakdown.answers}`);
+      console.log(`    - couldn't submit complete:           ${failureBreakdown.complete}`);
+    }
+    console.log(`  Returning users: ${returning} | Avg session: ${avgDuration.toFixed(1)}s`);
+
+    console.log(`\n${'-'.repeat(70)}`);
+    console.log('WS RESILIENCE');
+    console.log('-'.repeat(70));
+    console.log(`  Users with WS connect failures:      ${wsConnectFailed}  (${((wsConnectFailed / total_users) * 100).toFixed(1)}%)`);
+    console.log(`    → successfully completed anyway:   ${wsFailedButCompleted}  (fallback worked)`);
+    console.log(`    → ultimately failed:               ${wsFailedAndFailed}`);
+    console.log(`  Users who used HTTP fallback at all: ${usedHttpFallback}  (${((usedHttpFallback / total_users) * 100).toFixed(1)}%)`);
 
     // Error details (first 5 unique)
     const uniqueErrors = [...new Set(this.data.filter((m) => m.error).map((m) => `${m.endpoint}: ${m.error}`))];
@@ -586,18 +636,22 @@ async function simulateUser(
 ): Promise<UserOutcome> {
   const profile = createUserProfile(questions.length);
   const userStart = performance.now();
-  const cookieName = `rid_${slug}`;
-  let respondentCookie = '';
   let questionsAnswered = 0;
+  let wsConnectFailed = false;
+  const usedHttpFallback = false; // never — we're measuring WS-only capacity
 
   const isExpired = () => Date.now() > deadline;
-  const fail = (): UserOutcome => ({
+  const outcome = (failure: FailureMode, extras: Partial<UserOutcome> = {}): UserOutcome => ({
     answered: questionsAnswered,
     total: questions.length,
     completed: false,
-    abandoned: true,
+    abandoned: false,
     returning: profile.isReturning,
     durationMs: performance.now() - userStart,
+    failure,
+    wsConnectFailed,
+    usedHttpFallback,
+    ...extras,
   });
   const wsUrl = `${config.baseUrl.replace(/^http/, 'ws')}/api/s/${slug}/ws?type=respondent`;
 
@@ -605,87 +659,89 @@ async function simulateUser(
   // Step 1: HTTP GET /api/s/:slug — fetch survey metadata (matches frontend)
   // ============================================================
   const surveyRes = await timedFetch(metrics, 'GET /api/s/:slug', `${config.baseUrl}/api/s/${slug}`);
-  if (!surveyRes || !surveyRes.ok || isExpired()) return fail();
+  if (!surveyRes || !surveyRes.ok) return outcome('load');
   await surveyRes.json();
+  if (isExpired()) return outcome('none', { abandoned: true });
 
   // ============================================================
-  // Step 2: Connect WebSocket — the upgrade handler creates the respondent,
-  // sets the cookie on the 101 response, and tags the connection with the ID.
-  // No HTTP resume round-trip needed.
+  // Step 2: Connect WebSocket — WS is the only data path. If it fails,
+  // that's a real failure (no HTTP fallback since that would trigger
+  // per-request cookie auth and reduce server capacity).
   // ============================================================
-  let wsClient = createWsClient(wsUrl, metrics);
+  let wsClient: WsClient | null = createWsClient(wsUrl, metrics);
 
-  const waitForConnect = async () => {
-    for (let i = 0; i < 20; i++) {
-      if (wsClient.connected) return true;
+  const waitForConnect = async (client: WsClient) => {
+    // Wait up to ~13s to match the frontend's 3 retries × 3s delay + initial attempt
+    for (let i = 0; i < 130; i++) {
+      if (client.connected) return true;
       await new Promise((r) => setTimeout(r, 100));
     }
     return false;
   };
-  if (!(await waitForConnect())) return fail();
+
+  if (!(await waitForConnect(wsClient))) {
+    wsConnectFailed = true;
+    wsClient.close();
+    wsClient = null;
+    return outcome('session');
+  }
 
   // ============================================================
-  // Step 3: WS resume — get existing answers/state. Returns the respondent ID
-  // so we can build the cookie for HTTP fallback if the WS drops later.
+  // Step 3: WS resume — must succeed, no HTTP fallback
   // ============================================================
   let resumeState: { isComplete: boolean; nextQuestionIndex: number; respondentId?: string };
   try {
-    resumeState = (await wsClient.request('resume', {})) as { isComplete: boolean; nextQuestionIndex: number; respondentId?: string };
+    resumeState = (await wsClient.request('resume', {})) as {
+      isComplete: boolean;
+      nextQuestionIndex: number;
+      respondentId?: string;
+    };
   } catch {
-    return fail();
-  }
-
-  if (resumeState.respondentId) {
-    respondentCookie = `${cookieName}=${resumeState.respondentId}`;
+    wsClient.close();
+    return outcome('session');
   }
 
   if (resumeState.isComplete) {
     questionsAnswered = questions.length;
     wsClient.close();
-    return { answered: questions.length, total: questions.length, completed: true, abandoned: false, returning: false, durationMs: performance.now() - userStart };
+    return {
+      answered: questions.length,
+      total: questions.length,
+      completed: true,
+      abandoned: false,
+      returning: false,
+      durationMs: performance.now() - userStart,
+      failure: 'none',
+      wsConnectFailed,
+      usedHttpFallback,
+    };
   }
 
   let startIdx = resumeState.nextQuestionIndex;
 
   // ============================================================
-  // Buffered answer submission with retry + inactivity flush + HTTP fallback
-  // (mirrors src/lib/api/client.ts)
+  // Buffered answer submission via WS only (no HTTP fallback).
+  // On WS failure, answers are re-buffered and retried on the next flush
+  // after the WS auto-reconnect has had a chance to restore the connection.
   // ============================================================
   const buffer = new Map<string, PendingSave>();
   let inactivityTimer: ReturnType<typeof setTimeout> | null = null;
   let flushing: Promise<boolean> | null = null;
+  let consecutiveFailures = 0;
+  const MAX_FLUSH_FAILURES = 5; // give up after this many consecutive failed flushes
 
   const clearInactivity = () => {
     if (inactivityTimer) { clearTimeout(inactivityTimer); inactivityTimer = null; }
   };
 
-  const saveBatchHttp = async (batch: PendingSave[]): Promise<boolean> => {
-    for (let attempt = 0; attempt <= BACKOFF_DELAYS.length; attempt++) {
-      const res = await timedFetch(metrics, 'POST /answers/batch', `${config.baseUrl}/api/s/${slug}/answers/batch`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Cookie: respondentCookie },
-        body: JSON.stringify({ answers: batch }),
-      });
-      if (res?.ok) return true;
-      if (res && res.status < 500) return false;
-      if (attempt < BACKOFF_DELAYS.length) {
-        await new Promise((r) => setTimeout(r, BACKOFF_DELAYS[attempt]));
-      }
-    }
-    return false;
-  };
-
   const saveBatchWs = async (batch: PendingSave[]): Promise<boolean> => {
-    // Prefer WS; fall back to HTTP if WS is down or the request fails
-    if (wsClient.connected) {
-      try {
-        await wsClient.request('submit-answers', { answers: batch });
-        return true;
-      } catch {
-        // fall through
-      }
+    if (!wsClient || !wsClient.connected) return false;
+    try {
+      await wsClient.request('submit-answers', { answers: batch });
+      return true;
+    } catch {
+      return false;
     }
-    return saveBatchHttp(batch);
   };
 
   const flushBuffer = async (): Promise<boolean> => {
@@ -697,8 +753,11 @@ async function simulateUser(
 
     flushing = (async () => {
       const success = await saveBatchWs(batch);
-      if (!success) {
-        // Restore unsent answers (but don't overwrite newer ones for the same question)
+      if (success) {
+        consecutiveFailures = 0;
+      } else {
+        consecutiveFailures++;
+        // Restore unsent answers so the next flush retries them
         for (const item of batch) {
           if (!buffer.has(item.questionId)) buffer.set(item.questionId, item);
         }
@@ -730,6 +789,7 @@ async function simulateUser(
     for (let i = from; i < to; i++) {
       if (isExpired()) break;
       if (profile.abandonAt !== null && questionsAnswered >= profile.abandonAt) break;
+      if (consecutiveFailures >= MAX_FLUSH_FAILURES) break;
 
       await randomDelay(profile.minDelay, profile.maxDelay);
       if (isExpired()) break;
@@ -737,8 +797,14 @@ async function simulateUser(
       bufferAnswer(generateAnswer(questions[i]));
       questionsAnswered++;
     }
-    // Final flush (equivalent to the frontend's pre-complete flushBuffer)
-    await flushBuffer();
+    // Final flush — retry a few times via inactivity-timer-like loop if WS is recovering
+    for (let attempt = 0; attempt < 3; attempt++) {
+      if (buffer.size === 0) break;
+      const ok = await flushBuffer();
+      if (ok) break;
+      // Wait for possible WS reconnect
+      await new Promise((r) => setTimeout(r, BACKOFF_DELAYS[Math.min(attempt, BACKOFF_DELAYS.length - 1)]));
+    }
   };
 
   try {
@@ -746,20 +812,18 @@ async function simulateUser(
       const leavePoint = Math.min(startIdx + profile.leaveAfter, questions.length);
       await answerQuestions(startIdx, leavePoint);
 
-      if (!isExpired() && questionsAnswered < questions.length) {
-        // Simulate leaving: close WS, wait, reconnect WS
-        // The X-Respondent-Id header comes from the cookie that was set during the
-        // original upgrade — but in the load test we use the WebSocket class which
-        // doesn't send cookies automatically. Instead, send the ID via a query param
-        // fallback... actually, the DO only reads X-Respondent-Id from the header.
-        // For a returning user in the load test, the DO will create a NEW respondent.
-        // This is acceptable for load testing — it's not meaningfully different work.
+      if (!isExpired() && questionsAnswered < questions.length && consecutiveFailures < MAX_FLUSH_FAILURES) {
+        // Simulate leaving: close WS, wait, reconnect
+        // (Node's built-in WebSocket doesn't send cookies, so reconnect creates
+        // a fresh respondent — acceptable for load measurement since the server
+        // work is equivalent.)
         wsClient.close();
+        wsClient = null;
         await randomDelay(5000, 20000);
 
         if (!isExpired()) {
           wsClient = createWsClient(wsUrl, metrics);
-          if (await waitForConnect()) {
+          if (await waitForConnect(wsClient)) {
             try {
               const state2 = (await wsClient.request('resume', {})) as {
                 nextQuestionIndex: number;
@@ -767,13 +831,14 @@ async function simulateUser(
                 respondentId?: string;
               };
               if (!state2.isComplete) {
-                if (state2.respondentId) respondentCookie = `${cookieName}=${state2.respondentId}`;
                 startIdx = state2.nextQuestionIndex;
                 await answerQuestions(startIdx, questions.length);
               }
             } catch {
-              // couldn't resume
+              // couldn't resume on reconnect — the answer loop will end naturally
             }
+          } else {
+            wsConnectFailed = true;
           }
         }
       }
@@ -782,39 +847,55 @@ async function simulateUser(
     }
 
     // ============================================================
-    // Step 5: Complete the survey (WS with HTTP fallback)
+    // Step 5: Complete the survey via WS only
     // ============================================================
     const didAbandon = profile.abandonAt !== null && questionsAnswered >= profile.abandonAt;
-    let completed = false;
-    if (!didAbandon && questionsAnswered >= questions.length && !isExpired()) {
-      let success = false;
-      if (wsClient.connected) {
-        try {
-          await wsClient.request('complete', {});
-          success = true;
-        } catch {}
-      }
-      if (!success) {
-        const res = await timedFetch(metrics, 'POST /complete', `${config.baseUrl}/api/s/${slug}/complete`, {
-          method: 'POST',
-          headers: { Cookie: respondentCookie },
-        });
-        success = !!res?.ok;
-      }
-      completed = success;
+    if (didAbandon) {
+      return {
+        answered: questionsAnswered,
+        total: questions.length,
+        completed: false,
+        abandoned: true,
+        returning: profile.isReturning,
+        durationMs: performance.now() - userStart,
+        failure: 'none',
+        wsConnectFailed,
+        usedHttpFallback,
+      };
+    }
+
+    // Couldn't submit answers we wanted to submit (WS kept failing)
+    if (questionsAnswered < questions.length) {
+      // If we got zero answers through, it's an 'answers' failure
+      // If we got some but not all, it's still an 'answers' failure (partial submit)
+      return outcome('answers');
+    }
+
+    // Try to complete via WS
+    if (!wsClient || !wsClient.connected || isExpired()) {
+      return outcome('complete');
+    }
+
+    try {
+      await wsClient.request('complete', {});
+    } catch {
+      return outcome('complete');
     }
 
     return {
       answered: questionsAnswered,
       total: questions.length,
-      completed,
-      abandoned: didAbandon,
+      completed: true,
+      abandoned: false,
       returning: profile.isReturning,
       durationMs: performance.now() - userStart,
+      failure: 'none',
+      wsConnectFailed,
+      usedHttpFallback,
     };
   } finally {
     clearInactivity();
-    wsClient.close();
+    wsClient?.close();
   }
 }
 

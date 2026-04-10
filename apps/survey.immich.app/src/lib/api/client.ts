@@ -11,6 +11,22 @@ const BACKOFF_DELAYS = [1000, 2000, 4000];
 const INACTIVITY_MS = 10_000;
 const FLUSH_THRESHOLD = 4;
 
+/**
+ * Client transport mode.
+ *
+ *   - 'ws': WebSocket command ops are supported (Cloudflare Workers + DO). Data
+ *     ops (submit-answers, complete, resume) go exclusively over the WS.
+ *     HTTP is only used for the sendBeacon fallback on page unload.
+ *
+ *   - 'http': WebSocket command ops aren't available (Node.js self-hosted mode).
+ *     Data ops go over HTTP with cookie auth.
+ *
+ * Mode is committed on the first resume — once chosen, it doesn't switch.
+ * This avoids per-request HTTP fallbacks that would trigger cookie auth on
+ * every submission and reduce server capacity.
+ */
+type Mode = 'ws' | 'http' | 'unknown';
+
 export function createApiClient(slug: string) {
   const base = `/api/s/${slug}`;
 
@@ -19,6 +35,7 @@ export function createApiClient(slug: string) {
   let unflushedCount = 0;
   let onSaveErrorCallback: ((message: string) => void) | null = null;
   let wsClient: SurveyWsClient | null = null;
+  let mode: Mode = 'unknown';
 
   function setWsClient(client: SurveyWsClient | null) {
     wsClient = client;
@@ -43,17 +60,20 @@ export function createApiClient(slug: string) {
     }
   }
 
-  async function saveBatchWs(answers: PendingSave[]): Promise<boolean> {
-    // Prefer WebSocket — the connection is tagged with the respondent ID
-    // at upgrade time, so no per-request auth is needed.
-    if (wsClient?.connected) {
+  async function saveBatch(answers: PendingSave[]): Promise<boolean> {
+    if (mode === 'ws') {
+      // WS-only — if the socket is down, re-buffer and retry on next flush.
+      // No HTTP fallback: it would trigger per-request cookie auth and hurt
+      // server capacity.
+      if (!wsClient?.connected) return false;
       try {
         await wsClient.request('submit-answers', { answers });
         return true;
       } catch {
-        // WS request failed (timeout, disconnect, etc.) — fall back to HTTP
+        return false;
       }
     }
+    // http mode (Node.js self-hosted): HTTP with retry
     return saveBatchHttp(answers);
   }
 
@@ -89,7 +109,7 @@ export function createApiClient(slug: string) {
     const batch = [...answerBuffer.values()];
     answerBuffer.clear();
 
-    const success = await saveBatchWs(batch);
+    const success = await saveBatch(batch);
     if (success) {
       unflushedCount = 0;
     } else {
@@ -104,6 +124,9 @@ export function createApiClient(slug: string) {
   }
 
   function flushBufferSync(): void {
+    // Page unload path — sendBeacon is HTTP-only. This is the ONE place where
+    // HTTP is used in ws mode, since the WebSocket can't reliably finish
+    // pending sends during unload.
     if (answerBuffer.size === 0) return;
 
     if (inactivityTimer !== null) {
@@ -115,7 +138,6 @@ export function createApiClient(slug: string) {
     const batch = [...answerBuffer.values()];
     answerBuffer.clear();
 
-    // sendBeacon is HTTP-only (last resort on page unload)
     const blob = new Blob([JSON.stringify({ answers: batch })], { type: 'application/json' });
     navigator.sendBeacon(`${base}/answers/batch`, blob);
   }
@@ -125,25 +147,31 @@ export function createApiClient(slug: string) {
     nextQuestionIndex?: number;
     isComplete?: boolean;
   }> {
-    // Prefer WS resume — no round trip, respondent created on WS upgrade.
-    // HTTP fallback for Node.js self-hosted mode (no DO WS command path).
+    // Probe the transport. Try WS first if a client is attached; if it works,
+    // commit to 'ws' mode for the rest of the session. Otherwise fall back to
+    // HTTP and commit to 'http' mode. Subsequent calls don't re-probe.
     if (wsClient) {
-      // Wait briefly for WS to open if still connecting
+      // Wait briefly for WS to finish connecting (auto-reconnect may still be in progress)
       for (let i = 0; i < 20 && !wsClient.connected; i++) {
         await new Promise((r) => setTimeout(r, 100));
       }
       if (wsClient.connected) {
         try {
-          return (await wsClient.request('resume', {})) as {
+          const result = (await wsClient.request('resume', {})) as {
             answers?: Record<string, SurveyAnswer>;
             nextQuestionIndex?: number;
             isComplete?: boolean;
           };
+          mode = 'ws';
+          return result;
         } catch {
-          // fall through to HTTP
+          // WS resume failed — server likely doesn't support command ops (Node.js mode)
         }
       }
     }
+
+    // HTTP path (no WS client, or WS resume failed)
+    mode = 'http';
     const res = await fetch(`${base}/resume`, { credentials: 'same-origin' });
     if (!res.ok) {
       throw new Error(`Failed to load survey (${res.status})`);
@@ -152,15 +180,14 @@ export function createApiClient(slug: string) {
   }
 
   async function postComplete(): Promise<void> {
-    // Prefer WebSocket (auth via connection tag). Fall back to HTTP cookie-auth on failure.
-    if (wsClient?.connected) {
-      try {
-        await wsClient.request('complete', {});
-        return;
-      } catch {
-        // fall through to HTTP
+    if (mode === 'ws') {
+      if (!wsClient?.connected) {
+        throw new Error('Connection lost — please try again in a moment');
       }
+      await wsClient.request('complete', {});
+      return;
     }
+    // http mode
     const res = await fetch(`${base}/complete`, {
       method: 'POST',
       credentials: 'same-origin',
