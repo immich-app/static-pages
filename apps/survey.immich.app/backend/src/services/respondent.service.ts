@@ -50,8 +50,13 @@ export class RespondentService {
     }
   }
 
-  async resume(slug: string, respondentId: string | undefined, ipAddress: string): Promise<ResumeResult> {
-    const survey = await this.surveys.getBySlug(slug);
+  async resume(
+    slug: string,
+    respondentId: string | undefined,
+    ipAddress: string,
+    knownSurvey?: SurveyRow,
+  ): Promise<ResumeResult> {
+    const survey = knownSurvey ?? (await this.surveys.getBySlug(slug));
     if (!survey || survey.status !== 'published') {
       throw new ServiceError('Survey not found', 404);
     }
@@ -99,7 +104,12 @@ export class RespondentService {
     };
   }
 
-  async submitBatch(slug: string, respondentId: string, inputs: BatchAnswerInput[]): Promise<void> {
+  async submitBatch(
+    slug: string,
+    respondentId: string,
+    inputs: BatchAnswerInput[],
+    knownSurvey?: SurveyRow,
+  ): Promise<void> {
     if (!inputs || !Array.isArray(inputs) || inputs.length === 0 || inputs.length > BATCH_ANSWER_LIMIT) {
       throw new ServiceError(`Invalid answers payload: must be 1-${BATCH_ANSWER_LIMIT} answers`, 400);
     }
@@ -109,7 +119,7 @@ export class RespondentService {
       throw new ServiceError('Respondent not found', 404);
     }
 
-    const survey = await this.surveys.getBySlug(slug);
+    const survey = knownSurvey ?? (await this.surveys.getBySlug(slug));
     if (!survey || respondent.survey_id !== survey.id) {
       throw new ServiceError('Respondent does not belong to this survey', 403);
     }
@@ -136,13 +146,13 @@ export class RespondentService {
     await this.answers.upsertBatch(answerRows);
   }
 
-  async complete(slug: string, respondentId: string): Promise<void> {
+  async complete(slug: string, respondentId: string, knownSurvey?: SurveyRow): Promise<void> {
     const respondent = await this.respondents.getById(respondentId);
     if (!respondent) {
       throw new ServiceError('Respondent not found', 404);
     }
 
-    const survey = await this.surveys.getBySlug(slug);
+    const survey = knownSurvey ?? (await this.surveys.getBySlug(slug));
     if (!survey || respondent.survey_id !== survey.id) {
       throw new ServiceError('Respondent does not belong to this survey', 403);
     }
@@ -412,20 +422,22 @@ export class RespondentService {
     };
   }
 
-  async getLiveResults(surveyId: string): Promise<{
+  async getLiveResults(
+    surveyId: string,
+    presenceCounts?: { activeViewers: number; activeRespondents: number },
+  ): Promise<{
     respondentCounts: { total: number; completed: number };
     results: AggregatedResult[];
     liveCounts: { activeViewers: number; activeRespondents: number };
   }> {
     const baseResults = await this.getResults(surveyId);
 
-    // Active respondents: created in last 5 minutes and not yet complete
-    const activeCount = await this.respondents.countActiveBySurveyId(surveyId);
-
-    return {
-      ...baseResults,
-      liveCounts: { activeViewers: 0, activeRespondents: activeCount },
+    const liveCounts = presenceCounts ?? {
+      activeViewers: 0,
+      activeRespondents: await this.respondents.countActiveBySurveyId(surveyId),
     };
+
+    return { ...baseResults, liveCounts };
   }
 
   private csvSafe(value: string): string {

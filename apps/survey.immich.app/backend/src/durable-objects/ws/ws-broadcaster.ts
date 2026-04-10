@@ -26,7 +26,7 @@ export function broadcastToViewers(ctx: DurableObjectState, cache: SurveyCache):
   const viewers = ctx.getWebSockets('viewer');
   if (viewers.length === 0) return;
 
-  const counts = getPresenceCounts(ctx);
+  const counts = getPresenceCounts(ctx, activeRespondents);
   const counters = cache.counters;
   const stats = {
     type: 'push' as const,

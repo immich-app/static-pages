@@ -1,18 +1,13 @@
 import type { IRequest } from 'itty-router';
-import { SESSION_COOKIE_NAME, type UserRole } from '../constants';
+import { SESSION_COOKIE_NAME, ROLE_HIERARCHY, type UserRole } from '../constants';
 import { AuthService, type UserInfo } from '../services/auth.service';
 import type { AppContext } from '../config';
 import { ServiceError } from '../services/errors';
+import { getCookie } from '../cookie';
 
 // Extend request with user info
 export interface AuthenticatedRequest extends IRequest {
   user?: UserInfo;
-}
-
-function getCookie(request: IRequest, name: string): string | undefined {
-  const cookies = request.headers.get('cookie') ?? '';
-  const match = cookies.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
-  return match?.[1];
 }
 
 export function authMiddleware(ctx: AppContext): (request: AuthenticatedRequest) => Promise<void | Response> {
@@ -46,8 +41,7 @@ export function authMiddleware(ctx: AppContext): (request: AuthenticatedRequest)
 export function requireRole(user: UserInfo | undefined, minRole: UserRole): void {
   if (!user) throw new ServiceError('Authentication required', 401);
 
-  const hierarchy: Record<UserRole, number> = { admin: 3, editor: 2, viewer: 1 };
-  if (hierarchy[user.role] < hierarchy[minRole]) {
+  if ((ROLE_HIERARCHY[user.role] ?? 0) < (ROLE_HIERARCHY[minRole] ?? 0)) {
     throw new ServiceError('Insufficient permissions', 403);
   }
 }

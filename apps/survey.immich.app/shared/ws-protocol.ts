@@ -289,6 +289,7 @@ export interface WsOperations {
 
   // Public respondent
   'get-public-survey': { request: Record<string, never>; response: PublicSurveyPayload };
+  resume: { request: Record<string, never>; response: ResumePayload };
   'submit-answers': { request: { answers: AnswerInput[] }; response: Record<string, never> };
   complete: { request: Record<string, never>; response: Record<string, never> };
 }

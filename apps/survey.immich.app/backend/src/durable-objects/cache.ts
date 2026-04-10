@@ -16,14 +16,91 @@ export interface AnswerTally {
   count: number;
 }
 
+/**
+ * Minimal per-respondent state held in memory during a session.
+ *
+ * We DON'T cache all answers — that's what SQLite is for. We only cache:
+ *   - isComplete: so we know the respondent's status
+ *   - hasSubmitted: enables the resume fast path (new users skip SQL entirely)
+ *   - choiceAnswers: only answers to choice questions (radio, dropdown, etc.)
+ *     because updateTalliesOnCompletion needs them — text/textarea answers
+ *     are never tallied, so they don't need to live in memory.
+ *
+ * This keeps the per-user memory cost small and bounded by the choice-question
+ * count, independent of how much text the user types.
+ */
+export interface RespondentState {
+  isComplete: boolean;
+  hasSubmitted: boolean;
+  choiceAnswers: Map<string, { value: string; otherText: string | null }>;
+}
+
 export class SurveyCache {
   private _survey: SurveyRow | null = null;
   private _sections: SectionRow[] | null = null;
   private _questions: QuestionRow[] | null = null;
   private _counters: { total: number; completed: number } | null = null;
   private _tallies: Map<string, AnswerTally[]> | null = null;
+  private _choiceQuestionIds: Set<string> | null = null;
+
+  /**
+   * Per-respondent state for active sessions. Populated on upgrade (new respondents
+   * start empty) and lazily on resume (returning respondents load from SQL once).
+   * Evicted on complete or hibernation. Avoids SQL hits for submit-answers and
+   * updateTalliesOnCompletion since the choice answers are already in memory.
+   */
+  private _respondentState = new Map<string, RespondentState>();
+
+  /** Debounce flag for scheduled broadcasts — shared between ws-handler and survey-do */
+  readonly broadcastScheduled = { value: false };
 
   constructor(private sql: SqlStorage) {}
+
+  /** Check if a respondent exists. Uses in-memory state first, falls back to a fast PK lookup. */
+  hasRespondent(id: string): boolean {
+    if (this._respondentState.has(id)) return true;
+    const row = this.sql.exec('SELECT 1 FROM respondents WHERE id = ? LIMIT 1', id).toArray()[0];
+    return !!row;
+  }
+
+  /** Add a brand-new respondent to the in-memory state. Called on WS upgrade for new users. */
+  initRespondent(id: string): void {
+    this._respondentState.set(id, { isComplete: false, hasSubmitted: false, choiceAnswers: new Map() });
+  }
+
+  /**
+   * Get cached respondent state without touching SQL. Returns undefined if not cached.
+   * Callers that need to know the full respondent state (including text answers) must
+   * query SQL themselves — we only keep choice answers in memory.
+   */
+  getCachedRespondent(id: string): RespondentState | undefined {
+    return this._respondentState.get(id);
+  }
+
+  /**
+   * Record a submitted answer in memory. Only choice answers are kept (for later
+   * tally updates); text/textarea/email/number answers are discarded from cache
+   * since they're already persisted to SQL and not needed for in-memory ops.
+   */
+  setAnswer(respondentId: string, questionId: string, value: string, otherText: string | null): void {
+    const state = this._respondentState.get(respondentId);
+    if (!state) return;
+    state.hasSubmitted = true;
+    if (this.choiceQuestionIds.has(questionId)) {
+      state.choiceAnswers.set(questionId, { value, otherText });
+    }
+  }
+
+  /** Mark a respondent complete in memory. */
+  markRespondentComplete(id: string): void {
+    const state = this._respondentState.get(id);
+    if (state) state.isComplete = true;
+  }
+
+  /** Evict a respondent's state from memory (called on complete to reclaim memory). */
+  removeRespondent(id: string): void {
+    this._respondentState.delete(id);
+  }
 
   get survey(): SurveyRow {
     if (this._survey) return this._survey;
@@ -47,6 +124,15 @@ export class SurveyCache {
       .exec('SELECT * FROM survey_questions ORDER BY sort_order')
       .toArray() as unknown as QuestionRow[];
     return this._questions;
+  }
+
+  /** Pre-computed set of choice question IDs — used to filter which answers to cache */
+  get choiceQuestionIds(): Set<string> {
+    if (this._choiceQuestionIds) return this._choiceQuestionIds;
+    this._choiceQuestionIds = new Set(
+      this.questions.filter((q) => CHOICE_TYPES.has(q.type)).map((q) => q.id),
+    );
+    return this._choiceQuestionIds;
   }
 
   get counters(): { total: number; completed: number } {
@@ -98,11 +184,13 @@ export class SurveyCache {
     this._survey = null;
     this._sections = null;
     this._questions = null;
+    this._choiceQuestionIds = null;
   }
 
   invalidateResults(): void {
     this._counters = null;
     this._tallies = null;
+    this._respondentState.clear();
   }
 
   incrementTotal(): void {
@@ -113,30 +201,25 @@ export class SurveyCache {
     if (this._counters) this._counters.completed++;
   }
 
-  /** Update tallies incrementally when a respondent completes */
+  /**
+   * Update tallies incrementally when a respondent completes — uses in-memory
+   * choice answers, no SQL query needed.
+   */
   updateTalliesOnCompletion(respondentId: string): void {
     if (!this._tallies) return;
-    const choiceIds = new Set(this.questions.filter((q) => CHOICE_TYPES.has(q.type)).map((q) => q.id));
-    if (choiceIds.size === 0) return;
+    const state = this._respondentState.get(respondentId);
+    if (!state) return; // not in memory — tallies will rebuild from SQL on next full read
 
-    const answers = this.sql
-      .exec('SELECT question_id, answer, other_text FROM answers WHERE respondent_id = ?', respondentId)
-      .toArray();
-
-    for (const a of answers) {
-      const qId = a.question_id as string;
-      if (!choiceIds.has(qId)) continue;
+    for (const [qId, ans] of state.choiceAnswers) {
       if (!this._tallies.has(qId)) this._tallies.set(qId, []);
       const qTallies = this._tallies.get(qId)!;
-      const existing = qTallies.find(
-        (t) => t.value === (a.answer as string) && t.otherText === ((a.other_text as string) || null),
-      );
+      const existing = qTallies.find((t) => t.value === ans.value && t.otherText === ans.otherText);
       if (existing) {
         existing.count++;
       } else {
         qTallies.push({
-          value: a.answer as string,
-          otherText: (a.other_text as string) || null,
+          value: ans.value,
+          otherText: ans.otherText,
           count: 1,
         });
       }

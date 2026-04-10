@@ -10,8 +10,6 @@ import { ServiceError } from './errors';
 import { VALID_QUESTION_TYPES, SLUG_PATTERN } from '../constants';
 import { hashPassword } from '../utils/crypto';
 
-export { ServiceError };
-
 export interface SurveyWithDetails {
   survey: SurveyRow;
   sections: SectionRow[];
@@ -172,10 +170,10 @@ export class SurveyService {
     return survey;
   }
 
-  async updateSurvey(id: string, input: UpdateSurveyInput): Promise<SurveyRow> {
-    const existing = await this.surveys.getById(id);
+  async updateSurvey(id: string, input: UpdateSurveyInput, existing?: SurveyRow): Promise<SurveyRow> {
     if (!existing) {
-      throw new ServiceError('Survey not found', 404);
+      existing = (await this.surveys.getById(id)) ?? undefined;
+      if (!existing) throw new ServiceError('Survey not found', 404);
     }
 
     const fields: Record<string, unknown> = { updated_at: new Date().toISOString() };
@@ -230,14 +228,13 @@ export class SurveyService {
 
   async deleteSurvey(id: string): Promise<void> {
     const existing = await this.surveys.getById(id);
-    if (!existing) {
-      throw new ServiceError('Survey not found', 404);
-    }
+    if (!existing) throw new ServiceError('Survey not found', 404);
     await this.surveys.delete(id);
   }
 
-  async publishSurvey(id: string): Promise<SurveyRow> {
-    const { survey, sections, questions } = await this.getSurvey(id);
+  async publishSurvey(id: string, details?: SurveyWithDetails): Promise<SurveyRow> {
+    if (!details) details = await this.getSurvey(id);
+    const { survey, sections, questions } = details;
 
     if (!survey.slug) {
       throw new ServiceError('Survey must have a slug before publishing', 400);
@@ -258,25 +255,20 @@ export class SurveyService {
     return { ...survey, status: 'published' };
   }
 
-  async unpublishSurvey(id: string): Promise<SurveyRow> {
-    const survey = await this.surveys.getById(id);
-    if (!survey) {
-      throw new ServiceError('Survey not found', 404);
+  async unpublishSurvey(id: string, existing?: SurveyRow): Promise<SurveyRow> {
+    if (!existing) {
+      existing = (await this.surveys.getById(id)) ?? undefined;
+      if (!existing) throw new ServiceError('Survey not found', 404);
     }
 
     await this.surveys.update(id, {
       status: 'draft',
       updated_at: new Date().toISOString(),
     });
-    return { ...survey, status: 'draft' };
+    return { ...existing, status: 'draft' };
   }
 
   async createSection(surveyId: string, input: CreateSectionInput): Promise<SectionRow> {
-    const survey = await this.surveys.getById(surveyId);
-    if (!survey) {
-      throw new ServiceError('Survey not found', 404);
-    }
-
     if (!input.title?.trim()) {
       throw new ServiceError('Section title is required', 400);
     }
@@ -294,10 +286,10 @@ export class SurveyService {
     return section;
   }
 
-  async updateSection(id: string, input: UpdateSectionInput): Promise<SectionRow> {
-    const existing = await this.sections.getById(id);
+  async updateSection(id: string, input: UpdateSectionInput, existing?: SectionRow): Promise<SectionRow> {
     if (!existing) {
-      throw new ServiceError('Section not found', 404);
+      existing = (await this.sections.getById(id)) ?? undefined;
+      if (!existing) throw new ServiceError('Section not found', 404);
     }
 
     const fields: Record<string, unknown> = {};
@@ -316,25 +308,17 @@ export class SurveyService {
   }
 
   async deleteSection(id: string): Promise<void> {
-    const existing = await this.sections.getById(id);
-    if (!existing) {
-      throw new ServiceError('Section not found', 404);
-    }
     await this.sections.delete(id);
   }
 
-  async reorderSections(surveyId: string, items: Array<{ id: string; sort_order: number }>): Promise<void> {
-    const survey = await this.surveys.getById(surveyId);
-    if (!survey) {
-      throw new ServiceError('Survey not found', 404);
-    }
+  async reorderSections(_surveyId: string, items: Array<{ id: string; sort_order: number }>): Promise<void> {
     await this.sections.reorder(items);
   }
 
-  async createQuestion(sectionId: string, input: CreateQuestionInput): Promise<QuestionRow> {
-    const section = await this.sections.getById(sectionId);
+  async createQuestion(sectionId: string, input: CreateQuestionInput, section?: SectionRow): Promise<QuestionRow> {
     if (!section) {
-      throw new ServiceError('Section not found', 404);
+      section = (await this.sections.getById(sectionId)) ?? undefined;
+      if (!section) throw new ServiceError('Section not found', 404);
     }
 
     if (!input.text?.trim()) {
@@ -372,10 +356,10 @@ export class SurveyService {
     return question;
   }
 
-  async updateQuestion(id: string, input: UpdateQuestionInput): Promise<QuestionRow> {
-    const existing = await this.questions.getById(id);
+  async updateQuestion(id: string, input: UpdateQuestionInput, existing?: QuestionRow): Promise<QuestionRow> {
     if (!existing) {
-      throw new ServiceError('Question not found', 404);
+      existing = (await this.questions.getById(id)) ?? undefined;
+      if (!existing) throw new ServiceError('Question not found', 404);
     }
 
     const fields: Record<string, unknown> = {};
@@ -423,18 +407,10 @@ export class SurveyService {
   }
 
   async deleteQuestion(id: string): Promise<void> {
-    const existing = await this.questions.getById(id);
-    if (!existing) {
-      throw new ServiceError('Question not found', 404);
-    }
     await this.questions.delete(id);
   }
 
-  async reorderQuestions(sectionId: string, items: Array<{ id: string; sort_order: number }>): Promise<void> {
-    const section = await this.sections.getById(sectionId);
-    if (!section) {
-      throw new ServiceError('Section not found', 404);
-    }
+  async reorderQuestions(_sectionId: string, items: Array<{ id: string; sort_order: number }>): Promise<void> {
     await this.questions.reorder(items);
   }
 
@@ -506,28 +482,29 @@ export class SurveyService {
     return { survey: newSurvey, sections: newSections, questions: newQuestions };
   }
 
-  async archiveSurvey(id: string): Promise<SurveyRow> {
-    const survey = await this.surveys.getById(id);
-    if (!survey) {
-      throw new ServiceError('Survey not found', 404);
+  async archiveSurvey(id: string, existing?: SurveyRow): Promise<SurveyRow> {
+    if (!existing) {
+      existing = (await this.surveys.getById(id)) ?? undefined;
+      if (!existing) throw new ServiceError('Survey not found', 404);
     }
     const now = new Date().toISOString();
     await this.surveys.update(id, { archived_at: now, updated_at: now });
-    return { ...survey, archived_at: now, updated_at: now };
+    return { ...existing, archived_at: now, updated_at: now };
   }
 
-  async unarchiveSurvey(id: string): Promise<SurveyRow> {
-    const survey = await this.surveys.getById(id);
-    if (!survey) {
-      throw new ServiceError('Survey not found', 404);
+  async unarchiveSurvey(id: string, existing?: SurveyRow): Promise<SurveyRow> {
+    if (!existing) {
+      existing = (await this.surveys.getById(id)) ?? undefined;
+      if (!existing) throw new ServiceError('Survey not found', 404);
     }
     const now = new Date().toISOString();
     await this.surveys.update(id, { archived_at: null, updated_at: now });
-    return { ...survey, archived_at: null, updated_at: now };
+    return { ...existing, archived_at: null, updated_at: now };
   }
 
-  async exportDefinition(id: string): Promise<SurveyDefinition> {
-    const { survey, sections, questions } = await this.getSurvey(id);
+  async exportDefinition(id: string, details?: SurveyWithDetails): Promise<SurveyDefinition> {
+    if (!details) details = await this.getSurvey(id);
+    const { survey, sections, questions } = details;
     return {
       version: 1,
       title: survey.title,

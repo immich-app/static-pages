@@ -23,10 +23,7 @@ export function createSurveyLoader(slug: string) {
   onMount(() => {
     (async () => {
       try {
-        // Connect WebSocket for presence + data
-        wsClient = createSurveyWsClient(slug, 'respondent');
-
-        // Load survey definition (HTTP for initial load — needed before WS is ready)
+        // Load survey definition
         const data = await getPublishedSurvey(slug);
         survey = data.survey;
         sections = data.sections;
@@ -38,6 +35,11 @@ export function createSurveyLoader(slug: string) {
           loading = false;
           return;
         }
+
+        // Connect WebSocket first — the DO's upgrade handler creates the respondent,
+        // sets the cookie, and tags the connection with the respondent ID. No HTTP
+        // resume round-trip needed.
+        wsClient = createSurveyWsClient(slug, 'respondent');
 
         await initializeSurvey();
       } catch (e) {
@@ -74,14 +76,15 @@ export function createSurveyLoader(slug: string) {
       questions = randomizeOptionOrder(questions, slug);
     }
 
-    // Create engine and client
+    // Create engine and client; give the client the WS connection
     engine = createSurveyEngine(questions);
     client = createApiClient(slug);
     client.onSaveError((msg) => {
       error = msg;
     });
+    if (wsClient) client.setWsClient(wsClient);
 
-    // Resume (HTTP — sets respondent cookie)
+    // Resume via WS (HTTP fallback handled by client)
     const resume = await client.fetchResume();
     if (resume.isComplete) {
       alreadyCompleted = true;
@@ -127,6 +130,7 @@ export function createSurveyLoader(slug: string) {
       sections = data.sections;
       questions = data.questions;
 
+      wsClient = createSurveyWsClient(slug, 'respondent');
       await initializeSurvey();
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to load survey';

@@ -1,4 +1,5 @@
 import type { SurveyAnswer } from '../types';
+import type { SurveyWsClient } from './survey-ws';
 
 interface PendingSave {
   questionId: string;
@@ -17,6 +18,11 @@ export function createApiClient(slug: string) {
   let inactivityTimer: ReturnType<typeof setTimeout> | null = null;
   let unflushedCount = 0;
   let onSaveErrorCallback: ((message: string) => void) | null = null;
+  let wsClient: SurveyWsClient | null = null;
+
+  function setWsClient(client: SurveyWsClient | null) {
+    wsClient = client;
+  }
 
   function resetInactivityTimer() {
     if (inactivityTimer !== null) {
@@ -38,7 +44,16 @@ export function createApiClient(slug: string) {
   }
 
   async function saveBatchWs(answers: PendingSave[]): Promise<boolean> {
-    // Answer submission uses HTTP because the respondent is identified by an HttpOnly cookie
+    // Prefer WebSocket — the connection is tagged with the respondent ID
+    // at upgrade time, so no per-request auth is needed.
+    if (wsClient?.connected) {
+      try {
+        await wsClient.request('submit-answers', { answers });
+        return true;
+      } catch {
+        // WS request failed (timeout, disconnect, etc.) — fall back to HTTP
+      }
+    }
     return saveBatchHttp(answers);
   }
 
@@ -105,12 +120,30 @@ export function createApiClient(slug: string) {
     navigator.sendBeacon(`${base}/answers/batch`, blob);
   }
 
-  // Resume stays HTTP — sets respondent cookie
   async function fetchResume(): Promise<{
     answers?: Record<string, SurveyAnswer>;
     nextQuestionIndex?: number;
     isComplete?: boolean;
   }> {
+    // Prefer WS resume — no round trip, respondent created on WS upgrade.
+    // HTTP fallback for Node.js self-hosted mode (no DO WS command path).
+    if (wsClient) {
+      // Wait briefly for WS to open if still connecting
+      for (let i = 0; i < 20 && !wsClient.connected; i++) {
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      if (wsClient.connected) {
+        try {
+          return (await wsClient.request('resume', {})) as {
+            answers?: Record<string, SurveyAnswer>;
+            nextQuestionIndex?: number;
+            isComplete?: boolean;
+          };
+        } catch {
+          // fall through to HTTP
+        }
+      }
+    }
     const res = await fetch(`${base}/resume`, { credentials: 'same-origin' });
     if (!res.ok) {
       throw new Error(`Failed to load survey (${res.status})`);
@@ -118,8 +151,16 @@ export function createApiClient(slug: string) {
     return res.json();
   }
 
-  // Complete uses HTTP because the respondent is identified by an HttpOnly cookie
   async function postComplete(): Promise<void> {
+    // Prefer WebSocket (auth via connection tag). Fall back to HTTP cookie-auth on failure.
+    if (wsClient?.connected) {
+      try {
+        await wsClient.request('complete', {});
+        return;
+      } catch {
+        // fall through to HTTP
+      }
+    }
     const res = await fetch(`${base}/complete`, {
       method: 'POST',
       credentials: 'same-origin',
@@ -153,5 +194,6 @@ export function createApiClient(slug: string) {
     onSaveError,
     getBufferSize,
     destroy,
+    setWsClient,
   };
 }

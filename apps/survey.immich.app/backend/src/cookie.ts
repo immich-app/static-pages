@@ -1,6 +1,6 @@
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 90; // 90 days
 
-export function getCookie(request: Request, name: string): string | undefined {
+export function getCookie(request: { headers: { get(name: string): string | null } }, name: string): string | undefined {
   const header = request.headers.get('Cookie') ?? '';
   const match = header.match(new RegExp(`(?:^|;\\s*)${name}=([^;]+)`));
   return match?.[1];

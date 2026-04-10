@@ -12,6 +12,7 @@ import { configFromEnv, type AppContext } from './config';
 import { createD1Database } from './db';
 import { getCookie, getRespondentId, setRespondentCookie } from './cookie';
 import { verifyToken } from './utils/crypto';
+import { ROLE_HIERARCHY, type UserRole } from './constants';
 
 const { preflight, corsify } = cors();
 
@@ -105,13 +106,19 @@ function getDOStub(env: Env, surveyId: string): DurableObjectStub {
   return env.SURVEY_SESSIONS.get(id);
 }
 
+const CATALOG_SYNC_COLUMNS = new Set([
+  'title', 'slug', 'status', 'description', 'password_hash', 'archived_at', 'updated_at',
+  'welcome_title', 'welcome_description', 'thank_you_title', 'thank_you_description',
+  'closes_at', 'max_responses', 'randomize_questions', 'randomize_options',
+]);
+
 /** After forwarding a mutation to the DO, sync catalog fields back to D1 */
 async function syncCatalog(response: Response, db: D1Database, surveyId: string): Promise<void> {
   const syncHeader = response.headers.get('X-Catalog-Sync');
   if (!syncHeader) return;
   try {
     const fields = JSON.parse(syncHeader) as Record<string, unknown>;
-    const keys = Object.keys(fields);
+    const keys = Object.keys(fields).filter((k) => CATALOG_SYNC_COLUMNS.has(k));
     if (keys.length === 0) return;
     const setClauses = keys.map((k) => `${k} = ?`).join(', ');
     const values = [...keys.map((k) => fields[k]), surveyId];
@@ -170,6 +177,9 @@ function matchDORoute(method: string, pathname: string): { surveyId?: string; sl
     const id = surveyMatch[1];
     // Exclude list and create (handled by itty-router)
     if (id === 'import') return null; // POST /api/surveys/import
+    // Tags live in D1, not in the DO — let itty-router handle them
+    const subPath = surveyMatch[2] || '';
+    if (subPath === '/tags') return null;
     return { surveyId: id };
   }
 
@@ -255,18 +265,18 @@ export default {
 
     // Authenticate: admin routes need auth, public routes need password check
     if (!isPublicRoute) {
-      // Admin route — authenticate via middleware
+      // Admin route — authenticate and check role
       const authResult = await authenticateRequest(request, config);
-      if (authResult) return authResult; // Returns error response if auth fails
+      if (authResult instanceof Response) return authResult;
+
+      const subPath = pathname.match(SURVEY_ID_PATTERN)?.[2] || '/';
+      const requiredRole = getRequiredDORole(method, subPath);
+      if (!checkRole(authResult, requiredRole)) {
+        return Response.json({ error: 'Insufficient permissions' }, { status: 403 });
+      }
     } else {
       // Public route — check password session if needed
       if (doMatch.slug) {
-        // Look up password_hash if not already loaded
-        if (passwordHash === undefined) {
-          const row = await slugToRow(env.DB, doMatch.slug);
-          passwordHash = row?.password_hash ?? null;
-        }
-
         const subPathPublic = pathname.match(PUBLIC_PATTERN)?.[2] || '';
         const needsPasswordCheck =
           subPathPublic === '/resume' || subPathPublic === '/answers/batch' || subPathPublic === '/complete';
@@ -286,15 +296,38 @@ export default {
       const wsUrl = new URL(request.url);
       const wsType = wsUrl.searchParams.get('type');
 
-      // Editor WebSocket connections require admin authentication
-      if (wsType === 'editor') {
+      // Viewer and editor WS connections are admin features — authenticate via session cookie
+      // and pass the real role to the DO so it can allow/deny per-op based on role hierarchy.
+      let wsRole = 'public';
+      if (wsType === 'viewer' || wsType === 'editor') {
         const authResult = await authenticateRequest(request, config);
-        if (authResult) return authResult;
+        if (authResult instanceof Response) return authResult;
+        const minRole = wsType === 'editor' ? 'editor' : 'viewer';
+        if (!checkRole(authResult, minRole)) {
+          return Response.json({ error: 'Insufficient permissions' }, { status: 403 });
+        }
+        wsRole = authResult; // actual role (viewer/editor/admin) so DO can enforce fine-grained checks
+      }
+
+      // Public (respondent) WebSocket connections to password-protected surveys require password cookie
+      if (isPublicRoute && wsType === 'respondent' && passwordHash && doMatch.slug) {
+        const token = getCookie(request, `spw_${doMatch.slug}`);
+        if (!token || !(await verifyToken(surveyId, token, config.passwordSecret))) {
+          return Response.json({ error: 'Authentication required' }, { status: 403 });
+        }
       }
 
       // Tag the connection with its verified role so the DO can enforce authorization
       const wsHeaders = new Headers(request.headers);
-      wsHeaders.set('X-WS-Role', wsType === 'editor' ? 'editor' : 'public');
+      wsHeaders.set('X-WS-Role', wsRole);
+
+      // Forward respondent cookie ID so the DO can tag the connection for
+      // authenticated-once respondent sessions (no need to re-auth per message)
+      if (isPublicRoute && doMatch.slug) {
+        const respondentId = getRespondentId(request, doMatch.slug);
+        if (respondentId) wsHeaders.set('X-Respondent-Id', respondentId);
+      }
+
       return stub.fetch(new Request(request.url, { method: request.method, headers: wsHeaders }));
     }
 
@@ -369,15 +402,12 @@ export default {
       return dupResponse;
     }
 
-    // Handle delete: also remove D1 catalog row (and dependent rows lacking ON DELETE CASCADE)
+    // Handle delete: remove D1 catalog row and tag associations
     if (method === 'DELETE' && doResponse.status === 204 && doMatch.surveyId && !pathname.includes('/results/')) {
       ctx.waitUntil(
         (async () => {
           await env.DB.batch([
-            env.DB.prepare(
-              'DELETE FROM answers WHERE respondent_id IN (SELECT id FROM respondents WHERE survey_id = ?)',
-            ).bind(surveyId),
-            env.DB.prepare('DELETE FROM respondents WHERE survey_id = ?').bind(surveyId),
+            env.DB.prepare('DELETE FROM survey_tags WHERE survey_id = ?').bind(surveyId),
             env.DB.prepare('DELETE FROM surveys WHERE id = ?').bind(surveyId),
           ]);
         })(),
@@ -411,8 +441,26 @@ export default {
   },
 };
 
-// Auth check for admin routes (outside itty-router) — verifies HMAC signature
-async function authenticateRequest(request: Request, config: import('./config').AppConfig): Promise<Response | null> {
+function checkRole(role: UserRole, minRole: UserRole): boolean {
+  return (ROLE_HIERARCHY[role] ?? 0) >= (ROLE_HIERARCHY[minRole] ?? 0);
+}
+
+/** Determine the minimum role required for a DO admin route */
+function getRequiredDORole(method: string, subPath: string): UserRole {
+  if (method === 'DELETE') {
+    // Delete survey or delete respondent requires admin
+    if (subPath === '/' || subPath === '' || /^\/results\/respondents\//.test(subPath)) {
+      return 'admin';
+    }
+    return 'editor';
+  }
+  if (method !== 'GET' && method !== 'HEAD') return 'editor';
+  if (subPath === '/definition') return 'editor';
+  return 'viewer';
+}
+
+// Auth check for admin routes (outside itty-router) — verifies HMAC signature and returns user role
+async function authenticateRequest(request: Request, config: import('./config').AppConfig): Promise<Response | UserRole> {
   const sessionCookie = getCookie(request, 'survey_session');
   if (!sessionCookie) {
     return Response.json({ error: 'Authentication required' }, { status: 401 });
@@ -442,7 +490,7 @@ async function authenticateRequest(request: Request, config: import('./config').
     if (!payload.sub || !payload.exp || payload.exp * 1000 < Date.now()) {
       return Response.json({ error: 'Session expired' }, { status: 401 });
     }
-    return null; // Auth OK
+    return (payload.role as UserRole) ?? 'viewer';
   } catch {
     return Response.json({ error: 'Invalid session' }, { status: 401 });
   }

@@ -28,3 +28,4 @@ export const SESSION_MAX_AGE = 8 * 60 * 60; // 8 hours
 export const SESSION_COOKIE_NAME = 'survey_session';
 export const AUTH_STATE_COOKIE_NAME = 'auth_state';
 export type UserRole = 'admin' | 'editor' | 'viewer';
+export const ROLE_HIERARCHY: Record<string, number> = { admin: 3, editor: 2, viewer: 1, public: 0 };

@@ -102,15 +102,6 @@ export class QuestionRepository {
       .execute();
   }
 
-  async getBySectionId(sectionId: string): Promise<import('../db').QuestionRow[]> {
-    return this.db
-      .selectFrom('survey_questions')
-      .selectAll()
-      .where('section_id', '=', sectionId)
-      .orderBy('sort_order')
-      .execute();
-  }
-
   async getById(id: string): Promise<import('../db').QuestionRow | null> {
     const result = await this.db.selectFrom('survey_questions').selectAll().where('id', '=', id).executeTakeFirst();
     return result ?? null;

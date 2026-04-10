@@ -8,7 +8,9 @@ import type { SurveyService } from '../../services/survey.service';
 import type { RespondentService } from '../../services/respondent.service';
 import type { SurveyCache } from '../cache';
 import { ServiceError } from '../../services/errors';
-import { getPresenceCounts } from './ws-broadcaster';
+import { ROLE_HIERARCHY, BATCH_ANSWER_LIMIT } from '../../constants';
+import { execute, type CommandContext } from '../do-commands';
+import { getPresenceCounts, scheduleBroadcast } from './ws-broadcaster';
 
 interface Services {
   survey: SurveyService;
@@ -31,9 +33,11 @@ function respondError(ws: WebSocket, requestId: string, op: string, message: str
   send(ws, { type: 'response', requestId, op, error: message });
 }
 
-// Operations that require editor authentication
+// Operations that require admin authentication
+const ADMIN_OPS = new Set<string>(['delete-respondent']);
+
+// Operations that require at least editor authentication (mutations + definition export)
 const EDITOR_OPS = new Set<string>([
-  'get-survey',
   'export-definition',
   'create-section',
   'update-section',
@@ -43,19 +47,36 @@ const EDITOR_OPS = new Set<string>([
   'update-question',
   'delete-question',
   'reorder-questions',
+]);
+
+// Operations that require at least viewer authentication (read-only admin queries)
+const VIEWER_OPS = new Set<string>([
+  'get-survey',
   'get-results',
   'get-live-results',
   'get-timeline',
   'get-dropoff',
   'list-respondents',
   'get-respondent',
-  'delete-respondent',
   'search-answers',
 ]);
 
-function hasEditorRole(ws: WebSocket, ctx: DurableObjectState): boolean {
-  const tags = ctx.getTags(ws);
-  return tags.includes('role:editor');
+function getWsRole(ws: WebSocket, ctx: DurableObjectState): string {
+  for (const tag of ctx.getTags(ws)) {
+    if (tag.startsWith('role:')) return tag.slice(5);
+  }
+  return 'public';
+}
+
+function hasMinRole(ws: WebSocket, ctx: DurableObjectState, minRole: string): boolean {
+  return (ROLE_HIERARCHY[getWsRole(ws, ctx)] ?? 0) >= (ROLE_HIERARCHY[minRole] ?? 0);
+}
+
+function getWsRespondentId(ws: WebSocket, ctx: DurableObjectState): string | null {
+  for (const tag of ctx.getTags(ws)) {
+    if (tag.startsWith('rid:')) return tag.slice(4);
+  }
+  return null;
 }
 
 export async function dispatch(
@@ -86,14 +107,22 @@ export async function dispatch(
   const { requestId, op, data } = parsed;
   const d = data ?? {};
 
-  // Enforce authorization: editor operations require authenticated editor connection
-  if (EDITOR_OPS.has(op) && !hasEditorRole(ws, ctx)) {
+  // Enforce authorization: check role hierarchy for protected operations
+  if (ADMIN_OPS.has(op) && !hasMinRole(ws, ctx, 'admin')) {
+    respondError(ws, requestId, op, 'Insufficient permissions');
+    return;
+  }
+  if (EDITOR_OPS.has(op) && !hasMinRole(ws, ctx, 'editor')) {
+    respondError(ws, requestId, op, 'Insufficient permissions');
+    return;
+  }
+  if (VIEWER_OPS.has(op) && !hasMinRole(ws, ctx, 'viewer')) {
     respondError(ws, requestId, op, 'Insufficient permissions');
     return;
   }
 
   try {
-    const result = await handleOp(op as keyof WsOperations, d, services, cache, ctx);
+    const result = await handleOp(ws, op as keyof WsOperations, d, services, cache, ctx);
     respond(ws, requestId, op, result);
   } catch (e) {
     const message = e instanceof ServiceError ? e.message : e instanceof Error ? e.message : 'Internal error';
@@ -102,82 +131,21 @@ export async function dispatch(
 }
 
 async function handleOp(
+  ws: WebSocket,
   op: keyof WsOperations,
   data: Record<string, unknown>,
   { survey: surveyService, respondent: respondentService }: Services,
   cache: SurveyCache,
   ctx: DurableObjectState,
 ): Promise<unknown> {
-  const surveyId = cache.survey.id;
+  const cmdCtx: CommandContext = { surveyService, respondentService, cache };
 
   switch (op) {
-    // ---- Survey ----
+    // ---- Survey (WS-only, admin operations use full service) ----
     case 'get-survey':
-      return surveyService.getSurvey(surveyId);
+      return surveyService.getSurvey(cache.survey.id);
 
-    case 'export-definition':
-      return surveyService.exportDefinition(surveyId);
-
-    // ---- Sections ----
-    case 'create-section': {
-      const result = await surveyService.createSection(surveyId, data as { title: string; description?: string });
-      cache.invalidateSurvey();
-      return result;
-    }
-    case 'update-section': {
-      const { id, ...input } = data as { id: string; title?: string; description?: string };
-      const result = await surveyService.updateSection(id, input);
-      cache.invalidateSurvey();
-      return result;
-    }
-    case 'delete-section': {
-      await surveyService.deleteSection(data.id as string);
-      cache.invalidateSurvey();
-      return {};
-    }
-    case 'reorder-sections': {
-      await surveyService.reorderSections(
-        surveyId,
-        (data as { items: Array<{ id: string; sort_order: number }> }).items,
-      );
-      cache.invalidateSurvey();
-      return {};
-    }
-
-    // ---- Questions ----
-    case 'create-question': {
-      const { sectionId, ...input } = data as { sectionId: string; [key: string]: unknown };
-      const result = await surveyService.createQuestion(
-        sectionId,
-        input as Parameters<typeof surveyService.createQuestion>[1],
-      );
-      cache.invalidateSurvey();
-      cache.invalidateResults();
-      return result;
-    }
-    case 'update-question': {
-      const { id, ...input } = data as { id: string; [key: string]: unknown };
-      const result = await surveyService.updateQuestion(
-        id,
-        input as Parameters<typeof surveyService.updateQuestion>[1],
-      );
-      cache.invalidateSurvey();
-      return result;
-    }
-    case 'delete-question': {
-      await surveyService.deleteQuestion(data.id as string);
-      cache.invalidateSurvey();
-      cache.invalidateResults();
-      return {};
-    }
-    case 'reorder-questions': {
-      const { sectionId, items } = data as { sectionId: string; items: Array<{ id: string; sort_order: number }> };
-      await surveyService.reorderQuestions(sectionId, items);
-      cache.invalidateSurvey();
-      return {};
-    }
-
-    // ---- Results ----
+    // ---- Results (WS uses cache for hot-path performance) ----
     case 'get-results':
       return {
         respondentCounts: cache.counters,
@@ -191,40 +159,7 @@ async function handleOp(
         liveCounts: getPresenceCounts(ctx).data,
       };
 
-    case 'get-timeline': {
-      const granularity = (data.granularity as 'day' | 'hour') || 'day';
-      return respondentService.getTimeline(surveyId, granularity);
-    }
-
-    case 'get-dropoff':
-      return respondentService.getDropoff(surveyId);
-
-    case 'list-respondents': {
-      const offset = Number(data.offset ?? 0);
-      const limit = Math.min(Number(data.limit ?? 20), 100);
-      return respondentService.listRespondents(surveyId, offset, limit);
-    }
-
-    case 'get-respondent':
-      return respondentService.getRespondentDetail(surveyId, data.respondentId as string);
-
-    case 'delete-respondent': {
-      await respondentService.deleteRespondent(surveyId, data.respondentId as string);
-      cache.invalidateResults();
-      return {};
-    }
-
-    case 'search-answers': {
-      const { query, questionId, offset, limit } = data as {
-        query: string;
-        questionId?: string;
-        offset?: number;
-        limit?: number;
-      };
-      return respondentService.searchAnswers(surveyId, query, questionId, { offset: offset ?? 0, limit: limit ?? 50 });
-    }
-
-    // ---- Public respondent ----
+    // ---- Public respondent (WS-only, DO fast path) ----
     case 'get-public-survey': {
       const survey = cache.survey;
       if (survey.status !== 'published') throw new ServiceError('Survey not found', 404);
@@ -232,24 +167,133 @@ async function handleOp(
       return { survey: safeSurvey, sections: cache.sections, questions: cache.questions };
     }
 
+    case 'resume': {
+      // Fast path for new users: if cache has the respondent with hasSubmitted=false,
+      // we know they have zero answers — return empty state with zero SQL queries.
+      //
+      // Otherwise (returning user or mid-session resume after submissions), query SQL
+      // for the full answer set since we only keep choice answers in memory.
+      const respondentId = getWsRespondentId(ws, ctx);
+      if (!respondentId) throw new ServiceError('Not a respondent connection', 401);
+
+      const cachedState = cache.getCachedRespondent(respondentId);
+      if (cachedState && !cachedState.hasSubmitted) {
+        return { answers: {}, nextQuestionIndex: 0, isComplete: cachedState.isComplete, respondentId };
+      }
+
+      // Returning user or mid-session resume — read all answers from SQL
+      const answerRows = ctx.storage.sql
+        .exec('SELECT question_id, answer, other_text FROM answers WHERE respondent_id = ?', respondentId)
+        .toArray() as Array<{ question_id: string; answer: string; other_text: string | null }>;
+
+      const answers: Record<string, { value: string; otherText?: string }> = {};
+      for (const row of answerRows) {
+        answers[row.question_id] = {
+          value: row.answer,
+          ...(row.other_text ? { otherText: row.other_text } : {}),
+        };
+      }
+
+      // Get isComplete — prefer cache if available, otherwise one more SQL by PK
+      let isComplete = cachedState?.isComplete ?? false;
+      if (!cachedState) {
+        const row = ctx.storage.sql
+          .exec('SELECT is_complete FROM respondents WHERE id = ? LIMIT 1', respondentId)
+          .toArray()[0] as { is_complete: number } | undefined;
+        isComplete = row?.is_complete === 1;
+      }
+
+      // Compute nextQuestionIndex from cached questions + queried answers
+      const questions = cache.questions;
+      let nextQuestionIndex = questions.length;
+      for (let i = 0; i < questions.length; i++) {
+        const q = questions[i];
+        if (q.conditional) {
+          try {
+            const cond = JSON.parse(q.conditional) as { showIf?: { questionId: string; condition: string } };
+            if (cond.showIf?.condition === 'skipped' && cond.showIf.questionId in answers) continue;
+          } catch {
+            // malformed conditional — fall through
+          }
+        }
+        if (!(q.id in answers)) {
+          nextQuestionIndex = i;
+          break;
+        }
+      }
+
+      return { answers, nextQuestionIndex, isComplete, respondentId };
+    }
+
     case 'submit-answers': {
-      const answers = (data as { answers: Array<{ questionId: string; value: string; otherText?: string }> }).answers;
-      const respondentId = data.respondentId as string;
-      if (!respondentId) throw new ServiceError('No respondent ID', 400);
-      await respondentService.submitBatch(cache.survey.slug!, respondentId, answers);
+      // Fast path: all validation in-memory, single batched SQL INSERT.
+      const respondentId = getWsRespondentId(ws, ctx);
+      if (!respondentId) throw new ServiceError('Not a respondent connection', 401);
+
+      const survey = cache.survey;
+      if (survey.closes_at && new Date(survey.closes_at) < new Date()) {
+        throw new ServiceError('This survey has closed', 403);
+      }
+
+      const answers = (data as { answers?: Array<{ questionId: string; value: string; otherText?: string }> }).answers;
+      if (!answers || !Array.isArray(answers) || answers.length === 0 || answers.length > BATCH_ANSWER_LIMIT) {
+        throw new ServiceError(`Invalid answers payload: must be 1-${BATCH_ANSWER_LIMIT} answers`, 400);
+      }
+
+      const validQuestionIds = new Set(cache.questions.map((q) => q.id));
+      for (const a of answers) {
+        if (!validQuestionIds.has(a.questionId)) {
+          throw new ServiceError(`Invalid question ID: ${a.questionId}`, 400);
+        }
+      }
+
+      // Update in-memory state so subsequent operations (complete's tally update)
+      // don't need to re-query the database
+      for (const a of answers) {
+        cache.setAnswer(respondentId, a.questionId, a.value, a.otherText ?? null);
+      }
+
+      // Single batched INSERT — one SQL round-trip regardless of answer count
+      const now = new Date().toISOString();
+      const placeholders = answers.map(() => '(?, ?, ?, ?, ?)').join(', ');
+      const values: unknown[] = [];
+      for (const a of answers) {
+        values.push(respondentId, a.questionId, a.value, a.otherText ?? null, now);
+      }
+      ctx.storage.sql.exec(
+        `INSERT OR REPLACE INTO answers (respondent_id, question_id, answer, other_text, answered_at) VALUES ${placeholders}`,
+        ...values,
+      );
       return {};
     }
 
     case 'complete': {
-      const respondentId = data.respondentId as string;
-      if (!respondentId) throw new ServiceError('No respondent ID', 400);
-      await respondentService.complete(cache.survey.slug!, respondentId);
+      // Fast path: in-memory tally update (no SQL read), single UPDATE, evict from cache
+      const respondentId = getWsRespondentId(ws, ctx);
+      if (!respondentId) throw new ServiceError('Not a respondent connection', 401);
+
+      cache.markRespondentComplete(respondentId);
+      cache.updateTalliesOnCompletion(respondentId); // uses in-memory answers, no SQL
       cache.incrementCompleted();
-      cache.updateTalliesOnCompletion(respondentId);
+
+      ctx.storage.sql.exec(
+        'UPDATE respondents SET is_complete = 1, completed_at = ? WHERE id = ?',
+        new Date().toISOString(),
+        respondentId,
+      );
+
+      // Evict after complete — they won't submit again, free the memory
+      cache.removeRespondent(respondentId);
+
+      scheduleBroadcast(ctx, cache.broadcastScheduled);
       return {};
     }
 
-    default:
-      throw new ServiceError(`Unknown operation: ${op}`, 400);
+    // ---- Shared operations (section/question CRUD, results queries, definition) ----
+    default: {
+      const result = await execute(op, data, cmdCtx);
+      if (result === null) throw new ServiceError(`Unknown operation: ${op}`, 400);
+      return result ?? {};
+    }
   }
 }
