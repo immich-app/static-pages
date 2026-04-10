@@ -13,7 +13,7 @@
   type FilterKind = 'all' | EmailKind | 'role';
 
   const MAILTO_BCC_LIMIT = 50;
-  const PAGE_SIZE = 25;
+  const PAGE_SIZE = 5;
 
   const summary = $derived(computeEmailSummary(answers));
 
