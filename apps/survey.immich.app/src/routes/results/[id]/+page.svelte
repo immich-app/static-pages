@@ -85,27 +85,52 @@
 
     <div id="results-content">
       {#if loader.activeTab === 'overview'}
-        <!-- Stats cards -->
-        <div class="animate-in animate-in-delay-1 mb-6 grid grid-cols-3 gap-3">
-          <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-700/80">
-            <div class="flex items-center gap-2 text-gray-500">
-              <Icon icon={mdiAccountGroup} size="16" />
-              <span class="text-xs font-medium tracking-wider uppercase">Total</span>
+        <!-- KPI strip -->
+        <div class="animate-in animate-in-delay-1 mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
+          <div class="rounded-xl border border-gray-200 bg-gradient-to-br from-gray-50 to-transparent p-4 dark:border-gray-700/80 dark:from-gray-800/40">
+            <div class="flex items-center gap-1.5 text-gray-500">
+              <Icon icon={mdiAccountGroup} size="14" />
+              <span class="text-[10px] font-medium tracking-wider uppercase">Total</span>
             </div>
-            <p class="mt-2 text-2xl font-bold">{loader.respondentCounts.total}</p>
+            <p class="mt-1.5 text-2xl font-bold tabular-nums">{loader.respondentCounts.total}</p>
+            <p class="text-[11px] text-gray-500">respondents</p>
           </div>
-          <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-700/80">
-            <div class="flex items-center gap-2 text-gray-500">
-              <Icon icon={mdiCheckCircle} size="16" />
-              <span class="text-xs font-medium tracking-wider uppercase">Completed</span>
+          <div class="rounded-xl border border-gray-200 bg-gradient-to-br from-green-50/40 to-transparent p-4 dark:border-gray-700/80 dark:from-green-900/20">
+            <div class="flex items-center gap-1.5 text-gray-500">
+              <Icon icon={mdiCheckCircle} size="14" />
+              <span class="text-[10px] font-medium tracking-wider uppercase">Completed</span>
             </div>
-            <p class="mt-2 text-2xl font-bold">{loader.respondentCounts.completed}</p>
+            <p class="mt-1.5 text-2xl font-bold tabular-nums text-green-400">
+              {loader.respondentCounts.completed}
+            </p>
+            <p class="text-[11px] text-gray-500">
+              {loader.respondentCounts.total - loader.respondentCounts.completed} in progress
+            </p>
           </div>
-          <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-700/80">
-            <div class="flex items-center gap-2 text-gray-500">
-              <span class="text-xs font-medium tracking-wider uppercase">Completion</span>
+          <div class="rounded-xl border border-gray-200 bg-gradient-to-br from-blue-50/40 to-transparent p-4 dark:border-gray-700/80 dark:from-blue-900/20">
+            <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">
+              Completion
             </div>
-            <p class="mt-2 text-2xl font-bold">{loader.completionRate}%</p>
+            <p class="mt-1.5 text-2xl font-bold tabular-nums text-blue-400">
+              {loader.completionRate}%
+            </p>
+            <div class="mt-1.5 h-1 overflow-hidden rounded-full bg-gray-800">
+              <div
+                class="h-full rounded-full bg-blue-400 transition-all"
+                style="width: {loader.completionRate}%"
+              ></div>
+            </div>
+          </div>
+          <div class="rounded-xl border border-gray-200 bg-gradient-to-br from-purple-50/40 to-transparent p-4 dark:border-gray-700/80 dark:from-purple-900/20">
+            <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">
+              Live now
+            </div>
+            <p class="mt-1.5 text-2xl font-bold tabular-nums text-purple-400">
+              {loader.liveCounts.activeRespondents}
+            </p>
+            <p class="text-[11px] text-gray-500">
+              {loader.liveCounts.activeViewers} viewing
+            </p>
           </div>
         </div>
 

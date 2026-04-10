@@ -1,92 +1,80 @@
 <script lang="ts">
   import type { SurveyQuestion } from '$lib/types';
-  import BarChart from './BarChart.svelte';
-  import PieChart from './PieChart.svelte';
-  import ChartTypeToggle from './ChartTypeToggle.svelte';
-  import NpsScoreCard from './NpsScoreCard.svelte';
-  import WordCloud from './WordCloud.svelte';
-
-  interface AnswerData {
-    value: string;
-    otherText: string | null;
-    count: number;
-  }
+  import ChoiceResult from './ChoiceResult.svelte';
+  import RatingResult from './RatingResult.svelte';
+  import NpsResult from './NpsResult.svelte';
+  import LikertResult from './LikertResult.svelte';
+  import NumberResult from './NumberResult.svelte';
+  import TextResult from './TextResult.svelte';
+  import type { AnswerData } from './analytics-utils';
 
   interface Props {
     question: SurveyQuestion;
     answers: AnswerData[];
+    /** Total number of completed respondents for this survey (denominator for % calculations). */
     totalResponses: number;
   }
 
   let { question, answers, totalResponses }: Props = $props();
 
-  let chartType = $state<'bar' | 'pie'>('bar');
-  let showWordCloud = $state(false);
-
-  const sortedAnswers = $derived([...answers].sort((a, b) => b.count - a.count));
-
-  const chartData = $derived(
-    sortedAnswers.map((a) => ({
-      label: a.value + (a.otherText ? `: ${a.otherText}` : ''),
-      value: a.count,
-      percentage: totalResponses > 0 ? (a.count / totalResponses) * 100 : 0,
-    })),
-  );
-
+  // Response count for THIS specific question — sum of all answer counts.
+  // For checkbox this is the total combinations, not total selections; ChoiceResult
+  // handles its own denominator logic.
   const responseCount = $derived(answers.reduce((sum, a) => sum + a.count, 0));
-  const isChartType = $derived(['radio', 'checkbox', 'dropdown', 'rating', 'nps', 'likert'].includes(question.type));
+  const skipCount = $derived(Math.max(0, totalResponses - responseCount));
+  const skipRate = $derived(totalResponses > 0 ? (skipCount / totalResponses) * 100 : 0);
 
-  const isTextType = $derived(['text', 'textarea', 'email'].includes(question.type));
-
-  const wordCloudData = $derived(isTextType ? sortedAnswers.map((a) => ({ text: a.value, count: a.count })) : []);
+  // Question type badge
+  const typeLabel = $derived(
+    ({
+      radio: 'Single choice',
+      checkbox: 'Multi-select',
+      dropdown: 'Dropdown',
+      text: 'Short text',
+      textarea: 'Long text',
+      email: 'Email',
+      number: 'Number',
+      rating: 'Rating',
+      nps: 'NPS',
+      likert: 'Likert',
+    })[question.type] ?? question.type,
+  );
 </script>
 
-<div class="rounded-xl border border-gray-300 p-5 dark:border-gray-600">
-  <div class="mb-1 flex items-start justify-between gap-2">
-    <h3 class="text-base font-semibold">{question.text}</h3>
-    {#if isChartType}
-      <ChartTypeToggle value={chartType} onChange={(t) => (chartType = t)} />
+<div class="rounded-xl border border-gray-300 p-5 dark:border-gray-700">
+  <!-- Header -->
+  <div class="mb-4">
+    <div class="mb-1 flex items-start justify-between gap-3">
+      <h3 class="text-base font-semibold leading-snug">{question.text}</h3>
+      <span class="shrink-0 rounded-full border border-gray-700 px-2 py-0.5 text-[10px] uppercase tracking-wider text-gray-500">
+        {typeLabel}
+      </span>
+    </div>
+    {#if question.description}
+      <p class="mb-2 text-xs text-gray-500">{question.description}</p>
     {/if}
-  </div>
-  <p class="mb-4 text-sm text-gray-500">{responseCount} {responseCount === 1 ? 'response' : 'responses'}</p>
-
-  {#if isChartType}
-    {#if chartType === 'bar'}
-      <BarChart data={chartData} />
-    {:else}
-      <PieChart data={chartData} />
-    {/if}
-    {#if question.type === 'nps'}
-      <NpsScoreCard {answers} />
-    {/if}
-  {:else}
-    {#if isTextType && wordCloudData.length > 2}
-      <div class="mb-3">
-        <button
-          class="text-xs text-gray-400 underline-offset-2 hover:text-gray-300 hover:underline"
-          onclick={() => (showWordCloud = !showWordCloud)}
-        >
-          {showWordCloud ? 'Hide' : 'Show'} word cloud
-        </button>
-      </div>
-      {#if showWordCloud}
-        <div class="mb-4 rounded-lg border border-gray-200 p-3 dark:border-gray-700">
-          <WordCloud words={wordCloudData} />
-        </div>
-      {/if}
-    {/if}
-    <div class="space-y-2">
-      {#each sortedAnswers.slice(0, 20) as answer (answer.value)}
-        <div class="rounded-lg bg-gray-100 p-3 text-sm dark:bg-gray-800">
-          <p>{answer.value}</p>
-          {#if answer.count > 1}
-            <span class="text-xs text-gray-400">({answer.count}x)</span>
-          {/if}
-        </div>
-      {/each}
-      {#if sortedAnswers.length > 20}
-        <p class="text-sm text-gray-500">...and {sortedAnswers.length - 20} more responses</p>
+    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-gray-500">
+      <span>{responseCount} {responseCount === 1 ? 'response' : 'responses'}</span>
+      {#if skipCount > 0}
+        <span class="text-amber-500/80">· {skipCount} skipped ({skipRate.toFixed(0)}%)</span>
       {/if}
     </div>
+  </div>
+
+  <!-- Type-specific visualization -->
+  {#if question.type === 'radio' || question.type === 'dropdown' || question.type === 'checkbox'}
+    <ChoiceResult {question} {answers} />
+  {:else if question.type === 'rating'}
+    <RatingResult {question} {answers} />
+  {:else if question.type === 'nps'}
+    <NpsResult {answers} />
+  {:else if question.type === 'likert'}
+    <LikertResult {answers} />
+  {:else if question.type === 'number'}
+    <NumberResult {answers} />
+  {:else if question.type === 'text' || question.type === 'textarea' || question.type === 'email'}
+    <TextResult {question} {answers} />
+  {:else}
+    <p class="text-sm text-gray-500">No visualization available for type "{question.type}".</p>
   {/if}
 </div>

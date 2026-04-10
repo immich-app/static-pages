@@ -127,8 +127,9 @@ export function createResultsLoader(surveyId: string) {
         // server for periodic pushes). Merge them with the existing results
         // so text/textarea/email/number answers from the initial HTTP load
         // stay intact.
-        const updates = new Map(data.results.map((r) => [r.questionId, r]));
-        results = results.map((r) => updates.get(r.questionId) ?? r);
+        const updates: Record<string, (typeof data.results)[number]> = {};
+        for (const r of data.results) updates[r.questionId] = r;
+        results = results.map((r) => updates[r.questionId] ?? r);
       });
     }
 
