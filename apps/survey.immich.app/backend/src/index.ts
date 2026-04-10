@@ -94,11 +94,51 @@ registerAllRoutes(router);
 // DO routing helpers
 // ============================================================
 
+/**
+ * Per-isolate cache for slug → survey metadata lookups.
+ *
+ * Every public HTTP request and every WS upgrade on /api/s/:slug/* needs to
+ * translate the slug to a survey ID before forwarding to the DO. Without
+ * caching, this hits D1 on every request — under load the D1 read throughput
+ * limit (~2000/s) becomes the bottleneck for WS connects.
+ *
+ * The cache lives in module scope, so it's shared across all requests handled
+ * by the same Workers isolate (isolates last minutes). A 60-second TTL keeps
+ * stale reads bounded — slug/password changes propagate within a minute.
+ *
+ * password_hash is cached but only used as a truthy "has password?" check;
+ * the actual password verification uses an HMAC token signed with a separate
+ * secret, so stale hash values are safe to cache.
+ */
+interface CachedSlugEntry {
+  id: string;
+  password_hash: string | null;
+  cachedAt: number;
+}
+const SLUG_CACHE_TTL_MS = 60_000;
+const slugCache = new Map<string, CachedSlugEntry>();
+
 async function slugToRow(db: D1Database, slug: string): Promise<{ id: string; password_hash: string | null } | null> {
-  return db
+  const cached = slugCache.get(slug);
+  if (cached && Date.now() - cached.cachedAt < SLUG_CACHE_TTL_MS) {
+    return { id: cached.id, password_hash: cached.password_hash };
+  }
+
+  const row = await db
     .prepare('SELECT id, password_hash FROM surveys WHERE slug = ?')
     .bind(slug)
     .first<{ id: string; password_hash: string | null }>();
+
+  if (row) {
+    slugCache.set(slug, { id: row.id, password_hash: row.password_hash, cachedAt: Date.now() });
+    // Bound the cache size — unlikely to grow large (one entry per published survey)
+    // but cap it to prevent unbounded growth in pathological cases
+    if (slugCache.size > 1000) {
+      const firstKey = slugCache.keys().next().value;
+      if (firstKey) slugCache.delete(firstKey);
+    }
+  }
+  return row;
 }
 
 function getDOStub(env: Env, surveyId: string): DurableObjectStub {

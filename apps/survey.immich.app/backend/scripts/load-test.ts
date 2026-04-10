@@ -41,7 +41,8 @@ type FailureMode =
   | 'load' // HTTP GET /api/s/:slug failed — never saw the survey
   | 'session' // couldn't establish a session (neither WS nor HTTP resume worked)
   | 'answers' // session started but no answers went through
-  | 'complete'; // answered everything but complete call failed (WS + HTTP both failed)
+  | 'complete' // answered everything but complete call failed (WS + HTTP both failed)
+  | 'deadline'; // ran out of test duration before completing — test config issue, not a real failure
 
 interface UserOutcome {
   answered: number;
@@ -149,21 +150,32 @@ class Metrics {
       answers: failures.filter((o) => o.failure === 'answers').length,
       complete: failures.filter((o) => o.failure === 'complete').length,
     };
-    const totalFailures = failureBreakdown.load + failureBreakdown.session + failureBreakdown.answers + failureBreakdown.complete;
+    const realFailures = failureBreakdown.load + failureBreakdown.session + failureBreakdown.answers + failureBreakdown.complete;
+    const deadlineCutoffs = this.outcomes.filter((o) => o.failure === 'deadline').length;
 
     console.log(`\n${'='.repeat(70)}`);
     console.log(`USER OUTCOMES (${total_users} total)`);
     console.log('='.repeat(70));
     console.log(`  Completed successfully:  ${String(completed).padStart(5)}  (${((completed / total_users) * 100).toFixed(1)}%)`);
     console.log(`  Abandoned (intentional): ${String(abandoned).padStart(5)}  (${((abandoned / total_users) * 100).toFixed(1)}%)`);
-    console.log(`  FAILED (couldn't complete): ${String(totalFailures).padStart(2)}  (${((totalFailures / total_users) * 100).toFixed(1)}%)`);
-    if (totalFailures > 0) {
+    if (deadlineCutoffs > 0) {
+      console.log(
+        `  Cut off by --duration:   ${String(deadlineCutoffs).padStart(5)}  (${((deadlineCutoffs / total_users) * 100).toFixed(1)}%)  ← NOT a failure, test config`,
+      );
+    }
+    console.log(`  FAILED (server issue):   ${String(realFailures).padStart(5)}  (${((realFailures / total_users) * 100).toFixed(1)}%)`);
+    if (realFailures > 0) {
       console.log(`    - load failed (never saw survey):     ${failureBreakdown.load}`);
       console.log(`    - session failed (couldn't resume):   ${failureBreakdown.session}`);
       console.log(`    - couldn't submit any answers:        ${failureBreakdown.answers}`);
       console.log(`    - couldn't submit complete:           ${failureBreakdown.complete}`);
     }
     console.log(`  Returning users: ${returning} | Avg session: ${avgDuration.toFixed(1)}s`);
+
+    if (deadlineCutoffs > 0) {
+      console.log(`\n  ⚠  ${deadlineCutoffs} user${deadlineCutoffs === 1 ? '' : 's'} were cut off by the test duration.`);
+      console.log(`     Increase --duration to let them finish, or these could also skew completion rate.`);
+    }
 
     console.log(`\n${'-'.repeat(70)}`);
     console.log('WS RESILIENCE');
@@ -173,12 +185,27 @@ class Metrics {
     console.log(`    → ultimately failed:               ${wsFailedAndFailed}`);
     console.log(`  Users who used HTTP fallback at all: ${usedHttpFallback}  (${((usedHttpFallback / total_users) * 100).toFixed(1)}%)`);
 
-    // Error details (first 5 unique)
-    const uniqueErrors = [...new Set(this.data.filter((m) => m.error).map((m) => `${m.endpoint}: ${m.error}`))];
-    if (uniqueErrors.length > 0) {
-      console.log(`\nErrors (first ${Math.min(5, uniqueErrors.length)}):`);
-      for (const e of uniqueErrors.slice(0, 5)) {
-        console.log(`  - ${e}`);
+    // Error breakdown — grouped by endpoint and error message, with counts
+    const errorGroups = new Map<string, number>();
+    for (const m of this.data) {
+      if (!m.error) continue;
+      // Normalize "retry in Xms" to make messages comparable
+      const normalized = m.error.replace(/retry in \d+ms/, 'retry');
+      const key = `${m.endpoint}: ${normalized}`;
+      errorGroups.set(key, (errorGroups.get(key) ?? 0) + 1);
+    }
+
+    if (errorGroups.size > 0) {
+      console.log(`\n${'-'.repeat(70)}`);
+      console.log('ERROR BREAKDOWN');
+      console.log('-'.repeat(70));
+      // Sort by count descending
+      const sorted = [...errorGroups.entries()].sort((a, b) => b[1] - a[1]);
+      for (const [err, count] of sorted.slice(0, 10)) {
+        console.log(`  ${String(count).padStart(5)}  ${err}`);
+      }
+      if (sorted.length > 10) {
+        console.log(`  ... and ${sorted.length - 10} more unique errors`);
       }
     }
 
@@ -472,9 +499,16 @@ function createWsClient(url: string, metrics: Metrics): WsClient {
   let closed = false;
   let failures = 0;
   let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
-  const MAX_FAILURES = 3;
-  const RECONNECT_DELAY = 3000;
+  const MAX_FAILURES = 5; // was 3 — more retries to ride out transient overload
   const pending = new Map<string, { resolve: (v: unknown) => void; reject: (e: Error) => void }>();
+
+  // Exponential backoff with jitter to avoid thundering-herd on shared failure modes.
+  // Base delays: 0.5s, 1s, 2s, 4s, 8s — each ±50% jitter applied on top.
+  const computeBackoff = (attempt: number): number => {
+    const base = 500 * Math.pow(2, Math.min(attempt, 4));
+    const jitter = base * (0.5 + Math.random()); // 0.5× to 1.5×
+    return jitter;
+  };
 
   function connect() {
     if (closed) return;
@@ -501,22 +535,42 @@ function createWsClient(url: string, metrics: Metrics): WsClient {
       } catch {}
     };
 
-    ws.onclose = () => {
+    ws.onclose = (evt: { code?: number; reason?: string }) => {
       // Reject all pending requests on close
       for (const [, req] of pending) req.reject(new Error('WebSocket closed'));
       pending.clear();
 
       if (closed) return;
       failures++;
+      // Record the close code for diagnostics (1006 = abnormal, 1011 = server error,
+      // 4xx/5xx mapped via ws lib, etc.)
+      const code = evt?.code ?? 0;
       if (failures < MAX_FAILURES) {
-        reconnectTimer = setTimeout(connect, RECONNECT_DELAY);
+        const delay = computeBackoff(failures);
+        metrics.record({
+          endpoint: 'WS close',
+          status: code,
+          latencyMs: 0,
+          error: `close code ${code}${evt?.reason ? ' ' + evt.reason : ''}; retry in ${Math.round(delay)}ms`,
+        });
+        reconnectTimer = setTimeout(connect, delay);
       } else {
-        metrics.record({ endpoint: 'WS reconnect', status: 0, latencyMs: 0, error: 'max retries exceeded' });
+        metrics.record({
+          endpoint: 'WS reconnect',
+          status: code,
+          latencyMs: 0,
+          error: `max retries exceeded (last code: ${code})`,
+        });
       }
     };
 
-    ws.onerror = () => {
-      metrics.record({ endpoint: 'WS connect', status: 0, latencyMs: performance.now() - start, error: 'WS error' });
+    ws.onerror = (err: { message?: string }) => {
+      metrics.record({
+        endpoint: 'WS connect',
+        status: 0,
+        latencyMs: performance.now() - start,
+        error: err?.message ?? 'WS error',
+      });
       ws?.close();
     };
   }
@@ -638,9 +692,16 @@ async function simulateUser(
   const userStart = performance.now();
   let questionsAnswered = 0;
   let wsConnectFailed = false;
+  let hitDeadline = false;
   const usedHttpFallback = false; // never — we're measuring WS-only capacity
 
-  const isExpired = () => Date.now() > deadline;
+  const isExpired = () => {
+    if (Date.now() > deadline) {
+      hitDeadline = true;
+      return true;
+    }
+    return false;
+  };
   const outcome = (failure: FailureMode, extras: Partial<UserOutcome> = {}): UserOutcome => ({
     answered: questionsAnswered,
     total: questions.length,
@@ -648,7 +709,10 @@ async function simulateUser(
     abandoned: false,
     returning: profile.isReturning,
     durationMs: performance.now() - userStart,
-    failure,
+    // If the user was cut off by the test duration, report it as a 'deadline'
+    // outcome (test config issue) instead of the server-side failure mode that
+    // happened to be triggered by the cutoff.
+    failure: hitDeadline && failure !== 'load' ? 'deadline' : failure,
     wsConnectFailed,
     usedHttpFallback,
     ...extras,
@@ -926,6 +990,25 @@ async function main() {
   // Calculate deadline and ramp interval
   const deadline = Date.now() + config.durationSeconds * 1000;
   const interval = config.users > 1 ? (config.rampSeconds * 1000) / (config.users - 1) : 0;
+
+  // Estimate if --duration is long enough for the slowest users to finish.
+  // Slow users: minDelay=3s, maxDelay=15s → avg 9s per question (worst case ~15s).
+  // A user started at the end of the ramp has: (duration - rampSeconds) seconds left.
+  // For reliable completion, that should cover worst-case delay × question count.
+  const worstCaseSecsPerUser = questions.length * 15; // matches createUserProfile slow bound
+  const minRecommendedDuration = config.rampSeconds + worstCaseSecsPerUser + 5;
+  if (config.durationSeconds < minRecommendedDuration) {
+    console.log(
+      `\n⚠  Warning: --duration ${config.durationSeconds}s may be too short for ${questions.length} questions.`,
+    );
+    console.log(
+      `   Slow users need up to ~${worstCaseSecsPerUser}s to answer, plus ${config.rampSeconds}s ramp.`,
+    );
+    console.log(
+      `   Recommended: --duration ${minRecommendedDuration} (or higher). Users cut short will be`,
+    );
+    console.log(`   reported under "Cut off by --duration" in the results.`);
+  }
 
   console.log(`\nRamping ${config.users} users over ${config.rampSeconds}s...`);
 
