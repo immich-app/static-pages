@@ -164,6 +164,14 @@ export class SurveyDO extends DurableObject {
   async alarm(): Promise<void> {
     this.cache.broadcastScheduled.value = false;
     broadcastToViewers(this.ctx, this.cache);
+    // Keep the broadcast loop running as long as viewers are connected so they
+    // get periodic counts/stats updates even when no activity is happening.
+    // The loop self-terminates when the last viewer disconnects — the next
+    // alarm fires once, sees zero viewers in broadcastToViewers (early return),
+    // and doesn't re-schedule.
+    if (this.ctx.getWebSockets('viewer').length > 0) {
+      scheduleBroadcast(this.ctx, this.cache.broadcastScheduled);
+    }
   }
 
   // ============================================================
