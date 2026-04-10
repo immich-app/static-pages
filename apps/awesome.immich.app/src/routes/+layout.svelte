@@ -1,16 +1,19 @@
 <script lang="ts">
   import PageContent from '$common/components/PageContent.svelte';
-  import { siteMetadata } from '$lib';
+  import { getCategoryProviders, siteMetadata } from '$lib';
   import '$lib/app.css';
   import {
     AppShell,
     AppShellHeader,
     Button,
+    CommandPaletteButton,
+    commandPaletteManager,
+    CommandPaletteProvider,
     ControlBar,
     ControlBarHeader,
     ControlBarOverflow,
+    getSiteProviders,
     Logo,
-    themeManager,
     ThemeSwitcher,
     TooltipProvider,
   } from '@immich/ui';
@@ -23,8 +26,10 @@
 
   const { children }: Props = $props();
 
-  themeManager.initialize();
+  commandPaletteManager.enable();
 </script>
+
+<CommandPaletteProvider providers={[...getCategoryProviders(), ...getSiteProviders()]} />
 
 <TooltipProvider>
   <AppShell>
@@ -37,7 +42,10 @@
           </a>
         </ControlBarHeader>
         <ControlBarOverflow>
-          <Button color="secondary" href={siteMetadata.editUrl} leadingIcon={mdiPencil}>Edit this page</Button>
+          <Button color="secondary" href={siteMetadata.editUrl} leadingIcon={mdiPencil} size="small" shape="round">
+            Edit this page
+          </Button>
+          <CommandPaletteButton />
           <ThemeSwitcher />
         </ControlBarOverflow>
       </ControlBar>

@@ -26,7 +26,8 @@ export default [
         parser: ts.parser,
       },
     },
-
+  },
+  {
     rules: {
       'svelte/no-navigation-without-resolve': 'off',
     },

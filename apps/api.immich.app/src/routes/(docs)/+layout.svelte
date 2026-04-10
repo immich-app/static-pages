@@ -47,9 +47,14 @@
   </AppShellHeader>
 
   <AppShellSidebar bind:open class="border-e">
-    <div class="mt-8 flex flex-col gap-4 pe-6">
+    <div class="my-4 me-4 mb-24 flex flex-col gap-4">
       <div>
-        <NavbarItem title="Introduction" href={ApiPage.Introduction} icon={mdiNoteOutline} activeIcon={mdiNote} />
+        <NavbarItem
+          title="Introduction"
+          href={ApiPage.Introduction}
+          icon={{ icon: mdiNoteOutline, flipped: true, flopped: true }}
+          activeIcon={{ icon: mdiNote, flipped: true, flopped: true }}
+        />
         <NavbarItem
           title="Getting started"
           href={ApiPage.GettingStarted}
@@ -74,7 +79,7 @@
         />
       </div>
       <div>
-        <NavbarGroup title="Endpoints" />
+        <NavbarGroup title="Endpoints" variant="compact" />
         {#each tags as tag (tag.href)}
           <NavbarItem title={tag.name} href={tag.href} icon={getIcon(tag.name)} variant="compact" />
         {/each}

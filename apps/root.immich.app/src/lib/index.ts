@@ -1,4 +1,6 @@
+import { goto } from '$app/navigation';
 import { PUBLIC_IMMICH_ENV } from '$env/static/public';
+import { defaultProvider, type ActionItem } from '@immich/ui';
 import fm from 'front-matter';
 import { DateTime } from 'luxon';
 
@@ -117,3 +119,14 @@ const getPosts = () => {
 };
 
 export const posts: BlogPost[] = getPosts();
+
+export const getBlogProvider = () => {
+  const commands: ActionItem[] = posts.map((post) => ({
+    title: post.title,
+    description: `${post.publishedAt.toLocaleString(DateTime.DATE_MED)} — ${post.description}`,
+    extraText: post.url,
+    onAction: () => goto(post.url),
+  }));
+
+  return defaultProvider({ name: 'Posts', types: ['blog', 'blogs', 'post', 'posts'], actions: commands });
+};

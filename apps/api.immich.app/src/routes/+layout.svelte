@@ -1,138 +1,28 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
   import { page } from '$app/state';
-  import { ApiPage } from '$lib';
   import '$lib/app.css';
   import ErrorLayout from '$lib/components/ErrorLayout.svelte';
-  import { getOpenApi } from '$lib/services/open-api';
+  import { getOpenApiProviders } from '$lib/services/open-api';
   import {
-    asText,
     commandPaletteManager,
     CommandPaletteProvider,
-    defaultProvider,
-    siteCommands,
-    themeManager,
+    getSiteProviders,
+    ScreencastOverlay,
     TooltipProvider,
-    type ActionItem,
   } from '@immich/ui';
-  import { mdiApi, mdiScriptText, mdiSend, mdiTag, mdiTagMultiple } from '@mdi/js';
   import { type Snippet } from 'svelte';
 
-  interface Props {
+  type Props = {
     children?: Snippet;
-  }
+  };
 
   let { children }: Props = $props();
 
-  themeManager.initialize();
-
   commandPaletteManager.enable();
-
-  const commands: ActionItem[] = [
-    {
-      icon: mdiSend,
-      iconClass: 'text-purple-800 dark:text-purple-200',
-      title: 'Toggle theme',
-      description: 'Toggle between light and dark theme',
-      onAction: () => themeManager.toggle(),
-      searchText: asText('theme', 'toggle', 'dark', 'light'),
-    },
-  ];
-
-  const pageCommands: ActionItem[] = [
-    {
-      title: 'Introduction',
-      description: 'Overview of Immich API',
-      href: ApiPage.Introduction,
-    },
-    {
-      title: 'Getting started',
-      description: 'Learn how to get started with Immich API',
-      href: ApiPage.GettingStarted,
-    },
-    {
-      title: 'Authentication',
-      description: 'Learn how authentication works in the Immich API',
-      href: ApiPage.Authentication,
-    },
-    {
-      title: 'Permissions',
-      description: 'Learn how permissions work with the Immich API',
-      href: ApiPage.Permissions,
-    },
-    {
-      title: 'SDK',
-      description: 'Learn about the @immich/sdk generated client',
-      href: ApiPage.Sdk,
-    },
-    {
-      title: 'Endpoints',
-      description: 'A list of all the endpoints in the Immich API',
-      href: ApiPage.Endpoints,
-    },
-    {
-      title: 'Models',
-      description: 'A list of all the models in the Immich API',
-      href: ApiPage.Models,
-    },
-  ].map(({ href, ...item }) => ({
-    icon: mdiScriptText,
-    iconClass: 'text-teal-800 dark:text-teal-200',
-    onAction: () => goto(href),
-    ...item,
-  }));
-
-  const endpointCommands = $state<ActionItem[]>([]);
-  const tagActions = $state<ActionItem[]>([]);
-  const modelCommands = $state<ActionItem[]>([]);
-
-  try {
-    const { tags, models } = getOpenApi();
-
-    for (const tag of tags) {
-      tagActions.push({
-        icon: mdiTagMultiple,
-        iconClass: 'text-pink-700 dark:text-pink-200',
-        title: tag.name,
-        onAction: () => goto(tag.href),
-      });
-
-      for (const endpoint of tag.endpoints) {
-        endpointCommands.push({
-          icon: mdiApi,
-          iconClass: 'text-indigo-700 dark:text-indigo-200',
-          title: endpoint.operationId,
-          description: endpoint.description,
-          onAction: () => goto(endpoint.href),
-          searchText: asText(endpoint.operationId, endpoint.name, endpoint.description),
-        });
-      }
-    }
-
-    for (const model of models) {
-      modelCommands.push({
-        icon: mdiTag,
-        iconClass: 'text-violet-700 dark:text-violet-200',
-        title: model.name,
-        description: model.description,
-        onAction: () => goto(model.href),
-        searchText: asText(model.name, model.title, model.description),
-      });
-    }
-  } catch {
-    // noop
-  }
 </script>
 
-<CommandPaletteProvider
-  providers={[
-    defaultProvider({ name: 'Command', actions: commands }),
-    defaultProvider({ name: 'Page', actions: pageCommands }),
-    defaultProvider({ name: 'Link', actions: siteCommands }),
-    defaultProvider({ name: 'Endpoint', actions: endpointCommands }),
-    defaultProvider({ name: 'Model', actions: modelCommands }),
-  ]}
-/>
+<CommandPaletteProvider providers={[...getOpenApiProviders(), ...getSiteProviders()]} />
+<ScreencastOverlay />
 
 <TooltipProvider>
   {#if page.data.error}

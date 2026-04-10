@@ -12,8 +12,8 @@ importers:
   apps/api.immich.app:
     dependencies:
       '@immich/ui':
-        specifier: ^0.74.1
-        version: 0.74.1(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)
+        specifier: ^0.76.0
+        version: 0.76.0(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -106,8 +106,8 @@ importers:
   apps/awesome.immich.app:
     dependencies:
       '@immich/ui':
-        specifier: ^0.74.1
-        version: 0.74.1(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)
+        specifier: ^0.76.0
+        version: 0.76.0(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -206,8 +206,8 @@ importers:
   apps/buy.immich.app:
     dependencies:
       '@immich/ui':
-        specifier: ^0.74.1
-        version: 0.74.1(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)
+        specifier: ^0.76.0
+        version: 0.76.0(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -297,8 +297,8 @@ importers:
   apps/datasets.immich.app:
     dependencies:
       '@immich/ui':
-        specifier: ^0.74.1
-        version: 0.74.1(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)
+        specifier: ^0.76.0
+        version: 0.76.0(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -437,8 +437,8 @@ importers:
   apps/futo-backups-survey.immich.app:
     dependencies:
       '@immich/ui':
-        specifier: ^0.74.1
-        version: 0.74.1(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)
+        specifier: ^0.76.0
+        version: 0.76.0(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -526,8 +526,8 @@ importers:
   apps/get.immich.app:
     dependencies:
       '@immich/ui':
-        specifier: ^0.74.1
-        version: 0.74.1(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)
+        specifier: ^0.76.0
+        version: 0.76.0(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -617,8 +617,8 @@ importers:
   apps/my.immich.app:
     dependencies:
       '@immich/ui':
-        specifier: ^0.74.1
-        version: 0.74.1(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)
+        specifier: ^0.76.0
+        version: 0.76.0(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -708,8 +708,8 @@ importers:
   apps/root.immich.app:
     dependencies:
       '@immich/ui':
-        specifier: ^0.74.1
-        version: 0.74.1(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)
+        specifier: ^0.76.0
+        version: 0.76.0(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -1277,8 +1277,8 @@ packages:
     peerDependencies:
       svelte: ^5.0.0
 
-  '@immich/ui@0.74.1':
-    resolution: {integrity: sha512-Z/ZAHsaVJxasfYho90kZQ0qsKzdEjfNHqWb0wccrJ5B8eCVtqXMJpOZANiS0QefcqLqRedm3oF6La4PIxLTaEA==}
+  '@immich/ui@0.76.0':
+    resolution: {integrity: sha512-ghxfbC47UPMwQJ65maOUYdduQ/G/zo87Oc2ZUKe6o8KgoHsWxLVjQUw44T3dZdFOhvyS8SsIlkGLuagVcrM9Bg==}
     peerDependencies:
       svelte: ^5.0.0
 
@@ -3112,7 +3112,7 @@ snapshots:
       node-emoji: 2.2.0
       svelte: 5.55.1
 
-  '@immich/ui@0.74.1(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)':
+  '@immich/ui@0.76.0(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.1)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(typescript@6.0.2)(vite@8.0.5(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@24.12.0)(esbuild@0.27.3)(jiti@2.6.1)))(svelte@5.55.1)(tailwindcss@4.2.2)':
     dependencies:
       '@immich/svelte-markdown-preprocess': 0.4.1(svelte@5.55.1)
       '@internationalized/date': 3.12.0
