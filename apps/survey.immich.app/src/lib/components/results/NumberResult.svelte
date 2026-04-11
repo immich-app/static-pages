@@ -49,17 +49,16 @@
   {:else if stats.total === 0}
     <p class="text-sm text-gray-500">No responses yet.</p>
   {:else}
-    <!-- Histogram -->
+    <!-- Histogram. Bars use explicit pixel heights (not flex-1 percentage)
+         because the column has no intrinsic cross-axis height, which makes
+         the flex approach collapse to 0. -->
+    {@const CHART_PX = 128}
     <div>
-      <div class="flex h-32 items-end gap-1">
+      <div class="flex items-end gap-1" style="height: {CHART_PX + 20}px">
         {#each buckets as bucket, i (i)}
+          {@const barPx = bucket.count === 0 ? 0 : Math.max(2, Math.round((bucket.count / maxBucket) * CHART_PX))}
           <div class="flex flex-1 flex-col items-center gap-1" title="{bucket.label}: {bucket.count} responses">
-            <div class="flex w-full flex-1 items-end">
-              <div
-                class="w-full rounded-t bg-blue-500/70 transition-all"
-                style="height: {(bucket.count / maxBucket) * 100}%"
-              ></div>
-            </div>
+            <div class="w-full rounded-t bg-blue-500/70 transition-all" style="height: {barPx}px"></div>
             <span class="text-[10px] text-gray-500" style="max-width: 100%">
               {bucket.label}
             </span>

@@ -198,9 +198,14 @@ export interface QuestionTimingEntry {
   questionId: string;
   questionText: string;
   sampleSize: number;
-  /** Median milliseconds spent on this question. */
-  medianMs: number | null;
   meanMs: number | null;
+  medianMs: number | null;
+  p5Ms: number | null;
+  p25Ms: number | null;
+  p75Ms: number | null;
+  p95Ms: number | null;
+  minMs: number | null;
+  maxMs: number | null;
 }
 
 export interface SlowAnalyticsPayload {

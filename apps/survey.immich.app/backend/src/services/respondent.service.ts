@@ -310,8 +310,14 @@ export class RespondentService {
       questionId: string;
       questionText: string;
       sampleSize: number;
-      medianMs: number | null;
       meanMs: number | null;
+      medianMs: number | null;
+      p5Ms: number | null;
+      p25Ms: number | null;
+      p75Ms: number | null;
+      p95Ms: number | null;
+      minMs: number | null;
+      maxMs: number | null;
     }>
   > {
     const survey = await this.surveys.getById(surveyId);
@@ -331,20 +337,32 @@ export class RespondentService {
       entry.durations.push(r.answer_ms);
     }
 
+    // Nearest-rank percentile (no interpolation). Good enough for display and
+    // cheap regardless of sample size.
+    const percentile = (sorted: number[], p: number): number | null => {
+      if (sorted.length === 0) return null;
+      const idx = Math.min(sorted.length - 1, Math.max(0, Math.floor((p / 100) * (sorted.length - 1))));
+      return sorted[idx];
+    };
+
     return [...byQ.values()]
       .sort((a, b) => a.sort - b.sort)
       .map((q) => {
         const sorted = [...q.durations].sort((a, b) => a - b);
         const n = sorted.length;
         const sum = sorted.reduce((acc, v) => acc + v, 0);
-        const median = n > 0 ? sorted[Math.floor(n / 2)] : null;
-        const mean = n > 0 ? Math.round(sum / n) : null;
         return {
           questionId: q.questionId,
           questionText: q.questionText,
           sampleSize: n,
-          medianMs: median,
-          meanMs: mean,
+          meanMs: n > 0 ? Math.round(sum / n) : null,
+          medianMs: percentile(sorted, 50),
+          p5Ms: percentile(sorted, 5),
+          p25Ms: percentile(sorted, 25),
+          p75Ms: percentile(sorted, 75),
+          p95Ms: percentile(sorted, 95),
+          minMs: n > 0 ? sorted[0] : null,
+          maxMs: n > 0 ? sorted[n - 1] : null,
         };
       });
   }
