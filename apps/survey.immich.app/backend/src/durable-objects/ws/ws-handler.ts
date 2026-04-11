@@ -8,7 +8,7 @@ import type { SurveyService } from '../../services/survey.service';
 import type { RespondentService } from '../../services/respondent.service';
 import type { SurveyCache } from '../cache';
 import { ServiceError } from '../../services/errors';
-import { ROLE_HIERARCHY, BATCH_ANSWER_LIMIT } from '../../constants';
+import { ROLE_HIERARCHY, BATCH_ANSWER_LIMIT, clampAnswerMs } from '../../constants';
 import { execute, type CommandContext } from '../do-commands';
 import { getPresenceCounts, scheduleBroadcast } from './ws-broadcaster';
 
@@ -33,35 +33,46 @@ function respondError(ws: WebSocket, requestId: string, op: string, message: str
   send(ws, { type: 'response', requestId, op, error: message });
 }
 
-// Operations that require admin authentication
-const ADMIN_OPS = new Set<string>(['delete-respondent']);
+/**
+ * Declarative authorization table. Every op that requires authentication
+ * MUST appear here. The dispatcher rejects unknown ops at the default
+ * branch, and any op mapped here is gated by the listed minimum role.
+ *
+ * Public ops (no entry) — respondent taking the survey:
+ *   get-public-survey, resume, submit-answers, complete
+ *
+ * Keeping this as a single map (instead of three Sets + inline checks)
+ * means adding a new op only touches this table plus the switch below,
+ * and makes it obvious which operations need which permissions.
+ */
+type MinRole = 'viewer' | 'editor' | 'admin';
+const OP_ROLES: Record<string, MinRole> = {
+  // Admin-only
+  'delete-respondent': 'admin',
 
-// Operations that require at least editor authentication (mutations + definition export)
-const EDITOR_OPS = new Set<string>([
-  'export-definition',
-  'create-section',
-  'update-section',
-  'delete-section',
-  'reorder-sections',
-  'create-question',
-  'update-question',
-  'delete-question',
-  'reorder-questions',
-]);
+  // Editor mutations + definition export
+  'export-definition': 'editor',
+  'create-section': 'editor',
+  'update-section': 'editor',
+  'delete-section': 'editor',
+  'reorder-sections': 'editor',
+  'create-question': 'editor',
+  'update-question': 'editor',
+  'delete-question': 'editor',
+  'reorder-questions': 'editor',
 
-// Operations that require at least viewer authentication (read-only admin queries)
-const VIEWER_OPS = new Set<string>([
-  'get-survey',
-  'get-results',
-  'get-live-results',
-  'get-timeline',
-  'get-dropoff',
-  'get-completion-times',
-  'get-question-timings',
-  'list-respondents',
-  'get-respondent',
-  'search-answers',
-]);
+  // Viewer reads (admin dashboard)
+  'get-survey': 'viewer',
+  'get-results': 'viewer',
+  'get-live-results': 'viewer',
+  'get-timeline': 'viewer',
+  'get-dropoff': 'viewer',
+  'get-completion-times': 'viewer',
+  'get-question-timings': 'viewer',
+  'list-respondents': 'viewer',
+  'get-respondent': 'viewer',
+  'search-answers': 'viewer',
+};
 
 function getWsRole(ws: WebSocket, ctx: DurableObjectState): string {
   for (const tag of ctx.getTags(ws)) {
@@ -109,16 +120,10 @@ export async function dispatch(
   const { requestId, op, data } = parsed;
   const d = data ?? {};
 
-  // Enforce authorization: check role hierarchy for protected operations
-  if (ADMIN_OPS.has(op) && !hasMinRole(ws, ctx, 'admin')) {
-    respondError(ws, requestId, op, 'Insufficient permissions');
-    return;
-  }
-  if (EDITOR_OPS.has(op) && !hasMinRole(ws, ctx, 'editor')) {
-    respondError(ws, requestId, op, 'Insufficient permissions');
-    return;
-  }
-  if (VIEWER_OPS.has(op) && !hasMinRole(ws, ctx, 'viewer')) {
+  // Enforce authorization via the declarative OP_ROLES table. Ops with no
+  // entry are public (respondent survey-taking ops).
+  const requiredRole = OP_ROLES[op];
+  if (requiredRole && !hasMinRole(ws, ctx, requiredRole)) {
     respondError(ws, requestId, op, 'Insufficient permissions');
     return;
   }
@@ -260,18 +265,13 @@ async function handleOp(
       }
 
       // Single batched INSERT — one SQL round-trip regardless of answer count.
-      // answer_ms is nullable and clamped to [0, 24h] since the client supplies
-      // it — defensive against bad values poisoning the aggregates.
+      // answer_ms is nullable and clamped via the shared helper so validation
+      // stays in lockstep with the HTTP path in respondent.service.
       const now = new Date().toISOString();
-      const MAX_ANSWER_MS = 24 * 60 * 60 * 1000;
       const placeholders = answers.map(() => '(?, ?, ?, ?, ?, ?)').join(', ');
       const values: unknown[] = [];
       for (const a of answers) {
-        let ms: number | null = null;
-        if (typeof a.answerMs === 'number' && Number.isFinite(a.answerMs) && a.answerMs >= 0) {
-          ms = Math.min(Math.floor(a.answerMs), MAX_ANSWER_MS);
-        }
-        values.push(respondentId, a.questionId, a.value, a.otherText ?? null, now, ms);
+        values.push(respondentId, a.questionId, a.value, a.otherText ?? null, now, clampAnswerMs(a.answerMs));
       }
       ctx.storage.sql.exec(
         `INSERT OR REPLACE INTO answers (respondent_id, question_id, answer, other_text, answered_at, answer_ms) VALUES ${placeholders}`,

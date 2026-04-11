@@ -6,7 +6,12 @@ import {
   type SurveyRow,
 } from '../repositories/survey.repository';
 import { ServiceError } from './errors';
-import { BATCH_ANSWER_LIMIT } from '../constants';
+import {
+  BATCH_ANSWER_LIMIT,
+  COMPLETION_TIME_BUCKETS,
+  clampAnswerMs as clampAnswerMsShared,
+  percentile,
+} from '../constants';
 
 export interface ResumeResult {
   answers: Record<string, { value: string; otherText?: string }>;
@@ -23,12 +28,10 @@ export interface BatchAnswerInput {
   answerMs?: number;
 }
 
-const MAX_ANSWER_MS = 24 * 60 * 60 * 1000;
-
-function clampAnswerMs(raw: unknown): number | null {
-  if (typeof raw !== 'number' || !Number.isFinite(raw) || raw < 0) return null;
-  return Math.min(Math.floor(raw), MAX_ANSWER_MS);
-}
+// Shared clamp helper — re-exported name so the rest of this file doesn't need
+// to change, but the implementation lives in constants.ts so the DO fast-path
+// in ws-handler can reuse the exact same validation.
+const clampAnswerMs = clampAnswerMsShared;
 
 export interface AggregatedResult {
   questionId: string;
@@ -337,14 +340,6 @@ export class RespondentService {
       entry.durations.push(r.answer_ms);
     }
 
-    // Nearest-rank percentile (no interpolation). Good enough for display and
-    // cheap regardless of sample size.
-    const percentile = (sorted: number[], p: number): number | null => {
-      if (sorted.length === 0) return null;
-      const idx = Math.min(sorted.length - 1, Math.max(0, Math.floor((p / 100) * (sorted.length - 1))));
-      return sorted[idx];
-    };
-
     return [...byQ.values()]
       .sort((a, b) => a.sort - b.sort)
       .map((q) => {
@@ -382,16 +377,7 @@ export class RespondentService {
     const durations = await this.respondents.getCompletionDurationsSeconds(surveyId);
     const count = durations.length;
 
-    const buckets: Array<{ label: string; minSeconds: number; maxSeconds: number | null; count: number }> = [
-      { label: '<30s', minSeconds: 0, maxSeconds: 30, count: 0 },
-      { label: '30s–1m', minSeconds: 30, maxSeconds: 60, count: 0 },
-      { label: '1–2m', minSeconds: 60, maxSeconds: 120, count: 0 },
-      { label: '2–5m', minSeconds: 120, maxSeconds: 300, count: 0 },
-      { label: '5–10m', minSeconds: 300, maxSeconds: 600, count: 0 },
-      { label: '10–30m', minSeconds: 600, maxSeconds: 1800, count: 0 },
-      { label: '30m–1h', minSeconds: 1800, maxSeconds: 3600, count: 0 },
-      { label: '>1h', minSeconds: 3600, maxSeconds: null, count: 0 },
-    ];
+    const buckets = COMPLETION_TIME_BUCKETS.map((b) => ({ ...b, count: 0 }));
     for (const d of durations) {
       for (const b of buckets) {
         if (d >= b.minSeconds && (b.maxSeconds === null || d < b.maxSeconds)) {
@@ -406,18 +392,14 @@ export class RespondentService {
     }
 
     const sorted = [...durations].sort((a, b) => a - b);
-    const percentile = (p: number) => {
-      const idx = Math.min(sorted.length - 1, Math.max(0, Math.floor((p / 100) * (sorted.length - 1))));
-      return sorted[idx];
-    };
     const sum = sorted.reduce((acc, v) => acc + v, 0);
 
     return {
       count,
       mean: Math.round(sum / count),
-      median: percentile(50),
-      p25: percentile(25),
-      p75: percentile(75),
+      median: percentile(sorted, 50),
+      p25: percentile(sorted, 25),
+      p75: percentile(sorted, 75),
       min: sorted[0],
       max: sorted[sorted.length - 1],
       buckets,

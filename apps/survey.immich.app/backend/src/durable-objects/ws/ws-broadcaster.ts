@@ -16,10 +16,11 @@
 
 import type { RespondentService } from '../../services/respondent.service';
 import type { SurveyCache } from '../cache';
+import { BROADCAST_FAST_INTERVAL_MS, BROADCAST_SLOW_TICKS_PER_CYCLE } from '../../constants';
 
-const BROADCAST_INTERVAL_MS = 5000;
-/** Slow tier fires every N fast ticks (12 × 5s = 60s). */
-const SLOW_TICKS_PER_CYCLE = 12;
+const BROADCAST_INTERVAL_MS = BROADCAST_FAST_INTERVAL_MS;
+/** Slow tier fires every N fast ticks (default 12 × 5s = 60s). */
+const SLOW_TICKS_PER_CYCLE = BROADCAST_SLOW_TICKS_PER_CYCLE;
 
 export function getPresenceCounts(ctx: DurableObjectState): {
   type: 'push';
