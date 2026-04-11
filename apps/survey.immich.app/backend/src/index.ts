@@ -118,6 +118,19 @@ interface CachedSlugEntry {
 const SLUG_CACHE_TTL_MS = 60_000;
 const slugCache = new Map<string, CachedSlugEntry>();
 
+/**
+ * Internal headers that the API worker uses to tell the DO the verified
+ * identity of a request. These MUST never be sourced from the client — a
+ * client sending any of these is trying to spoof auth. We strip them from
+ * every inbound request before forwarding, then the worker explicitly sets
+ * the ones it has verified.
+ */
+const INTERNAL_HEADERS = ['X-WS-Role', 'X-Respondent-Id', 'X-Authenticated'];
+
+function stripInternalHeaders(headers: Headers): void {
+  for (const h of INTERNAL_HEADERS) headers.delete(h);
+}
+
 async function slugToRow(db: D1Database, slug: string): Promise<{ id: string; password_hash: string | null } | null> {
   const cached = slugCache.get(slug);
   if (cached && Date.now() - cached.cachedAt < SLUG_CACHE_TTL_MS) {
@@ -139,6 +152,19 @@ async function slugToRow(db: D1Database, slug: string): Promise<{ id: string; pa
     }
   }
   return row;
+}
+
+/**
+ * Drop all slug-cache entries that point at the given survey. Call this after
+ * any mutation that invalidates the slug→surveyId mapping — delete, slug
+ * change, or password_hash change — so the current isolate doesn't serve
+ * stale routes. Other isolates still rely on the TTL to expire; keeping that
+ * short (60s) bounds cross-isolate staleness.
+ */
+function invalidateSlugCacheBySurveyId(surveyId: string): void {
+  for (const [slug, entry] of slugCache.entries()) {
+    if (entry.id === surveyId) slugCache.delete(slug);
+  }
 }
 
 function getDOStub(env: Env, surveyId: string): DurableObjectStub {
@@ -178,6 +204,12 @@ async function syncCatalog(response: Response, db: D1Database, surveyId: string)
       .prepare(`UPDATE surveys SET ${setClauses} WHERE id = ?`)
       .bind(...values)
       .run();
+    // If the mutation touched fields that feed the slug cache, drop any
+    // stale entries for this survey from the current isolate. Other isolates
+    // rely on the TTL to expire — keeping that short (60s) bounds the window.
+    if ('slug' in fields || 'password_hash' in fields) {
+      invalidateSlugCacheBySurveyId(surveyId);
+    }
   } catch {
     console.error('Failed to sync catalog for survey', surveyId);
   }
@@ -369,12 +401,16 @@ export default {
         }
       }
 
-      // Tag the connection with its verified role so the DO can enforce authorization
+      // Strip any client-supplied internal headers — these MUST come from
+      // the worker's own verification, never from the client.
       const wsHeaders = new Headers(request.headers);
+      stripInternalHeaders(wsHeaders);
       wsHeaders.set('X-WS-Role', wsRole);
 
       // Forward respondent cookie ID so the DO can tag the connection for
-      // authenticated-once respondent sessions (no need to re-auth per message)
+      // authenticated-once respondent sessions (no need to re-auth per message).
+      // The header is only set from a verified rid cookie — never from the
+      // client's request headers directly.
       if (isPublicRoute && doMatch.slug) {
         const respondentId = getRespondentId(request, doMatch.slug);
         if (respondentId) wsHeaders.set('X-Respondent-Id', respondentId);
@@ -383,11 +419,14 @@ export default {
       return stub.fetch(new Request(request.url, { method: request.method, headers: wsHeaders }));
     }
 
-    // Build headers for the DO request
+    // Build headers for the DO request. Strip any client-supplied internal
+    // headers up front — the worker is the only thing allowed to set them.
     const doHeaders = new Headers(request.headers);
+    stripInternalHeaders(doHeaders);
 
     if (isPublicRoute) {
-      // Add respondent ID header for public endpoints
+      // Add respondent ID header for public endpoints — ONLY from a verified
+      // rid cookie, never from the client's own X-Respondent-Id header.
       const slug = doMatch.slug!;
       const respondentId = getRespondentId(request, slug);
       if (respondentId) doHeaders.set('X-Respondent-Id', respondentId);
@@ -456,6 +495,10 @@ export default {
 
     // Handle delete: remove D1 catalog row and tag associations
     if (method === 'DELETE' && doResponse.status === 204 && doMatch.surveyId && !pathname.includes('/results/')) {
+      // Drop any stale slug→id entries for this survey from the per-isolate
+      // cache so a later request (e.g. same slug re-used by a brand new
+      // survey) can't route through to the deleted DO.
+      invalidateSlugCacheBySurveyId(surveyId);
       ctx.waitUntil(
         (async () => {
           await env.DB.batch([

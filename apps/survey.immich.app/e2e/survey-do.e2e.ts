@@ -219,6 +219,28 @@ test.describe('Respondent flow', () => {
     expect(results.respondentCounts.completed).toBeGreaterThanOrEqual(1);
     expect(results.results.length).toBeGreaterThan(0);
   });
+
+  test('a client-supplied X-Respondent-Id header is ignored (creates a new respondent)', async () => {
+    // Start a real session so we have a known-valid respondent ID
+    const resumeRes = await fetch(`${API}/api/s/${slug}/resume`);
+    const ridCookie = resumeRes.headers.get('set-cookie')?.split(';')[0];
+    expect(ridCookie).toBeTruthy();
+    const legitId = ridCookie!.split('=')[1];
+
+    // Now make a fresh request with NO cookie but a forged X-Respondent-Id
+    // matching the legit respondent. The API worker must strip the header
+    // before forwarding to the DO, so the DO should allocate a brand-new
+    // respondent (evidenced by returning a fresh Set-Cookie with a different
+    // UUID).
+    const forgedRes = await fetch(`${API}/api/s/${slug}/resume`, {
+      headers: { 'X-Respondent-Id': legitId },
+    });
+    expect(forgedRes.ok).toBe(true);
+    const forgedCookie = forgedRes.headers.get('set-cookie')?.split(';')[0];
+    expect(forgedCookie).toBeTruthy();
+    const forgedId = forgedCookie!.split('=')[1];
+    expect(forgedId).not.toBe(legitId);
+  });
 });
 
 // ============================================================
