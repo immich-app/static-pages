@@ -1,12 +1,17 @@
 <script lang="ts">
+  import type { Chart as ChartType } from 'chart.js';
   import type { CompletionTimesPayload } from '$lib/types';
   import StatStrip from './StatStrip.svelte';
+  import { getChartColors } from './chart-utils';
 
   interface Props {
     data: CompletionTimesPayload;
   }
 
   let { data }: Props = $props();
+
+  let canvas: HTMLCanvasElement | undefined = $state();
+  let chart: ChartType | undefined;
 
   function formatDuration(seconds: number | null): string {
     if (seconds === null || !Number.isFinite(seconds)) return '–';
@@ -18,8 +23,6 @@
     const remMin = mins % 60;
     return remMin === 0 ? `${hours}h` : `${hours}h ${remMin}m`;
   }
-
-  const maxCount = $derived(Math.max(1, ...data.buckets.map((b) => b.count)));
 
   interface StatEntry {
     label: string;
@@ -44,10 +47,7 @@
     ];
   });
 
-  /**
-   * Find the bucket index that contains the median so we can highlight it
-   * on the histogram. Null if no median (zero completions).
-   */
+  /** Bucket index containing the median — highlighted in the chart. */
   const medianBucketIndex = $derived.by(() => {
     if (data.median === null) return -1;
     for (let i = 0; i < data.buckets.length; i++) {
@@ -56,6 +56,75 @@
     }
     return -1;
   });
+
+  $effect(() => {
+    if (!canvas || data.buckets.length === 0 || data.count === 0) {
+      chart?.destroy();
+      chart = undefined;
+      return;
+    }
+
+    const { isDark, textColor, gridColor } = getChartColors();
+    const defaultColor = isDark ? 'rgba(96, 165, 250, 0.75)' : 'rgba(59, 130, 246, 0.8)';
+    const medianColor = isDark ? 'rgba(74, 222, 128, 0.9)' : 'rgba(16, 185, 129, 0.9)';
+
+    // Snapshot for the async closure so stale re-runs don't mix arrays.
+    const buckets = data.buckets;
+    const medianIdx = medianBucketIndex;
+
+    (async () => {
+      const { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip } = await import('chart.js');
+      Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip);
+
+      chart?.destroy();
+      chart = new Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels: buckets.map((b) => b.label),
+          datasets: [
+            {
+              label: 'Respondents',
+              data: buckets.map((b) => b.count),
+              backgroundColor: buckets.map((_, i) => (i === medianIdx ? medianColor : defaultColor)),
+              borderRadius: 4,
+              borderSkipped: false,
+              categoryPercentage: 0.85,
+              barPercentage: 0.9,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: (items) => items[0].label,
+                label: (ctx) => `${ctx.parsed.y} ${ctx.parsed.y === 1 ? 'respondent' : 'respondents'}`,
+              },
+            },
+          },
+          scales: {
+            x: {
+              ticks: { color: textColor, font: { size: 11 } },
+              grid: { display: false },
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { color: textColor, precision: 0 },
+              grid: { color: gridColor },
+            },
+          },
+        },
+      });
+    })();
+
+    return () => {
+      chart?.destroy();
+      chart = undefined;
+    };
+  });
 </script>
 
 <div class="rounded-xl border border-gray-300 p-5 dark:border-gray-600">
@@ -63,23 +132,10 @@
   <div class="space-y-4">
     <StatStrip {stats} />
     {#if data.count === 0 || data.buckets.length === 0}
-      <p class="py-4 text-center text-sm text-gray-500">No completed responses yet</p>
+      <p class="py-8 text-center text-sm text-gray-500">No completed responses yet</p>
     {:else}
-      <div class="flex h-32 items-end gap-1">
-        {#each data.buckets as bucket, i (i)}
-          <div class="flex flex-1 flex-col items-center gap-1" title="{bucket.label}: {bucket.count} responses">
-            <span class="text-[10px] text-gray-400 tabular-nums">{bucket.count > 0 ? bucket.count : ''}</span>
-            <div class="flex w-full flex-1 items-end">
-              <div
-                class="w-full rounded-t transition-all {i === medianBucketIndex
-                  ? 'bg-emerald-400/80'
-                  : 'bg-blue-500/70'}"
-                style="height: {(bucket.count / maxCount) * 100}%"
-              ></div>
-            </div>
-            <span class="text-[10px] text-gray-500">{bucket.label}</span>
-          </div>
-        {/each}
+      <div style="height: 200px">
+        <canvas bind:this={canvas}></canvas>
       </div>
       <p class="text-[11px] text-gray-500">
         Distribution of how long respondents took from starting the survey to hitting submit. The green bar is the

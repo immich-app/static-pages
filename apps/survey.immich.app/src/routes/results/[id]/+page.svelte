@@ -145,18 +145,17 @@
           />
         </div>
 
-        <!-- Completion time histogram + drop-off -->
-        <div class="animate-in animate-in-delay-2 mb-6 grid gap-4 md:grid-cols-2">
+        <!-- Completion time histogram -->
+        <div class="animate-in animate-in-delay-2 mb-6">
           <CompletionTimeChart data={loader.completionTimes} />
-          {#if loader.dropoffData.length > 0}
-            <DropoffChart data={loader.dropoffData} />
-          {:else}
-            <div class="rounded-xl border border-dashed border-gray-300 p-5 text-sm text-gray-500 dark:border-gray-700">
-              <h3 class="mb-2 text-base font-semibold text-gray-400">Drop-off Analysis</h3>
-              No data yet
-            </div>
-          {/if}
         </div>
+
+        <!-- Drop-off -->
+        {#if loader.dropoffData.length > 0}
+          <div class="animate-in animate-in-delay-2 mb-6">
+            <DropoffChart data={loader.dropoffData} />
+          </div>
+        {/if}
 
         <!-- Filter bar -->
         <div class="mb-4">
