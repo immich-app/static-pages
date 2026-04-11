@@ -60,14 +60,18 @@
   }
 
   function handleKeydown(e: KeyboardEvent) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      const target = e.target as HTMLElement;
-      if (target.tagName === 'TEXTAREA') return;
-      if (target.tagName === 'INPUT' && target.getAttribute('type') === 'text') {
-        e.preventDefault();
-        handleNext();
-      }
-    }
+    if (e.key !== 'Enter' || e.shiftKey) return;
+    const target = e.target as HTMLElement | null;
+    if (!target) return;
+    // Textareas keep their native behaviour (newline on Enter).
+    if (target.tagName === 'TEXTAREA') return;
+    // Buttons and links: let their native activation run instead (Next, Back,
+    // choice toggles, etc. all work via Enter that way).
+    if (target.tagName === 'BUTTON' || target.tagName === 'A') return;
+    // Everything else — text/email/number/tel/url/search/password and selects
+    // — advances to the next question.
+    e.preventDefault();
+    handleNext();
   }
 
   onMount(() => {

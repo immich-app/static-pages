@@ -5,6 +5,8 @@ interface PendingSave {
   questionId: string;
   value: string;
   otherText?: string;
+  /** Client-measured milliseconds spent on this question before committing. */
+  answerMs?: number;
 }
 
 const BACKOFF_DELAYS = [1000, 2000, 4000];

@@ -7,6 +7,7 @@ import type {
   TimelineDataPoint,
   DropoffDataPoint,
   CompletionTimesPayload,
+  QuestionTimingEntry,
   LiveCounts,
 } from '../types';
 import {
@@ -16,6 +17,7 @@ import {
   getSurveyTimeline,
   getSurveyDropoff,
   getSurveyCompletionTimes,
+  getSurveyQuestionTimings,
 } from '../api/surveys';
 import { createSurveyWsClient, registerWsClient, type SurveyWsClient } from '../api/survey-ws';
 
@@ -44,6 +46,7 @@ export function createResultsLoader(surveyId: string) {
   let timelineData = $state<TimelineDataPoint[]>([]);
   let dropoffData = $state<DropoffDataPoint[]>([]);
   let completionTimes = $state<CompletionTimesPayload>(EMPTY_COMPLETION_TIMES);
+  let questionTimings = $state<QuestionTimingEntry[]>([]);
   let loading = $state(true);
   let error = $state<string | null>(null);
   let activeTab = $state<'overview' | 'responses' | 'search'>('overview');
@@ -135,12 +138,13 @@ export function createResultsLoader(surveyId: string) {
     try {
       // First load uses minute granularity so we can inspect the timestamp
       // span and pick a sensible initial granularity below.
-      const [surveyData, resultsData, initialTimeline, dropoff, ctimes] = await Promise.all([
+      const [surveyData, resultsData, initialTimeline, dropoff, ctimes, qtimings] = await Promise.all([
         getSurvey(surveyId),
         getLiveResults(surveyId),
         getSurveyTimeline(surveyId, 'minute'),
         getSurveyDropoff(surveyId),
         getSurveyCompletionTimes(surveyId),
+        getSurveyQuestionTimings(surveyId),
       ]);
       survey = surveyData.survey;
       questions = surveyData.questions;
@@ -158,6 +162,7 @@ export function createResultsLoader(surveyId: string) {
       }
       dropoffData = dropoff;
       completionTimes = ctimes;
+      questionTimings = qtimings;
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to load results';
     }
@@ -199,6 +204,7 @@ export function createResultsLoader(surveyId: string) {
         }
         dropoffData = data.dropoff;
         completionTimes = data.completionTimes;
+        questionTimings = data.questionTimings;
       });
     }
 
@@ -237,6 +243,9 @@ export function createResultsLoader(surveyId: string) {
     },
     get completionTimes() {
       return completionTimes;
+    },
+    get questionTimings() {
+      return questionTimings;
     },
     get completionRate() {
       return completionRate;

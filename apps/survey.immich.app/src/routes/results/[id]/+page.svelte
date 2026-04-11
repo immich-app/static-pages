@@ -9,6 +9,7 @@
   import TimelineChart from '$lib/components/results/TimelineChart.svelte';
   import DropoffChart from '$lib/components/results/DropoffChart.svelte';
   import CompletionTimeChart from '$lib/components/results/CompletionTimeChart.svelte';
+  import QuestionTimingChart from '$lib/components/results/QuestionTimingChart.svelte';
   import FilterBar from '$lib/components/results/FilterBar.svelte';
   import ResponseViewer from '$lib/components/results/ResponseViewer.svelte';
   import TextSearch from '$lib/components/results/TextSearch.svelte';
@@ -148,6 +149,11 @@
         <!-- Completion time histogram -->
         <div class="animate-in animate-in-delay-2 mb-6">
           <CompletionTimeChart data={loader.completionTimes} />
+        </div>
+
+        <!-- Per-question timing -->
+        <div class="animate-in animate-in-delay-2 mb-6">
+          <QuestionTimingChart data={loader.questionTimings} />
         </div>
 
         <!-- Drop-off -->

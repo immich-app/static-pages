@@ -85,6 +85,35 @@ export class RespondentRepository {
     }));
   }
 
+  /**
+   * Returns per-question answer durations (ms) grouped by question. Only
+   * includes non-null answer_ms values. Used for the per-question timing
+   * analytics — caller aggregates medians/means in JS.
+   */
+  async getAnswerDurationsByQuestion(
+    surveyId: string,
+  ): Promise<Array<{ question_id: string; question_text: string; question_sort: number; answer_ms: number }>> {
+    const rows = await this.db
+      .selectFrom('answers as a')
+      .innerJoin('respondents as r', 'a.respondent_id', 'r.id')
+      .innerJoin('survey_questions as q', 'a.question_id', 'q.id')
+      .where('r.survey_id', '=', surveyId)
+      .where('a.answer_ms', 'is not', null)
+      .select([
+        'a.question_id as question_id',
+        'q.text as question_text',
+        'q.sort_order as question_sort',
+        'a.answer_ms as answer_ms',
+      ])
+      .execute();
+    return rows.map((r) => ({
+      question_id: String(r.question_id),
+      question_text: String(r.question_text),
+      question_sort: Number(r.question_sort),
+      answer_ms: Number(r.answer_ms),
+    }));
+  }
+
   async getCompletionDurationsSeconds(surveyId: string): Promise<number[]> {
     const rows = await this.db
       .selectFrom('respondents')
@@ -163,13 +192,14 @@ export class AnswerRepository {
       answer: string;
       other_text: string | null;
       answered_at: string;
+      answer_ms: number | null;
     }>,
   ): Promise<void> {
     for (const a of answers) {
-      await sql`INSERT INTO answers (respondent_id, question_id, answer, other_text, answered_at)
-        VALUES (${a.respondent_id}, ${a.question_id}, ${a.answer}, ${a.other_text}, ${a.answered_at})
+      await sql`INSERT INTO answers (respondent_id, question_id, answer, other_text, answered_at, answer_ms)
+        VALUES (${a.respondent_id}, ${a.question_id}, ${a.answer}, ${a.other_text}, ${a.answered_at}, ${a.answer_ms})
         ON CONFLICT (respondent_id, question_id)
-        DO UPDATE SET answer = excluded.answer, other_text = excluded.other_text, answered_at = excluded.answered_at`.execute(
+        DO UPDATE SET answer = excluded.answer, other_text = excluded.other_text, answered_at = excluded.answered_at, answer_ms = excluded.answer_ms`.execute(
         this.db,
       );
     }

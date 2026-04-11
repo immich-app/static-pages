@@ -90,6 +90,9 @@ export async function execute(op: string, data: Record<string, unknown>, ctx: Co
     case 'get-completion-times':
       return ctx.respondentService.getCompletionTimes(surveyId);
 
+    case 'get-question-timings':
+      return ctx.respondentService.getQuestionTimings(surveyId);
+
     case 'get-dropoff':
       return ctx.respondentService.getDropoff(surveyId);
 

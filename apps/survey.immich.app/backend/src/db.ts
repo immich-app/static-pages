@@ -65,6 +65,8 @@ export interface AnswersTable {
   answer: string;
   other_text: string | null;
   answered_at: string;
+  /** Milliseconds the respondent spent on this question before committing. */
+  answer_ms: number | null;
 }
 
 export interface TagsTable {

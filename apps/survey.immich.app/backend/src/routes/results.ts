@@ -70,6 +70,14 @@ export function registerResultRoutes(router: AppRouter) {
     return Response.json(data);
   });
 
+  router.get('/api/surveys/:id/results/question-timings', async (request: AuthenticatedRequest) => {
+    requireRole(request.user, 'viewer');
+    const ctx = getContext(request);
+    const service = createRespondentService(ctx.db);
+    const data = await service.getQuestionTimings(request.params.id);
+    return Response.json(data);
+  });
+
   router.get('/api/surveys/:id/results/dropoff', async (request: AuthenticatedRequest) => {
     requireRole(request.user, 'viewer');
     const ctx = getContext(request);

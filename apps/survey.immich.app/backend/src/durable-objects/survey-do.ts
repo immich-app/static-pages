@@ -534,6 +534,7 @@ export class SurveyDO extends DurableObject {
     if (method === 'GET' && path === '/results/timeline')
       return { op: 'get-timeline', params: { granularity: url.searchParams.get('granularity') } };
     if (method === 'GET' && path === '/results/completion-times') return { op: 'get-completion-times', params: {} };
+    if (method === 'GET' && path === '/results/question-timings') return { op: 'get-question-timings', params: {} };
     if (method === 'GET' && path === '/results/dropoff') return { op: 'get-dropoff', params: {} };
     if (method === 'GET' && path === '/results/respondents')
       return {

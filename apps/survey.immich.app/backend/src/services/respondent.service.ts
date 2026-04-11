@@ -20,6 +20,14 @@ export interface BatchAnswerInput {
   questionId: string;
   value: string;
   otherText?: string;
+  answerMs?: number;
+}
+
+const MAX_ANSWER_MS = 24 * 60 * 60 * 1000;
+
+function clampAnswerMs(raw: unknown): number | null {
+  if (typeof raw !== 'number' || !Number.isFinite(raw) || raw < 0) return null;
+  return Math.min(Math.floor(raw), MAX_ANSWER_MS);
 }
 
 export interface AggregatedResult {
@@ -141,6 +149,7 @@ export class RespondentService {
       answer: a.value,
       other_text: a.otherText ?? null,
       answered_at: now,
+      answer_ms: clampAnswerMs(a.answerMs),
     }));
 
     await this.answers.upsertBatch(answerRows);
@@ -294,6 +303,50 @@ export class RespondentService {
     const survey = await this.surveys.getById(surveyId);
     if (!survey) throw new ServiceError('Survey not found', 404);
     return this.respondents.getTimelineData(surveyId, granularity);
+  }
+
+  async getQuestionTimings(surveyId: string): Promise<
+    Array<{
+      questionId: string;
+      questionText: string;
+      sampleSize: number;
+      medianMs: number | null;
+      meanMs: number | null;
+    }>
+  > {
+    const survey = await this.surveys.getById(surveyId);
+    if (!survey) throw new ServiceError('Survey not found', 404);
+
+    const rows = await this.respondents.getAnswerDurationsByQuestion(surveyId);
+    if (rows.length === 0) return [];
+
+    // Bucket durations by question, preserving survey order.
+    const byQ = new Map<string, { questionId: string; questionText: string; sort: number; durations: number[] }>();
+    for (const r of rows) {
+      let entry = byQ.get(r.question_id);
+      if (!entry) {
+        entry = { questionId: r.question_id, questionText: r.question_text, sort: r.question_sort, durations: [] };
+        byQ.set(r.question_id, entry);
+      }
+      entry.durations.push(r.answer_ms);
+    }
+
+    return [...byQ.values()]
+      .sort((a, b) => a.sort - b.sort)
+      .map((q) => {
+        const sorted = [...q.durations].sort((a, b) => a - b);
+        const n = sorted.length;
+        const sum = sorted.reduce((acc, v) => acc + v, 0);
+        const median = n > 0 ? sorted[Math.floor(n / 2)] : null;
+        const mean = n > 0 ? Math.round(sum / n) : null;
+        return {
+          questionId: q.questionId,
+          questionText: q.questionText,
+          sampleSize: n,
+          medianMs: median,
+          meanMs: mean,
+        };
+      });
   }
 
   async getCompletionTimes(surveyId: string): Promise<{

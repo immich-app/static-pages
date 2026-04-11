@@ -20,6 +20,22 @@ export function createSurveyLoader(slug: string) {
   let client: ReturnType<typeof createApiClient> | null = null;
   let wsClient: SurveyWsClient | undefined;
 
+  /**
+   * Time (Date.now()) at which each question first became visible in the
+   * current session. Used to compute `answerMs` per question for analytics.
+   * Plain non-reactive object — it's written from a $effect that reads the
+   * reactive `engine.currentQuestion.id` and stamps a timestamp on change.
+   * Reset on page reload (resume after refresh starts the timer from 0).
+   */
+  const questionShownAt: Record<string, number> = {};
+
+  $effect(() => {
+    const q = engine?.currentQuestion;
+    if (q && questionShownAt[q.id] === undefined) {
+      questionShownAt[q.id] = Date.now();
+    }
+  });
+
   onMount(() => {
     (async () => {
       try {
@@ -101,7 +117,9 @@ export function createSurveyLoader(slug: string) {
 
   function handleAnswer(questionId: string, value: string, otherText?: string) {
     engine?.setAnswer(questionId, value, otherText);
-    client?.bufferAnswer({ questionId, value, otherText });
+    const shownAt = questionShownAt[questionId];
+    const answerMs = shownAt !== undefined ? Date.now() - shownAt : undefined;
+    client?.bufferAnswer({ questionId, value, otherText, answerMs });
   }
 
   async function handleComplete() {

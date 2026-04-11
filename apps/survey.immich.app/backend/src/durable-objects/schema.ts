@@ -72,14 +72,29 @@ CREATE TABLE IF NOT EXISTS answers (
   answer TEXT NOT NULL,
   other_text TEXT,
   answered_at TEXT NOT NULL,
+  answer_ms INTEGER,
   PRIMARY KEY (respondent_id, question_id)
 );
 `;
 
 const initializedInstances = new WeakSet<SqlStorage>();
 
+/**
+ * Additive migrations for existing DO instances. Each entry is idempotent —
+ * the catch handles the "column already exists" / "table already has X" errors
+ * that SQLite raises when re-running on an already-migrated database.
+ */
+const MIGRATIONS: string[] = ['ALTER TABLE answers ADD COLUMN answer_ms INTEGER'];
+
 export function ensureSchema(sql: SqlStorage): void {
   if (initializedInstances.has(sql)) return;
   sql.exec(SCHEMA);
+  for (const stmt of MIGRATIONS) {
+    try {
+      sql.exec(stmt);
+    } catch {
+      // Already applied — SQLite throws on duplicate column add.
+    }
+  }
   initializedInstances.add(sql);
 }

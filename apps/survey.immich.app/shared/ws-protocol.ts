@@ -127,6 +127,8 @@ export interface AnswerInput {
   questionId: string;
   value: string;
   otherText?: string;
+  /** Client-measured ms spent on this question before committing. */
+  answerMs?: number;
 }
 
 // ============================================================
@@ -192,10 +194,20 @@ export interface CompletionTimesPayload {
   buckets: CompletionTimeBucket[];
 }
 
+export interface QuestionTimingEntry {
+  questionId: string;
+  questionText: string;
+  sampleSize: number;
+  /** Median milliseconds spent on this question. */
+  medianMs: number | null;
+  meanMs: number | null;
+}
+
 export interface SlowAnalyticsPayload {
   timeline: TimelineDataPoint[];
   dropoff: DropoffDataPoint[];
   completionTimes: CompletionTimesPayload;
+  questionTimings: QuestionTimingEntry[];
 }
 
 export interface RespondentSummary {
@@ -303,6 +315,7 @@ export interface WsOperations {
   'get-live-results': { request: Record<string, never>; response: LiveResultsPayload };
   'get-timeline': { request: { granularity: 'minute' | 'hour' | 'day' }; response: TimelineDataPoint[] };
   'get-completion-times': { request: Record<string, never>; response: CompletionTimesPayload };
+  'get-question-timings': { request: Record<string, never>; response: QuestionTimingEntry[] };
   'get-dropoff': { request: Record<string, never>; response: DropoffDataPoint[] };
   'list-respondents': {
     request: { offset?: number; limit?: number };

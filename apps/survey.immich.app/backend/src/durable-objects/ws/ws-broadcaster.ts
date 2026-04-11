@@ -99,19 +99,21 @@ export async function broadcastSlowAnalytics(
   const viewers = ctx.getWebSockets('viewer');
   if (viewers.length === 0) return;
 
-  // Run all three analytics queries in parallel against the DO's SQLite.
-  // Each is one GROUP BY — dropoff joins answers+respondents, timeline groups
-  // respondents by minute, completion-times scans completed respondents.
-  const [timeline, dropoff, completionTimes] = await Promise.all([
+  // Run all four analytics queries in parallel against the DO's SQLite.
+  // Dropoff joins answers+respondents, timeline groups respondents by minute,
+  // completion-times scans completed respondents, question-timings scans
+  // answers with a non-null answer_ms.
+  const [timeline, dropoff, completionTimes, questionTimings] = await Promise.all([
     respondents.getTimeline(surveyId, 'minute'),
     respondents.getDropoff(surveyId),
     respondents.getCompletionTimes(surveyId),
+    respondents.getQuestionTimings(surveyId),
   ]);
 
   const payload = {
     type: 'push' as const,
     event: 'analytics' as const,
-    data: { timeline, dropoff, completionTimes },
+    data: { timeline, dropoff, completionTimes, questionTimings },
   };
   const serialized = JSON.stringify(payload);
 

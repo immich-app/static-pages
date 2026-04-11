@@ -57,6 +57,7 @@ const VIEWER_OPS = new Set<string>([
   'get-timeline',
   'get-dropoff',
   'get-completion-times',
+  'get-question-timings',
   'list-respondents',
   'get-respondent',
   'search-answers',
@@ -236,7 +237,11 @@ async function handleOp(
         throw new ServiceError('This survey has closed', 403);
       }
 
-      const answers = (data as { answers?: Array<{ questionId: string; value: string; otherText?: string }> }).answers;
+      const answers = (
+        data as {
+          answers?: Array<{ questionId: string; value: string; otherText?: string; answerMs?: number }>;
+        }
+      ).answers;
       if (!answers || !Array.isArray(answers) || answers.length === 0 || answers.length > BATCH_ANSWER_LIMIT) {
         throw new ServiceError(`Invalid answers payload: must be 1-${BATCH_ANSWER_LIMIT} answers`, 400);
       }
@@ -254,15 +259,22 @@ async function handleOp(
         cache.setAnswer(respondentId, a.questionId, a.value, a.otherText ?? null);
       }
 
-      // Single batched INSERT — one SQL round-trip regardless of answer count
+      // Single batched INSERT — one SQL round-trip regardless of answer count.
+      // answer_ms is nullable and clamped to [0, 24h] since the client supplies
+      // it — defensive against bad values poisoning the aggregates.
       const now = new Date().toISOString();
-      const placeholders = answers.map(() => '(?, ?, ?, ?, ?)').join(', ');
+      const MAX_ANSWER_MS = 24 * 60 * 60 * 1000;
+      const placeholders = answers.map(() => '(?, ?, ?, ?, ?, ?)').join(', ');
       const values: unknown[] = [];
       for (const a of answers) {
-        values.push(respondentId, a.questionId, a.value, a.otherText ?? null, now);
+        let ms: number | null = null;
+        if (typeof a.answerMs === 'number' && Number.isFinite(a.answerMs) && a.answerMs >= 0) {
+          ms = Math.min(Math.floor(a.answerMs), MAX_ANSWER_MS);
+        }
+        values.push(respondentId, a.questionId, a.value, a.otherText ?? null, now, ms);
       }
       ctx.storage.sql.exec(
-        `INSERT OR REPLACE INTO answers (respondent_id, question_id, answer, other_text, answered_at) VALUES ${placeholders}`,
+        `INSERT OR REPLACE INTO answers (respondent_id, question_id, answer, other_text, answered_at, answer_ms) VALUES ${placeholders}`,
         ...values,
       );
       return {};

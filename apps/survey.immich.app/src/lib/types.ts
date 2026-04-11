@@ -117,6 +117,14 @@ export interface CompletionTimesPayload {
   buckets: CompletionTimeBucket[];
 }
 
+export interface QuestionTimingEntry {
+  questionId: string;
+  questionText: string;
+  sampleSize: number;
+  medianMs: number | null;
+  meanMs: number | null;
+}
+
 export interface RespondentSummary {
   id: string;
   createdAt: string;

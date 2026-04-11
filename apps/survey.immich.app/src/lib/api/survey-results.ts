@@ -3,6 +3,7 @@ import type {
   TimelineDataPoint,
   DropoffDataPoint,
   CompletionTimesPayload,
+  QuestionTimingEntry,
   RespondentSummary,
   RespondentDetail,
   SearchResult,
@@ -55,6 +56,14 @@ export async function getSurveyCompletionTimes(id: string): Promise<CompletionTi
     return ws.request('get-completion-times', {}) as Promise<CompletionTimesPayload>;
   }
   return request(`/api/surveys/${id}/results/completion-times`);
+}
+
+export async function getSurveyQuestionTimings(id: string): Promise<QuestionTimingEntry[]> {
+  const ws = getWsClientById(id);
+  if (ws?.connected) {
+    return ws.request('get-question-timings', {}) as Promise<QuestionTimingEntry[]>;
+  }
+  return request(`/api/surveys/${id}/results/question-timings`);
 }
 
 export async function listRespondents(
