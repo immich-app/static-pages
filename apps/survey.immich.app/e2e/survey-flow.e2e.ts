@@ -645,7 +645,8 @@ test.describe('Enter key advances on single-line inputs', () => {
     await clickNext(page);
     await expect(page.getByRole('heading', { name: 'Any comments' })).toBeVisible({ timeout: 5000 });
 
-    const textarea = page.getByPlaceholder('Tell us more');
+    const textarea = page.locator('textarea');
+    await expect(textarea).toBeVisible({ timeout: 5000 });
     await textarea.fill('line one');
     await textarea.press('Enter');
     await textarea.pressSequentially('line two');

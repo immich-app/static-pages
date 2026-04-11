@@ -27,6 +27,12 @@
 
 <QuestionHeader text={question.text} description={question.description} />
 
-<Textarea bind:value={textValue} rows={6} maxlength={maxLength} oninput={handleInput} />
+<Textarea
+  bind:value={textValue}
+  rows={6}
+  maxlength={maxLength}
+  placeholder={question.placeholder ?? ''}
+  oninput={handleInput}
+/>
 
 <p class="mt-1 text-right text-sm text-gray-400">{textValue.length}/{maxLength}</p>
