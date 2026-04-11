@@ -2,6 +2,7 @@ import { request } from './request';
 import type {
   TimelineDataPoint,
   DropoffDataPoint,
+  CompletionTimesPayload,
   RespondentSummary,
   RespondentDetail,
   SearchResult,
@@ -29,7 +30,10 @@ export async function getSurveyResults(id: string): Promise<{
   return request(`/api/surveys/${id}/results`);
 }
 
-export async function getSurveyTimeline(id: string, granularity: 'day' | 'hour' = 'day'): Promise<TimelineDataPoint[]> {
+export async function getSurveyTimeline(
+  id: string,
+  granularity: 'minute' | 'hour' | 'day' = 'day',
+): Promise<TimelineDataPoint[]> {
   const ws = getWsClientById(id);
   if (ws?.connected) {
     return ws.request('get-timeline', { granularity }) as Promise<TimelineDataPoint[]>;
@@ -43,6 +47,14 @@ export async function getSurveyDropoff(id: string): Promise<DropoffDataPoint[]> 
     return ws.request('get-dropoff', {}) as Promise<DropoffDataPoint[]>;
   }
   return request(`/api/surveys/${id}/results/dropoff`);
+}
+
+export async function getSurveyCompletionTimes(id: string): Promise<CompletionTimesPayload> {
+  const ws = getWsClientById(id);
+  if (ws?.connected) {
+    return ws.request('get-completion-times', {}) as Promise<CompletionTimesPayload>;
+  }
+  return request(`/api/surveys/${id}/results/completion-times`);
 }
 
 export async function listRespondents(

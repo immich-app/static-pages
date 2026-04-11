@@ -8,6 +8,7 @@
   import LiveIndicator from '$lib/components/results/LiveIndicator.svelte';
   import TimelineChart from '$lib/components/results/TimelineChart.svelte';
   import DropoffChart from '$lib/components/results/DropoffChart.svelte';
+  import CompletionTimeChart from '$lib/components/results/CompletionTimeChart.svelte';
   import FilterBar from '$lib/components/results/FilterBar.svelte';
   import ResponseViewer from '$lib/components/results/ResponseViewer.svelte';
   import TextSearch from '$lib/components/results/TextSearch.svelte';
@@ -144,12 +145,18 @@
           />
         </div>
 
-        <!-- Drop-off -->
-        {#if loader.dropoffData.length > 0}
-          <div class="animate-in animate-in-delay-2 mb-6">
+        <!-- Completion time histogram + drop-off -->
+        <div class="animate-in animate-in-delay-2 mb-6 grid gap-4 md:grid-cols-2">
+          <CompletionTimeChart data={loader.completionTimes} />
+          {#if loader.dropoffData.length > 0}
             <DropoffChart data={loader.dropoffData} />
-          </div>
-        {/if}
+          {:else}
+            <div class="rounded-xl border border-dashed border-gray-300 p-5 text-sm text-gray-500 dark:border-gray-700">
+              <h3 class="mb-2 text-base font-semibold text-gray-400">Drop-off Analysis</h3>
+              No data yet
+            </div>
+          {/if}
+        </div>
 
         <!-- Filter bar -->
         <div class="mb-4">

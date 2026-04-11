@@ -1,8 +1,36 @@
 import { onMount, onDestroy } from 'svelte';
 import { SvelteMap } from 'svelte/reactivity';
-import type { Survey, SurveyQuestion, SurveySection, TimelineDataPoint, DropoffDataPoint, LiveCounts } from '../types';
-import { getSurvey, getLiveResults, exportResults, getSurveyTimeline, getSurveyDropoff } from '../api/surveys';
+import type {
+  Survey,
+  SurveyQuestion,
+  SurveySection,
+  TimelineDataPoint,
+  DropoffDataPoint,
+  CompletionTimesPayload,
+  LiveCounts,
+} from '../types';
+import {
+  getSurvey,
+  getLiveResults,
+  exportResults,
+  getSurveyTimeline,
+  getSurveyDropoff,
+  getSurveyCompletionTimes,
+} from '../api/surveys';
 import { createSurveyWsClient, registerWsClient, type SurveyWsClient } from '../api/survey-ws';
+
+type Granularity = 'minute' | 'hour' | 'day';
+
+const EMPTY_COMPLETION_TIMES: CompletionTimesPayload = {
+  count: 0,
+  mean: null,
+  median: null,
+  p25: null,
+  p75: null,
+  min: null,
+  max: null,
+  buckets: [],
+};
 
 export function createResultsLoader(surveyId: string) {
   let survey = $state<Survey | null>(null);
@@ -15,10 +43,11 @@ export function createResultsLoader(surveyId: string) {
   let liveCounts = $state<LiveCounts>({ activeViewers: 0, activeRespondents: 0 });
   let timelineData = $state<TimelineDataPoint[]>([]);
   let dropoffData = $state<DropoffDataPoint[]>([]);
+  let completionTimes = $state<CompletionTimesPayload>(EMPTY_COMPLETION_TIMES);
   let loading = $state(true);
   let error = $state<string | null>(null);
   let activeTab = $state<'overview' | 'responses' | 'search'>('overview');
-  let granularity = $state<'day' | 'hour'>('day');
+  let granularity = $state<Granularity>('day');
   let filterQuestionId = $state('');
   let filterValue = $state('');
   let exporting = $state(false);
@@ -65,7 +94,24 @@ export function createResultsLoader(surveyId: string) {
     }
   }
 
-  function handleGranularityChange(g: 'day' | 'hour') {
+  /**
+   * Pick an initial granularity based on the spread of response timestamps.
+   * New/active surveys get minute-level detail; long-running surveys default
+   * to hour or day so the chart isn't drowned in buckets.
+   */
+  function pickGranularity(data: TimelineDataPoint[]): Granularity {
+    if (data.length <= 1) return 'minute';
+    // Server returns minute-granularity periods as "YYYY-MM-DDTHH:MM".
+    const first = Date.parse(`${data[0].period}:00Z`);
+    const last = Date.parse(`${data[data.length - 1].period}:00Z`);
+    const spanMs = last - first;
+    const hours = spanMs / (1000 * 60 * 60);
+    if (hours <= 2) return 'minute';
+    if (hours <= 72) return 'hour';
+    return 'day';
+  }
+
+  function handleGranularityChange(g: Granularity) {
     granularity = g;
     refreshTimeline();
   }
@@ -87,11 +133,14 @@ export function createResultsLoader(surveyId: string) {
 
   onMount(async () => {
     try {
-      const [surveyData, resultsData, timeline, dropoff] = await Promise.all([
+      // First load uses minute granularity so we can inspect the timestamp
+      // span and pick a sensible initial granularity below.
+      const [surveyData, resultsData, initialTimeline, dropoff, ctimes] = await Promise.all([
         getSurvey(surveyId),
         getLiveResults(surveyId),
-        getSurveyTimeline(surveyId, granularity),
+        getSurveyTimeline(surveyId, 'minute'),
         getSurveyDropoff(surveyId),
+        getSurveyCompletionTimes(surveyId),
       ]);
       survey = surveyData.survey;
       questions = surveyData.questions;
@@ -101,8 +150,14 @@ export function createResultsLoader(surveyId: string) {
         results = resultsData.results;
         liveCounts = resultsData.liveCounts;
       }
-      timelineData = timeline;
+      granularity = pickGranularity(initialTimeline);
+      if (granularity === 'minute') {
+        timelineData = initialTimeline;
+      } else {
+        timelineData = await getSurveyTimeline(surveyId, granularity);
+      }
       dropoffData = dropoff;
+      completionTimes = ctimes;
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to load results';
     }
@@ -130,6 +185,20 @@ export function createResultsLoader(surveyId: string) {
         const updates: Record<string, (typeof data.results)[number]> = {};
         for (const r of data.results) updates[r.questionId] = r;
         results = results.map((r) => updates[r.questionId] ?? r);
+      });
+
+      // Slow-tier analytics (once per minute, fanned out to all viewers).
+      // Contains timeline, drop-off, and completion-time histogram — the
+      // fields that need SQL aggregations and so can't live in the 5s push.
+      // The server always sends timeline at minute granularity; we drop the
+      // payload's timeline if the user has picked a coarser bucket so their
+      // roll-up stays consistent with what they asked for.
+      wsClient.on('analytics', (data) => {
+        if (granularity === 'minute') {
+          timelineData = data.timeline;
+        }
+        dropoffData = data.dropoff;
+        completionTimes = data.completionTimes;
       });
     }
 
@@ -165,6 +234,9 @@ export function createResultsLoader(surveyId: string) {
     },
     get dropoffData() {
       return dropoffData;
+    },
+    get completionTimes() {
+      return completionTimes;
     },
     get completionRate() {
       return completionRate;

@@ -54,6 +54,14 @@ export class SurveyCache {
   /** Debounce flag for scheduled broadcasts — shared between ws-handler and survey-do */
   readonly broadcastScheduled = { value: false };
 
+  /**
+   * Fast-tier alarm tick counter. The slow-tier analytics broadcast fires
+   * every Nth fast tick (see SLOW_TICKS_PER_CYCLE in ws-broadcaster). This
+   * lives on the cache so it survives between alarm invocations without
+   * needing to be stored in DO storage.
+   */
+  fastTick = 0;
+
   constructor(private sql: SqlStorage) {}
 
   /** Check if a respondent exists. Uses in-memory state first, falls back to a fast PK lookup. */

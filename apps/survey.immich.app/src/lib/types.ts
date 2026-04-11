@@ -99,6 +99,24 @@ export interface DropoffDataPoint {
   dropoffRate: number;
 }
 
+export interface CompletionTimeBucket {
+  label: string;
+  minSeconds: number;
+  maxSeconds: number | null;
+  count: number;
+}
+
+export interface CompletionTimesPayload {
+  count: number;
+  mean: number | null;
+  median: number | null;
+  p25: number | null;
+  p75: number | null;
+  min: number | null;
+  max: number | null;
+  buckets: CompletionTimeBucket[];
+}
+
 export interface RespondentSummary {
   id: string;
   createdAt: string;

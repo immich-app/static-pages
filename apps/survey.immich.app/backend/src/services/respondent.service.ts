@@ -289,11 +289,68 @@ export class RespondentService {
 
   async getTimeline(
     surveyId: string,
-    granularity: 'day' | 'hour',
+    granularity: 'minute' | 'hour' | 'day',
   ): Promise<Array<{ period: string; started: number; completed: number }>> {
     const survey = await this.surveys.getById(surveyId);
     if (!survey) throw new ServiceError('Survey not found', 404);
     return this.respondents.getTimelineData(surveyId, granularity);
+  }
+
+  async getCompletionTimes(surveyId: string): Promise<{
+    count: number;
+    median: number | null;
+    mean: number | null;
+    p25: number | null;
+    p75: number | null;
+    min: number | null;
+    max: number | null;
+    buckets: Array<{ label: string; minSeconds: number; maxSeconds: number | null; count: number }>;
+  }> {
+    const survey = await this.surveys.getById(surveyId);
+    if (!survey) throw new ServiceError('Survey not found', 404);
+    const durations = await this.respondents.getCompletionDurationsSeconds(surveyId);
+    const count = durations.length;
+
+    const buckets: Array<{ label: string; minSeconds: number; maxSeconds: number | null; count: number }> = [
+      { label: '<30s', minSeconds: 0, maxSeconds: 30, count: 0 },
+      { label: '30s–1m', minSeconds: 30, maxSeconds: 60, count: 0 },
+      { label: '1–2m', minSeconds: 60, maxSeconds: 120, count: 0 },
+      { label: '2–5m', minSeconds: 120, maxSeconds: 300, count: 0 },
+      { label: '5–10m', minSeconds: 300, maxSeconds: 600, count: 0 },
+      { label: '10–30m', minSeconds: 600, maxSeconds: 1800, count: 0 },
+      { label: '30m–1h', minSeconds: 1800, maxSeconds: 3600, count: 0 },
+      { label: '>1h', minSeconds: 3600, maxSeconds: null, count: 0 },
+    ];
+    for (const d of durations) {
+      for (const b of buckets) {
+        if (d >= b.minSeconds && (b.maxSeconds === null || d < b.maxSeconds)) {
+          b.count += 1;
+          break;
+        }
+      }
+    }
+
+    if (count === 0) {
+      return { count: 0, median: null, mean: null, p25: null, p75: null, min: null, max: null, buckets };
+    }
+
+    const sorted = [...durations].sort((a, b) => a - b);
+    const percentile = (p: number) => {
+      const idx = Math.min(sorted.length - 1, Math.max(0, Math.floor((p / 100) * (sorted.length - 1))));
+      return sorted[idx];
+    };
+    const sum = sorted.reduce((acc, v) => acc + v, 0);
+
+    return {
+      count,
+      mean: Math.round(sum / count),
+      median: percentile(50),
+      p25: percentile(25),
+      p75: percentile(75),
+      min: sorted[0],
+      max: sorted[sorted.length - 1],
+      buckets,
+    };
   }
 
   async getDropoff(surveyId: string): Promise<

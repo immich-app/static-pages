@@ -82,9 +82,13 @@ export async function execute(op: string, data: Record<string, unknown>, ctx: Co
       return ctx.respondentService.getResults(surveyId);
 
     case 'get-timeline': {
-      const granularity = (data.granularity as 'day' | 'hour') || 'day';
+      const raw = data.granularity;
+      const granularity: 'minute' | 'hour' | 'day' = raw === 'minute' ? 'minute' : raw === 'hour' ? 'hour' : 'day';
       return ctx.respondentService.getTimeline(surveyId, granularity);
     }
+
+    case 'get-completion-times':
+      return ctx.respondentService.getCompletionTimes(surveyId);
 
     case 'get-dropoff':
       return ctx.respondentService.getDropoff(surveyId);

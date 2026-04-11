@@ -56,8 +56,17 @@ export function registerResultRoutes(router: AppRouter) {
     const ctx = getContext(request);
     const service = createRespondentService(ctx.db);
     const url = new URL(request.url);
-    const granularity = url.searchParams.get('granularity') === 'hour' ? 'hour' : 'day';
+    const raw = url.searchParams.get('granularity');
+    const granularity: 'minute' | 'hour' | 'day' = raw === 'minute' ? 'minute' : raw === 'hour' ? 'hour' : 'day';
     const data = await service.getTimeline(request.params.id, granularity);
+    return Response.json(data);
+  });
+
+  router.get('/api/surveys/:id/results/completion-times', async (request: AuthenticatedRequest) => {
+    requireRole(request.user, 'viewer');
+    const ctx = getContext(request);
+    const service = createRespondentService(ctx.db);
+    const data = await service.getCompletionTimes(request.params.id);
     return Response.json(data);
   });
 

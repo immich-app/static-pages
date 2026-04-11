@@ -56,6 +56,7 @@ const VIEWER_OPS = new Set<string>([
   'get-live-results',
   'get-timeline',
   'get-dropoff',
+  'get-completion-times',
   'list-respondents',
   'get-respondent',
   'search-answers',

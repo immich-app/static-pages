@@ -174,6 +174,30 @@ export interface DropoffDataPoint {
   dropoffRate: number;
 }
 
+export interface CompletionTimeBucket {
+  label: string;
+  minSeconds: number;
+  maxSeconds: number | null;
+  count: number;
+}
+
+export interface CompletionTimesPayload {
+  count: number;
+  mean: number | null;
+  median: number | null;
+  p25: number | null;
+  p75: number | null;
+  min: number | null;
+  max: number | null;
+  buckets: CompletionTimeBucket[];
+}
+
+export interface SlowAnalyticsPayload {
+  timeline: TimelineDataPoint[];
+  dropoff: DropoffDataPoint[];
+  completionTimes: CompletionTimesPayload;
+}
+
 export interface RespondentSummary {
   id: string;
   createdAt: string;
@@ -277,7 +301,8 @@ export interface WsOperations {
   // Results
   'get-results': { request: Record<string, never>; response: ResultsPayload };
   'get-live-results': { request: Record<string, never>; response: LiveResultsPayload };
-  'get-timeline': { request: { granularity: 'day' | 'hour' }; response: TimelineDataPoint[] };
+  'get-timeline': { request: { granularity: 'minute' | 'hour' | 'day' }; response: TimelineDataPoint[] };
+  'get-completion-times': { request: Record<string, never>; response: CompletionTimesPayload };
   'get-dropoff': { request: Record<string, never>; response: DropoffDataPoint[] };
   'list-respondents': {
     request: { offset?: number; limit?: number };
@@ -302,6 +327,7 @@ export interface WsPushEvents {
   counts: { activeViewers: number; activeRespondents: number };
   stats: { total: number; completed: number; completionRate: number };
   results: ResultsPayload;
+  analytics: SlowAnalyticsPayload;
 }
 
 // ============================================================

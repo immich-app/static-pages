@@ -18,7 +18,13 @@ import type { SurveyService } from '../services/survey.service';
 import type { RespondentService } from '../services/respondent.service';
 import { ServiceError } from '../services/errors';
 import { dispatch as wsDispatch } from './ws/ws-handler';
-import { broadcastToViewers, scheduleBroadcast, getPresenceCounts } from './ws/ws-broadcaster';
+import {
+  broadcastToViewers,
+  broadcastSlowAnalytics,
+  scheduleBroadcast,
+  getPresenceCounts,
+  SLOW_TICKS_PER_CYCLE,
+} from './ws/ws-broadcaster';
 import { execute, type CommandContext } from './do-commands';
 import type { Database, SurveyRow, SectionRow, QuestionRow } from '../db';
 
@@ -164,6 +170,23 @@ export class SurveyDO extends DurableObject {
   async alarm(): Promise<void> {
     this.cache.broadcastScheduled.value = false;
     broadcastToViewers(this.ctx, this.cache);
+
+    // Slow-tier analytics broadcast: runs one set of SQL queries per cycle
+    // (60s default) and fans the result out to every viewer. This means a
+    // survey with 500 viewers on the results page still only runs the
+    // dropoff/timeline/completion-time queries once per minute total —
+    // critical for large-scale live broadcasts.
+    this.cache.fastTick += 1;
+    if (this.cache.fastTick >= SLOW_TICKS_PER_CYCLE) {
+      this.cache.fastTick = 0;
+      if (this.ctx.getWebSockets('viewer').length > 0 && this.cache.hasSurvey) {
+        // Fire-and-forget: we don't block the next fast broadcast on analytics.
+        broadcastSlowAnalytics(this.ctx, this.cache.survey.id, this.respondentService).catch((e) => {
+          console.error('slow analytics broadcast failed:', e);
+        });
+      }
+    }
+
     // Keep the broadcast loop running as long as viewers are connected so they
     // get periodic counts/stats updates even when no activity is happening.
     // The loop self-terminates when the last viewer disconnects — the next
@@ -171,6 +194,8 @@ export class SurveyDO extends DurableObject {
     // and doesn't re-schedule.
     if (this.ctx.getWebSockets('viewer').length > 0) {
       scheduleBroadcast(this.ctx, this.cache.broadcastScheduled);
+    } else {
+      this.cache.fastTick = 0;
     }
   }
 
@@ -508,6 +533,7 @@ export class SurveyDO extends DurableObject {
     if (method === 'GET' && path === '/results') return { op: 'get-results', params: {} };
     if (method === 'GET' && path === '/results/timeline')
       return { op: 'get-timeline', params: { granularity: url.searchParams.get('granularity') } };
+    if (method === 'GET' && path === '/results/completion-times') return { op: 'get-completion-times', params: {} };
     if (method === 'GET' && path === '/results/dropoff') return { op: 'get-dropoff', params: {} };
     if (method === 'GET' && path === '/results/respondents')
       return {

@@ -53,10 +53,11 @@ export class RespondentRepository {
 
   async getTimelineData(
     surveyId: string,
-    granularity: 'day' | 'hour',
+    granularity: 'minute' | 'hour' | 'day',
   ): Promise<Array<{ period: string; started: number; completed: number }>> {
-    const dateExpr = granularity === 'day' ? sql`substr(created_at, 1, 10)` : sql`substr(created_at, 1, 13)`;
-    const completedExpr = granularity === 'day' ? sql`substr(completed_at, 1, 10)` : sql`substr(completed_at, 1, 13)`;
+    const sliceLen = granularity === 'day' ? 10 : granularity === 'hour' ? 13 : 16;
+    const dateExpr = sql`substr(created_at, 1, ${sql.lit(sliceLen)})`;
+    const completedExpr = sql`substr(completed_at, 1, ${sql.lit(sliceLen)})`;
 
     const startedResults = await this.db
       .selectFrom('respondents')
@@ -82,6 +83,17 @@ export class RespondentRepository {
       started: Number(r.count),
       completed: completedMap.get(String(r.period)) ?? 0,
     }));
+  }
+
+  async getCompletionDurationsSeconds(surveyId: string): Promise<number[]> {
+    const rows = await this.db
+      .selectFrom('respondents')
+      .select([sql<number>`CAST((julianday(completed_at) - julianday(created_at)) * 86400 AS INTEGER)`.as('duration')])
+      .where('survey_id', '=', surveyId)
+      .where('is_complete', '=', 1)
+      .where('completed_at', 'is not', null)
+      .execute();
+    return rows.map((r) => Number(r.duration)).filter((d) => d >= 0 && Number.isFinite(d));
   }
 
   async deleteWithAnswers(id: string): Promise<void> {
