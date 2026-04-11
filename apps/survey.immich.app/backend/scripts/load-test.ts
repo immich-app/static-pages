@@ -771,6 +771,7 @@ interface PendingSave {
   questionId: string;
   value: string;
   otherText?: string;
+  answerMs?: number;
 }
 
 async function simulateUser(
@@ -951,16 +952,21 @@ async function simulateUser(
   // ============================================================
   // Step 4: Answer questions one at a time, buffering writes
   // ============================================================
+  // Mirrors the real client: when a question first appears on screen we
+  // stamp a "shown at" timestamp, then on answer we report the elapsed ms
+  // so the backend can populate per-question timing analytics.
   const answerQuestions = async (from: number, to: number) => {
     for (let i = from; i < to; i++) {
       if (isExpired()) break;
       if (profile.abandonAt !== null && questionsAnswered >= profile.abandonAt) break;
       if (consecutiveFailures >= MAX_FLUSH_FAILURES) break;
 
+      const shownAt = Date.now();
       await randomDelay(profile.minDelay, profile.maxDelay);
       if (isExpired()) break;
 
-      bufferAnswer(generateAnswer(questions[i]));
+      const answer = generateAnswer(questions[i]);
+      bufferAnswer({ ...answer, answerMs: Date.now() - shownAt });
       questionsAnswered++;
     }
     // Final flush — retry a few times via inactivity-timer-like loop if WS is recovering
