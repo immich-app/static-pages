@@ -593,78 +593,65 @@ test.describe('Enter key advances on single-line inputs', () => {
     await apiPut(`/api/surveys/${survey.id}/publish`);
   });
 
-  test('Enter on text input advances to the next question', async ({ page }) => {
+  async function startSurveyAtFirstQuestion(page: Page) {
     await page.goto(`/s/${slug}`);
     await page.getByRole('button', { name: 'Get Started' }).click();
+    await dismissSectionHeader(page);
+    await expect(page.getByRole('heading', { name: 'Your name' })).toBeVisible({ timeout: 5000 });
+  }
 
-    // Dismiss section header if present
-    const continueBtn = page.getByRole('button', { name: 'Continue' });
-    if (await continueBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
-      await continueBtn.click();
-    }
+  test('Enter on text input advances to the next question', async ({ page }) => {
+    await startSurveyAtFirstQuestion(page);
 
-    await expect(page.getByText('Your name')).toBeVisible({ timeout: 3000 });
     const nameInput = page.getByPlaceholder('Your name');
     await nameInput.fill('Alice');
     await nameInput.press('Enter');
 
-    // Should advance to the email question without clicking Next
-    await expect(page.getByText('Your email')).toBeVisible({ timeout: 3000 });
+    await expect(page.getByRole('heading', { name: 'Your email' })).toBeVisible({ timeout: 5000 });
   });
 
   test('Enter on email and number inputs advances', async ({ page }) => {
-    await page.goto(`/s/${slug}`);
-    await page.getByRole('button', { name: 'Get Started' }).click();
-    const continueBtn = page.getByRole('button', { name: 'Continue' });
-    if (await continueBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
-      await continueBtn.click();
-    }
+    await startSurveyAtFirstQuestion(page);
 
-    // Fill text and advance via Enter
-    const nameInput = page.getByPlaceholder('Your name');
-    await nameInput.fill('Bob');
-    await nameInput.press('Enter');
+    await page.getByPlaceholder('Your name').fill('Bob');
+    await page.getByPlaceholder('Your name').press('Enter');
+    await expect(page.getByRole('heading', { name: 'Your email' })).toBeVisible({ timeout: 5000 });
+    await waitForTransition(page);
 
-    // Email question — Enter advances
-    await expect(page.getByText('Your email')).toBeVisible({ timeout: 3000 });
-    const emailInput = page.getByPlaceholder('you@example.com');
-    await emailInput.fill('bob@test.com');
-    await emailInput.press('Enter');
+    await page.getByPlaceholder('you@example.com').fill('bob@test.com');
+    await page.getByPlaceholder('you@example.com').press('Enter');
+    await expect(page.getByRole('heading', { name: 'Your age' })).toBeVisible({ timeout: 5000 });
+    await waitForTransition(page);
 
-    // Number question — Enter advances
-    await expect(page.getByText('Your age')).toBeVisible({ timeout: 3000 });
-    const ageInput = page.locator('input[type="number"]');
-    await ageInput.fill('30');
-    await ageInput.press('Enter');
-
-    // We should now be on the textarea question
-    await expect(page.getByText('Any comments')).toBeVisible({ timeout: 3000 });
+    await page.locator('input[type="number"]').fill('30');
+    await page.locator('input[type="number"]').press('Enter');
+    await expect(page.getByRole('heading', { name: 'Any comments' })).toBeVisible({ timeout: 5000 });
   });
 
   test('Enter in textarea inserts a newline instead of advancing', async ({ page }) => {
-    await page.goto(`/s/${slug}`);
-    await page.getByRole('button', { name: 'Get Started' }).click();
-    const continueBtn = page.getByRole('button', { name: 'Continue' });
-    if (await continueBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
-      await continueBtn.click();
-    }
+    await startSurveyAtFirstQuestion(page);
 
-    // Race through earlier questions
+    // Race through to the textarea question via the regular Next button so we
+    // don't depend on the feature under test.
     await page.getByPlaceholder('Your name').fill('Carol');
-    await page.getByPlaceholder('Your name').press('Enter');
-    await page.getByPlaceholder('you@example.com').fill('carol@test.com');
-    await page.getByPlaceholder('you@example.com').press('Enter');
-    await page.locator('input[type="number"]').fill('25');
-    await page.locator('input[type="number"]').press('Enter');
+    await clickNext(page);
+    await expect(page.getByRole('heading', { name: 'Your email' })).toBeVisible({ timeout: 5000 });
 
-    await expect(page.getByText('Any comments')).toBeVisible({ timeout: 3000 });
+    await page.getByPlaceholder('you@example.com').fill('carol@test.com');
+    await clickNext(page);
+    await expect(page.getByRole('heading', { name: 'Your age' })).toBeVisible({ timeout: 5000 });
+
+    await page.locator('input[type="number"]').fill('25');
+    await clickNext(page);
+    await expect(page.getByRole('heading', { name: 'Any comments' })).toBeVisible({ timeout: 5000 });
+
     const textarea = page.getByPlaceholder('Tell us more');
     await textarea.fill('line one');
     await textarea.press('Enter');
-    await textarea.type('line two');
+    await textarea.pressSequentially('line two');
 
-    // Enter should not have advanced us
-    await expect(page.getByText('Any comments')).toBeVisible();
+    // Enter must not have advanced us
+    await expect(page.getByRole('heading', { name: 'Any comments' })).toBeVisible();
     const value = await textarea.inputValue();
     expect(value).toBe('line one\nline two');
   });
