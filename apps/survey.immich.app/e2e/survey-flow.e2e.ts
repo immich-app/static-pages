@@ -539,6 +539,137 @@ test.describe('Survey with skip logic across question types', () => {
   });
 });
 
+// ──────────────────────────────────────────────────────────────────────────────
+// Enter-to-advance keyboard behaviour
+// ──────────────────────────────────────────────────────────────────────────────
+test.describe('Enter key advances on single-line inputs', () => {
+  let slug: string;
+  let questionIds: { text: string; email: string; number: string; textarea: string; rating: string };
+
+  test.beforeAll(async () => {
+    const survey = await apiPost('/api/surveys', { title: 'Enter Key Test' });
+    const section = await apiPost(`/api/surveys/${survey.id}/sections`, { title: 'Inputs' });
+
+    const qText = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
+      text: 'Your name',
+      type: 'text',
+      required: true,
+      placeholder: 'Your name',
+    });
+    const qEmail = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
+      text: 'Your email',
+      type: 'email',
+      required: true,
+      placeholder: 'you@example.com',
+    });
+    const qNumber = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
+      text: 'Your age',
+      type: 'number',
+      required: true,
+    });
+    const qTextarea = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
+      text: 'Any comments',
+      type: 'textarea',
+      required: false,
+      placeholder: 'Tell us more',
+    });
+    const qRating = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
+      text: 'Rate us',
+      type: 'rating',
+      required: true,
+      config: { scaleMax: 5 },
+    });
+
+    questionIds = {
+      text: qText.id,
+      email: qEmail.id,
+      number: qNumber.id,
+      textarea: qTextarea.id,
+      rating: qRating.id,
+    };
+
+    slug = `enter-key-${Date.now()}`;
+    await apiPut(`/api/surveys/${survey.id}`, { slug });
+    await apiPut(`/api/surveys/${survey.id}/publish`);
+  });
+
+  test('Enter on text input advances to the next question', async ({ page }) => {
+    await page.goto(`/s/${slug}`);
+    await page.getByRole('button', { name: 'Get Started' }).click();
+
+    // Dismiss section header if present
+    const continueBtn = page.getByRole('button', { name: 'Continue' });
+    if (await continueBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
+      await continueBtn.click();
+    }
+
+    await expect(page.getByText('Your name')).toBeVisible({ timeout: 3000 });
+    const nameInput = page.getByPlaceholder('Your name');
+    await nameInput.fill('Alice');
+    await nameInput.press('Enter');
+
+    // Should advance to the email question without clicking Next
+    await expect(page.getByText('Your email')).toBeVisible({ timeout: 3000 });
+  });
+
+  test('Enter on email and number inputs advances', async ({ page }) => {
+    await page.goto(`/s/${slug}`);
+    await page.getByRole('button', { name: 'Get Started' }).click();
+    const continueBtn = page.getByRole('button', { name: 'Continue' });
+    if (await continueBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
+      await continueBtn.click();
+    }
+
+    // Fill text and advance via Enter
+    const nameInput = page.getByPlaceholder('Your name');
+    await nameInput.fill('Bob');
+    await nameInput.press('Enter');
+
+    // Email question — Enter advances
+    await expect(page.getByText('Your email')).toBeVisible({ timeout: 3000 });
+    const emailInput = page.getByPlaceholder('you@example.com');
+    await emailInput.fill('bob@test.com');
+    await emailInput.press('Enter');
+
+    // Number question — Enter advances
+    await expect(page.getByText('Your age')).toBeVisible({ timeout: 3000 });
+    const ageInput = page.locator('input[type="number"]');
+    await ageInput.fill('30');
+    await ageInput.press('Enter');
+
+    // We should now be on the textarea question
+    await expect(page.getByText('Any comments')).toBeVisible({ timeout: 3000 });
+  });
+
+  test('Enter in textarea inserts a newline instead of advancing', async ({ page }) => {
+    await page.goto(`/s/${slug}`);
+    await page.getByRole('button', { name: 'Get Started' }).click();
+    const continueBtn = page.getByRole('button', { name: 'Continue' });
+    if (await continueBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
+      await continueBtn.click();
+    }
+
+    // Race through earlier questions
+    await page.getByPlaceholder('Your name').fill('Carol');
+    await page.getByPlaceholder('Your name').press('Enter');
+    await page.getByPlaceholder('you@example.com').fill('carol@test.com');
+    await page.getByPlaceholder('you@example.com').press('Enter');
+    await page.locator('input[type="number"]').fill('25');
+    await page.locator('input[type="number"]').press('Enter');
+
+    await expect(page.getByText('Any comments')).toBeVisible({ timeout: 3000 });
+    const textarea = page.getByPlaceholder('Tell us more');
+    await textarea.fill('line one');
+    await textarea.press('Enter');
+    await textarea.type('line two');
+
+    // Enter should not have advanced us
+    await expect(page.getByText('Any comments')).toBeVisible();
+    const value = await textarea.inputValue();
+    expect(value).toBe('line one\nline two');
+  });
+});
+
 test.describe('Survey builder with new types', () => {
   test('can add all question types in the builder', async ({ page }) => {
     // Create a survey first
