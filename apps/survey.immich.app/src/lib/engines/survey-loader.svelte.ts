@@ -105,7 +105,16 @@ export function createSurveyLoader(slug: string) {
     if (resume.isComplete) {
       alreadyCompleted = true;
     } else if (resume.answers && resume.nextQuestionIndex !== undefined && resume.nextQuestionIndex > 0) {
-      engine.initialize(resume.answers, resume.nextQuestionIndex);
+      // If the respondent answered every question but never hit "complete"
+      // (e.g. tab crashed, browser closed), nextQuestionIndex can be past
+      // the end of the array. In that case auto-complete for them — the
+      // answers are already saved, there's nothing left to show.
+      if (resume.nextQuestionIndex >= questions.length) {
+        await client.postComplete();
+        surveyFinished = true;
+      } else {
+        engine.initialize(resume.answers, resume.nextQuestionIndex);
+      }
     } else {
       showWelcome = true;
     }
