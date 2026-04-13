@@ -10,8 +10,12 @@ export function registerSurveyRoutes(router: AppRouter) {
     const service = createSurveyService(ctx.db);
     const url = new URL(request.url);
     const includeArchived = url.searchParams.get('archived') === 'true';
-    const surveys = await service.listSurveys(includeArchived);
-    return Response.json(surveys);
+    const search = url.searchParams.get('search')?.trim() || undefined;
+    const offset = Math.max(0, Number(url.searchParams.get('offset')) || 0);
+    const limit = Math.min(100, Math.max(1, Number(url.searchParams.get('limit')) || 20));
+
+    const result = await service.listSurveysPaginated({ includeArchived, search, offset, limit });
+    return Response.json(result);
   });
 
   router.post('/api/surveys', async (request: AuthenticatedRequest) => {

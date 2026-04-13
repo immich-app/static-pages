@@ -112,6 +112,15 @@ export class SurveyService {
     return this.surveys.listAll(includeArchived);
   }
 
+  async listSurveysPaginated(opts: {
+    includeArchived?: boolean;
+    search?: string;
+    offset?: number;
+    limit?: number;
+  }): Promise<{ surveys: SurveyRow[]; total: number }> {
+    return this.surveys.listPaginated(opts);
+  }
+
   async getSurvey(id: string): Promise<SurveyWithDetails> {
     const survey = await this.surveys.getById(id);
     if (!survey) {

@@ -14,6 +14,29 @@ export class SurveyRepository {
     return query.execute();
   }
 
+  async listPaginated(opts: {
+    includeArchived?: boolean;
+    search?: string;
+    offset?: number;
+    limit?: number;
+  }): Promise<{ surveys: import('../db').SurveyRow[]; total: number }> {
+    const { includeArchived = false, search, offset = 0, limit = 20 } = opts;
+    let base = this.db.selectFrom('surveys');
+    if (!includeArchived) {
+      base = base.where('archived_at', 'is', null);
+    }
+    if (search) {
+      base = base.where('title', 'like', `%${search}%`);
+    }
+
+    const countResult = await base.select(({ fn }) => [fn.count('id').as('total')]).executeTakeFirst();
+    const total = Number(countResult?.total ?? 0);
+
+    const surveys = await base.selectAll().orderBy('created_at', 'desc').limit(limit).offset(offset).execute();
+
+    return { surveys, total };
+  }
+
   async getById(id: string): Promise<import('../db').SurveyRow | null> {
     const result = await this.db.selectFrom('surveys').selectAll().where('id', '=', id).executeTakeFirst();
     return result ?? null;

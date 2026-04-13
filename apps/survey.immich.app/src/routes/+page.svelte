@@ -13,9 +13,10 @@
     mdiImport,
     mdiArchive,
   } from '@mdi/js';
+  import { mdiMagnify, mdiChevronLeft, mdiChevronRight } from '@mdi/js';
   import type { Survey } from '$lib/types';
   import {
-    listSurveys,
+    listSurveysPaginated,
     deleteSurvey,
     duplicateSurvey,
     archiveSurvey,
@@ -25,16 +26,31 @@
   } from '$lib/api/surveys';
   import ImportSurveyModal from '$lib/components/dashboard/ImportSurveyModal.svelte';
 
+  const PAGE_SIZE = 12;
+
   let surveys = $state<Survey[]>([]);
+  let totalSurveys = $state(0);
   let loading = $state(true);
   let error = $state<string | null>(null);
   let showArchived = $state(false);
   let showImportModal = $state(false);
+  let search = $state('');
+  let page = $state(0);
+  let searchTimer: ReturnType<typeof setTimeout> | undefined;
+
+  const totalPages = $derived(Math.max(1, Math.ceil(totalSurveys / PAGE_SIZE)));
 
   async function loadSurveys() {
     loading = true;
     try {
-      surveys = await listSurveys(showArchived);
+      const result = await listSurveysPaginated({
+        includeArchived: showArchived,
+        search: search.trim() || undefined,
+        offset: page * PAGE_SIZE,
+        limit: PAGE_SIZE,
+      });
+      surveys = result.surveys;
+      totalSurveys = result.total;
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to load surveys';
     }
@@ -43,14 +59,23 @@
 
   $effect(() => {
     void showArchived;
+    void page;
     loadSurveys();
   });
+
+  function handleSearch() {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      page = 0;
+      loadSurveys();
+    }, 300);
+  }
 
   async function handleDelete(id: string) {
     if (!confirm('Delete this survey? This cannot be undone.')) return;
     try {
       await deleteSurvey(id);
-      surveys = surveys.filter((s) => s.id !== id);
+      await loadSurveys();
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to delete survey';
     }
@@ -58,8 +83,9 @@
 
   async function handleDuplicate(id: string) {
     try {
-      const result = await duplicateSurvey(id);
-      surveys = [result.survey, ...surveys];
+      await duplicateSurvey(id);
+      page = 0;
+      await loadSurveys();
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to duplicate survey';
     }
@@ -67,12 +93,8 @@
 
   async function handleArchive(id: string) {
     try {
-      const updated = await archiveSurvey(id);
-      if (showArchived) {
-        surveys = surveys.map((s) => (s.id === id ? updated : s));
-      } else {
-        surveys = surveys.filter((s) => s.id !== id);
-      }
+      await archiveSurvey(id);
+      await loadSurveys();
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to archive survey';
     }
@@ -80,8 +102,8 @@
 
   async function handleUnarchive(id: string) {
     try {
-      const updated = await unarchiveSurvey(id);
-      surveys = surveys.map((s) => (s.id === id ? updated : s));
+      await unarchiveSurvey(id);
+      await loadSurveys();
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to unarchive survey';
     }
@@ -106,9 +128,10 @@
 
   async function handleImport(definition: unknown) {
     try {
-      const result = await importSurveyDefinition(definition);
-      surveys = [result.survey, ...surveys];
+      await importSurveyDefinition(definition);
       showImportModal = false;
+      page = 0;
+      await loadSurveys();
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to import survey';
     }
@@ -150,7 +173,19 @@
     </div>
   {/if}
 
-  <div class="mb-4 flex items-center gap-2">
+  <div class="mb-4 flex flex-wrap items-center gap-3">
+    <div class="relative min-w-0 flex-1">
+      <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-gray-500">
+        <Icon icon={mdiMagnify} size="16" />
+      </span>
+      <input
+        type="search"
+        bind:value={search}
+        oninput={handleSearch}
+        placeholder="Search surveys..."
+        class="w-full rounded-lg border border-gray-300 bg-transparent py-2 pr-3 pl-9 text-sm placeholder:text-gray-500 focus:border-blue-500 focus:outline-none dark:border-gray-700"
+      />
+    </div>
     <label class="flex cursor-pointer items-center gap-2 text-sm text-gray-400">
       <input type="checkbox" bind:checked={showArchived} class="rounded" />
       <Icon icon={mdiArchive} size="16" />
@@ -167,17 +202,33 @@
     <div
       class="animate-in animate-in-delay-1 flex flex-col items-center rounded-2xl border border-dashed border-gray-600 px-8 py-16 text-center"
     >
-      <div class="bg-immich-primary-10 mb-4 flex h-16 w-16 items-center justify-center rounded-2xl">
-        <Icon icon={mdiPlus} size="28" class="text-immich-primary" />
-      </div>
-      <p class="text-lg font-medium text-gray-300">No surveys yet</p>
-      <p class="mt-1.5 max-w-xs text-sm text-gray-500">Create your first survey to start collecting responses.</p>
-      <a
-        href="/create"
-        class="bg-immich-primary mt-6 inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium text-white transition-all hover:shadow-md hover:brightness-110"
-      >
-        Create Survey
-      </a>
+      {#if search.trim()}
+        <Icon icon={mdiMagnify} size="28" class="mb-3 text-gray-500" />
+        <p class="text-lg font-medium text-gray-300">No matching surveys</p>
+        <p class="mt-1 text-sm text-gray-500">No surveys match "{search.trim()}".</p>
+        <button
+          class="mt-4 text-sm text-blue-400 hover:underline"
+          onclick={() => {
+            search = '';
+            page = 0;
+            loadSurveys();
+          }}
+        >
+          Clear search
+        </button>
+      {:else}
+        <div class="bg-immich-primary-10 mb-4 flex h-16 w-16 items-center justify-center rounded-2xl">
+          <Icon icon={mdiPlus} size="28" class="text-immich-primary" />
+        </div>
+        <p class="text-lg font-medium text-gray-300">No surveys yet</p>
+        <p class="mt-1.5 max-w-xs text-sm text-gray-500">Create your first survey to start collecting responses.</p>
+        <a
+          href="/create"
+          class="bg-immich-primary mt-6 inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium text-white transition-all hover:shadow-md hover:brightness-110"
+        >
+          Create Survey
+        </a>
+      {/if}
     </div>
   {:else}
     <div class="space-y-3">
@@ -293,6 +344,34 @@
         </div>
       {/each}
     </div>
+
+    {#if totalPages > 1}
+      <div class="mt-6 flex items-center justify-between text-sm text-gray-400">
+        <span>
+          {totalSurveys}
+          {totalSurveys === 1 ? 'survey' : 'surveys'}
+        </span>
+        <div class="flex items-center gap-2">
+          <button
+            class="inline-flex items-center gap-1 rounded-md border border-gray-300 px-2.5 py-1 transition-colors hover:bg-gray-100 disabled:opacity-40 dark:border-gray-700 dark:hover:bg-gray-800"
+            disabled={page === 0}
+            onclick={() => (page = Math.max(0, page - 1))}
+          >
+            <Icon icon={mdiChevronLeft} size="16" />
+            Prev
+          </button>
+          <span class="text-xs text-gray-500 tabular-nums">Page {page + 1} of {totalPages}</span>
+          <button
+            class="inline-flex items-center gap-1 rounded-md border border-gray-300 px-2.5 py-1 transition-colors hover:bg-gray-100 disabled:opacity-40 dark:border-gray-700 dark:hover:bg-gray-800"
+            disabled={page >= totalPages - 1}
+            onclick={() => (page = Math.min(totalPages - 1, page + 1))}
+          >
+            Next
+            <Icon icon={mdiChevronRight} size="16" />
+          </button>
+        </div>
+      </div>
+    {/if}
   {/if}
 </div>
 

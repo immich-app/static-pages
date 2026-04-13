@@ -53,8 +53,13 @@ export function createApiClient(slug: string) {
   }
 
   function bufferAnswer(data: PendingSave): void {
+    // Only count genuinely NEW questions toward the flush threshold.
+    // Repeated updates to the same question (e.g. every keystroke in a
+    // text field) replace the buffer entry but don't advance the counter
+    // — otherwise typing "Hello" would flush after 4 characters.
+    const isNew = !answerBuffer.has(data.questionId);
     answerBuffer.set(data.questionId, data);
-    unflushedCount++;
+    if (isNew) unflushedCount++;
     resetInactivityTimer();
 
     if (unflushedCount >= FLUSH_THRESHOLD) {

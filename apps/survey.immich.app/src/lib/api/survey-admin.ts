@@ -5,8 +5,23 @@ import { getWsClientById } from './survey-ws';
 
 export async function listSurveys(includeArchived = false): Promise<Survey[]> {
   const url = includeArchived ? '/api/surveys?archived=true' : '/api/surveys';
-  const data = await request<Array<Record<string, unknown>>>(url);
-  return data.map(surveyFromApi);
+  const data = await request<{ surveys: Array<Record<string, unknown>>; total: number }>(url);
+  return data.surveys.map(surveyFromApi);
+}
+
+export async function listSurveysPaginated(opts: {
+  includeArchived?: boolean;
+  search?: string;
+  offset?: number;
+  limit?: number;
+}): Promise<{ surveys: Survey[]; total: number }> {
+  const params = new URLSearchParams();
+  if (opts.includeArchived) params.set('archived', 'true');
+  if (opts.search) params.set('search', opts.search);
+  if (opts.offset) params.set('offset', String(opts.offset));
+  if (opts.limit) params.set('limit', String(opts.limit));
+  const data = await request<{ surveys: Array<Record<string, unknown>>; total: number }>(`/api/surveys?${params}`);
+  return { surveys: data.surveys.map(surveyFromApi), total: data.total };
 }
 
 export async function getSurvey(id: string): Promise<SurveyWithDetails> {

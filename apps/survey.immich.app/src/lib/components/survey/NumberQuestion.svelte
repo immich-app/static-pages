@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Input } from '@immich/ui';
   import type { SurveyQuestion, SurveyAnswer } from '$lib/types';
+  import { onDestroy } from 'svelte';
 
   interface Props {
     question: SurveyQuestion;
@@ -17,6 +18,18 @@
   const hintText = $derived(
     [min !== undefined ? `Min: ${min}` : '', max !== undefined ? `Max: ${max}` : ''].filter(Boolean).join(', '),
   );
+
+  let debounceTimer: ReturnType<typeof setTimeout> | undefined;
+  function handleInput() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => onAnswer(numberValue), 300);
+  }
+  onDestroy(() => {
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+      onAnswer(numberValue);
+    }
+  });
 </script>
 
 <h2 class="mb-2 text-xl font-bold sm:text-2xl">{question.text}</h2>
@@ -31,7 +44,7 @@
   placeholder={question.placeholder ?? ''}
   {min}
   {max}
-  oninput={() => onAnswer(numberValue)}
+  oninput={handleInput}
 />
 
 {#if hasHint}

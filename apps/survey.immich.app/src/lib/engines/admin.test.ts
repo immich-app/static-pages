@@ -441,7 +441,7 @@ describe('API URL construction — survey admin', () => {
     fetchSpy = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
-      json: () => Promise.resolve([]),
+      json: () => Promise.resolve({ surveys: [], total: 0 }),
     });
     vi.stubGlobal('fetch', fetchSpy);
   });
