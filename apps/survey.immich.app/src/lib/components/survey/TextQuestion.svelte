@@ -2,7 +2,7 @@
   import { Input } from '@immich/ui';
   import type { SurveyQuestion, SurveyAnswer } from '$lib/types';
   import QuestionHeader from './QuestionHeader.svelte';
-  import { onDestroy } from 'svelte';
+  import { useDebouncedAnswer } from './use-debounced-answer';
 
   interface Props {
     question: SurveyQuestion;
@@ -13,17 +13,7 @@
   let { question, answer, onAnswer }: Props = $props();
   let textValue = $derived(answer?.value ?? '');
 
-  let debounceTimer: ReturnType<typeof setTimeout> | undefined;
-  function handleInput() {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => onAnswer(textValue), 300);
-  }
-  onDestroy(() => {
-    if (debounceTimer) {
-      clearTimeout(debounceTimer);
-      onAnswer(textValue);
-    }
-  });
+  const { handleInput } = useDebouncedAnswer(() => textValue, onAnswer);
 </script>
 
 <QuestionHeader text={question.text} description={question.description} />

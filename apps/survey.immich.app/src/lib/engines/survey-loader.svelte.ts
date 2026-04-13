@@ -1,4 +1,4 @@
-import { onMount } from 'svelte';
+import { onMount, setContext } from 'svelte';
 import type { Survey, SurveySection, SurveyQuestion } from '../types';
 import { getPublishedSurvey, authenticateSurvey } from '../api/surveys';
 import { createSurveyWsClient, type SurveyWsClient } from '../api/survey-ws';
@@ -28,6 +28,27 @@ export function createSurveyLoader(slug: string) {
    * Reset on page reload (resume after refresh starts the timer from 0).
    */
   const questionShownAt: Record<string, number> = {};
+
+  /**
+   * Pre-flush hook for debounced question components. When beforeunload
+   * fires, we call this BEFORE flushBufferSync so that any pending 300ms
+   * debounce timer in the active text/email/number/textarea component
+   * fires and gets its latest value into the buffer before the beacon
+   * sends it. Components register/unregister via onMount/onDestroy.
+   */
+  let preFlushHook: (() => void) | null = null;
+
+  function registerPreFlush(hook: () => void) {
+    preFlushHook = hook;
+  }
+
+  function unregisterPreFlush() {
+    preFlushHook = null;
+  }
+
+  // Expose the pre-flush registry via Svelte context so debounced question
+  // components can register without prop drilling through SurveyShell/QuestionCard.
+  setContext('survey-pre-flush', { registerPreFlush, unregisterPreFlush });
 
   $effect(() => {
     const q = engine?.currentQuestion;
@@ -64,7 +85,10 @@ export function createSurveyLoader(slug: string) {
       loading = false;
     })();
 
-    const handleUnload = () => client?.flushBufferSync();
+    const handleUnload = () => {
+      preFlushHook?.();
+      client?.flushBufferSync();
+    };
     window.addEventListener('beforeunload', handleUnload);
     return () => {
       wsClient?.close();
