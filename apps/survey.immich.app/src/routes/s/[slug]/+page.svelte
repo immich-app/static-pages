@@ -11,7 +11,9 @@
   const loader = createSurveyLoader(slug);
 </script>
 
-{#if loader.error && !loader.showWelcome && !loader.alreadyCompleted && !loader.surveyFinished}
+<!-- Error toast for non-fatal errors (e.g. save failures while answering).
+     Fatal load errors are handled in the main branch below, not here. -->
+{#if loader.error && loader.engine?.currentQuestion}
   <div class="fixed top-2 left-1/2 z-[100] w-full max-w-lg -translate-x-1/2 px-4">
     <div class="flex items-center justify-between gap-3 rounded-lg bg-red-600 px-4 py-3 text-sm text-white shadow-lg">
       <p>{loader.error}</p>
@@ -30,6 +32,9 @@
   <div class="flex min-h-screen items-center justify-center px-4">
     <div class="text-center">
       <p class="text-lg text-red-400">{loader.error}</p>
+      <button class="mt-4 text-sm text-gray-400 hover:underline" onclick={() => window.location.reload()}>
+        Try again
+      </button>
     </div>
   </div>
 {:else if loader.alreadyCompleted}
@@ -48,5 +53,16 @@
       onAnswer={loader.handleAnswer}
       onComplete={loader.handleComplete}
     />
+  </div>
+{:else}
+  <!-- Catch-all: should never be reached, but prevents a blank page if
+       some state combination falls through all the branches above. -->
+  <div class="flex min-h-screen items-center justify-center px-4">
+    <div class="text-center">
+      <p class="text-gray-400">Something went wrong loading this survey.</p>
+      <button class="mt-4 text-sm text-blue-400 hover:underline" onclick={() => window.location.reload()}>
+        Try again
+      </button>
+    </div>
   </div>
 {/if}
