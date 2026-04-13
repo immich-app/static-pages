@@ -23,8 +23,9 @@
 {/if}
 
 {#if loader.loading}
-  <div class="flex min-h-screen items-center justify-center">
-    <p class="text-gray-400">Loading...</p>
+  <div class="flex min-h-screen flex-col items-center justify-center gap-3">
+    <div class="h-8 w-8 animate-spin rounded-full border-2 border-gray-600 border-t-blue-400"></div>
+    <p class="text-sm text-gray-400">Loading survey...</p>
   </div>
 {:else if loader.needsPassword}
   <PasswordGate surveyTitle={loader.survey?.title} onSubmit={loader.submitPassword} />
