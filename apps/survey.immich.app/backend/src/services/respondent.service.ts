@@ -12,6 +12,7 @@ import {
   clampAnswerMs as clampAnswerMsShared,
   percentile,
 } from '../constants';
+import { validateAnswer, type QuestionSpec } from '../answer-validation';
 
 export interface ResumeResult {
   answers: Record<string, { value: string; otherText?: string }>;
@@ -138,11 +139,20 @@ export class RespondentService {
     this.checkSurveyClosed(survey);
 
     const surveyQuestions = await this.questions.getBySurveyId(survey.id);
-    const validQuestionIds = new Set(surveyQuestions.map((q) => q.id));
+    const questionMap = new Map(surveyQuestions.map((sq) => [sq.id, sq]));
     for (const input of inputs) {
-      if (!validQuestionIds.has(input.questionId)) {
-        throw new ServiceError(`Invalid question ID: ${input.questionId}`, 400);
-      }
+      const sq = questionMap.get(input.questionId);
+      if (!sq) throw new ServiceError(`Invalid question ID: ${input.questionId}`, 400);
+      const spec: QuestionSpec = {
+        type: sq.type,
+        required: sq.required === 1,
+        options: sq.options ? JSON.parse(sq.options) : undefined,
+        hasOther: sq.has_other === 1,
+        maxLength: sq.max_length ?? undefined,
+        config: sq.config ? JSON.parse(sq.config) : undefined,
+      };
+      const error = validateAnswer(spec, input.value, input.otherText);
+      if (error) throw new ServiceError(error, 400);
     }
 
     const now = new Date().toISOString();

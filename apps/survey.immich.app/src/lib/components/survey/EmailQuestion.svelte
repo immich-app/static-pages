@@ -13,8 +13,7 @@
   let { question, answer, onAnswer }: Props = $props();
   let email = $derived(answer?.value ?? '');
 
-  const validEmail = () => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : '');
-  const { handleInput } = useDebouncedAnswer(validEmail, onAnswer);
+  const { handleInput } = useDebouncedAnswer(() => email, onAnswer);
 </script>
 
 <QuestionHeader text={question.text} description={question.description} />

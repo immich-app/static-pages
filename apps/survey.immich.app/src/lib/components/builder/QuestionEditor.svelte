@@ -421,6 +421,168 @@
           </div>
         {/if}
 
+        <!-- Validation rules -->
+        {#if question.type === 'text' || question.type === 'textarea'}
+          <div class="border-t border-gray-200 pt-4 dark:border-gray-700/60">
+            <p class="mb-3 text-xs font-medium tracking-wider text-gray-500 uppercase">Validation</p>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="mb-1 block text-xs text-gray-500">Min length</label>
+                <Input
+                  type="number"
+                  value={String(question.config.minLength ?? '')}
+                  placeholder="No minimum"
+                  oninput={(e) => {
+                    const v = Number((e.target as HTMLInputElement).value);
+                    updateField('config', { ...question.config, minLength: v > 0 ? v : undefined });
+                  }}
+                />
+              </div>
+              <div>
+                <label class="mb-1 block text-xs text-gray-500">Min words</label>
+                <Input
+                  type="number"
+                  value={String(question.config.minWords ?? '')}
+                  placeholder="No minimum"
+                  oninput={(e) => {
+                    const v = Number((e.target as HTMLInputElement).value);
+                    updateField('config', { ...question.config, minWords: v > 0 ? v : undefined });
+                  }}
+                />
+              </div>
+              <div>
+                <label class="mb-1 block text-xs text-gray-500">Max words</label>
+                <Input
+                  type="number"
+                  value={String(question.config.maxWords ?? '')}
+                  placeholder="No maximum"
+                  oninput={(e) => {
+                    const v = Number((e.target as HTMLInputElement).value);
+                    updateField('config', { ...question.config, maxWords: v > 0 ? v : undefined });
+                  }}
+                />
+              </div>
+            </div>
+            <div class="mt-3">
+              <label class="mb-1 block text-xs text-gray-500">Pattern (regex)</label>
+              <Input
+                value={String(question.config.pattern ?? '')}
+                placeholder="e.g. ^\d{3}-\d{4}$"
+                oninput={(e) =>
+                  updateField('config', {
+                    ...question.config,
+                    pattern: (e.target as HTMLInputElement).value || undefined,
+                  })}
+              />
+            </div>
+            {#if question.config.pattern}
+              <div class="mt-2">
+                <label class="mb-1 block text-xs text-gray-500">Pattern error message</label>
+                <Input
+                  value={String(question.config.patternError ?? '')}
+                  placeholder="Answer does not match the required format"
+                  oninput={(e) =>
+                    updateField('config', {
+                      ...question.config,
+                      patternError: (e.target as HTMLInputElement).value || undefined,
+                    })}
+                />
+              </div>
+            {/if}
+          </div>
+        {/if}
+
+        {#if question.type === 'email'}
+          <div class="border-t border-gray-200 pt-4 dark:border-gray-700/60">
+            <p class="mb-3 text-xs font-medium tracking-wider text-gray-500 uppercase">Validation</p>
+            <div>
+              <label class="mb-1 block text-xs text-gray-500"
+                >Allowed domains (comma-separated, leave empty for any)</label
+              >
+              <Input
+                value={((question.config.allowedDomains as string[] | undefined) ?? []).join(', ')}
+                placeholder="e.g. company.com, corp.net"
+                oninput={(e) => {
+                  const raw = (e.target as HTMLInputElement).value;
+                  const domains = raw
+                    .split(',')
+                    .map((d) => d.trim())
+                    .filter(Boolean);
+                  updateField('config', {
+                    ...question.config,
+                    allowedDomains: domains.length > 0 ? domains : undefined,
+                  });
+                }}
+              />
+            </div>
+          </div>
+        {/if}
+
+        {#if question.type === 'number'}
+          <div class="border-t border-gray-200 pt-4 dark:border-gray-700/60">
+            <p class="mb-3 text-xs font-medium tracking-wider text-gray-500 uppercase">Validation</p>
+            <div class="flex flex-wrap items-center gap-4">
+              <label class="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={!!question.config.integerOnly}
+                  onchange={(e) =>
+                    updateField('config', {
+                      ...question.config,
+                      integerOnly: (e.target as HTMLInputElement).checked || undefined,
+                    })}
+                  class="rounded"
+                />
+                Whole numbers only
+              </label>
+              <div class="flex items-center gap-2">
+                <label class="text-xs text-gray-500">Step</label>
+                <Input
+                  type="number"
+                  value={String(question.config.step ?? '')}
+                  placeholder="Any"
+                  oninput={(e) => {
+                    const v = Number((e.target as HTMLInputElement).value);
+                    updateField('config', { ...question.config, step: v > 0 ? v : undefined });
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        {/if}
+
+        {#if question.type === 'checkbox'}
+          <div class="border-t border-gray-200 pt-4 dark:border-gray-700/60">
+            <p class="mb-3 text-xs font-medium tracking-wider text-gray-500 uppercase">Selection limits</p>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="mb-1 block text-xs text-gray-500">Min selections</label>
+                <Input
+                  type="number"
+                  value={String(question.config.minSelections ?? '')}
+                  placeholder="No minimum"
+                  oninput={(e) => {
+                    const v = Number((e.target as HTMLInputElement).value);
+                    updateField('config', { ...question.config, minSelections: v > 0 ? v : undefined });
+                  }}
+                />
+              </div>
+              <div>
+                <label class="mb-1 block text-xs text-gray-500">Max selections</label>
+                <Input
+                  type="number"
+                  value={String(question.config.maxSelections ?? '')}
+                  placeholder="No maximum"
+                  oninput={(e) => {
+                    const v = Number((e.target as HTMLInputElement).value);
+                    updateField('config', { ...question.config, maxSelections: v > 0 ? v : undefined });
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        {/if}
+
         <!-- Logic section -->
         <div class="border-t border-gray-200 pt-4 dark:border-gray-700/60">
           <button

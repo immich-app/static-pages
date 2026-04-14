@@ -13,6 +13,7 @@
   import LikertQuestion from './LikertQuestion.svelte';
   import { onMount, onDestroy } from 'svelte';
   import { announce } from '$lib/stores/announcer.svelte';
+  import { validateAnswer } from '../../../../backend/src/answer-validation';
 
   interface Props {
     question: SurveyQuestion;
@@ -50,9 +51,10 @@
 
   function handleNext() {
     if (!question) return;
-    if (question.required && !hasAnswer) {
-      validationError = 'This question is required';
-      announce('This question is required');
+    const error = validateAnswer(question, answer?.value ?? '', answer?.otherText);
+    if (error) {
+      validationError = error;
+      announce(error);
       return;
     }
     validationError = null;

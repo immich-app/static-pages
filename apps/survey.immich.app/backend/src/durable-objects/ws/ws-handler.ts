@@ -9,6 +9,7 @@ import type { RespondentService } from '../../services/respondent.service';
 import type { SurveyCache } from '../cache';
 import { ServiceError } from '../../services/errors';
 import { ROLE_HIERARCHY, BATCH_ANSWER_LIMIT, clampAnswerMs } from '../../constants';
+import { validateAnswer, type QuestionSpec } from '../../answer-validation';
 import { execute, type CommandContext } from '../do-commands';
 import { getPresenceCounts, scheduleBroadcast } from './ws-broadcaster';
 
@@ -243,11 +244,20 @@ async function handleOp(
         throw new ServiceError(`Invalid answers payload: must be 1-${BATCH_ANSWER_LIMIT} answers`, 400);
       }
 
-      const validQuestionIds = new Set(cache.questions.map((q) => q.id));
+      const questionMap = new Map(cache.questions.map((cq) => [cq.id, cq]));
       for (const a of answers) {
-        if (!validQuestionIds.has(a.questionId)) {
-          throw new ServiceError(`Invalid question ID: ${a.questionId}`, 400);
-        }
+        const cq = questionMap.get(a.questionId);
+        if (!cq) throw new ServiceError(`Invalid question ID: ${a.questionId}`, 400);
+        const spec: QuestionSpec = {
+          type: cq.type,
+          required: cq.required === 1,
+          options: cq.options ? JSON.parse(cq.options) : undefined,
+          hasOther: cq.has_other === 1,
+          maxLength: cq.max_length ?? undefined,
+          config: cq.config ? JSON.parse(cq.config) : undefined,
+        };
+        const error = validateAnswer(spec, a.value, a.otherText);
+        if (error) throw new ServiceError(error, 400);
       }
 
       // Update in-memory state so subsequent operations (complete's tally update)
