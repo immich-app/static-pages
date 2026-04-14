@@ -141,6 +141,11 @@
     "types": ["tool", "tools"],
     "projects": [
       {
+        "title": "Darkroom Log",
+        "description": "Self-hosted darkroom print session logger with Immich integration for analog photographers.",
+        "href": "https://github.com/jaapjan14/darkroom-log"
+      },
+      {
         "title": "Immich-Tiktok-Remover",
         "description": "Script to search for and remove TikTok videos from your Immich library.",
         "href": "https://github.com/mxc2/immich-tiktok-remover"
