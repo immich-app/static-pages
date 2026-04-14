@@ -22,8 +22,23 @@
 
   let direction = $state(1);
   let transitioning = $state(false);
-  let seenSectionIds = new SvelteSet<string>();
   let dismissedSections = new SvelteSet<string>();
+
+  // Pre-populate seen sections when resuming mid-survey so we don't
+  // re-show section headers the user already passed through. Every
+  // section up to and including the current question's section is
+  // marked as "seen". On a fresh start (index 0, no answers) this
+  // produces an empty set and the first section header shows normally.
+  function buildInitialSeenSections(): string[] {
+    if (engine.currentIndex === 0 && Object.keys(engine.answers).length === 0) return [];
+    const currentQ = engine.currentQuestion;
+    if (!currentQ) return [];
+    const sorted = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
+    const currentSection = sorted.find((s) => s.id === currentQ.section_id);
+    if (!currentSection) return [];
+    return sorted.filter((s) => s.sortOrder <= currentSection.sortOrder).map((s) => s.id);
+  }
+  let seenSectionIds = new SvelteSet<string>(buildInitialSeenSections());
 
   const reducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const flyDuration = reducedMotion ? 0 : 300;
