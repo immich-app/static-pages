@@ -104,7 +104,7 @@ export class RespondentService {
     }
 
     const questions = await this.questions.getBySurveyId(survey.id);
-    const nextQuestionIndex = this.findNextUnanswered(questions, answersMap);
+    const nextQuestionIndex = this.findResumeIndex(questions, answersMap);
 
     return {
       answers: answersMap,
@@ -574,30 +574,30 @@ export class RespondentService {
     };
   }
 
-  private findNextUnanswered(
+  /**
+   * Find the resume point — the question the respondent should land on.
+   *
+   * We use the LAST answered question's position rather than the first
+   * unanswered one. The old approach would send a user backwards to an
+   * optional question they intentionally skipped. By finding the highest
+   * index that has an answer, we resume from where they actually were.
+   *
+   * If nothing is answered yet, returns 0 (start of the survey).
+   */
+  private findResumeIndex(
     questions: QuestionRow[],
     answers: Record<string, { value: string; otherText?: string }>,
   ): number {
+    let lastAnsweredIndex = -1;
     for (let i = 0; i < questions.length; i++) {
-      const q = questions[i];
-
-      if (q.conditional) {
-        try {
-          const cond = JSON.parse(q.conditional) as {
-            showIf: { questionId: string; condition: string };
-          };
-          if (cond.showIf.condition === 'skipped' && cond.showIf.questionId in answers) {
-            continue;
-          }
-        } catch {
-          // skip malformed conditional
-        }
-      }
-
-      if (!answers[q.id]) {
-        return i;
+      if (answers[questions[i].id]) {
+        lastAnsweredIndex = i;
       }
     }
-    return questions.length;
+    // Resume ON the last answered question — not the one after it — because
+    // the user may not have finished their answer (e.g. mid-typing in a
+    // text field when the tab crashed). Showing them that question lets
+    // them review or complete it before advancing.
+    return Math.max(0, lastAnsweredIndex);
   }
 }

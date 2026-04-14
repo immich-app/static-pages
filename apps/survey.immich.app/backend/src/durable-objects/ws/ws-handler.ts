@@ -210,24 +210,16 @@ async function handleOp(
         isComplete = row?.is_complete === 1;
       }
 
-      // Compute nextQuestionIndex from cached questions + queried answers
+      // Compute nextQuestionIndex: resume from the question AFTER the last
+      // answered one (not the first unanswered, which would send the user
+      // backwards past optional questions they intentionally skipped).
       const questions = cache.questions;
-      let nextQuestionIndex = questions.length;
+      let lastAnsweredIndex = -1;
       for (let i = 0; i < questions.length; i++) {
-        const q = questions[i];
-        if (q.conditional) {
-          try {
-            const cond = JSON.parse(q.conditional) as { showIf?: { questionId: string; condition: string } };
-            if (cond.showIf?.condition === 'skipped' && cond.showIf.questionId in answers) continue;
-          } catch {
-            // malformed conditional — fall through
-          }
-        }
-        if (!(q.id in answers)) {
-          nextQuestionIndex = i;
-          break;
-        }
+        if (questions[i].id in answers) lastAnsweredIndex = i;
       }
+      // Resume ON the last answered question so the user can review/complete it.
+      const nextQuestionIndex = Math.max(0, lastAnsweredIndex);
 
       return { answers, nextQuestionIndex, isComplete, respondentId };
     }
