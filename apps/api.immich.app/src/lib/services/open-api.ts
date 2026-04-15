@@ -276,6 +276,25 @@ export const parseSpec = (spec: OpenAPIObject) => {
 
       console.log('Unable to resolve schema from $ref', ref);
     },
+
+    getById: (id: string) => {
+      const endpoint = endpointsMap[id];
+      if (!endpoint) {
+        return;
+      }
+
+      for (const value of endpoint.tags) {
+        const tag = tagsMap[value];
+        if (!tag) {
+          continue;
+        }
+
+        const endpoint = tag.endpoints.find((endpoint) => endpoint.operationId === id);
+        if (endpoint) {
+          return endpoint;
+        }
+      }
+    },
   };
 };
 

@@ -11,8 +11,18 @@
   import ApiSharedLinkRouteBadge from '$lib/components/ApiSharedLinkRouteBadge.svelte';
   import ApiState from '$lib/components/ApiState.svelte';
   import { getEndpointColor, getOpenApi, isRef } from '$lib/services/open-api';
-  import { Button, CommandPaletteDefaultProvider, Heading, Icon, Stack, Text, type ActionItem } from '@immich/ui';
-  import { mdiArrowLeft, mdiArrowRight } from '@mdi/js';
+  import {
+    Alert,
+    Button,
+    CommandPaletteDefaultProvider,
+    Heading,
+    Icon,
+    Link,
+    Stack,
+    Text,
+    type ActionItem,
+  } from '@immich/ui';
+  import { mdiAlertCircle, mdiArrowLeft, mdiArrowRight } from '@mdi/js';
   import { type PageData } from './$types';
 
   type Props = {
@@ -24,7 +34,10 @@
   const endpoint = $derived(data.endpoint);
   const tag = $derived(data.tag);
 
-  const { fromRef } = getOpenApi();
+  const { fromRef, getById } = getOpenApi();
+
+  const replacementId = $derived(endpoint?.history?.find((item) => item.state === 'Deprecated')?.replacementId);
+  const replacementEndpoint = $derived(replacementId ? getById(replacementId) : undefined);
 </script>
 
 {#key endpoint.operationId}
@@ -115,6 +128,16 @@
     </div>
     <hr class="border-subtle mt-4 border" />
   </section>
+
+  {#if endpoint.deprecated}
+    <Alert color="danger" title="Deprecated" icon={mdiAlertCircle}>
+      <span class="inline">
+        This endpoint has been deprecated. {#if replacementEndpoint}
+          Please use <Link href={replacementEndpoint.href}>{replacementEndpoint.operationId}</Link> instead.
+        {/if}
+      </span>
+    </Alert>
+  {/if}
 
   {#if endpoint.params.length > 0}
     <section class="flex flex-col gap-2">
