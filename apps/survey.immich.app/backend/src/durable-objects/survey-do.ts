@@ -500,10 +500,12 @@ export class SurveyDO extends DurableObject {
     }
     const respondentId = request.headers.get('X-Respondent-Id');
     if (!respondentId) return Response.json({ error: 'No respondent cookie' }, { status: 400 });
-    await this.respondentService.complete(survey.slug!, respondentId, survey);
-    this.cache.incrementCompleted();
-    this.cache.updateTalliesOnCompletion(respondentId);
-    scheduleBroadcast(this.ctx, this.cache.broadcastScheduled);
+    const completed = await this.respondentService.complete(survey.slug!, respondentId, survey);
+    if (completed) {
+      this.cache.incrementCompleted();
+      this.cache.updateTalliesOnCompletion(respondentId);
+      scheduleBroadcast(this.ctx, this.cache.broadcastScheduled);
+    }
     return new Response(null, { status: 204 });
   }
 

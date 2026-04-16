@@ -136,6 +136,14 @@ export class RespondentService {
       throw new ServiceError('Respondent does not belong to this survey', 403);
     }
 
+    // Completion is terminal: once a respondent has submitted complete, their
+    // answers are frozen. Without this guard, the INSERT OR REPLACE would let
+    // a completed respondent silently rewrite their answers (or analytics
+    // signals like answer_ms) at any time before the survey closes.
+    if (respondent.is_complete) {
+      throw new ServiceError('Survey already completed', 409);
+    }
+
     this.checkSurveyClosed(survey);
 
     const surveyQuestions = await this.questions.getBySurveyId(survey.id);
@@ -168,7 +176,13 @@ export class RespondentService {
     await this.answers.upsertBatch(answerRows);
   }
 
-  async complete(slug: string, respondentId: string, knownSurvey?: SurveyRow): Promise<void> {
+  /**
+   * Mark a respondent complete. Returns true on the 0→1 transition, false on
+   * idempotent no-op (already complete). Callers use the return value to gate
+   * counter / tally updates so a duplicate `complete` call doesn't inflate
+   * counts or be retroactively rewritten.
+   */
+  async complete(slug: string, respondentId: string, knownSurvey?: SurveyRow): Promise<boolean> {
     const respondent = await this.respondents.getById(respondentId);
     if (!respondent) {
       throw new ServiceError('Respondent not found', 404);
@@ -179,7 +193,7 @@ export class RespondentService {
       throw new ServiceError('Respondent does not belong to this survey', 403);
     }
 
-    await this.respondents.markComplete(respondentId);
+    return this.respondents.markComplete(respondentId);
   }
 
   async deleteRespondent(surveyId: string, respondentId: string): Promise<void> {

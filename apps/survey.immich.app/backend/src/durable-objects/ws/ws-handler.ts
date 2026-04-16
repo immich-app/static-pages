@@ -235,6 +235,21 @@ async function handleOp(
         throw new ServiceError('This survey has closed', 403);
       }
 
+      // Completion is terminal — see RespondentService.submitBatch for the
+      // long form. The cached respondent state is the fast path; if the row
+      // has been evicted (e.g. after a long gap), fall back to a single PK
+      // lookup against SQL so we still catch the post-complete case.
+      const cachedState = cache.getCachedRespondent(respondentId);
+      let isComplete = cachedState?.isComplete ?? false;
+      if (!cachedState) {
+        const row = ctx.storage.sql
+          .exec('SELECT is_complete FROM respondents WHERE id = ? LIMIT 1', respondentId)
+          .toArray()[0] as { is_complete: number } | undefined;
+        if (!row) throw new ServiceError('Respondent not found', 404);
+        isComplete = row.is_complete === 1;
+      }
+      if (isComplete) throw new ServiceError('Survey already completed', 409);
+
       const answers = (
         data as {
           answers?: Array<{ questionId: string; value: string; otherText?: string; answerMs?: number }>;
@@ -283,24 +298,27 @@ async function handleOp(
     }
 
     case 'complete': {
-      // Fast path: in-memory tally update (no SQL read), single UPDATE, evict from cache
+      // Fast path: in-memory tally update (no SQL read), single UPDATE, evict from cache.
+      // Idempotent: a duplicate `complete` (flaky retry, malicious replay) must
+      // not bump counters or rewrite completed_at — gate the SQL UPDATE on the
+      // 0→1 transition and only mutate cache state when the row actually changed.
       const respondentId = getWsRespondentId(ws, ctx);
       if (!respondentId) throw new ServiceError('Not a respondent connection', 401);
 
-      cache.markRespondentComplete(respondentId);
-      cache.updateTalliesOnCompletion(respondentId); // uses in-memory answers, no SQL
-      cache.incrementCompleted();
-
-      ctx.storage.sql.exec(
-        'UPDATE respondents SET is_complete = 1, completed_at = ? WHERE id = ?',
+      const cursor = ctx.storage.sql.exec(
+        'UPDATE respondents SET is_complete = 1, completed_at = ? WHERE id = ? AND is_complete = 0',
         new Date().toISOString(),
         respondentId,
       );
-
-      // Evict after complete — they won't submit again, free the memory
-      cache.removeRespondent(respondentId);
-
-      scheduleBroadcast(ctx, cache.broadcastScheduled);
+      const transitioned = cursor.rowsWritten > 0;
+      if (transitioned) {
+        cache.markRespondentComplete(respondentId);
+        cache.updateTalliesOnCompletion(respondentId); // uses in-memory answers, no SQL
+        cache.incrementCompleted();
+        // Evict after complete — they won't submit again, free the memory
+        cache.removeRespondent(respondentId);
+        scheduleBroadcast(ctx, cache.broadcastScheduled);
+      }
       return {};
     }
 

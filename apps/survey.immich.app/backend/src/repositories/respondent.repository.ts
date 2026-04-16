@@ -22,9 +22,21 @@ export class RespondentRepository {
     await this.db.insertInto('respondents').values(respondent).execute();
   }
 
-  async markComplete(id: string): Promise<void> {
+  /**
+   * Mark a respondent complete, but only if they aren't already complete.
+   * Returns true on the actual 0→1 transition so callers can keep counters
+   * and tallies in sync; returns false when the call was a no-op (duplicate
+   * complete from a flaky client retry, or malicious replay).
+   */
+  async markComplete(id: string): Promise<boolean> {
     const now = new Date().toISOString();
-    await this.db.updateTable('respondents').set({ is_complete: 1, completed_at: now }).where('id', '=', id).execute();
+    const result = await this.db
+      .updateTable('respondents')
+      .set({ is_complete: 1, completed_at: now })
+      .where('id', '=', id)
+      .where('is_complete', '=', 0)
+      .executeTakeFirst();
+    return Number(result.numUpdatedRows ?? 0) > 0;
   }
 
   async countBySurveyId(surveyId: string): Promise<{ total: number; completed: number }> {
