@@ -493,8 +493,12 @@ export default {
       return dupResponse;
     }
 
-    // Handle delete: remove D1 catalog row and tag associations
-    if (method === 'DELETE' && doResponse.status === 204 && doMatch.surveyId && !pathname.includes('/results/')) {
+    // Handle delete: remove D1 catalog row and tag associations.
+    // ONLY for the top-level DELETE /api/surveys/:id — nested deletes
+    // (sections, questions, respondents) must leave the catalog intact.
+    const surveySubPath = pathname.match(SURVEY_ID_PATTERN)?.[2] ?? '';
+    const isTopLevelSurveyDelete = surveySubPath === '' || surveySubPath === '/';
+    if (method === 'DELETE' && doResponse.status === 204 && doMatch.surveyId && isTopLevelSurveyDelete) {
       // Drop any stale slug→id entries for this survey from the per-isolate
       // cache so a later request (e.g. same slug re-used by a brand new
       // survey) can't route through to the deleted DO.
