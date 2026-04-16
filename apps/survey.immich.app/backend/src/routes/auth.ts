@@ -94,7 +94,22 @@ export function registerAuthRoutes(router: AppRouter) {
     const nonce = crypto.randomUUID();
     const url = new URL(request.url);
     const rawReturnTo = url.searchParams.get('returnTo') ?? '/';
-    const returnTo = rawReturnTo.startsWith('/') && !rawReturnTo.startsWith('//') ? rawReturnTo : '/';
+    // Validate returnTo by parsing against this origin and confirming the
+    // resolved origin still matches. A naive prefix check (e.g. startsWith('/')
+    // && !startsWith('//')) misses backslash variants like /\evil.com — the
+    // WHATWG URL parser folds \ to / for special schemes, so a redirect to
+    // /\evil.com resolves to //evil.com, giving an attacker an open redirect
+    // off the trusted SSO origin (CWE-601). The URL-API check rejects every
+    // variant — backslashes, percent-encoded slashes, schemed URLs, etc.
+    let returnTo = '/';
+    try {
+      const target = new URL(rawReturnTo, url.origin);
+      if (target.origin === url.origin) {
+        returnTo = target.pathname + target.search + target.hash;
+      }
+    } catch {
+      // Invalid URL — fall back to the safe default
+    }
 
     const authUrl = await authService.getAuthorizationUrl(state, nonce);
     const stateData = JSON.stringify({ state, nonce, returnTo });
