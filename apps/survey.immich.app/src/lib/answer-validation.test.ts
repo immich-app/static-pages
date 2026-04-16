@@ -297,6 +297,22 @@ describe('checkbox validation', () => {
       "Please specify your 'Other' answer",
     );
   });
+
+  it('rejects comma-only value on required checkbox (no real selections)', () => {
+    expect(validateAnswer(q({ type: 'checkbox', options: opts, required: true }), ',')).toBe(
+      'This question is required',
+    );
+    expect(validateAnswer(q({ type: 'checkbox', options: opts, required: true }), ',,,')).toBe(
+      'This question is required',
+    );
+    expect(validateAnswer(q({ type: 'checkbox', options: opts, required: true }), ', , ,')).toBe(
+      'This question is required',
+    );
+  });
+
+  it('accepts comma-only value on optional checkbox', () => {
+    expect(validateAnswer(q({ type: 'checkbox', options: opts, required: false }), ',')).toBeNull();
+  });
 });
 
 // ═══════════════════════════════════════════════════════════════════════════

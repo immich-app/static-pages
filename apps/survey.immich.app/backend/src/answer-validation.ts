@@ -208,7 +208,13 @@ function validateCheckbox(
     .map((v) => v.trim())
     .filter(Boolean);
 
-  if (selected.length === 0) return null; // caught by the required check above
+  // The top-level required check uses String.trim() which preserves commas,
+  // so a value of "," (or ", , ,") survives that gate even though it
+  // represents zero real selections. Re-check required here against the
+  // actually-selected count.
+  if (selected.length === 0) {
+    return question.required ? 'This question is required' : null;
+  }
 
   const validValues = new Set((question.options ?? []).map((o) => o.value));
   if (question.hasOther) {
