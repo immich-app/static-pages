@@ -210,11 +210,21 @@ export class SurveyCache {
   /**
    * Update tallies incrementally when a respondent completes — uses in-memory
    * choice answers, no SQL query needed.
+   *
+   * If the respondent's choice answers aren't in memory (HTTP-only respondent
+   * via sendBeacon, WS reconnect after DO hibernation, or an op race), we
+   * have no in-memory state to fold in. Drop _tallies so the next read
+   * rebuilds the full set from SQL — without this, `incrementCompleted`
+   * would still bump the completion counter while per-option tallies stayed
+   * frozen, causing live-results charts to silently drift.
    */
   updateTalliesOnCompletion(respondentId: string): void {
     if (!this._tallies) return;
     const state = this._respondentState.get(respondentId);
-    if (!state) return; // not in memory — tallies will rebuild from SQL on next full read
+    if (!state) {
+      this._tallies = null;
+      return;
+    }
 
     for (const [qId, ans] of state.choiceAnswers) {
       if (!this._tallies.has(qId)) this._tallies.set(qId, []);
