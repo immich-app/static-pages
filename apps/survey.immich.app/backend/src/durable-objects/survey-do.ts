@@ -14,7 +14,7 @@ import { CloudflareDODialect } from './do-sqlite-dialect';
 import { ensureSchema } from './schema';
 import { SurveyCache } from './cache';
 import { createSurveyService, createRespondentService } from '../services/factory';
-import type { SurveyService } from '../services/survey.service';
+import type { SurveyService, UpdateSurveyInput } from '../services/survey.service';
 import type { RespondentService } from '../services/respondent.service';
 import { ServiceError } from '../services/errors';
 import { dispatch as wsDispatch } from './ws/ws-handler';
@@ -34,7 +34,7 @@ export class SurveyDO extends DurableObject {
   private surveyService: SurveyService;
   private respondentService: RespondentService;
 
-  constructor(ctx: DurableObjectState, env: unknown) {
+  constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
     ensureSchema(ctx.storage.sql);
     this.cache = new SurveyCache(ctx.storage.sql);
@@ -322,7 +322,7 @@ export class SurveyDO extends DurableObject {
   }
 
   private async handleUpdateSurvey(request: Request): Promise<Response> {
-    const input = await request.json();
+    const input = (await request.json()) as UpdateSurveyInput;
     const result = await this.surveyService.updateSurvey(this.cache.survey.id, input, this.cache.survey);
     this.cache.invalidateSurvey();
     return Response.json(result, { headers: this.catalogSyncHeaders() });
@@ -519,7 +519,7 @@ export class SurveyDO extends DurableObject {
       return new Response('Not found', { status: 404 });
     }
 
-    const body = ['POST', 'PUT'].includes(method) ? await request.json() : {};
+    const body = ['POST', 'PUT'].includes(method) ? ((await request.json()) as Record<string, unknown>) : {};
     const data = { ...route.params, ...body };
     const result = await execute(route.op, data, this.commandContext());
 

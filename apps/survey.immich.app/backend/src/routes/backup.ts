@@ -1,6 +1,6 @@
 import { getContext } from '../config';
 import { requireRole, type AuthenticatedRequest } from '../middleware/auth';
-import { BackupService } from '../services/backup.service';
+import { BackupService, type BackupData } from '../services/backup.service';
 import type { AppRouter } from '../types';
 
 export function registerBackupRoutes(router: AppRouter) {
@@ -16,7 +16,7 @@ export function registerBackupRoutes(router: AppRouter) {
     requireRole(request.user, 'admin');
     const ctx = getContext(request);
     const service = new BackupService(ctx.db);
-    const body = await request.json();
+    const body = (await request.json()) as BackupData;
     const result = await service.importAll(body);
     return Response.json(result);
   });

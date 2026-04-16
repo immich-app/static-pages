@@ -3,7 +3,7 @@
  * Routes incoming WS messages to the appropriate service method based on `op`.
  */
 
-import type { WsOperations } from '../../../shared/ws-protocol';
+import type { WsOperations } from '../../../../shared/ws-protocol';
 import type { SurveyService } from '../../services/survey.service';
 import type { RespondentService } from '../../services/respondent.service';
 import type { SurveyCache } from '../cache';
@@ -324,8 +324,9 @@ async function handleOp(
 
     // ---- Shared operations (section/question CRUD, results queries, definition) ----
     default: {
-      const result = await execute(op, data, cmdCtx);
-      if (result === null) throw new ServiceError(`Unknown operation: ${op}`, 400);
+      const opStr = String(op);
+      const result = await execute(opStr, data, cmdCtx);
+      if (result === null) throw new ServiceError(`Unknown operation: ${opStr}`, 400);
       return result ?? {};
     }
   }

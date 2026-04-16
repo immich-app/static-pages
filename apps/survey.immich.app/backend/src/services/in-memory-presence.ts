@@ -1,10 +1,10 @@
-import type { ServerWebSocket } from 'ws';
+import type { WebSocket } from 'ws';
 
 const BROADCAST_INTERVAL_MS = 5000;
 
 interface SurveyRoom {
-  viewers: Set<ServerWebSocket>;
-  respondents: Set<ServerWebSocket>;
+  viewers: Set<WebSocket>;
+  respondents: Set<WebSocket>;
   broadcastTimer: ReturnType<typeof setTimeout> | undefined;
 }
 
@@ -49,7 +49,7 @@ function cleanupRoom(slug: string, room: SurveyRoom) {
   }
 }
 
-export function handlePresenceUpgrade(ws: ServerWebSocket, slug: string, type: 'viewer' | 'respondent'): void {
+export function handlePresenceUpgrade(ws: WebSocket, slug: string, type: 'viewer' | 'respondent'): void {
   const room = getRoom(slug);
   const set = type === 'viewer' ? room.viewers : room.respondents;
   set.add(ws);

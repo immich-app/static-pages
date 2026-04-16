@@ -1,4 +1,4 @@
-import { sql, type Kysely } from 'kysely';
+import { sql, type Kysely, type SqlBool } from 'kysely';
 import type { Database } from '../db';
 import { ACTIVE_RESPONDENT_WINDOW_MS, SEARCH_RESULT_LIMIT } from '../constants';
 
@@ -309,7 +309,7 @@ export class AnswerRepository {
       .innerJoin('respondents as r', 'a.respondent_id', 'r.id')
       .innerJoin('survey_questions as q', 'a.question_id', 'q.id')
       .where('r.survey_id', '=', surveyId)
-      .where(sql`a.answer LIKE ${likeQuery} ESCAPE '\\'`);
+      .where(sql<SqlBool>`a.answer LIKE ${likeQuery} ESCAPE '\\'`);
 
     if (questionId) {
       baseQb = baseQb.where('a.question_id', '=', questionId);

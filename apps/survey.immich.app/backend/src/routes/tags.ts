@@ -16,7 +16,7 @@ export function registerTagRoutes(router: AppRouter) {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
     const service = createTagService(ctx.db);
-    const body = await request.json();
+    const body = (await request.json()) as { name: string; color?: string };
     const tag = await service.createTag(body);
     return Response.json(tag, { status: 201 });
   });
@@ -25,7 +25,7 @@ export function registerTagRoutes(router: AppRouter) {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
     const service = createTagService(ctx.db);
-    const body = await request.json();
+    const body = (await request.json()) as { name?: string; color?: string | null };
     const tag = await service.updateTag(request.params.id, body);
     return Response.json(tag);
   });

@@ -2,6 +2,15 @@ import { createSurveyService } from '../services/factory';
 import { requireRole, type AuthenticatedRequest } from '../middleware/auth';
 import { getContext } from '../config';
 import type { AppRouter } from '../types';
+import type {
+  CreateSurveyInput,
+  UpdateSurveyInput,
+  SurveyDefinition,
+  CreateSectionInput,
+  UpdateSectionInput,
+  CreateQuestionInput,
+  UpdateQuestionInput,
+} from '../services/survey.service';
 
 export function registerSurveyRoutes(router: AppRouter) {
   router.get('/api/surveys', async (request: AuthenticatedRequest) => {
@@ -22,7 +31,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
-    const body = await request.json();
+    const body = (await request.json()) as CreateSurveyInput;
     const survey = await service.createSurvey(body);
     return Response.json(survey, { status: 201 });
   });
@@ -39,7 +48,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
-    const body = await request.json();
+    const body = (await request.json()) as UpdateSurveyInput;
     const survey = await service.updateSurvey(request.params.id, body);
     return Response.json(survey);
   });
@@ -104,7 +113,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
-    const body = await request.json();
+    const body = (await request.json()) as SurveyDefinition;
     const result = await service.importDefinition(body);
     return Response.json(result, { status: 201 });
   });
@@ -114,7 +123,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
-    const body = await request.json();
+    const body = (await request.json()) as CreateSectionInput;
     const section = await service.createSection(request.params.id, body);
     return Response.json(section, { status: 201 });
   });
@@ -123,7 +132,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
-    const body = await request.json();
+    const body = (await request.json()) as UpdateSectionInput;
     const section = await service.updateSection(request.params.id, body);
     return Response.json(section);
   });
@@ -150,7 +159,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
-    const body = await request.json();
+    const body = (await request.json()) as CreateQuestionInput;
     const question = await service.createQuestion(request.params.id, body);
     return Response.json(question, { status: 201 });
   });
@@ -159,7 +168,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
-    const body = await request.json();
+    const body = (await request.json()) as UpdateQuestionInput;
     const question = await service.updateQuestion(request.params.id, body);
     return Response.json(question);
   });
