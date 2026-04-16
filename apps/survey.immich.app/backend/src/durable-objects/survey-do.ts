@@ -98,6 +98,12 @@ export class SurveyDO extends DurableObject {
       if (survey.max_responses && this.cache.counters.completed >= survey.max_responses) {
         return new Response('This survey has reached its maximum number of responses', { status: 403 });
       }
+      // Password gate (authoritative — uses this DO's own cache which is
+      // properly invalidated on update; the worker only forwards a verified
+      // X-Authenticated header)
+      if (survey.password_hash && request.headers.get('X-Authenticated') !== 'true') {
+        return new Response('Authentication required', { status: 403 });
+      }
 
       // Existing respondent from cookie (forwarded via X-Respondent-Id by the API worker)
       // Existence check is O(1) in memory via the cache's Set<respondentId>
@@ -449,6 +455,9 @@ export class SurveyDO extends DurableObject {
     if (survey.status !== 'published') {
       return Response.json({ error: 'Survey not found' }, { status: 404 });
     }
+    if (survey.password_hash && request.headers.get('X-Authenticated') !== 'true') {
+      return Response.json({ error: 'Authentication required' }, { status: 403 });
+    }
     const respondentId = request.headers.get('X-Respondent-Id') || undefined;
     const ip = request.headers.get('CF-Connecting-IP') ?? request.headers.get('X-Forwarded-For') ?? 'unknown';
     const result = await this.respondentService.resume(survey.slug!, respondentId, ip, survey);
@@ -471,19 +480,27 @@ export class SurveyDO extends DurableObject {
   }
 
   private async handleSubmitAnswers(request: Request): Promise<Response> {
+    const survey = this.cache.survey;
+    if (survey.password_hash && request.headers.get('X-Authenticated') !== 'true') {
+      return Response.json({ error: 'Authentication required' }, { status: 403 });
+    }
     const respondentId = request.headers.get('X-Respondent-Id');
     if (!respondentId) return Response.json({ error: 'No respondent cookie' }, { status: 400 });
     const { answers } = (await request.json()) as {
       answers: Array<{ questionId: string; value: string; otherText?: string }>;
     };
-    await this.respondentService.submitBatch(this.cache.survey.slug!, respondentId, answers, this.cache.survey);
+    await this.respondentService.submitBatch(survey.slug!, respondentId, answers, survey);
     return new Response(null, { status: 204 });
   }
 
   private async handleComplete(request: Request): Promise<Response> {
+    const survey = this.cache.survey;
+    if (survey.password_hash && request.headers.get('X-Authenticated') !== 'true') {
+      return Response.json({ error: 'Authentication required' }, { status: 403 });
+    }
     const respondentId = request.headers.get('X-Respondent-Id');
     if (!respondentId) return Response.json({ error: 'No respondent cookie' }, { status: 400 });
-    await this.respondentService.complete(this.cache.survey.slug!, respondentId, this.cache.survey);
+    await this.respondentService.complete(survey.slug!, respondentId, survey);
     this.cache.incrementCompleted();
     this.cache.updateTalliesOnCompletion(respondentId);
     scheduleBroadcast(this.ctx, this.cache.broadcastScheduled);

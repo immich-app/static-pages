@@ -95,7 +95,7 @@ registerAllRoutes(router);
 // ============================================================
 
 /**
- * Per-isolate cache for slug → survey metadata lookups.
+ * Per-isolate cache for slug → survey ID lookups.
  *
  * Every public HTTP request and every WS upgrade on /api/s/:slug/* needs to
  * translate the slug to a survey ID before forwarding to the DO. Without
@@ -103,16 +103,18 @@ registerAllRoutes(router);
  * limit (~2000/s) becomes the bottleneck for WS connects.
  *
  * The cache lives in module scope, so it's shared across all requests handled
- * by the same Workers isolate (isolates last minutes). A 60-second TTL keeps
- * stale reads bounded — slug/password changes propagate within a minute.
+ * by the same Workers isolate (isolates last minutes). A 60-second TTL bounds
+ * cross-isolate staleness for slug renames.
  *
- * password_hash is cached but only used as a truthy "has password?" check;
- * the actual password verification uses an HMAC token signed with a separate
- * secret, so stale hash values are safe to cache.
+ * We deliberately do NOT cache password_hash — its value gates an auth check
+ * (whether a password is required at all), and a stale `null` after an admin
+ * adds a password would let unauthenticated respondents through in other
+ * isolates for the TTL window. Instead, the DO itself enforces the password
+ * requirement using its own properly-invalidated cache, and the worker just
+ * verifies the spw_ cookie if present and forwards X-Authenticated.
  */
 interface CachedSlugEntry {
   id: string;
-  password_hash: string | null;
   cachedAt: number;
 }
 const SLUG_CACHE_TTL_MS = 60_000;
@@ -131,19 +133,16 @@ function stripInternalHeaders(headers: Headers): void {
   for (const h of INTERNAL_HEADERS) headers.delete(h);
 }
 
-async function slugToRow(db: D1Database, slug: string): Promise<{ id: string; password_hash: string | null } | null> {
+async function slugToRow(db: D1Database, slug: string): Promise<{ id: string } | null> {
   const cached = slugCache.get(slug);
   if (cached && Date.now() - cached.cachedAt < SLUG_CACHE_TTL_MS) {
-    return { id: cached.id, password_hash: cached.password_hash };
+    return { id: cached.id };
   }
 
-  const row = await db
-    .prepare('SELECT id, password_hash FROM surveys WHERE slug = ?')
-    .bind(slug)
-    .first<{ id: string; password_hash: string | null }>();
+  const row = await db.prepare('SELECT id FROM surveys WHERE slug = ?').bind(slug).first<{ id: string }>();
 
   if (row) {
-    slugCache.set(slug, { id: row.id, password_hash: row.password_hash, cachedAt: Date.now() });
+    slugCache.set(slug, { id: row.id, cachedAt: Date.now() });
     // Bound the cache size — unlikely to grow large (one entry per published survey)
     // but cap it to prevent unbounded growth in pathological cases
     if (slugCache.size > 1000) {
@@ -204,10 +203,12 @@ async function syncCatalog(response: Response, db: D1Database, surveyId: string)
       .prepare(`UPDATE surveys SET ${setClauses} WHERE id = ?`)
       .bind(...values)
       .run();
-    // If the mutation touched fields that feed the slug cache, drop any
-    // stale entries for this survey from the current isolate. Other isolates
+    // If the slug changed, drop stale entries from the per-isolate cache so
+    // future requests for the new slug rebuild the mapping. Other isolates
     // rely on the TTL to expire — keeping that short (60s) bounds the window.
-    if ('slug' in fields || 'password_hash' in fields) {
+    // password_hash changes don't need invalidation here because the cache no
+    // longer stores it; the DO enforces the password gate authoritatively.
+    if ('slug' in fields) {
       invalidateSlugCacheBySurveyId(surveyId);
     }
   } catch {
@@ -332,7 +333,6 @@ export default {
 
     // Resolve survey ID
     let surveyId: string;
-    let passwordHash: string | null = null;
 
     if (doMatch.surveyId) {
       surveyId = doMatch.surveyId;
@@ -340,16 +340,19 @@ export default {
       const row = await slugToRow(env.DB, doMatch.slug);
       if (!row) return Response.json({ error: 'Survey not found' }, { status: 404 });
       surveyId = row.id;
-      passwordHash = row.password_hash;
     } else {
       return router.fetch(request, env, ctx);
     }
 
     const isPublicRoute = !!doMatch.slug;
 
-    // Authenticate: admin routes need auth, public routes need password check
+    // Authenticate: admin routes need auth + role check.
+    // Public routes: the worker doesn't gate on password requirements (which
+    // would require knowing the current password_hash and risk cross-isolate
+    // staleness). Instead, the worker verifies the spw_ cookie if present and
+    // forwards an X-Authenticated header — the DO checks its own
+    // (always-current) survey.password_hash and rejects with 403 when needed.
     if (!isPublicRoute) {
-      // Admin route — authenticate and check role
       const authResult = await authenticateRequest(request, config);
       if (authResult instanceof Response) return authResult;
 
@@ -357,20 +360,6 @@ export default {
       const requiredRole = getRequiredDORole(method, subPath);
       if (!checkRole(authResult, requiredRole)) {
         return Response.json({ error: 'Insufficient permissions' }, { status: 403 });
-      }
-    } else {
-      // Public route — check password session if needed
-      if (doMatch.slug) {
-        const subPathPublic = pathname.match(PUBLIC_PATTERN)?.[2] || '';
-        const needsPasswordCheck =
-          subPathPublic === '/resume' || subPathPublic === '/answers/batch' || subPathPublic === '/complete';
-
-        if (needsPasswordCheck && passwordHash) {
-          const token = getCookie(request, `spw_${doMatch.slug}`);
-          if (!token || !(await verifyToken(surveyId, token, config.passwordSecret))) {
-            return Response.json({ error: 'Authentication required' }, { status: 403 });
-          }
-        }
       }
     }
 
@@ -393,27 +382,27 @@ export default {
         wsRole = authResult; // actual role (viewer/editor/admin) so DO can enforce fine-grained checks
       }
 
-      // Public (respondent) WebSocket connections to password-protected surveys require password cookie
-      if (isPublicRoute && wsType === 'respondent' && passwordHash && doMatch.slug) {
-        const token = getCookie(request, `spw_${doMatch.slug}`);
-        if (!token || !(await verifyToken(surveyId, token, config.passwordSecret))) {
-          return Response.json({ error: 'Authentication required' }, { status: 403 });
-        }
-      }
-
       // Strip any client-supplied internal headers — these MUST come from
       // the worker's own verification, never from the client.
       const wsHeaders = new Headers(request.headers);
       stripInternalHeaders(wsHeaders);
       wsHeaders.set('X-WS-Role', wsRole);
 
-      // Forward respondent cookie ID so the DO can tag the connection for
-      // authenticated-once respondent sessions (no need to re-auth per message).
-      // The header is only set from a verified rid cookie — never from the
-      // client's request headers directly.
       if (isPublicRoute && doMatch.slug) {
+        // Forward respondent cookie ID so the DO can tag the connection for
+        // authenticated-once respondent sessions (no need to re-auth per message).
+        // The header is only set from a verified rid cookie — never from the
+        // client's request headers directly.
         const respondentId = getRespondentId(request, doMatch.slug);
         if (respondentId) wsHeaders.set('X-Respondent-Id', respondentId);
+
+        // Always verify the spw_ cookie (independent of whether we know the
+        // survey requires a password — the DO will gate based on its own
+        // current password_hash). Forwarding "user holds a valid token for
+        // this survey" lets the DO trust the result without re-verifying.
+        const token = getCookie(request, `spw_${doMatch.slug}`);
+        const isAuthenticated = token ? await verifyToken(surveyId, token, config.passwordSecret) : false;
+        wsHeaders.set('X-Authenticated', isAuthenticated ? 'true' : 'false');
       }
 
       return stub.fetch(new Request(request.url, { method: request.method, headers: wsHeaders }));
@@ -431,14 +420,12 @@ export default {
       const respondentId = getRespondentId(request, slug);
       if (respondentId) doHeaders.set('X-Respondent-Id', respondentId);
 
-      // Add password authentication status
-      if (passwordHash) {
-        const token = getCookie(request, `spw_${slug}`);
-        const isAuthenticated = token ? await verifyToken(surveyId, token, config.passwordSecret) : false;
-        doHeaders.set('X-Authenticated', isAuthenticated ? 'true' : 'false');
-      } else {
-        doHeaders.set('X-Authenticated', 'true');
-      }
+      // X-Authenticated reports the true validity of the spw_ cookie. The DO
+      // decides whether a password is required based on its own up-to-date
+      // survey.password_hash and rejects unauthenticated requests when needed.
+      const token = getCookie(request, `spw_${slug}`);
+      const isAuthenticated = token ? await verifyToken(surveyId, token, config.passwordSecret) : false;
+      doHeaders.set('X-Authenticated', isAuthenticated ? 'true' : 'false');
     }
 
     // Forward to DO
