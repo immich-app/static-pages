@@ -261,34 +261,58 @@ export class AnswerRepository {
       sort_order: number;
       section_sort_order: number;
       answer_count: number;
+      reached_count: number;
     }>
   > {
-    const results = await this.db
-      .selectFrom('survey_questions as q')
-      .innerJoin('survey_sections as s', 'q.section_id', 's.id')
-      .leftJoin('answers as a', 'q.id', 'a.question_id')
-      .leftJoin('respondents as r', (join) =>
-        join.onRef('a.respondent_id', '=', 'r.id').on('r.survey_id', '=', surveyId),
-      )
-      .select([
-        'q.id as question_id',
-        'q.text as question_text',
-        'q.sort_order',
-        's.sort_order as section_sort_order',
-        sql<number>`COUNT(DISTINCT a.respondent_id)`.as('answer_count'),
-      ])
-      .where('q.survey_id', '=', surveyId)
-      .groupBy('q.id')
-      .orderBy('s.sort_order')
-      .orderBy('q.sort_order')
-      .execute();
-    return results as Array<{
+    // For a true funnel, "reached" must be the count of respondents who
+    // submitted an answer to ANY question at this position or later — that's
+    // the only definition that produces a strictly non-increasing series.
+    // Conditional skip-logic and optional questions mean per-question
+    // answer counts are not monotonic: Q4 can have more answers than Q3 if
+    // Q3 was conditional. The correlated subquery computes that tail
+    // distinct-count from the SQL side; runs once per minute via the DO
+    // analytics broadcast.
+    const results = await sql<{
       question_id: string;
       question_text: string;
       sort_order: number;
       section_sort_order: number;
       answer_count: number;
-    }>;
+      reached_count: number;
+    }>`
+      SELECT
+        q.id AS question_id,
+        q.text AS question_text,
+        q.sort_order,
+        s.sort_order AS section_sort_order,
+        COUNT(DISTINCT a.respondent_id) AS answer_count,
+        (
+          SELECT COUNT(DISTINCT a2.respondent_id)
+          FROM answers a2
+          INNER JOIN survey_questions q2 ON a2.question_id = q2.id
+          INNER JOIN survey_sections s2 ON q2.section_id = s2.id
+          INNER JOIN respondents r2 ON a2.respondent_id = r2.id
+          WHERE r2.survey_id = ${surveyId}
+            AND (
+              s2.sort_order > s.sort_order
+              OR (s2.sort_order = s.sort_order AND q2.sort_order >= q.sort_order)
+            )
+        ) AS reached_count
+      FROM survey_questions q
+      INNER JOIN survey_sections s ON q.section_id = s.id
+      LEFT JOIN answers a ON q.id = a.question_id
+      LEFT JOIN respondents r ON a.respondent_id = r.id AND r.survey_id = ${surveyId}
+      WHERE q.survey_id = ${surveyId}
+      GROUP BY q.id, q.text, q.sort_order, s.sort_order
+      ORDER BY s.sort_order, q.sort_order
+    `.execute(this.db);
+    return results.rows.map((r) => ({
+      ...r,
+      sort_order: Number(r.sort_order),
+      section_sort_order: Number(r.section_sort_order),
+      answer_count: Number(r.answer_count),
+      reached_count: Number(r.reached_count),
+    }));
   }
 
   async searchTextAnswers(

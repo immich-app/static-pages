@@ -33,7 +33,11 @@
 
   function retainedPct(row: DropoffDataPoint): number {
     if (startingCohort <= 0) return 0;
-    return Math.round((row.respondentsAnswered / startingCohort) * 100);
+    return Math.round((row.respondentsReached / startingCohort) * 100);
+  }
+
+  function skippedFor(row: DropoffDataPoint): number {
+    return Math.max(0, row.respondentsReached - row.respondentsAnswered);
   }
 </script>
 
@@ -53,15 +57,21 @@
     <div class="space-y-2">
       {#each data as row, i (row.questionId)}
         {@const pct = retainedPct(row)}
-        {@const width = widthPct(row.respondentsAnswered)}
+        {@const width = widthPct(row.respondentsReached)}
+        {@const skipped = skippedFor(row)}
         <div class="flex items-center gap-3 text-xs">
           <span class="w-6 shrink-0 text-right font-mono text-gray-500 tabular-nums">Q{i + 1}</span>
           <div class="min-w-0 flex-1">
             <div class="mb-0.5 flex items-baseline justify-between gap-2">
               <span class="truncate text-gray-300">{row.questionText}</span>
               <span class="shrink-0 text-gray-500 tabular-nums">
-                {row.respondentsAnswered} / {startingCohort}
+                {row.respondentsReached} / {startingCohort}
                 <span class="ml-1 text-gray-600">({pct}%)</span>
+                {#if skipped > 0}
+                  <span class="ml-1 text-gray-500" title="Reached this question but skipped it (conditional or optional)">
+                    · {skipped} skipped
+                  </span>
+                {/if}
               </span>
             </div>
             <div class="relative h-4 overflow-hidden rounded-md bg-gray-800/40">
@@ -78,8 +88,9 @@
       {/each}
     </div>
     <p class="mt-3 text-[11px] text-gray-500">
-      Bar width is the share of the starting cohort still answering. Percentage on the right is drop-off from the
-      previous question.
+      Bar width is the cohort that reached this question (respondents who answered it or any question after it).
+      Percentage on the right is the drop-off from the previous step's cohort. Conditional or optional questions are
+      flagged with a "skipped" count.
     </p>
   {/if}
 </div>

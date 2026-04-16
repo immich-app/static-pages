@@ -61,14 +61,60 @@ describe('createApiClient', () => {
 
     client.bufferAnswer({ questionId: 'q1', value: 'a' });
 
-    const flushPromise = client.flushBuffer();
-    // Advance through all backoff delays
+    // First failure: silent — answers stay buffered to retry on the next flush.
+    const firstFlush = client.flushBuffer();
     await vi.runAllTimersAsync();
-    const result = await flushPromise;
+    const firstResult = await firstFlush;
 
-    expect(result).toBe(false);
+    expect(firstResult).toBe(false);
+    expect(client.getBufferSize()).toBe(1);
+    expect(onError).not.toHaveBeenCalled();
+
+    // Second consecutive failure: surfaces the toast so the respondent
+    // knows save is genuinely struggling and can act on it.
+    const secondFlush = client.flushBuffer();
+    await vi.runAllTimersAsync();
+    const secondResult = await secondFlush;
+
+    expect(secondResult).toBe(false);
     expect(client.getBufferSize()).toBe(1);
     expect(onError).toHaveBeenCalled();
+    client.destroy();
+  });
+
+  it('clears the toast after a successful flush following failures', async () => {
+    let succeed = false;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => Promise.resolve({ ok: succeed, status: succeed ? 204 : 500 })),
+    );
+
+    const onError = vi.fn();
+    const onSuccess = vi.fn();
+    const client = createApiClient('test-survey');
+    client.onSaveError(onError);
+    client.onSaveSuccess(onSuccess);
+
+    client.bufferAnswer({ questionId: 'q1', value: 'a' });
+
+    // Two consecutive flush failures (each saveBatchHttp exhausts its
+    // own retries internally before returning false).
+    const first = client.flushBuffer();
+    await vi.runAllTimersAsync();
+    await first;
+    const second = client.flushBuffer();
+    await vi.runAllTimersAsync();
+    await second;
+    expect(onError).toHaveBeenCalled();
+
+    // Next flush succeeds — success callback fires so the UI can dismiss
+    // the lingering toast.
+    succeed = true;
+    const third = client.flushBuffer();
+    await vi.runAllTimersAsync();
+    const ok = await third;
+    expect(ok).toBe(true);
+    expect(onSuccess).toHaveBeenCalled();
     client.destroy();
   });
 

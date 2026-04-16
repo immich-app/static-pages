@@ -159,6 +159,9 @@ export function createSurveyEngine(
     get totalQuestions() {
       return surveyQuestions.length;
     },
+    get questions() {
+      return surveyQuestions;
+    },
     next,
     previous,
     goTo,

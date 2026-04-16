@@ -446,14 +446,23 @@ export class RespondentService {
     const dropoffData = await this.answers.getDropoffData(surveyId);
     const totalRespondents = counts.total;
 
+    // The funnel measures cohort attrition, not per-question completion.
+    // `reached_count` is the distinct respondents who answered any question
+    // at this position or later — naturally non-increasing across the list.
+    // Drop-off at each step is the loss against the PREVIOUS question's
+    // reached cohort (the first question's baseline is total respondents,
+    // capturing those who started but bailed before answering anything).
     return dropoffData.map((d, i) => {
-      const reached = i === 0 ? totalRespondents : dropoffData[i - 1].answer_count;
+      const reached = d.reached_count;
+      const previousReached = i === 0 ? totalRespondents : dropoffData[i - 1].reached_count;
+      const dropoffRate =
+        previousReached > 0 ? Math.round(((previousReached - reached) / previousReached) * 100) : 0;
       return {
         questionId: d.question_id,
         questionText: d.question_text,
         respondentsReached: reached,
         respondentsAnswered: d.answer_count,
-        dropoffRate: reached > 0 ? Math.round(((reached - d.answer_count) / reached) * 100) : 0,
+        dropoffRate: Math.max(0, dropoffRate),
       };
     });
   }

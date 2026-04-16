@@ -122,6 +122,10 @@ export function createSurveyLoader(slug: string) {
     client.onSaveError((msg) => {
       error = msg;
     });
+    client.onSaveSuccess(() => {
+      // Clear any lingering save-failure toast once a flush succeeds.
+      if (error) error = null;
+    });
     if (wsClient) client.setWsClient(wsClient);
 
     // Resume via WS (HTTP fallback handled by client)

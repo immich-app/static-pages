@@ -210,6 +210,20 @@
     success = false;
     try {
       const isNew = !survey.id;
+      // Strip DnD-generated fake IDs before saving
+      const cleanSections = localSections.map((s) => ({
+        ...s,
+        id: s.id?.startsWith('new-section-') ? '' : s.id,
+        questions: s.questions.map((q) => ({
+          ...q,
+          id: q.id?.startsWith('new-q-') ? '' : q.id,
+        })),
+      }));
+      // For new surveys, sync sections to the parent first so that the create
+      // handler can persist them as part of the initial survey-creation pass.
+      if (isNew) {
+        await onSaveSections(cleanSections);
+      }
       await onSaveSurvey({
         title: localTitle,
         description: localDescription || null,
@@ -229,15 +243,6 @@
             : { password: null }),
       } as Partial<Survey> & { password?: string | null });
       if (!isNew) {
-        // Strip DnD-generated fake IDs before saving
-        const cleanSections = localSections.map((s) => ({
-          ...s,
-          id: s.id?.startsWith('new-section-') ? '' : s.id,
-          questions: s.questions.map((q) => ({
-            ...q,
-            id: q.id?.startsWith('new-q-') ? '' : q.id,
-          })),
-        }));
         await onSaveSections(cleanSections);
       }
       success = true;

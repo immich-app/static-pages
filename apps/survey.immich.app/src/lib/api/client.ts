@@ -12,6 +12,10 @@ interface PendingSave {
 const BACKOFF_DELAYS = [1000, 2000, 4000];
 const INACTIVITY_MS = 10_000;
 const FLUSH_THRESHOLD = 4;
+/** How many consecutive flush failures before we surface the toast. */
+const FAILURES_BEFORE_TOAST = 2;
+/** How long to wait for a transient WS reconnect before declaring failure. */
+const WS_RECONNECT_WAIT_MS = 2000;
 
 /**
  * Client transport mode.
@@ -35,7 +39,9 @@ export function createApiClient(slug: string) {
   const answerBuffer: Map<string, PendingSave> = new Map();
   let inactivityTimer: ReturnType<typeof setTimeout> | null = null;
   let unflushedCount = 0;
+  let consecutiveFailures = 0;
   let onSaveErrorCallback: ((message: string) => void) | null = null;
+  let onSaveSuccessCallback: (() => void) | null = null;
   let wsClient: SurveyWsClient | null = null;
   let mode: Mode = 'unknown';
 
@@ -72,7 +78,15 @@ export function createApiClient(slug: string) {
       // WS-only — if the socket is down, re-buffer and retry on next flush.
       // No HTTP fallback: it would trigger per-request cookie auth and hurt
       // server capacity.
-      if (!wsClient?.connected) return false;
+      // Briefly wait for the auto-reconnect to complete before giving up,
+      // so a transient drop doesn't surface as a save failure.
+      if (!wsClient?.connected) {
+        const deadline = Date.now() + WS_RECONNECT_WAIT_MS;
+        while (!wsClient?.connected && Date.now() < deadline) {
+          await new Promise((r) => setTimeout(r, 100));
+        }
+        if (!wsClient?.connected) return false;
+      }
       try {
         await wsClient.request('submit-answers', { answers });
         return true;
@@ -119,13 +133,22 @@ export function createApiClient(slug: string) {
     const success = await saveBatch(batch);
     if (success) {
       unflushedCount = 0;
+      consecutiveFailures = 0;
+      onSaveSuccessCallback?.();
     } else {
       for (const item of batch) {
         if (!answerBuffer.has(item.questionId)) {
           answerBuffer.set(item.questionId, item);
         }
       }
-      onSaveErrorCallback?.('Failed to save answers. Your responses will be retried automatically.');
+      consecutiveFailures++;
+      // Don't alarm the respondent on transient blips — buffered answers
+      // will retry on the next flush trigger (threshold, inactivity, or
+      // unload via sendBeacon). Surface a toast only after the failures
+      // have persisted, so the message is meaningful when it does appear.
+      if (consecutiveFailures >= FAILURES_BEFORE_TOAST) {
+        onSaveErrorCallback?.('Failed to save answers. Your responses will be retried automatically.');
+      }
     }
     return success;
   }
@@ -208,6 +231,10 @@ export function createApiClient(slug: string) {
     onSaveErrorCallback = cb;
   }
 
+  function onSaveSuccess(cb: () => void): void {
+    onSaveSuccessCallback = cb;
+  }
+
   function getBufferSize(): number {
     return answerBuffer.size;
   }
@@ -226,6 +253,7 @@ export function createApiClient(slug: string) {
     fetchResume,
     postComplete,
     onSaveError,
+    onSaveSuccess,
     getBufferSize,
     destroy,
     setWsClient,

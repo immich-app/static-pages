@@ -131,21 +131,27 @@
     <div class="bg-immich-primary h-full transition-all duration-300" style="width: {engine.progress}%"></div>
   </div>
 
-  <div class="relative flex flex-1 flex-col overflow-hidden">
+  <div class="relative flex flex-1 flex-col overflow-y-auto">
     {#key `${engine.currentIndex}-${showingSectionHeader}`}
       <div class="flex flex-1 flex-col" in:fly={{ y: direction * 50, duration: flyDuration, easing: cubicOut }}>
         {#if showingSectionHeader && currentSectionHeader}
+          {@const sectionQuestionCount = engine.questions.filter(
+            (q) => q.section_id === currentSectionHeader.id && engine.shouldShowQuestion(q),
+          ).length}
           <SectionHeader
             section={currentSectionHeader}
             sectionIndex={sortedSections.indexOf(currentSectionHeader)}
             totalSections={sortedSections.length}
+            questionCount={sectionQuestionCount}
             onContinue={dismissSection}
             onBack={handleBack}
             canGoBack={engine.currentIndex > 0}
           />
         {:else if engine.currentQuestion}
           {@const snapshotQuestion = engine.currentQuestion}
-          <div class="flex flex-1 flex-col items-center justify-center px-4 pt-6 pb-28 sm:pb-24">
+          <div
+            class="flex flex-1 flex-col items-center justify-center px-4 pt-6 pb-[calc(7rem+env(safe-area-inset-bottom))] sm:pb-[calc(6rem+env(safe-area-inset-bottom))]"
+          >
             <QuestionCard
               question={snapshotQuestion}
               answer={engine.answers[snapshotQuestion.id]}
