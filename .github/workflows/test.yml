@@ -65,29 +65,41 @@ jobs:
             echo "has_backend=false" >> $GITHUB_ENV
           fi
 
-      - name: Test backend
-        if: ${{ env.has_backend == 'true' }}
-        working-directory: 'apps/${{ matrix.app_name }}.immich.app/backend'
-        run: |
-          pnpm install
-          pnpm test
-
       - name: Install Playwright browsers
         if: ${{ matrix.app_name == 'survey' && !cancelled() }}
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Start wrangler and Vite
         if: ${{ matrix.app_name == 'survey' && !cancelled() }}
+        # Track PIDs so the teardown step can kill them reliably instead of
+        # leaking background processes into later steps. The `curl` probe
+        # against /api/auth/me checks for 401 Unauthorized (the server's
+        # actual healthy-but-unauthenticated response) — plain `curl -sf`
+        # would treat 401 as success too, so any run where wrangler never
+        # came up would race ahead and E2E tests would fail confusingly.
         run: |
           (cd backend && npx wrangler d1 migrations apply survey --local --config wrangler-dev.jsonc)
           (cd backend && npx wrangler dev --config wrangler-dev.jsonc --port 8787) &
+          echo "WRANGLER_PID=$!" >> $GITHUB_ENV
           pnpm dev &
-          timeout 60 bash -c 'until curl -sf http://localhost:8787/api/auth/me; do sleep 1; done'
+          echo "VITE_PID=$!" >> $GITHUB_ENV
+          timeout 60 bash -c 'until [ "$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8787/api/auth/me)" = "401" ]; do sleep 1; done'
           timeout 60 bash -c 'until curl -sf http://localhost:5173 >/dev/null 2>&1; do sleep 1; done'
+
+      - name: Backend integration tests
+        if: ${{ env.has_backend == 'true' && matrix.app_name == 'survey' && !cancelled() }}
+        working-directory: 'apps/${{ matrix.app_name }}.immich.app/backend'
+        run: pnpm test:integration
 
       - name: E2E tests
         if: ${{ matrix.app_name == 'survey' && !cancelled() }}
         run: pnpm exec playwright test
+
+      - name: Stop dev servers
+        if: ${{ matrix.app_name == 'survey' && always() }}
+        run: |
+          if [ -n "${WRANGLER_PID:-}" ]; then kill "$WRANGLER_PID" 2>/dev/null || true; fi
+          if [ -n "${VITE_PID:-}" ]; then kill "$VITE_PID" 2>/dev/null || true; fi
 
       - name: Upload Playwright report
         if: ${{ matrix.app_name == 'survey' && failure() }}

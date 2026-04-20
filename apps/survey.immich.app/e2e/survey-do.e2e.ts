@@ -274,7 +274,20 @@ test.describe('WebSocket protocol', () => {
     });
 
     await page.goto(`/results/${surveyId}`);
-    await page.waitForTimeout(3000);
+    // Wait for a "counts" push to arrive instead of blindly sleeping 3s.
+    await page.waitForFunction(
+      () =>
+        ((window as any).__wsMessages || [])
+          .map((m: string) => {
+            try {
+              return JSON.parse(m);
+            } catch {
+              return null;
+            }
+          })
+          .some((m: any) => m && m.type === 'push' && m.event === 'counts'),
+      { timeout: 10_000 },
+    );
 
     const messages = await page.evaluate(() => (window as any).__wsMessages || []);
     const parsed = messages.map((m: string) => JSON.parse(m));

@@ -99,8 +99,13 @@ jobs:
 
       - name: Build backend
         run: |
-          if pnpm run build:workers 2>/dev/null; then
-            echo "Built with build:workers"
+          # Prefer a package-defined build:workers script when present so
+          # multi-worker apps (e.g. survey, which needs a separate Durable
+          # Object worker bundle) can control the build. Fall back to plain
+          # `wrangler build` only when the script isn't defined — this must
+          # NOT silently swallow real build errors.
+          if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts['build:workers'] ? 0 : 1)"; then
+            pnpm run build:workers
           else
             pnpm exec wrangler build
           fi

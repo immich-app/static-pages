@@ -9,7 +9,7 @@
     "build:workers": "wrangler build --config wrangler-do.jsonc && mv dist/index.js dist/sessions.js && wrangler build",
     "start": "tsx src/server.ts",
     "build:node": "esbuild src/server.ts --bundle --platform=node --format=esm --outdir=dist --external:better-sqlite3 --external:pg",
-    "test": "echo 'Backend integration tests require a running server. Use test:integration instead.'",
+    "test": "pnpm test:integration",
     "load-test": "tsx scripts/load-test.ts",
     "test:integration": "vitest run",
     "test:integration:watch": "vitest"
