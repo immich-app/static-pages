@@ -18,6 +18,13 @@ export interface SurveyWsClient {
   /** Listen for push events from the server */
   on<K extends keyof WsPushEvents>(event: K, callback: (data: WsPushEvents[K]) => void): () => void;
 
+  /**
+   * Listen for connection lifecycle changes (e.g. to surface a "lost
+   * connection" toast and clear it on reconnect). Fires immediately with
+   * the current state on subscribe.
+   */
+  onConnectionChange(callback: (state: 'connecting' | 'open' | 'closed' | 'failed') => void): () => void;
+
   /** Close the connection */
   close(): void;
 
@@ -41,15 +48,25 @@ export function createSurveyWsClient(slug: string, type: 'viewer' | 'respondent'
   let failures = 0;
   const MAX_FAILURES = 3;
 
+  type ConnState = 'connecting' | 'open' | 'closed' | 'failed';
+  let state: ConnState = 'connecting';
+  const stateListeners = new Set<(s: ConnState) => void>();
+  function setState(next: ConnState) {
+    state = next;
+    for (const cb of stateListeners) cb(next);
+  }
+
   const pushListeners = new Map<string, Array<(data: unknown) => void>>();
   const pendingRequests = new Map<string, { resolve: (data: unknown) => void; reject: (error: Error) => void }>();
 
   function connect() {
     if (closed) return;
+    setState('connecting');
     ws = new WebSocket(url);
 
     ws.onopen = () => {
       failures = 0;
+      setState('open');
     };
 
     ws.onmessage = (event) => {
@@ -90,7 +107,10 @@ export function createSurveyWsClient(slug: string, type: 'viewer' | 'respondent'
       if (closed) return;
       failures++;
       if (failures < MAX_FAILURES) {
+        setState('closed');
         reconnectTimer = setTimeout(connect, 3000);
+      } else {
+        setState('failed');
       }
     };
 
@@ -110,21 +130,28 @@ export function createSurveyWsClient(slug: string, type: 'viewer' | 'respondent'
       op: K,
       data: WsOperations[K]['request'],
     ): Promise<WsOperations[K]['response']> {
-      // Wait for connection if still connecting
+      // Wait for connection if still connecting. We capture `ws` into a local
+      // so a concurrent reconnect that reassigns the outer binding can't make
+      // us remove listeners from the wrong socket.
       if (ws?.readyState === WebSocket.CONNECTING) {
+        const socket = ws;
         await new Promise<void>((resolve, reject) => {
           const onOpen = () => {
-            ws?.removeEventListener('open', onOpen);
-            ws?.removeEventListener('error', onError);
+            socket.removeEventListener('open', onOpen);
+            socket.removeEventListener('error', onError);
+            socket.removeEventListener('close', onClose);
             resolve();
           };
           const onError = () => {
-            ws?.removeEventListener('open', onOpen);
-            ws?.removeEventListener('error', onError);
+            socket.removeEventListener('open', onOpen);
+            socket.removeEventListener('error', onError);
+            socket.removeEventListener('close', onClose);
             reject(new Error('WebSocket connection failed'));
           };
-          ws?.addEventListener('open', onOpen);
-          ws?.addEventListener('error', onError);
+          const onClose = onError;
+          socket.addEventListener('open', onOpen);
+          socket.addEventListener('error', onError);
+          socket.addEventListener('close', onClose);
         });
       }
 
@@ -168,59 +195,73 @@ export function createSurveyWsClient(slug: string, type: 'viewer' | 'respondent'
       };
     },
 
+    onConnectionChange(callback: (s: ConnState) => void): () => void {
+      stateListeners.add(callback);
+      callback(state);
+      return () => {
+        stateListeners.delete(callback);
+      };
+    },
+
     close() {
       closed = true;
       clearTimeout(reconnectTimer);
       ws?.close();
+      setState('closed');
     },
   };
 }
 
 // ============================================================
 // Global connection registry
+//
+// Two separate maps so lookups are unambiguous: slug+type for survey-taking
+// / results viewing, surveyId for admin-registered clients (viewer WS in
+// the results page, editor WS in the builder). Previously a single map
+// used startsWith() prefix matching which could return either an editor
+// or a viewer connection for the same slug at random.
 // ============================================================
 
-const connections = new Map<string, SurveyWsClient>();
+type WsType = 'viewer' | 'respondent' | 'editor';
+
+const connectionsBySlug = new Map<string, SurveyWsClient>(); // key: `${slug}:${type}`
+const connectionsBySurveyId = new Map<string, SurveyWsClient>(); // key: surveyId
 
 /** Get or create a WS client for a survey */
-export function getSurveyWs(slug: string, type: 'viewer' | 'respondent' | 'editor'): SurveyWsClient {
+export function getSurveyWs(slug: string, type: WsType): SurveyWsClient {
   const key = `${slug}:${type}`;
-  const existing = connections.get(key);
+  const existing = connectionsBySlug.get(key);
   if (existing?.connected) return existing;
   existing?.close();
 
   const client = createSurveyWsClient(slug, type);
-  connections.set(key, client);
+  connectionsBySlug.set(key, client);
   return client;
 }
 
-/** Get an existing WS client by survey ID (for API modules — never creates a connection) */
+/** Get an existing WS client by survey ID (admin flows only) */
 export function getWsClientById(surveyId: string): SurveyWsClient | undefined {
-  // Check all connection keys for this survey ID
-  for (const [key, conn] of connections) {
-    if (key.startsWith(surveyId + ':') && conn.connected) return conn;
-  }
-  return undefined;
+  const conn = connectionsBySurveyId.get(surveyId);
+  return conn?.connected ? conn : undefined;
 }
 
-/** Get an existing WS client by slug (for API modules — never creates a connection) */
-export function getWsClientBySlug(slug: string): SurveyWsClient | undefined {
-  for (const [key, conn] of connections) {
-    if (key.startsWith(slug + ':') && conn.connected) return conn;
-  }
-  return undefined;
+/** Get an existing WS client by slug and type */
+export function getWsClientBySlug(slug: string, type: WsType = 'respondent'): SurveyWsClient | undefined {
+  const conn = connectionsBySlug.get(`${slug}:${type}`);
+  return conn?.connected ? conn : undefined;
 }
 
 /** Register a connection under a survey ID (for lookup from API modules) */
 export function registerWsClient(surveyId: string, client: SurveyWsClient): void {
-  connections.set(`${surveyId}:id`, client);
+  connectionsBySurveyId.set(surveyId, client);
 }
 
 /** Close and remove a WS connection */
-export function closeSurveyWs(key: string): void {
-  const conn = connections.get(key);
+export function closeSurveyWs(slug: string, type: WsType): void {
+  const key = `${slug}:${type}`;
+  const conn = connectionsBySlug.get(key);
   if (conn) {
     conn.close();
-    connections.delete(key);
+    connectionsBySlug.delete(key);
   }
 }

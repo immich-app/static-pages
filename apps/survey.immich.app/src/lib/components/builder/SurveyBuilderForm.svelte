@@ -82,6 +82,10 @@
   let undoStack = $state<Snapshot[]>([]);
   let redoStack = $state<Snapshot[]>([]);
   let snapshotTimer: ReturnType<typeof setTimeout> | undefined;
+  // Guard so the "track changes → pushSnapshot" effect doesn't re-push the
+  // state that undo/redo just restored, which would otherwise stack a
+  // duplicate on top of the action and make the next undo/redo a no-op.
+  let isRestoring = false;
 
   function takeSnapshot(): Snapshot {
     return {
@@ -93,6 +97,7 @@
   }
 
   function pushSnapshot() {
+    if (isRestoring) return;
     clearTimeout(snapshotTimer);
     snapshotTimer = setTimeout(() => {
       const snap = takeSnapshot();
@@ -103,6 +108,7 @@
 
   function undo() {
     if (undoStack.length === 0) return;
+    isRestoring = true;
     const current = takeSnapshot();
     redoStack = [...redoStack, current];
     const snap = undoStack[undoStack.length - 1];
@@ -111,10 +117,14 @@
     localDescription = snap.description;
     localSlug = snap.slug;
     localSections = snap.sections;
+    queueMicrotask(() => {
+      isRestoring = false;
+    });
   }
 
   function redo() {
     if (redoStack.length === 0) return;
+    isRestoring = true;
     const current = takeSnapshot();
     undoStack = [...undoStack, current];
     const snap = redoStack[redoStack.length - 1];
@@ -123,9 +133,22 @@
     localDescription = snap.description;
     localSlug = snap.slug;
     localSections = snap.sections;
+    queueMicrotask(() => {
+      isRestoring = false;
+    });
   }
 
   function handleKeyboard(e: KeyboardEvent) {
+    // Don't hijack Ctrl-Z / Ctrl-Y when the user is editing in a native
+    // input — let the browser's native per-field undo stack take it.
+    const active = document.activeElement;
+    if (
+      active instanceof HTMLInputElement ||
+      active instanceof HTMLTextAreaElement ||
+      (active instanceof HTMLElement && active.isContentEditable)
+    ) {
+      return;
+    }
     if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
       e.preventDefault();
       undo();

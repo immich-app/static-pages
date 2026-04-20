@@ -14,9 +14,13 @@ export function useDebouncedAnswer(
 ): { handleInput: () => void } {
   let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 
-  const ctx = getContext<{ registerPreFlush: (h: () => void) => void; unregisterPreFlush: () => void } | undefined>(
-    'survey-pre-flush',
-  );
+  const ctx = getContext<
+    | {
+        registerPreFlush: (h: () => void) => void;
+        unregisterPreFlush: (h: () => void) => void;
+      }
+    | undefined
+  >('survey-pre-flush');
 
   function flush() {
     if (debounceTimer !== undefined) {
@@ -38,7 +42,7 @@ export function useDebouncedAnswer(
   ctx?.registerPreFlush(flush);
 
   onDestroy(() => {
-    ctx?.unregisterPreFlush();
+    ctx?.unregisterPreFlush(flush);
     flush();
   });
 

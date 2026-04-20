@@ -40,6 +40,15 @@
   async function doSearch(offset = 0) {
     loading = true;
     searched = true;
+    if (offset === 0) {
+      // Clear any expanded detail ONLY when actually starting a new search.
+      // Doing this on every keystroke (as a plain effect) would wipe the
+      // user's current drill-down mid-typing.
+      selectedKey = null;
+      selectedDetail = null;
+      selectedMatchQuestionId = null;
+      detailError = null;
+    }
     try {
       const data = await searchAnswers(surveyId, query.trim(), questionFilter || undefined, {
         offset,
@@ -94,14 +103,13 @@
     doSearch(currentOffset + pageSize);
   }
 
-  // Reset expanded detail whenever the search changes
+  // Kick off a (debounced) search whenever the user types or changes the
+  // question filter. The expanded-detail reset happens inside doSearch once
+  // the debounce actually fires, so live typing doesn't wipe the current
+  // drill-down prematurely.
   $effect(() => {
     void query;
     void questionFilter;
-    selectedKey = null;
-    selectedDetail = null;
-    selectedMatchQuestionId = null;
-    detailError = null;
     handleSearch();
   });
 </script>

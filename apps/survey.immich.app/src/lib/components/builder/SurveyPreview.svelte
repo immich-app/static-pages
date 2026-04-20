@@ -57,7 +57,10 @@
     })),
   );
 
-  const engine = $derived(createSurveyEngine(previewQuestions));
+  // The engine is created ONCE for the lifetime of the preview modal so that
+  // in-preview state (current question, answers) survives unrelated parent
+  // re-renders. Parent edits while the preview is open don't reset progress.
+  const engine = createSurveyEngine(previewQuestions);
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->

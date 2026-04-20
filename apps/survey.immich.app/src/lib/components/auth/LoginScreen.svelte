@@ -43,7 +43,15 @@
     {#if passwordEnabled}
       <form onsubmit={handlePasswordLogin} class="space-y-4" aria-label="Sign in">
         <div>
-          <Input type="password" bind:value={password} placeholder="Admin password" disabled={submitting} />
+          <label for="admin-password" class="sr-only">Admin password</label>
+          <Input
+            id="admin-password"
+            type="password"
+            bind:value={password}
+            placeholder="Admin password"
+            disabled={submitting}
+            autocomplete="current-password"
+          />
         </div>
 
         {#if error}

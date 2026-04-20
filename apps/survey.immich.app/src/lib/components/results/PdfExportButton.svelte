@@ -134,7 +134,6 @@
 
       pdf.save(filename);
     } catch (e) {
-      console.error('PDF export failed:', e);
       error = e instanceof Error ? e.message : 'PDF export failed';
       setTimeout(() => (error = null), 4000);
     }

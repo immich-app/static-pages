@@ -30,20 +30,22 @@ export function createSurveyLoader(slug: string) {
   const questionShownAt: Record<string, number> = {};
 
   /**
-   * Pre-flush hook for debounced question components. When beforeunload
-   * fires, we call this BEFORE flushBufferSync so that any pending 300ms
-   * debounce timer in the active text/email/number/textarea component
-   * fires and gets its latest value into the buffer before the beacon
-   * sends it. Components register/unregister via onMount/onDestroy.
+   * Pre-flush hooks for debounced question components. When beforeunload
+   * fires, we call every hook BEFORE flushBufferSync so that any pending
+   * 300ms debounce timer in the active text/email/number/textarea component
+   * fires and gets its latest value into the buffer before the beacon sends
+   * it. Multiple hooks can be registered simultaneously (e.g. during the
+   * brief overlap between one component's onDestroy and the next's onMount)
+   * — each unregister removes only the hook it registered.
    */
-  let preFlushHook: (() => void) | null = null;
+  const preFlushHooks = new Set<() => void>();
 
   function registerPreFlush(hook: () => void) {
-    preFlushHook = hook;
+    preFlushHooks.add(hook);
   }
 
-  function unregisterPreFlush() {
-    preFlushHook = null;
+  function unregisterPreFlush(hook: () => void) {
+    preFlushHooks.delete(hook);
   }
 
   // Expose the pre-flush registry via Svelte context so debounced question
@@ -57,28 +59,31 @@ export function createSurveyLoader(slug: string) {
     }
   });
 
+  async function loadAndInit() {
+    // Load survey definition
+    const data = await getPublishedSurvey(slug);
+    survey = data.survey;
+    sections = data.sections;
+    questions = data.questions;
+
+    // Check if password protected (backend returns no questions/sections)
+    if (survey.requiresPassword && questions.length === 0) {
+      needsPassword = true;
+      return;
+    }
+
+    // Connect WebSocket first — the DO's upgrade handler creates the respondent,
+    // sets the cookie, and tags the connection with the respondent ID. No HTTP
+    // resume round-trip needed.
+    wsClient = createSurveyWsClient(slug, 'respondent');
+
+    await initializeSurvey();
+  }
+
   onMount(() => {
     (async () => {
       try {
-        // Load survey definition
-        const data = await getPublishedSurvey(slug);
-        survey = data.survey;
-        sections = data.sections;
-        questions = data.questions;
-
-        // Check if password protected (backend returns no questions/sections)
-        if (survey.requiresPassword && questions.length === 0) {
-          needsPassword = true;
-          loading = false;
-          return;
-        }
-
-        // Connect WebSocket first — the DO's upgrade handler creates the respondent,
-        // sets the cookie, and tags the connection with the respondent ID. No HTTP
-        // resume round-trip needed.
-        wsClient = createSurveyWsClient(slug, 'respondent');
-
-        await initializeSurvey();
+        await loadAndInit();
       } catch (e) {
         error = e instanceof Error ? e.message : 'Failed to load survey';
       }
@@ -86,7 +91,7 @@ export function createSurveyLoader(slug: string) {
     })();
 
     const handleUnload = () => {
-      preFlushHook?.();
+      for (const hook of preFlushHooks) hook();
       client?.flushBufferSync();
     };
     window.addEventListener('beforeunload', handleUnload);
@@ -178,13 +183,7 @@ export function createSurveyLoader(slug: string) {
     loading = true;
     error = null;
     try {
-      const data = await getPublishedSurvey(slug);
-      survey = data.survey;
-      sections = data.sections;
-      questions = data.questions;
-
-      wsClient = createSurveyWsClient(slug, 'respondent');
-      await initializeSurvey();
+      await loadAndInit();
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to load survey';
     }

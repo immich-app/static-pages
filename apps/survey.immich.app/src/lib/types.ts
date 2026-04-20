@@ -15,6 +15,48 @@ export interface QuestionOption {
   value: string;
 }
 
+/**
+ * Per-question config payload. Shape varies by question type — this is the
+ * union of every field the builder or runtime might read. Fields are all
+ * optional; the relevant subset is populated based on `SurveyQuestion.type`.
+ */
+export interface SurveyQuestionConfig {
+  // Number
+  min?: number;
+  max?: number;
+  integerOnly?: boolean;
+  step?: number;
+
+  // Rating / NPS
+  scaleMax?: number;
+
+  // Rating / Likert
+  lowLabel?: string;
+  highLabel?: string;
+  /** Legacy shape — some older surveys persisted labels as an object. */
+  scaleLabels?: { low: string; high: string };
+
+  // Text / textarea
+  minLength?: number;
+  pattern?: string;
+  patternError?: string;
+  minWords?: number;
+  maxWords?: number;
+
+  // Email
+  allowedDomains?: string[];
+
+  // Checkbox
+  minSelections?: number;
+  maxSelections?: number;
+
+  // Skip logic
+  skipSourceQuestion?: string;
+  skipConditionType?: 'skipped' | 'equals' | 'notEquals' | 'anyOf';
+  skipConditionValue?: string;
+  skipConditionValues?: string;
+}
+
 export interface SurveyQuestion {
   id: string;
   section_id: string;
@@ -28,12 +70,7 @@ export interface SurveyQuestion {
   placeholder?: string;
   required: boolean;
   sortOrder: number;
-  config?: {
-    min?: number;
-    max?: number;
-    scaleMax?: number;
-    scaleLabels?: { low: string; high: string };
-  };
+  config?: SurveyQuestionConfig;
   conditional?: {
     showIf: {
       questionId: string;

@@ -134,79 +134,81 @@ export function createResultsLoader(surveyId: string) {
     exporting = false;
   }
 
-  onMount(async () => {
-    try {
-      // First load uses minute granularity so we can inspect the timestamp
-      // span and pick a sensible initial granularity below.
-      const [surveyData, resultsData, initialTimeline, dropoff, ctimes, qtimings] = await Promise.all([
-        getSurvey(surveyId),
-        getLiveResults(surveyId),
-        getSurveyTimeline(surveyId, 'minute'),
-        getSurveyDropoff(surveyId),
-        getSurveyCompletionTimes(surveyId),
-        getSurveyQuestionTimings(surveyId),
-      ]);
-      survey = surveyData.survey;
-      questions = surveyData.questions;
-      sections = surveyData.sections;
-      if (resultsData) {
-        respondentCounts = resultsData.respondentCounts;
-        results = resultsData.results;
-        liveCounts = resultsData.liveCounts;
-      }
-      granularity = pickGranularity(initialTimeline);
-      if (granularity === 'minute') {
-        timelineData = initialTimeline;
-      } else {
-        timelineData = await getSurveyTimeline(surveyId, granularity);
-      }
-      dropoffData = dropoff;
-      completionTimes = ctimes;
-      questionTimings = qtimings;
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Failed to load results';
-    }
-    loading = false;
-
-    // Connect WebSocket for real-time updates
-    if (survey?.slug) {
-      wsClient = createSurveyWsClient(survey.slug, 'viewer');
-      registerWsClient(surveyId, wsClient);
-
-      wsClient.on('counts', (data) => {
-        liveCounts = data;
-      });
-
-      wsClient.on('stats', (data) => {
-        respondentCounts = { total: data.total, completed: data.completed };
-      });
-
-      wsClient.on('results', (data) => {
-        respondentCounts = data.respondentCounts;
-        // The broadcast only contains choice question results (no SQL on the
-        // server for periodic pushes). Merge them with the existing results
-        // so text/textarea/email/number answers from the initial HTTP load
-        // stay intact.
-        const updates: Record<string, (typeof data.results)[number]> = {};
-        for (const r of data.results) updates[r.questionId] = r;
-        results = results.map((r) => updates[r.questionId] ?? r);
-      });
-
-      // Slow-tier analytics (once per minute, fanned out to all viewers).
-      // Contains timeline, drop-off, and completion-time histogram — the
-      // fields that need SQL aggregations and so can't live in the 5s push.
-      // The server always sends timeline at minute granularity; we drop the
-      // payload's timeline if the user has picked a coarser bucket so their
-      // roll-up stays consistent with what they asked for.
-      wsClient.on('analytics', (data) => {
-        if (granularity === 'minute') {
-          timelineData = data.timeline;
+  onMount(() => {
+    (async () => {
+      try {
+        // First load uses minute granularity so we can inspect the timestamp
+        // span and pick a sensible initial granularity below.
+        const [surveyData, resultsData, initialTimeline, dropoff, ctimes, qtimings] = await Promise.all([
+          getSurvey(surveyId),
+          getLiveResults(surveyId),
+          getSurveyTimeline(surveyId, 'minute'),
+          getSurveyDropoff(surveyId),
+          getSurveyCompletionTimes(surveyId),
+          getSurveyQuestionTimings(surveyId),
+        ]);
+        survey = surveyData.survey;
+        questions = surveyData.questions;
+        sections = surveyData.sections;
+        if (resultsData) {
+          respondentCounts = resultsData.respondentCounts;
+          results = resultsData.results;
+          liveCounts = resultsData.liveCounts;
         }
-        dropoffData = data.dropoff;
-        completionTimes = data.completionTimes;
-        questionTimings = data.questionTimings;
-      });
-    }
+        granularity = pickGranularity(initialTimeline);
+        if (granularity === 'minute') {
+          timelineData = initialTimeline;
+        } else {
+          timelineData = await getSurveyTimeline(surveyId, granularity);
+        }
+        dropoffData = dropoff;
+        completionTimes = ctimes;
+        questionTimings = qtimings;
+      } catch (e) {
+        error = e instanceof Error ? e.message : 'Failed to load results';
+      }
+      loading = false;
+
+      // Connect WebSocket for real-time updates
+      if (survey?.slug) {
+        wsClient = createSurveyWsClient(survey.slug, 'viewer');
+        registerWsClient(surveyId, wsClient);
+
+        wsClient.on('counts', (data) => {
+          liveCounts = data;
+        });
+
+        wsClient.on('stats', (data) => {
+          respondentCounts = { total: data.total, completed: data.completed };
+        });
+
+        wsClient.on('results', (data) => {
+          respondentCounts = data.respondentCounts;
+          // The broadcast only contains choice question results (no SQL on the
+          // server for periodic pushes). Merge them with the existing results
+          // so text/textarea/email/number answers from the initial HTTP load
+          // stay intact.
+          const updates: Record<string, (typeof data.results)[number]> = {};
+          for (const r of data.results) updates[r.questionId] = r;
+          results = results.map((r) => updates[r.questionId] ?? r);
+        });
+
+        // Slow-tier analytics (once per minute, fanned out to all viewers).
+        // Contains timeline, drop-off, and completion-time histogram — the
+        // fields that need SQL aggregations and so can't live in the 5s push.
+        // The server always sends timeline at minute granularity; we drop the
+        // payload's timeline if the user has picked a coarser bucket so their
+        // roll-up stays consistent with what they asked for.
+        wsClient.on('analytics', (data) => {
+          if (granularity === 'minute') {
+            timelineData = data.timeline;
+          }
+          dropoffData = data.dropoff;
+          completionTimes = data.completionTimes;
+          questionTimings = data.questionTimings;
+        });
+      }
+    })();
 
     // HTTP polling as fallback (less frequent since WS handles live updates)
     pollInterval = setInterval(() => {
