@@ -11,6 +11,9 @@
   let { question, answer, onAnswer }: Props = $props();
 
   const labels = ['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree'] as const;
+  const lowLabel = $derived(typeof question.config?.lowLabel === 'string' ? question.config.lowLabel : '');
+  const highLabel = $derived(typeof question.config?.highLabel === 'string' ? question.config.highLabel : '');
+  const showScaleLabels = $derived(lowLabel !== '' || highLabel !== '');
 </script>
 
 <QuestionHeader text={question.text} description={question.description} />
@@ -31,10 +34,10 @@
     {/each}
   </div>
 
-  {#if question.config?.scaleLabels}
+  {#if showScaleLabels}
     <div class="flex justify-between text-sm text-gray-400">
-      <span>{question.config.scaleLabels.low}</span>
-      <span>{question.config.scaleLabels.high}</span>
+      <span>{lowLabel}</span>
+      <span>{highLabel}</span>
     </div>
   {/if}
 </div>

@@ -11,9 +11,13 @@
   }
 
   let { question, answer, onAnswer }: Props = $props();
-  let textValue = $derived(answer?.value ?? '');
+  let textValue = $state('');
 
   const maxLength = $derived(question.maxLength ?? 5000);
+
+  $effect.pre(() => {
+    textValue = answer?.value ?? '';
+  });
 
   $effect(() => {
     if (textValue.length > maxLength) {
@@ -21,7 +25,10 @@
     }
   });
 
-  const { handleInput } = useDebouncedAnswer(() => textValue, onAnswer);
+  const { handleInput } = useDebouncedAnswer(
+    () => textValue,
+    (v) => onAnswer(v),
+  );
 </script>
 
 <QuestionHeader text={question.text} description={question.description} />

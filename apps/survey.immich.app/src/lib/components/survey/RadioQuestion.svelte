@@ -11,7 +11,11 @@
   }
 
   let { question, answer, onAnswer }: Props = $props();
-  let otherText = $derived(answer?.otherText ?? '');
+  let otherText = $state('');
+
+  $effect.pre(() => {
+    otherText = answer?.otherText ?? '';
+  });
 
   const visibleOptions = $derived((question.options ?? []).filter((o) => !question.hasOther || o.value !== 'Other'));
 

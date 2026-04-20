@@ -64,18 +64,20 @@ export async function saveSections(
     }
 
     // Create/update questions
+    const hasOptions = (type: string) => ['radio', 'checkbox', 'dropdown'].includes(type);
     for (const q of section.questions) {
       if (!q.id) {
         const created = await apiCreateQuestion(surveyId, sectionId, {
           text: q.text,
           description: q.description || undefined,
           type: q.type,
-          options: ['radio', 'checkbox'].includes(q.type) ? q.options : undefined,
+          options: hasOptions(q.type) ? q.options : undefined,
           required: q.required,
           has_other: q.hasOther,
           other_prompt: q.otherPrompt || undefined,
           max_length: q.maxLength ?? undefined,
           placeholder: q.placeholder || undefined,
+          config: q.config ?? undefined,
         });
         q.id = created.id;
       } else {
@@ -84,12 +86,13 @@ export async function saveSections(
           text: q.text,
           description: q.description || undefined,
           type: q.type,
-          options: ['radio', 'checkbox'].includes(q.type) ? q.options : undefined,
+          options: hasOptions(q.type) ? q.options : undefined,
           required: q.required,
           has_other: q.hasOther,
           other_prompt: q.otherPrompt || undefined,
           max_length: q.maxLength ?? undefined,
           placeholder: q.placeholder || undefined,
+          config: q.config ?? null,
         });
       }
     }

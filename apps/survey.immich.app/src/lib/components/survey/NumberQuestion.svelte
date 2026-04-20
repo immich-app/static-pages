@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Input } from '@immich/ui';
   import type { SurveyQuestion, SurveyAnswer } from '$lib/types';
+  import QuestionHeader from './QuestionHeader.svelte';
   import { useDebouncedAnswer } from './use-debounced-answer';
 
   interface Props {
@@ -10,7 +11,11 @@
   }
 
   let { question, answer, onAnswer }: Props = $props();
-  let numberValue = $derived(answer?.value ?? '');
+  let numberValue = $state('');
+
+  $effect.pre(() => {
+    numberValue = answer?.value ?? '';
+  });
 
   const min = $derived(question.config?.min);
   const max = $derived(question.config?.max);
@@ -19,14 +24,13 @@
     [min !== undefined ? `Min: ${min}` : '', max !== undefined ? `Max: ${max}` : ''].filter(Boolean).join(', '),
   );
 
-  const { handleInput } = useDebouncedAnswer(() => numberValue, onAnswer);
+  const { handleInput } = useDebouncedAnswer(
+    () => numberValue,
+    (v) => onAnswer(v),
+  );
 </script>
 
-<h2 class="mb-2 text-xl font-bold sm:text-2xl">{question.text}</h2>
-
-{#if question.description}
-  <p class="mb-6 text-base text-gray-500">{question.description}</p>
-{/if}
+<QuestionHeader text={question.text} description={question.description} />
 
 <Input
   type="number"

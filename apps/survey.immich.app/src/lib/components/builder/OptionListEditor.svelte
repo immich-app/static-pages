@@ -37,7 +37,13 @@
 
   function updateOption(index: number, label: string) {
     const updated = [...options];
-    updated[index] = { label, value: label };
+    const existing = updated[index];
+    // `value` is the stable key that stored answers reference. Once assigned
+    // (either by the initial `addOptionAfter` seed or by the first keystroke
+    // after an empty option), don't rewrite it — renaming the label must
+    // not invalidate every answer that already picked this option.
+    const value = existing.value ? existing.value : label;
+    updated[index] = { label, value };
     onChange(updated);
   }
 

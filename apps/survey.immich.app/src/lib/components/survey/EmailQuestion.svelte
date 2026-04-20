@@ -11,9 +11,16 @@
   }
 
   let { question, answer, onAnswer }: Props = $props();
-  let email = $derived(answer?.value ?? '');
+  let email = $state('');
 
-  const { handleInput } = useDebouncedAnswer(() => email, onAnswer);
+  $effect.pre(() => {
+    email = answer?.value ?? '';
+  });
+
+  const { handleInput } = useDebouncedAnswer(
+    () => email,
+    (v) => onAnswer(v),
+  );
 </script>
 
 <QuestionHeader text={question.text} description={question.description} />

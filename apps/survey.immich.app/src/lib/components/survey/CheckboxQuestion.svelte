@@ -12,7 +12,11 @@
   }
 
   let { question, answer, onAnswer }: Props = $props();
-  let otherText = $derived(answer?.otherText ?? '');
+  let otherText = $state('');
+
+  $effect.pre(() => {
+    otherText = answer?.otherText ?? '';
+  });
 
   const selectedValues = $derived<SvelteSet<string>>(new SvelteSet(answer?.value ? answer.value.split(',') : []));
 

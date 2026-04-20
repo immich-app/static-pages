@@ -16,6 +16,7 @@ export async function createQuestion(
     other_prompt?: string;
     max_length?: number;
     placeholder?: string;
+    config?: Record<string, unknown>;
   },
 ): Promise<SurveyQuestion> {
   const ws = getWsClientById(surveyId);
@@ -44,6 +45,7 @@ export async function updateQuestion(
     other_prompt?: string;
     max_length?: number;
     placeholder?: string;
+    config?: Record<string, unknown> | null;
   },
 ): Promise<SurveyQuestion> {
   const ws = getWsClientById(surveyId);

@@ -76,7 +76,16 @@
   let showValidation = $state(false);
   const hasValidationOptions = $derived(['text', 'textarea', 'email', 'number', 'checkbox'].includes(question.type));
   const precedingQuestions = $derived(allQuestions.filter((_, i) => i < index));
-  let logicConditionType = $state<'skipped' | 'equals' | 'notEquals' | 'anyOf'>('equals');
+  type LogicConditionType = 'skipped' | 'equals' | 'notEquals' | 'anyOf';
+  const initialLogicType: LogicConditionType = (() => {
+    const saved = question.config?.skipConditionType;
+    if (saved === 'skipped' || saved === 'equals' || saved === 'notEquals' || saved === 'anyOf') return saved;
+    // Back-compat: infer from which value field is populated if an older
+    // survey was saved before skipConditionType was persisted.
+    if (question.config?.skipConditionValues) return 'anyOf';
+    return 'equals';
+  })();
+  let logicConditionType = $state<LogicConditionType>(initialLogicType);
   const showLogicValueInput = $derived(['equals', 'notEquals'].includes(logicConditionType));
   const showLogicValuesInput = $derived(logicConditionType === 'anyOf');
 
@@ -481,8 +490,10 @@
                 <select
                   class="w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm dark:border-gray-600"
                   value={logicConditionType}
-                  onchange={(e) =>
-                    (logicConditionType = (e.target as HTMLSelectElement).value as typeof logicConditionType)}
+                  onchange={(e) => {
+                    logicConditionType = (e.target as HTMLSelectElement).value as LogicConditionType;
+                    updateField('config', { ...question.config, skipConditionType: logicConditionType });
+                  }}
                 >
                   <option value="skipped">Show if skipped</option>
                   <option value="equals">Show if equals</option>

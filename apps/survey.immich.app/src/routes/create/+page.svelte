@@ -79,7 +79,11 @@
                 options: ['radio', 'checkbox', 'dropdown'].includes(q.type) ? q.options : undefined,
                 required: q.required,
                 has_other: q.hasOther,
+                other_prompt: q.otherPrompt || undefined,
+                max_length: q.maxLength ?? undefined,
+                placeholder: q.placeholder || undefined,
                 description: q.description || undefined,
+                config: q.config ?? undefined,
               });
             }
           }
