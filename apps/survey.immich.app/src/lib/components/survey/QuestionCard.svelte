@@ -13,7 +13,7 @@
   import LikertQuestion from './LikertQuestion.svelte';
   import { onMount, onDestroy } from 'svelte';
   import { announce } from '$lib/stores/announcer.svelte';
-  import { validateAnswer } from '../../../../backend/src/answer-validation';
+  import { validateAnswer } from '$shared/answer-validation';
 
   interface Props {
     question: SurveyQuestion;

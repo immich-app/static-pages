@@ -7,6 +7,7 @@
  */
 
 import type { SurveyRow, SectionRow, QuestionRow } from '../db';
+import { ServiceError } from '../services/errors';
 
 const CHOICE_TYPES = new Set(['radio', 'checkbox', 'dropdown', 'rating', 'nps', 'likert']);
 
@@ -113,7 +114,7 @@ export class SurveyCache {
   get survey(): SurveyRow {
     if (this._survey) return this._survey;
     const rows = this.sql.exec('SELECT * FROM surveys LIMIT 1').toArray();
-    if (rows.length === 0) throw new Error('Survey not initialized');
+    if (rows.length === 0) throw new ServiceError('Survey not found', 404);
     this._survey = rows[0] as unknown as SurveyRow;
     return this._survey;
   }

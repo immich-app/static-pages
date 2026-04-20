@@ -9,7 +9,7 @@ import type { RespondentService } from '../../services/respondent.service';
 import type { SurveyCache } from '../cache';
 import { ServiceError } from '../../services/errors';
 import { ROLE_HIERARCHY, BATCH_ANSWER_LIMIT, clampAnswerMs } from '../../constants';
-import { validateAnswer, type QuestionSpec } from '../../answer-validation';
+import { validateAnswer, type QuestionSpec } from '../../../../shared/answer-validation';
 import { execute, type CommandContext } from '../do-commands';
 import { getPresenceCounts, scheduleBroadcast } from './ws-broadcaster';
 
@@ -35,19 +35,21 @@ function respondError(ws: WebSocket, requestId: string, op: string, message: str
 }
 
 /**
- * Declarative authorization table. Every op that requires authentication
- * MUST appear here. The dispatcher rejects unknown ops at the default
- * branch, and any op mapped here is gated by the listed minimum role.
+ * Declarative authorization table. Every op handled by the dispatcher MUST
+ * appear here — there is no implicit default. Unmapped ops are rejected with
+ * "Unknown operation" so a future op added to the switch below (or to
+ * do-commands.execute) can't silently be exposed without an auth decision.
  *
- * Public ops (no entry) — respondent taking the survey:
- *   get-public-survey, resume, submit-answers, complete
- *
- * Keeping this as a single map (instead of three Sets + inline checks)
- * means adding a new op only touches this table plus the switch below,
- * and makes it obvious which operations need which permissions.
+ * 'public' marks respondent survey-taking ops that don't require any role.
  */
-type MinRole = 'viewer' | 'editor' | 'admin';
+type MinRole = 'public' | 'viewer' | 'editor' | 'admin';
 const OP_ROLES: Record<string, MinRole> = {
+  // Public (respondent)
+  'get-public-survey': 'public',
+  resume: 'public',
+  'submit-answers': 'public',
+  complete: 'public',
+
   // Admin-only
   'delete-respondent': 'admin',
 
@@ -121,10 +123,14 @@ export async function dispatch(
   const { requestId, op, data } = parsed;
   const d = data ?? {};
 
-  // Enforce authorization via the declarative OP_ROLES table. Ops with no
-  // entry are public (respondent survey-taking ops).
+  // Enforce authorization via the declarative OP_ROLES table. Ops without an
+  // entry are rejected — adding a new op requires an explicit auth decision.
   const requiredRole = OP_ROLES[op];
-  if (requiredRole && !hasMinRole(ws, ctx, requiredRole)) {
+  if (!requiredRole) {
+    respondError(ws, requestId, op, `Unknown operation: ${op}`);
+    return;
+  }
+  if (requiredRole !== 'public' && !hasMinRole(ws, ctx, requiredRole)) {
     respondError(ws, requestId, op, 'Insufficient permissions');
     return;
   }

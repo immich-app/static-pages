@@ -207,14 +207,24 @@ export class AnswerRepository {
       answer_ms: number | null;
     }>,
   ): Promise<void> {
-    for (const a of answers) {
-      await sql`INSERT INTO answers (respondent_id, question_id, answer, other_text, answered_at, answer_ms)
-        VALUES (${a.respondent_id}, ${a.question_id}, ${a.answer}, ${a.other_text}, ${a.answered_at}, ${a.answer_ms})
-        ON CONFLICT (respondent_id, question_id)
-        DO UPDATE SET answer = excluded.answer, other_text = excluded.other_text, answered_at = excluded.answered_at, answer_ms = excluded.answer_ms`.execute(
-        this.db,
-      );
-    }
+    if (answers.length === 0) return;
+
+    // Single multi-row INSERT ... ON CONFLICT — one round-trip regardless of
+    // batch size. The WS path in ws-handler submits the same way; keeping the
+    // HTTP fallback equally fast matters because self-hosted respondents also
+    // submit whole-page batches that would otherwise do N round-trips.
+    const values = sql.join(
+      answers.map(
+        (a) =>
+          sql`(${a.respondent_id}, ${a.question_id}, ${a.answer}, ${a.other_text}, ${a.answered_at}, ${a.answer_ms})`,
+      ),
+    );
+    await sql`INSERT INTO answers (respondent_id, question_id, answer, other_text, answered_at, answer_ms)
+      VALUES ${values}
+      ON CONFLICT (respondent_id, question_id)
+      DO UPDATE SET answer = excluded.answer, other_text = excluded.other_text, answered_at = excluded.answered_at, answer_ms = excluded.answer_ms`.execute(
+      this.db,
+    );
   }
 
   async getAllResponsesForSurvey(surveyId: string): Promise<

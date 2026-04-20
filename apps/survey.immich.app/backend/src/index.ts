@@ -12,7 +12,9 @@ import { configFromEnv, type AppContext } from './config';
 import { createD1Database } from './db';
 import { getCookie, getRespondentId, setRespondentCookie } from './cookie';
 import { verifyToken } from './utils/crypto';
+import { verifySessionToken } from './utils/session';
 import { ROLE_HIERARCHY, type UserRole } from './constants';
+import { SURVEY_ID_PATTERN, PUBLIC_PATTERN } from './routing';
 
 const { preflight, corsify } = cors();
 
@@ -245,15 +247,6 @@ function cleanResponse(response: Response): Response {
   return cleaned;
 }
 
-// ============================================================
-// Per-survey route patterns that go to DO
-// ============================================================
-
-// /api/surveys/:id/* (but NOT /api/surveys which is the list, or POST /api/surveys which is create)
-const SURVEY_ID_PATTERN = /^\/api\/surveys\/([^/]+)(\/.*)?$/;
-// /api/s/:slug/*
-const PUBLIC_PATTERN = /^\/api\/s\/([^/]+)(\/.*)?$/;
-
 /** Check if this route should be forwarded to the DO */
 function matchDORoute(method: string, pathname: string): { surveyId?: string; slug?: string } | null {
   // /api/surveys/:id/...
@@ -322,7 +315,14 @@ export default {
             return Response.json({ error: 'Failed to initialize survey storage. Please try again.' }, { status: 503 });
           }
         }
-        return Response.json(body, { status: response.status, headers: response.headers });
+        // Re-wrap with the new body. Strip headers that describe the original
+        // body's encoding/length — Response.json will recompute them against
+        // the re-serialized body, and a stale content-length would be rejected
+        // by downstream infra.
+        const newHeaders = new Headers(response.headers);
+        newHeaders.delete('content-length');
+        newHeaders.delete('content-type');
+        return Response.json(body, { status: response.status, headers: newHeaders });
       }
 
       return response;
@@ -545,7 +545,9 @@ function getRequiredDORole(method: string, subPath: string): UserRole {
   return 'viewer';
 }
 
-// Auth check for admin routes (outside itty-router) — verifies HMAC signature and returns user role
+// Auth check for admin routes (outside itty-router). Delegates to the shared
+// session-token validator so this path and the authMiddleware (AuthService)
+// path can't drift on signature / exp handling.
 async function authenticateRequest(
   request: Request,
   config: import('./config').AppConfig,
@@ -554,33 +556,9 @@ async function authenticateRequest(
   if (!sessionCookie) {
     return Response.json({ error: 'Authentication required' }, { status: 401 });
   }
-  try {
-    const parts = sessionCookie.split('.');
-    if (parts.length !== 3) return Response.json({ error: 'Invalid session' }, { status: 401 });
-
-    // Verify HMAC signature
-    const key = await crypto.subtle.importKey(
-      'raw',
-      new TextEncoder().encode(config.sessionSecret),
-      { name: 'HMAC', hash: 'SHA-256' },
-      false,
-      ['verify'],
-    );
-    const sigBytes = Uint8Array.from(atob(parts[2].replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0));
-    const valid = await crypto.subtle.verify(
-      'HMAC',
-      key,
-      sigBytes,
-      new TextEncoder().encode(`${parts[0]}.${parts[1]}`),
-    );
-    if (!valid) return Response.json({ error: 'Invalid session' }, { status: 401 });
-
-    const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
-    if (!payload.sub || !payload.exp || payload.exp * 1000 < Date.now()) {
-      return Response.json({ error: 'Session expired' }, { status: 401 });
-    }
-    return (payload.role as UserRole) ?? 'viewer';
-  } catch {
-    return Response.json({ error: 'Invalid session' }, { status: 401 });
+  const user = await verifySessionToken(sessionCookie, config.sessionSecret);
+  if (!user) {
+    return Response.json({ error: 'Invalid or expired session' }, { status: 401 });
   }
+  return user.role;
 }

@@ -3,6 +3,7 @@ import type { Database } from '../db';
 import type { AppConfig } from '../config';
 import { ServiceError } from './errors';
 import { hashPassword, verifyPassword } from '../utils/crypto';
+import { verifySessionToken } from '../utils/session';
 
 export interface UserInfo {
   sub: string;
@@ -165,13 +166,20 @@ export class AuthService {
       throw new ServiceError('Invalid audience', 400);
     }
     if (payload.nonce !== nonce) throw new ServiceError('Invalid nonce', 400);
-    if (typeof payload.exp === 'number' && payload.exp < Date.now() / 1000) {
+    if (typeof payload.exp !== 'number' || payload.exp < Date.now() / 1000) {
       throw new ServiceError('Token expired', 400);
     }
 
-    // Verify signature using JWKS
-    const jwks = await this.getJwks();
-    const key = header.kid ? jwks.keys.find((k) => k.kid === header.kid) : jwks.keys[0];
+    // Verify signature using JWKS. If we can't find the key by `kid` in the
+    // cached set, the IdP may have rotated keys since we last fetched — bust
+    // the cache and retry once before failing.
+    let jwks = await this.getJwks();
+    let key = header.kid ? jwks.keys.find((k) => k.kid === header.kid) : jwks.keys[0];
+    if (!key && header.kid) {
+      cachedJwks = null;
+      jwks = await this.getJwks();
+      key = jwks.keys.find((k) => k.kid === header.kid);
+    }
     if (!key) throw new ServiceError('No matching signing key found', 400);
 
     const signingKey = await crypto.subtle.importKey(
@@ -262,41 +270,6 @@ export class AuthService {
   }
 
   async validateSessionToken(token: string): Promise<UserInfo | null> {
-    try {
-      const parts = token.split('.');
-      if (parts.length !== 3) return null;
-
-      // Verify HMAC signature
-      const key = await crypto.subtle.importKey(
-        'raw',
-        new TextEncoder().encode(this.config.sessionSecret),
-        { name: 'HMAC', hash: 'SHA-256' },
-        false,
-        ['verify'],
-      );
-
-      const sigBytes = Uint8Array.from(atob(parts[2].replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0));
-      const valid = await crypto.subtle.verify(
-        'HMAC',
-        key,
-        sigBytes,
-        new TextEncoder().encode(`${parts[0]}.${parts[1]}`),
-      );
-      if (!valid) return null;
-
-      const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'))) as Record<string, unknown>;
-
-      // Check expiry
-      if (typeof payload.exp === 'number' && payload.exp < Date.now() / 1000) return null;
-
-      return {
-        sub: payload.sub as string,
-        email: payload.email as string,
-        name: (payload.name as string) ?? '',
-        role: (payload.role as 'admin' | 'editor' | 'viewer') ?? 'viewer',
-      };
-    } catch {
-      return null;
-    }
+    return verifySessionToken(token, this.config.sessionSecret);
   }
 }

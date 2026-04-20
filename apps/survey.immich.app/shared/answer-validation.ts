@@ -184,12 +184,10 @@ function validateNps(value: string): string | null {
 function validateRadio(value: string, question: QuestionSpec, otherText?: string): string | null {
   const validValues = new Set((question.options ?? []).map((o) => o.value));
   if (question.hasOther) validValues.add('Other');
-  // Also accept __other__ which some clients use
-  if (question.hasOther) validValues.add('__other__');
   if (!validValues.has(value)) {
     return 'Please select a valid option';
   }
-  if ((value === 'Other' || value === '__other__') && question.hasOther && (!otherText || otherText.trim() === '')) {
+  if (value === 'Other' && question.hasOther && (!otherText || otherText.trim() === '')) {
     return 'Please specify your answer';
   }
   return null;
@@ -217,10 +215,7 @@ function validateCheckbox(
   }
 
   const validValues = new Set((question.options ?? []).map((o) => o.value));
-  if (question.hasOther) {
-    validValues.add('Other');
-    validValues.add('__other__');
-  }
+  if (question.hasOther) validValues.add('Other');
   for (const v of selected) {
     if (!validValues.has(v)) {
       return `Invalid selection: ${v}`;
@@ -234,11 +229,7 @@ function validateCheckbox(
     return `Please select at most ${cfg.maxSelections}`;
   }
 
-  if (
-    (selected.includes('Other') || selected.includes('__other__')) &&
-    question.hasOther &&
-    (!otherText || otherText.trim() === '')
-  ) {
+  if (selected.includes('Other') && question.hasOther && (!otherText || otherText.trim() === '')) {
     return "Please specify your 'Other' answer";
   }
 

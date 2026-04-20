@@ -467,7 +467,7 @@ function generateAnswer(q: Question): { questionId: string; value: string; other
   switch (q.type) {
     case 'radio': {
       if (q.has_other && Math.random() < 0.1) {
-        return { ...base, value: '__other__', otherText: 'Something else' };
+        return { ...base, value: 'Other', otherText: 'Something else' };
       }
       return { ...base, value: options.length > 0 ? randomItem(options).value : 'option1' };
     }
@@ -475,11 +475,11 @@ function generateAnswer(q: Question): { questionId: string; value: string; other
       const count = Math.min(1 + Math.floor(Math.random() * 3), options.length);
       const shuffled = [...options].sort(() => Math.random() - 0.5);
       const selected = shuffled.slice(0, count).map((o) => o.value);
-      if (q.has_other && Math.random() < 0.1) selected.push('__other__');
+      if (q.has_other && Math.random() < 0.1) selected.push('Other');
       return {
         ...base,
         value: selected.join(','),
-        ...(selected.includes('__other__') ? { otherText: 'Custom option' } : {}),
+        ...(selected.includes('Other') ? { otherText: 'Custom option' } : {}),
       };
     }
     case 'dropdown':

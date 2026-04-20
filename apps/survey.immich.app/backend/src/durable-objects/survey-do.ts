@@ -27,6 +27,7 @@ import {
 } from './ws/ws-broadcaster';
 import { execute, type CommandContext } from './do-commands';
 import type { Database, SurveyRow, SectionRow, QuestionRow } from '../db';
+import { SURVEY_ID_PATTERN, PUBLIC_PATTERN } from '../routing';
 
 export class SurveyDO extends DurableObject {
   private cache: SurveyCache;
@@ -249,6 +250,16 @@ export class SurveyDO extends DurableObject {
     };
 
     const s = body.survey;
+
+    // Wipe any prior state before re-initializing so that re-init (e.g. via
+    // restore or duplicate-into-existing-id) doesn't leave stale rows from a
+    // previous survey that lived in this DO.
+    this.ctx.storage.sql.exec('DELETE FROM answers');
+    this.ctx.storage.sql.exec('DELETE FROM respondents');
+    this.ctx.storage.sql.exec('DELETE FROM survey_questions');
+    this.ctx.storage.sql.exec('DELETE FROM survey_sections');
+    this.ctx.storage.sql.exec('DELETE FROM surveys');
+
     this.ctx.storage.sql.exec(
       `INSERT OR REPLACE INTO surveys (id, title, description, slug, status, welcome_title,
         welcome_description, thank_you_title, thank_you_description, closes_at, max_responses,
@@ -328,14 +339,7 @@ export class SurveyDO extends DurableObject {
     return Response.json(result, { headers: this.catalogSyncHeaders() });
   }
 
-  private handleDeleteSurvey(): Response {
-    this.ctx.storage.sql.exec('DELETE FROM answers');
-    this.ctx.storage.sql.exec('DELETE FROM respondents');
-    this.ctx.storage.sql.exec('DELETE FROM survey_questions');
-    this.ctx.storage.sql.exec('DELETE FROM survey_sections');
-    this.ctx.storage.sql.exec('DELETE FROM surveys');
-    this.cache.invalidateSurvey();
-    this.cache.invalidateResults();
+  private async handleDeleteSurvey(): Promise<Response> {
     for (const ws of this.ctx.getWebSockets()) {
       try {
         ws.close(1000, 'Survey deleted');
@@ -343,6 +347,12 @@ export class SurveyDO extends DurableObject {
         /* ignore */
       }
     }
+    // Destroy all DO state (SQLite + KV + alarms). The DO is reclaimed; any
+    // subsequent request to this ID creates a fresh, uninitialized instance,
+    // and `cache.survey` there throws ServiceError('Survey not found', 404).
+    await this.ctx.storage.deleteAll();
+    this.cache.invalidateSurvey();
+    this.cache.invalidateResults();
     return new Response(null, { status: 204 });
   }
 
@@ -487,7 +497,7 @@ export class SurveyDO extends DurableObject {
     const respondentId = request.headers.get('X-Respondent-Id');
     if (!respondentId) return Response.json({ error: 'No respondent cookie' }, { status: 400 });
     const { answers } = (await request.json()) as {
-      answers: Array<{ questionId: string; value: string; otherText?: string }>;
+      answers: Array<{ questionId: string; value: string; otherText?: string; answerMs?: number }>;
     };
     await this.respondentService.submitBatch(survey.slug!, respondentId, answers, survey);
     return new Response(null, { status: 204 });
@@ -602,10 +612,10 @@ export class SurveyDO extends DurableObject {
   }
 
   private internalPath(pathname: string): string {
-    const surveyMatch = pathname.match(/^\/api\/surveys\/[^/]+(\/.*)?$/);
-    if (surveyMatch) return surveyMatch[1] || '/';
-    const publicMatch = pathname.match(/^\/api\/s\/[^/]+(\/.*)?$/);
-    if (publicMatch) return '/public' + (publicMatch[1] || '');
+    const surveyMatch = pathname.match(SURVEY_ID_PATTERN);
+    if (surveyMatch) return surveyMatch[2] || '/';
+    const publicMatch = pathname.match(PUBLIC_PATTERN);
+    if (publicMatch) return '/public' + (publicMatch[2] || '');
     return pathname;
   }
 

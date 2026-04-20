@@ -12,7 +12,7 @@ import {
   clampAnswerMs as clampAnswerMsShared,
   percentile,
 } from '../constants';
-import { validateAnswer, type QuestionSpec } from '../answer-validation';
+import { validateAnswer, type QuestionSpec } from '../../../shared/answer-validation';
 
 export interface ResumeResult {
   answers: Record<string, { value: string; otherText?: string }>;
@@ -239,7 +239,7 @@ export class RespondentService {
   async exportResponses(
     surveyId: string,
     format: 'csv' | 'json',
-  ): Promise<{ data: string; contentType: string; filename: string }> {
+  ): Promise<{ data: ReadableStream<Uint8Array>; contentType: string; filename: string }> {
     const survey = await this.surveys.getById(surveyId);
     if (!survey) {
       throw new ServiceError('Survey not found', 404);
@@ -248,79 +248,73 @@ export class RespondentService {
     const questions = await this.questions.getBySurveyId(surveyId);
     const responses = await this.answers.getAllResponsesForSurvey(surveyId);
 
-    if (format === 'json') {
-      const respondentMap = new Map<
-        string,
-        {
-          respondentId: string;
-          completedAt: string | null;
-          answers: Record<string, { value: string; otherText: string | null }>;
-        }
-      >();
-      for (const row of responses) {
-        if (!respondentMap.has(row.respondent_id)) {
-          respondentMap.set(row.respondent_id, {
-            respondentId: row.respondent_id,
-            completedAt: row.completed_at,
-            answers: {},
-          });
-        }
-        const entry = respondentMap.get(row.respondent_id);
-        if (entry) {
-          entry.answers[row.question_id] = {
-            value: row.answer,
-            otherText: row.other_text,
-          };
-        }
-      }
-      const data = JSON.stringify([...respondentMap.values()], null, 2);
-      return { data, contentType: 'application/json', filename: `${survey.slug ?? survey.id}-responses.json` };
-    }
-
-    // CSV format
-    const questionColumns: Array<{ id: string; text: string; hasOther: boolean }> = questions.map((q) => ({
-      id: q.id,
-      text: q.text,
-      hasOther: q.has_other === 1,
-    }));
-
-    const headers = ['respondent_id', 'completed_at'];
-    for (const col of questionColumns) {
-      headers.push(this.csvSafe(col.text));
-      if (col.hasOther) {
-        headers.push(this.csvSafe(col.text) + '_other');
-      }
-    }
-
+    // Group responses once — the DB query orders by respondent so this is
+    // effectively a streaming group-by, but we still need the aggregated
+    // shape (one entry per respondent) before emitting. The output itself
+    // is streamed to the Response so we don't hold a second copy in a
+    // concatenated string.
     const respondentMap = new Map<
       string,
       { completedAt: string | null; answers: Map<string, { value: string; otherText: string | null }> }
     >();
     for (const row of responses) {
-      if (!respondentMap.has(row.respondent_id)) {
-        respondentMap.set(row.respondent_id, { completedAt: row.completed_at, answers: new Map() });
+      let entry = respondentMap.get(row.respondent_id);
+      if (!entry) {
+        entry = { completedAt: row.completed_at, answers: new Map() };
+        respondentMap.set(row.respondent_id, entry);
       }
-      const csvEntry = respondentMap.get(row.respondent_id);
-      csvEntry?.answers.set(row.question_id, {
-        value: row.answer,
-        otherText: row.other_text,
+      entry.answers.set(row.question_id, { value: row.answer, otherText: row.other_text });
+    }
+
+    const encoder = new TextEncoder();
+    const filenameBase = `${survey.slug ?? survey.id}-responses`;
+
+    if (format === 'json') {
+      const stream = new ReadableStream<Uint8Array>({
+        start: (controller) => {
+          controller.enqueue(encoder.encode('[\n'));
+          let first = true;
+          for (const [respondentId, entry] of respondentMap) {
+            const record = {
+              respondentId,
+              completedAt: entry.completedAt,
+              answers: Object.fromEntries(entry.answers),
+            };
+            controller.enqueue(encoder.encode((first ? '' : ',\n') + JSON.stringify(record, null, 2)));
+            first = false;
+          }
+          controller.enqueue(encoder.encode('\n]\n'));
+          controller.close();
+        },
       });
+      return { data: stream, contentType: 'application/json', filename: `${filenameBase}.json` };
     }
 
-    const rows: string[] = [headers.map((h) => `"${h}"`).join(',')];
-    for (const [respondentId, data] of respondentMap) {
-      const row: string[] = [`"${respondentId}"`, `"${data.completedAt ?? ''}"`];
-      for (const col of questionColumns) {
-        const answer = data.answers.get(col.id);
-        row.push(`"${this.csvSafe(answer?.value ?? '')}"`);
-        if (col.hasOther) {
-          row.push(`"${this.csvSafe(answer?.otherText ?? '')}"`);
+    // CSV
+    const questionColumns = questions.map((q) => ({ id: q.id, text: q.text, hasOther: q.has_other === 1 }));
+    const headers = ['respondent_id', 'completed_at'];
+    for (const col of questionColumns) {
+      headers.push(this.csvSafe(col.text));
+      if (col.hasOther) headers.push(this.csvSafe(col.text) + '_other');
+    }
+
+    const stream = new ReadableStream<Uint8Array>({
+      start: (controller) => {
+        controller.enqueue(encoder.encode(headers.map((h) => `"${h}"`).join(',') + '\n'));
+        for (const [respondentId, entry] of respondentMap) {
+          const row: string[] = [`"${respondentId}"`, `"${entry.completedAt ?? ''}"`];
+          for (const col of questionColumns) {
+            const answer = entry.answers.get(col.id);
+            row.push(`"${this.csvSafe(answer?.value ?? '')}"`);
+            if (col.hasOther) row.push(`"${this.csvSafe(answer?.otherText ?? '')}"`);
+          }
+          controller.enqueue(encoder.encode(row.join(',') + '\n'));
         }
-      }
-      rows.push(row.join(','));
-    }
+        controller.close();
+      },
+    });
 
-    return { data: rows.join('\n'), contentType: 'text/csv', filename: `${survey.slug ?? survey.id}-responses.csv` };
+    return { data: stream, contentType: 'text/csv', filename: `${filenameBase}.csv` };
   }
 
   async getTimeline(

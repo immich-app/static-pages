@@ -9,6 +9,81 @@ const OPTIONAL_TABLES = ['survey_sections', 'survey_questions', 'respondents', '
 
 const ALL_TABLES = [...REQUIRED_TABLES, ...OPTIONAL_TABLES] as const;
 
+/**
+ * Expected columns per table. Restore rejects any row that's missing a
+ * required column or carries an unknown one — prevents a malformed or
+ * malicious backup from silently corrupting the live schema.
+ */
+const TABLE_COLUMNS: Record<string, readonly string[]> = {
+  surveys: [
+    'id',
+    'title',
+    'description',
+    'slug',
+    'status',
+    'welcome_title',
+    'welcome_description',
+    'thank_you_title',
+    'thank_you_description',
+    'closes_at',
+    'max_responses',
+    'randomize_questions',
+    'randomize_options',
+    'password_hash',
+    'archived_at',
+    'created_at',
+    'updated_at',
+  ],
+  survey_sections: ['id', 'survey_id', 'title', 'description', 'sort_order'],
+  survey_questions: [
+    'id',
+    'survey_id',
+    'section_id',
+    'text',
+    'description',
+    'type',
+    'options',
+    'required',
+    'has_other',
+    'other_prompt',
+    'max_length',
+    'placeholder',
+    'sort_order',
+    'conditional',
+    'config',
+  ],
+  respondents: ['id', 'survey_id', 'ip_address', 'is_complete', 'created_at', 'completed_at'],
+  answers: ['respondent_id', 'question_id', 'answer', 'other_text', 'answered_at', 'answer_ms'],
+  tags: ['id', 'name', 'color', 'created_at'],
+  survey_tags: ['survey_id', 'tag_id'],
+  audit_log: [
+    'id',
+    'user_sub',
+    'user_email',
+    'action',
+    'resource_type',
+    'resource_id',
+    'details',
+    'ip_address',
+    'created_at',
+  ],
+  admin_credentials: ['id', 'password_hash', 'created_at'],
+};
+
+function validateRow(table: string, row: unknown, index: number): Record<string, unknown> {
+  if (!row || typeof row !== 'object' || Array.isArray(row)) {
+    throw new Error(`Backup ${table}[${index}]: row must be an object`);
+  }
+  const record = row as Record<string, unknown>;
+  const allowed = new Set(TABLE_COLUMNS[table] ?? []);
+  for (const key of Object.keys(record)) {
+    if (!allowed.has(key)) {
+      throw new Error(`Backup ${table}[${index}]: unknown column '${key}'`);
+    }
+  }
+  return record;
+}
+
 export interface BackupData {
   version: number;
   exportedAt: string;
@@ -79,6 +154,33 @@ export class BackupService {
 
     const counts: Record<string, number> = {};
 
+    const tables: Array<[string, string]> = [
+      ['surveys', 'surveys'],
+      ['survey_sections', 'survey_sections'],
+      ['survey_questions', 'survey_questions'],
+      ['tags', 'tags'],
+      ['survey_tags', 'survey_tags'],
+      ['respondents', 'respondents'],
+      ['answers', 'answers'],
+      ['audit_log', 'audit_log'],
+      ['admin_credentials', 'admin_credentials'],
+    ];
+
+    // Validate every row up-front — any schema violation rejects the whole
+    // restore before we touch the live DB. This matters because on D1 the
+    // Kysely `transaction()` wrapper isn't a true cross-table transaction
+    // (D1 can't BEGIN/COMMIT over the HTTP binding), so a mid-restore failure
+    // would otherwise leave the DB half-wiped.
+    const validatedRows: Record<string, Record<string, unknown>[]> = {};
+    for (const [key, table] of tables) {
+      const rows = (backup.data as Record<string, unknown[]>)[key];
+      if (!Array.isArray(rows)) {
+        validatedRows[key] = [];
+        continue;
+      }
+      validatedRows[key] = rows.map((row, i) => validateRow(table, row, i));
+    }
+
     await this.db.transaction().execute(async (trx) => {
       // Delete in reverse FK order
       await trx.deleteFrom('answers').execute();
@@ -92,31 +194,13 @@ export class BackupService {
       await trx.deleteFrom('admin_credentials').execute();
 
       // Insert in FK order — required tables first, then optional if present
-      const tables: Array<[string, string]> = [
-        ['surveys', 'surveys'],
-        ['survey_sections', 'survey_sections'],
-        ['survey_questions', 'survey_questions'],
-        ['tags', 'tags'],
-        ['survey_tags', 'survey_tags'],
-        ['respondents', 'respondents'],
-        ['answers', 'answers'],
-        ['audit_log', 'audit_log'],
-        ['admin_credentials', 'admin_credentials'],
-      ];
-
       for (const [key, table] of tables) {
-        const rows = (backup.data as Record<string, unknown[]>)[key];
-        if (!Array.isArray(rows)) {
-          counts[table] = 0;
-          continue;
-        }
-        if (rows.length > 0) {
-          for (const row of rows) {
-            await trx
-              .insertInto(table as any)
-              .values(row as any)
-              .execute();
-          }
+        const rows = validatedRows[key];
+        for (const row of rows) {
+          await trx
+            .insertInto(table as any)
+            .values(row as any)
+            .execute();
         }
         counts[table] = rows.length;
       }

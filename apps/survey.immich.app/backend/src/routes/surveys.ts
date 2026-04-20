@@ -1,6 +1,7 @@
 import { createSurveyService } from '../services/factory';
 import { requireRole, type AuthenticatedRequest } from '../middleware/auth';
 import { getContext } from '../config';
+import { MAX_PAGINATION_LIMIT } from '../constants';
 import type { AppRouter } from '../types';
 import type {
   CreateSurveyInput,
@@ -21,7 +22,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     const includeArchived = url.searchParams.get('archived') === 'true';
     const search = url.searchParams.get('search')?.trim() || undefined;
     const offset = Math.max(0, Number(url.searchParams.get('offset')) || 0);
-    const limit = Math.min(100, Math.max(1, Number(url.searchParams.get('limit')) || 20));
+    const limit = Math.min(MAX_PAGINATION_LIMIT, Math.max(1, Number(url.searchParams.get('limit')) || 20));
 
     const result = await service.listSurveysPaginated({ includeArchived, search, offset, limit });
     return Response.json(result);

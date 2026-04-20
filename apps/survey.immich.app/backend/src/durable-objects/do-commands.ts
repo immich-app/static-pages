@@ -13,6 +13,7 @@
 import type { SurveyService } from '../services/survey.service';
 import type { RespondentService } from '../services/respondent.service';
 import type { SurveyCache } from './cache';
+import { MAX_PAGINATION_LIMIT } from '../constants';
 
 export interface CommandContext {
   surveyService: SurveyService;
@@ -98,7 +99,7 @@ export async function execute(op: string, data: Record<string, unknown>, ctx: Co
 
     case 'list-respondents': {
       const offset = Number(data.offset ?? 0);
-      const limit = Math.min(Number(data.limit ?? 20), 100);
+      const limit = Math.min(Number(data.limit ?? 20), MAX_PAGINATION_LIMIT);
       return ctx.respondentService.listRespondents(surveyId, offset, limit);
     }
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { validateAnswer, type QuestionSpec } from '../../backend/src/answer-validation';
+import { validateAnswer, type QuestionSpec } from '$shared/answer-validation';
 
 function q(overrides: Partial<QuestionSpec> & { type: string }): QuestionSpec {
   return { required: true, ...overrides };
@@ -289,11 +289,11 @@ describe('checkbox validation', () => {
   });
 
   it('accepts Other with text when hasOther', () => {
-    expect(validateAnswer(q({ type: 'checkbox', options: opts, hasOther: true }), 'X,__other__', 'Custom')).toBeNull();
+    expect(validateAnswer(q({ type: 'checkbox', options: opts, hasOther: true }), 'X,Other', 'Custom')).toBeNull();
   });
 
   it('rejects Other without text when hasOther', () => {
-    expect(validateAnswer(q({ type: 'checkbox', options: opts, hasOther: true }), 'X,__other__', '')).toBe(
+    expect(validateAnswer(q({ type: 'checkbox', options: opts, hasOther: true }), 'X,Other', '')).toBe(
       "Please specify your 'Other' answer",
     );
   });

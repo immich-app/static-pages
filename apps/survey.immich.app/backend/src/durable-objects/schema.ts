@@ -92,8 +92,15 @@ export function ensureSchema(sql: SqlStorage): void {
   for (const stmt of MIGRATIONS) {
     try {
       sql.exec(stmt);
-    } catch {
-      // Already applied — SQLite throws on duplicate column add.
+    } catch (e) {
+      // Only swallow the known-benign "duplicate column" / "already exists"
+      // idempotency errors. Any other failure (disk full, corruption, syntax
+      // error in a future migration) must propagate so the DO refuses to
+      // boot with an incomplete schema.
+      const msg = e instanceof Error ? e.message.toLowerCase() : '';
+      if (!msg.includes('duplicate column') && !msg.includes('already exists')) {
+        throw e;
+      }
     }
   }
   initializedInstances.add(sql);

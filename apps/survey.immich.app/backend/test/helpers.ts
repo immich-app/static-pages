@@ -111,6 +111,16 @@ export async function createPublishedSurvey(options?: {
 const DEV_SESSION_SECRET = 'dev-session-secret-DO-NOT-USE-IN-PRODUCTION';
 const SESSION_COOKIE_NAME = 'survey_session';
 
+// Fail fast if the integration suite is ever pointed at a non-dev server —
+// an env-supplied SESSION_SECRET here would silently mint invalid cookies
+// and every auth-gated test would 401 with no hint why. The dev server is
+// the only environment this forgery should ever succeed against.
+if (process.env.SESSION_SECRET && process.env.SESSION_SECRET !== DEV_SESSION_SECRET) {
+  throw new Error(
+    'Integration tests must run against the dev wrangler server (SESSION_SECRET=dev-session-secret-DO-NOT-USE-IN-PRODUCTION).',
+  );
+}
+
 export async function createCookieForRole(role: 'admin' | 'editor' | 'viewer'): Promise<string> {
   const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
   const payload = btoa(

@@ -137,7 +137,7 @@ export function registerRespondentRoutes(router: AppRouter) {
     }
 
     const { answers } = (await request.json()) as {
-      answers: Array<{ questionId: string; value: string; otherText?: string }>;
+      answers: Array<{ questionId: string; value: string; otherText?: string; answerMs?: number }>;
     };
 
     await service.submitBatch(slug, respondentId, answers);
