@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "survey-sessions",
+  "main": "src/durable-objects/index.ts",
+  "compatibility_date": "2025-06-03",
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "SURVEY_SESSIONS",
+        "class_name": "SurveyDO",
+      },
+    ],
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_classes": ["SurveySession"],
+    },
+    {
+      "tag": "v2",
+      "new_sqlite_classes": ["SurveyDO"],
+    },
+  ],
+}

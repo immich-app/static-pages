@@ -27,3 +27,7 @@ vite.config.ts.timestamp-*
 # Planning
 .planning/
 apps/*/.planning
+dist/
+
+# Dogfood artifacts (screenshots, videos, reports produced by the dogfood skill)
+dogfood-output/

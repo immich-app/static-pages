@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets', 'futo-backups-survey']
+        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets', 'futo-backups-survey', 'survey']
         include:
           - app_name: futo-backups-survey
             app_dir: futo-backups-survey.immich.app
@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app_name: ['datasets', 'futo-backups-survey']
+        app_name: ['datasets', 'futo-backups-survey', 'survey']
         include:
           - app_name: futo-backups-survey
             app_dir: futo-backups-survey.immich.app
@@ -98,7 +98,17 @@ jobs:
         run: pnpm install
 
       - name: Build backend
-        run: pnpm exec wrangler build
+        run: |
+          # Prefer a package-defined build:workers script when present so
+          # multi-worker apps (e.g. survey, which needs a separate Durable
+          # Object worker bundle) can control the build. Fall back to plain
+          # `wrangler build` only when the script isn't defined — this must
+          # NOT silently swallow real build errors.
+          if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts['build:workers'] ? 0 : 1)"; then
+            pnpm run build:workers
+          else
+            pnpm exec wrangler build
+          fi
 
       - name: Upload build output
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
@@ -114,7 +124,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets', 'futo-backups-survey']
+        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets', 'futo-backups-survey', 'survey']
         include:
           - app_name: futo-backups-survey
             app_dir: futo-backups-survey.immich.app

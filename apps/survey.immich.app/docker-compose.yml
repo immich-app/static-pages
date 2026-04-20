@@ -1,0 +1,48 @@
+services:
+  survey:
+    build: .
+    ports:
+      - '${PORT:-3000}:3000'
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-/data/survey.db}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - PASSWORD_SECRET=${PASSWORD_SECRET}
+      - COOKIE_SECURE=${COOKIE_SECURE:-false}
+      # OIDC (optional)
+      - OIDC_ISSUER=${OIDC_ISSUER:-}
+      - OIDC_CLIENT_ID=${OIDC_CLIENT_ID:-}
+      - OIDC_CLIENT_SECRET=${OIDC_CLIENT_SECRET:-}
+      - OIDC_REDIRECT_URI=${OIDC_REDIRECT_URI:-}
+      - OIDC_ROLE_CLAIM=${OIDC_ROLE_CLAIM:-groups}
+      - OIDC_ROLE_MAP_ADMIN=${OIDC_ROLE_MAP_ADMIN:-survey-admin}
+      - OIDC_ROLE_MAP_EDITOR=${OIDC_ROLE_MAP_EDITOR:-survey-editor}
+    volumes:
+      - survey-data:/data
+    restart: unless-stopped
+    # /api/auth/me returns 200 when healthy (authenticated or not). Treat
+    # any 2xx as a pass; non-2xx is a genuine failure (e.g. migrations
+    # still running, DB unreachable, SESSION_SECRET missing).
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "wget -qO /dev/null --server-response http://localhost:3000/api/auth/me 2>&1 | awk '/HTTP/{print $$2}' | grep -qE '^2' || exit 1"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  # Optional: Use PostgreSQL instead of SQLite
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: survey
+      POSTGRES_USER: survey
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-survey}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    profiles:
+      - postgres
+
+volumes:
+  survey-data:
+  pgdata:

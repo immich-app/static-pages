@@ -1,0 +1,154 @@
+import { request } from './request';
+import { surveyFromApi, questionsFromApi, sectionsFromApiRaw } from '../engines/builder-engine.svelte';
+import type { Survey, SurveyWithDetails } from '../types';
+import { getWsClientById } from './survey-ws';
+
+export async function listSurveys(includeArchived = false): Promise<Survey[]> {
+  const url = includeArchived ? '/api/surveys?archived=true' : '/api/surveys';
+  const data = await request<{ surveys: Array<Record<string, unknown>>; total: number }>(url);
+  return data.surveys.map(surveyFromApi);
+}
+
+export async function listSurveysPaginated(opts: {
+  includeArchived?: boolean;
+  search?: string;
+  offset?: number;
+  limit?: number;
+}): Promise<{ surveys: Survey[]; total: number }> {
+  const params = new URLSearchParams();
+  if (opts.includeArchived) params.set('archived', 'true');
+  if (opts.search) params.set('search', opts.search);
+  if (opts.offset) params.set('offset', String(opts.offset));
+  if (opts.limit) params.set('limit', String(opts.limit));
+  const data = await request<{ surveys: Array<Record<string, unknown>>; total: number }>(`/api/surveys?${params}`);
+  return { surveys: data.surveys.map(surveyFromApi), total: data.total };
+}
+
+export async function getSurvey(id: string): Promise<SurveyWithDetails> {
+  const ws = getWsClientById(id);
+  if (ws?.connected) {
+    const data = (await ws.request('get-survey', {})) as unknown as {
+      survey: Record<string, unknown>;
+      sections: Array<Record<string, unknown>>;
+      questions: Array<Record<string, unknown>>;
+    };
+    return {
+      survey: surveyFromApi(data.survey),
+      sections: sectionsFromApiRaw(data.sections),
+      questions: questionsFromApi(data.questions),
+    };
+  }
+  const data = await request<{
+    survey: Record<string, unknown>;
+    sections: Array<Record<string, unknown>>;
+    questions: Array<Record<string, unknown>>;
+  }>(`/api/surveys/${id}`);
+  return {
+    survey: surveyFromApi(data.survey),
+    sections: sectionsFromApiRaw(data.sections),
+    questions: questionsFromApi(data.questions),
+  };
+}
+
+export async function createSurvey(input: { title: string; description?: string }): Promise<Survey> {
+  const data = await request<Record<string, unknown>>('/api/surveys', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+  return surveyFromApi(data);
+}
+
+export async function updateSurvey(
+  id: string,
+  input: {
+    title?: string | null;
+    description?: string | null;
+    slug?: string | null;
+    welcome_title?: string | null;
+    welcome_description?: string | null;
+    thank_you_title?: string | null;
+    thank_you_description?: string | null;
+    closes_at?: string | null;
+    max_responses?: number | null;
+    randomize_questions?: boolean;
+    randomize_options?: boolean;
+    password?: string | null;
+  },
+): Promise<Survey> {
+  // Filter out undefined keys so we only send fields the user explicitly set
+  const filtered = Object.fromEntries(Object.entries(input).filter(([, v]) => v !== undefined));
+  const data = await request<Record<string, unknown>>(`/api/surveys/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(filtered),
+  });
+  return surveyFromApi(data);
+}
+
+export async function deleteSurvey(id: string): Promise<void> {
+  await request(`/api/surveys/${id}`, { method: 'DELETE' });
+}
+
+export async function publishSurvey(id: string): Promise<Survey> {
+  const data = await request<Record<string, unknown>>(`/api/surveys/${id}/publish`, {
+    method: 'PUT',
+  });
+  return surveyFromApi(data);
+}
+
+export async function unpublishSurvey(id: string): Promise<Survey> {
+  const data = await request<Record<string, unknown>>(`/api/surveys/${id}/unpublish`, {
+    method: 'PUT',
+  });
+  return surveyFromApi(data);
+}
+
+export async function duplicateSurvey(id: string): Promise<SurveyWithDetails> {
+  const data = await request<{
+    survey: Record<string, unknown>;
+    sections: Array<Record<string, unknown>>;
+    questions: Array<Record<string, unknown>>;
+  }>(`/api/surveys/${id}/duplicate`, { method: 'POST' });
+  return {
+    survey: surveyFromApi(data.survey),
+    sections: sectionsFromApiRaw(data.sections),
+    questions: questionsFromApi(data.questions),
+  };
+}
+
+export async function archiveSurvey(id: string): Promise<Survey> {
+  const data = await request<Record<string, unknown>>(`/api/surveys/${id}/archive`, {
+    method: 'PUT',
+  });
+  return surveyFromApi(data);
+}
+
+export async function unarchiveSurvey(id: string): Promise<Survey> {
+  const data = await request<Record<string, unknown>>(`/api/surveys/${id}/unarchive`, {
+    method: 'PUT',
+  });
+  return surveyFromApi(data);
+}
+
+export async function exportSurveyDefinition(id: string): Promise<Record<string, unknown>> {
+  const ws = getWsClientById(id);
+  if (ws?.connected) {
+    return ws.request('export-definition', {}) as unknown as Promise<Record<string, unknown>>;
+  }
+  return request<Record<string, unknown>>(`/api/surveys/${id}/definition`);
+}
+
+export async function importSurveyDefinition(definition: unknown): Promise<SurveyWithDetails> {
+  const data = await request<{
+    survey: Record<string, unknown>;
+    sections: Array<Record<string, unknown>>;
+    questions: Array<Record<string, unknown>>;
+  }>('/api/surveys/import', {
+    method: 'POST',
+    body: JSON.stringify(definition),
+  });
+  return {
+    survey: surveyFromApi(data.survey),
+    sections: sectionsFromApiRaw(data.sections),
+    questions: questionsFromApi(data.questions),
+  };
+}

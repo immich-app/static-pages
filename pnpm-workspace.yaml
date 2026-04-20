@@ -2,6 +2,7 @@ packages:
   - apps/*
   - apps/datasets.immich.app/backend
   - apps/futo-backups-survey.immich.app/backend
+  - apps/survey.immich.app/backend
 
 dedupePeerDependents: true
 
@@ -12,6 +13,7 @@ onlyBuiltDependencies:
   - esbuild
   - sharp
   - workerd
+  - better-sqlite3
 
 preferWorkspacePackages: true
 

@@ -1,0 +1,36 @@
+{
+  "name": "survey-backend",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "cf-typegen": "wrangler types",
+    "build:workers": "wrangler build --config wrangler-do.jsonc && mv dist/index.js dist/sessions.js && wrangler build",
+    "start": "tsx src/server.ts",
+    "build:node": "esbuild src/server.ts --bundle --platform=node --format=esm --outdir=dist --external:better-sqlite3 --external:pg",
+    "test": "pnpm test:integration",
+    "load-test": "tsx scripts/load-test.ts",
+    "test:integration": "vitest run",
+    "test:integration:watch": "vitest"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260416.2",
+    "@hono/node-server": "^1.19.12",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/pg": "^8.20.0",
+    "@types/ws": "^8.18.1",
+    "better-sqlite3": "^12.8.0",
+    "esbuild": "^0.27.4",
+    "hono": "^4.12.9",
+    "pg": "^8.20.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.2",
+    "vitest": "^4.1.0",
+    "wrangler": "^4.75.0",
+    "ws": "^8.20.0"
+  },
+  "dependencies": {
+    "itty-router": "^5.0.18"
+  }
+}

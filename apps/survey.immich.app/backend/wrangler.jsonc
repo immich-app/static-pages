@@ -1,0 +1,30 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "survey-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-06-03",
+  "observability": {
+    "enabled": true,
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "survey",
+      "database_id": "local",
+    },
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "SURVEY_SESSIONS",
+        "class_name": "SurveyDO",
+        "script_name": "survey-sessions",
+      },
+    ],
+  },
+  // NOTE: Production `vars` are supplied via Terraform (see
+  // deployment/modules/cloudflare/workers/survey/worker.tf) and/or
+  // `wrangler secret put`. Keep this file free of `vars` so a local
+  // `wrangler deploy` never accidentally pushes dev credentials to
+  // prod. For local dev, use `wrangler-dev.jsonc`.
+}
