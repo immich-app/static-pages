@@ -57,7 +57,7 @@ jobs:
         run: pnpm build
 
       - name: Upload build output
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: build-frontend-output-${{ matrix.app_name }}
           include-hidden-files: true
@@ -101,7 +101,7 @@ jobs:
         run: pnpm exec wrangler build
 
       - name: Upload build output
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: build-backend-output-${{ matrix.app_name }}
           path: apps/${{ matrix.app_dir || format('{0}.immich.app', matrix.app_name) }}/backend/dist
@@ -212,7 +212,7 @@ jobs:
 
       - name: Upload preview URL
         if: ${{ github.event_name == 'pull_request' }}
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: preview-url-${{ matrix.app_name }}
           path: /tmp/preview-urls/${{ matrix.app_name }}.txt
@@ -254,7 +254,7 @@ jobs:
           } >> $GITHUB_OUTPUT
 
       - name: Comment
-        uses: actions-cool/maintain-one-comment@4b2dbf086015f892dcb5e8c1106f5fccd6c1476b # v3.2.0
+        uses: actions-cool/maintain-one-comment@909842216bc8e8658364c572ec52100f4c2cc50a # v3.3.0
         with:
           number: ${{ github.event.number }}
           body: ${{ steps.build-comment.outputs.body }}
