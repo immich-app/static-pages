@@ -43,6 +43,11 @@
         "title": "Mimick",
         "description": "Unofficial GTK4 Immich client for Linux with persistent background sync.",
         "href": "https://github.com/nicx17/mimick"
+      },
+      {
+        "title": "Lymic",
+        "description": "Unofficial Cross platform desktop client for Immich. Instantly detects new or modified files in your watched folders and starts background synchronization.",
+        "href": "https://github.com/xXRoxXeRXx/lymic"
       }
     ]
   },
@@ -132,6 +137,11 @@
         "title": "Lightroom Immich Plugin: lrc-immich-plugin",
         "description": "Lightroom plugin to publish, export photos from Lightroom to Immich. Import from Immich to Lightroom is also supported.",
         "href": "https://blog.fokuspunk.de/lrc-immich-plugin/"
+      },
+      {
+        "title": "Immich Integration for Nextcloud",
+        "description": "Browse your Immich photo library directly inside Nextcloud. Timeline, albums, people, map, explore — all seamlessly integrated.",
+        "href": "https://github.com/xXRoxXeRXx/integration_immich"
       }
     ]
   },
