@@ -70,6 +70,7 @@
     mdiPanVertical,
     mdiPartyPopper,
     mdiPencil,
+    mdiPlayCircleOutline,
     mdiRaw,
     mdiRocketLaunch,
     mdiRotate360,
@@ -94,6 +95,7 @@
     mdiUploadMultipleOutline,
     mdiVectorCombine,
     mdiVideo,
+    mdiVideoSwitchOutline,
     mdiWeb,
   } from '@mdi/js';
 
@@ -252,6 +254,21 @@
       icon: mdiImport,
       title: 'iCloud import',
       description: 'Build a better way to import large iCloud libraries',
+    },
+    {
+      icon: mdiVideoSwitchOutline,
+      title: 'Real-time transcoding',
+      description: 'Serve videos with on-the-fly transcoding',
+    },
+    {
+      icon: mdiPlayCircleOutline,
+      title: 'HTTP Live Streaming (HLS)',
+      description: 'Serve videos with automatic quality switching',
+    },
+    {
+      icon: mdiMapOutline,
+      title: 'Reverse geocoding v2',
+      description: 'New system with house number accuracy and points of interest',
     },
   ].map((item) => ({
     ...item,
