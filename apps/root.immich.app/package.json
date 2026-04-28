@@ -20,7 +20,7 @@
   "devDependencies": {
     "@eslint/compat": "^2.0.0",
     "@eslint/js": "^10.0.0",
-    "@immich/svelte-markdown-preprocess": "^0.4.0",
+    "@immich/svelte-markdown-preprocess": "^0.5.1",
     "@sveltejs/adapter-static": "^3.0.9",
     "@sveltejs/kit": "^2.55.0",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
@@ -51,7 +51,7 @@
     "vitest-browser-svelte": "^2.0.0"
   },
   "dependencies": {
-    "@immich/ui": "^0.76.0",
+    "@immich/ui": "^0.77.1",
     "@mdi/js": "^7.4.47",
     "feed": "^5.1.0",
     "front-matter": "^4.0.2",
