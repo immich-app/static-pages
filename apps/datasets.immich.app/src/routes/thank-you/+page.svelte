@@ -6,10 +6,12 @@
 
   const datasetName = $derived.by(() => {
     switch (dataset) {
-      case 'exif':
+      case 'exif': {
         return 'EXIF';
-      default:
+      }
+      default: {
         return 'Unknown';
+      }
     }
   });
 </script>

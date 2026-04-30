@@ -45,11 +45,17 @@
   };
 
   const showImagePreviewError = (assetId: string) => {
+    // eslint-disable-next-line unicorn/prefer-query-selector
     const errorElem = document.getElementById(`error-${assetId}`);
-    if (errorElem) errorElem.style = '';
+    if (errorElem) {
+      errorElem.style = '';
+    }
 
+    // eslint-disable-next-line unicorn/prefer-query-selector
     const previewElem = document.getElementById(`preview-${assetId}`);
-    if (previewElem) previewElem.style.display = 'none';
+    if (previewElem) {
+      previewElem.style.display = 'none';
+    }
   };
 
   const doUpload = async () => {
@@ -63,7 +69,7 @@
     }
 
     if (uploadResult.failedIds.length === 0) {
-      window.location.href = `/thank-you?dataset=exif`;
+      globalThis.location.href = `/thank-you?dataset=exif`;
       return;
     }
 

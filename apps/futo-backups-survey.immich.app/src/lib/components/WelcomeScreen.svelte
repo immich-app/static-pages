@@ -18,10 +18,10 @@
     <h1 class="text-3xl font-bold">FUTO Backups</h1>
 
     <p class="text-gray-300">
-      Hey, thanks for taking the time to fill out the FUTO Backups survey. We estimate this will
-      take a maximum of 5 minutes of your time. As a thanks for completing this survey, you can
-      provide your email at the end and we will invite you to the closed beta of the product when it
-      launches, which will be free for the duration of the beta period.
+      Hey, thanks for taking the time to fill out the FUTO Backups survey. We estimate this will take a maximum of 5
+      minutes of your time. As a thanks for completing this survey, you can provide your email at the end and we will
+      invite you to the closed beta of the product when it launches, which will be free for the duration of the beta
+      period.
     </p>
 
     <p class="text-gray-300">This survey is broken down in 6 sections;</p>

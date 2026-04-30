@@ -22,7 +22,7 @@ jobs:
         with:
           persist-credentials: false
           ref: 'main'
-      
+
       - name: Install uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
@@ -38,7 +38,7 @@ jobs:
           R2_ENDPOINT_URL: ${{ secrets.STATIC_BUCKET_ENDPOINT }}
           R2_ACCESS_KEY_ID: ${{ secrets.STATIC_BUCKET_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.STATIC_BUCKET_KEY_SECRET }}
-          R2_PUBLIC_URL: "https://static.immich.cloud"
+          R2_PUBLIC_URL: 'https://static.immich.cloud'
         run: uv run --script import-post.py
 
       - name: Format
@@ -49,6 +49,6 @@ jobs:
         with:
           token: ${{ steps.generate-token.outputs.token }}
           add-paths: apps/root.immich.app/src/routes/blog
-          commit-message: "feat: import ${{ steps.import.outputs.slug }}"
-          title: "feat: import ${{ steps.import.outputs.slug }}"
-          branch: "blog/${{ steps.import.outputs.uuid }}"
+          commit-message: 'feat: import ${{ steps.import.outputs.slug }}'
+          title: 'feat: import ${{ steps.import.outputs.slug }}'
+          branch: 'blog/${{ steps.import.outputs.uuid }}'

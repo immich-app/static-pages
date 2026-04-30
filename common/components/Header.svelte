@@ -26,8 +26,8 @@
   let { items = [], onToggleSidebar }: Props = $props();
 </script>
 
-<nav class="w-full flex items-center justify-between md:gap-2 p-2">
-  <div class="flex gap-2 place-items-center">
+<nav class="flex w-full items-center justify-between p-2 md:gap-2">
+  <div class="flex place-items-center gap-2">
     {#if onToggleSidebar}
       <IconButton
         shape="round"

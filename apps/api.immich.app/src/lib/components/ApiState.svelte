@@ -24,18 +24,24 @@
 
   const getTitle = (state: State) => {
     switch (state) {
-      case 'Stable':
+      case 'Stable': {
         return 'Considered stable and ready for general use.';
-      case 'Beta':
+      }
+      case 'Beta': {
         return 'Considered unstable and may change in future releases.';
-      case 'Deprecated':
+      }
+      case 'Deprecated': {
         return 'Deprecated and should not be used in new implementations. It will likely be removed in a future release.';
-      case 'Alpha':
+      }
+      case 'Alpha': {
         return 'Considered unstable and subject to significant changes.';
-      case 'Internal':
+      }
+      case 'Internal': {
         return 'For internal use only and may change at any time without notice.';
-      default:
+      }
+      default: {
         return 'Unknown state';
+      }
     }
   };
 </script>

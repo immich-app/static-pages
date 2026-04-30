@@ -5,11 +5,10 @@ import type { SurveyAnswer, SurveyQuestion } from './types';
  * Pure function: determines if a question should be visible given current answers.
  * Q18 shows only when Q17 is skipped (has no answer).
  */
-export function shouldShowQuestion(
-  q: SurveyQuestion,
-  answers: Record<string, SurveyAnswer>,
-): boolean {
-  if (!q.conditional) return true;
+export function shouldShowQuestion(q: SurveyQuestion, answers: Record<string, SurveyAnswer>): boolean {
+  if (!q.conditional) {
+    return true;
+  }
   if (q.conditional.showIf.condition === 'skipped') {
     return !(q.conditional.showIf.questionId in answers);
   }
@@ -51,10 +50,7 @@ export function findPrevVisibleIndex(
 /**
  * Pure function: counts visible questions given current answers.
  */
-export function getVisibleQuestionCount(
-  qs: SurveyQuestion[],
-  answers: Record<string, SurveyAnswer>,
-): number {
+export function getVisibleQuestionCount(qs: SurveyQuestion[], answers: Record<string, SurveyAnswer>): number {
   return qs.filter((q) => shouldShowQuestion(q, answers)).length;
 }
 
@@ -62,10 +58,7 @@ export function getVisibleQuestionCount(
  * Creates a reactive survey engine using Svelte 5 runes.
  * Manages navigation, answers, conditional logic, and completion state.
  */
-export function createSurveyEngine(
-  initialAnswers: Record<string, SurveyAnswer> = {},
-  startIndex = 0,
-) {
+export function createSurveyEngine(initialAnswers: Record<string, SurveyAnswer> = {}, startIndex = 0) {
   let currentIndex = $state(startIndex);
   let answers = $state<Record<string, SurveyAnswer>>({ ...initialAnswers });
   let isComplete = $state(false);
@@ -89,7 +82,7 @@ export function createSurveyEngine(
 
   function goTo(questionId: string) {
     const idx = questions.findIndex((q) => q.id === questionId);
-    if (idx >= 0) {
+    if (idx !== -1) {
       currentIndex = idx;
     }
   }

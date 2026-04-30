@@ -5,7 +5,7 @@
     error?: { message: string; code?: string | number; stack?: string } | undefined | null;
   };
 
-  let { error = undefined }: Props = $props();
+  let { error }: Props = $props();
 </script>
 
 <Container size="full" center class="h-dvh">

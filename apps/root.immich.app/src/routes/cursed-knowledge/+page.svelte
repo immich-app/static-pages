@@ -51,7 +51,7 @@
       title: 'Stabilized videos are cursed',
       description:
         'Video stabilization is cursed because it is implemented via crop metadata which impacts video dimensions and is sometimes automatically applied (depending on the tool), which can make dimension-based calculations wrong.',
-      link: asGithubLink({ number: 27251 }),
+      link: asGithubLink({ number: 27_251 }),
       date: new Date(2026, 2, 25),
     },
     withBlog({
@@ -67,7 +67,7 @@
       title: 'setTimeout is cursed',
       description:
         'The setTimeout method in JavaScript is cursed when used with small values because the implementation may or may not actually wait the specified time.',
-      link: asGithubLink(20655),
+      link: asGithubLink(20_655),
       date: new Date(2025, 7, 4),
     },
     {
@@ -75,7 +75,7 @@
       title: 'PostgreSQL USER is cursed',
       description:
         'The USER keyword in PostgreSQL is cursed because you can select from it like a table, which leads to confusion if you have a table name user as well.',
-      link: asGithubLink(19891),
+      link: asGithubLink(19_891),
       date: new Date(2025, 7, 4),
     },
     {
@@ -83,7 +83,7 @@
       title: 'PostgreSQL RESET is cursed',
       description:
         'PostgreSQL RESET is cursed because it is impossible to RESET a PostgreSQL extension parameter if the extension has been uninstalled.',
-      link: asGithubLink(19363),
+      link: asGithubLink(19_363),
       date: new Date(2025, 5, 20),
     },
     {
@@ -102,7 +102,7 @@
       title: 'Entra is cursed',
       description:
         "Microsoft Entra supports PKCE, but doesn't include it in its OpenID discovery document. This leads to clients thinking PKCE isn't available.",
-      link: asGithubLink(18725),
+      link: asGithubLink(18_725),
       date: new Date(2025, 4, 30),
     },
     {
@@ -110,14 +110,14 @@
       title: 'Image dimensions in EXIF metadata are cursed',
       description:
         'The dimensions in EXIF metadata can be different from the actual dimensions of the image, causing issues with cropping and resizing.',
-      link: asGithubLink(17974),
+      link: asGithubLink(17_974),
       date: new Date(2025, 4, 5),
     },
     {
       icon: mdiCodeJson,
       title: 'YAML whitespace is cursed',
       description: 'YAML whitespaces are often handled in unintuitive ways.',
-      link: asGithubLink(17309),
+      link: asGithubLink(17_309),
       date: new Date(2025, 3, 1),
     },
     {
@@ -125,7 +125,7 @@
       title: 'Hidden files in Windows are cursed',
       description:
         'Hidden files in Windows cannot be opened with the "w" flag. That, combined with SMB option "hide dot files" leads to a lot of confusion.',
-      link: asGithubLink(12812),
+      link: asGithubLink(12_812),
       date: new Date(2024, 8, 20),
     },
     {
@@ -133,7 +133,7 @@
       title: 'Carriage returns in bash scripts are cursed',
       description:
         'Git can be configured to automatically convert LF to CRLF on checkout and CRLF breaks bash scripts.',
-      link: asGithubLink(11613),
+      link: asGithubLink(11_613),
       date: new Date(2024, 7, 7),
     },
     {
@@ -152,7 +152,7 @@
       title: 'GPS sharing on mobile is cursed',
       description:
         'Some phones will silently strip GPS data from images when apps without location permission try to access them.',
-      link: asGithubLink({ number: 11268, type: 'discussion' }),
+      link: asGithubLink({ number: 11_268, type: 'discussion' }),
       date: new Date(2024, 6, 21),
     },
     {
@@ -160,7 +160,7 @@
       title: 'PostgreSQL NOTIFY is cursed',
       description:
         'PostgreSQL does everything in a transaction, including NOTIFY. This means using the socket.io postgres-adapter writes to WAL every 5 seconds.',
-      link: asGithubLink(10801),
+      link: asGithubLink(10_801),
       date: new Date(2024, 6, 3),
     },
     {
@@ -168,7 +168,7 @@
       title: 'npm scripts are cursed',
       description:
         'npm scripts make a http call to the npm registry each time they run, which means they are a terrible way to execute a health check.',
-      link: asGithubLink({ number: 10796, type: 'issue' }),
+      link: asGithubLink({ number: 10_796, type: 'issue' }),
       date: new Date(2024, 6, 3),
     },
     {
@@ -176,7 +176,7 @@
       title: '50 extra packages are cursed',
       description:
         'There is a user in the JavaScript community who goes around adding "backwards compatibility" to projects. They do this by adding 50 extra package dependencies to your project, which are maintained by them.',
-      link: asGithubLink(10690),
+      link: asGithubLink(10_690),
       date: new Date(2024, 5, 28),
     },
     {
@@ -205,7 +205,7 @@
     {
       icon: mdiDatabase,
       title: 'PostgreSQL parameters are cursed',
-      description: `PostgresSQL has a limit of ${Number(65535).toLocaleString()} parameters, so bulk inserts can fail with large datasets.`,
+      description: `PostgresSQL has a limit of ${Number(65_535).toLocaleString()} parameters, so bulk inserts can fail with large datasets.`,
       link: asGithubLink(6034),
       date: new Date(2023, 11, 28),
     },
@@ -244,7 +244,7 @@
 <div class="mx-auto mt-8 flex w-full max-w-(--breakpoint-md) justify-around">
   <Timeline
     items={items
-      .sort((a, b) => b.date.getTime() - a.date.getTime())
+      .toSorted((a, b) => b.date.getTime() - a.date.getTime())
       .map((item) => ({ ...item, getDateLabel: withLanguage(item.date) }))}
   />
 </div>

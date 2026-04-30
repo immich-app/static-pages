@@ -84,6 +84,7 @@
       const currentEntry = entriesToCheckForSubDirectories.pop();
 
       if (isFileSystemDirectoryEntry(currentEntry)) {
+        // eslint-disable-next-line unicorn/prefer-spread
         entriesToCheckForSubDirectories = entriesToCheckForSubDirectories.concat(
           await getContentsFromFileSystemDirectoryEntry(currentEntry),
         );
