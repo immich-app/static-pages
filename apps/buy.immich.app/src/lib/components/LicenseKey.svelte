@@ -22,7 +22,7 @@
       clipboardStatus = 'error';
     }
 
-    setTimeout(() => (clipboardStatus = undefined), 3_000);
+    setTimeout(() => (clipboardStatus = undefined), 3000);
   };
 </script>
 

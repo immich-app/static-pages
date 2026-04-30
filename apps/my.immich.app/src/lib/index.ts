@@ -5,13 +5,11 @@ export enum StorageKey {
 export const mergeInstanceUrl = ({ pathname, searchParams }: URL, instanceUrl: string) => {
   const targetUrl = new URL(instanceUrl);
 
-  if (targetUrl.pathname.endsWith('/')) {
-    targetUrl.pathname += pathname.slice(1);
-  } else {
-    targetUrl.pathname += pathname;
-  }
+  targetUrl.pathname += targetUrl.pathname.endsWith('/') ? pathname.slice(1) : pathname;
 
-  searchParams.forEach((v, k) => targetUrl.searchParams.append(k, v));
+  for (const [key, value] of searchParams.entries()) {
+    targetUrl.searchParams.append(key, value);
+  }
 
   return targetUrl;
 };

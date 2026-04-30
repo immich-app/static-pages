@@ -359,7 +359,7 @@
       description: 'Rework background backups to be more reliable',
       release: 'v1.141.1',
     }),
-    starMilestone(70000, new Date(2025, 6, 9)),
+    starMilestone(70_000, new Date(2025, 6, 9)),
     releaseItem({
       icon: mdiTableKey,
       title: 'Fine grained access controls',
@@ -384,7 +384,7 @@
       description: 'Browse your photos and videos in their folder structure inside the mobile app',
       release: 'v1.130.0',
     }),
-    starMilestone(60000, new Date(2025, 2, 4)),
+    starMilestone(60_000, new Date(2025, 2, 4)),
     releaseItem({
       icon: mdiTagFaces,
       title: 'Manual face tagging',
@@ -410,7 +410,7 @@
       description: 'Database dumps are now integrated into the Immich server',
       release: 'v1.120.0',
     }),
-    starMilestone(50000, new Date(2024, 10, 1)),
+    starMilestone(50_000, new Date(2024, 10, 1)),
     releaseItem({
       icon: mdiFaceRecognition,
       title: 'Metadata Face Import',
@@ -459,7 +459,7 @@
       description: 'Dedicated tile server for Immich',
       release: 'v1.111.0',
     }),
-    starMilestone(40000, new Date(2024, 6, 21)),
+    starMilestone(40_000, new Date(2024, 6, 21)),
     releaseItem({
       icon: mdiShare,
       title: 'Deploy my.immich.app',
@@ -527,7 +527,7 @@
       description: 'Assets on the web now have permanent URLs',
       release: 'v1.103.0',
     }),
-    starMilestone(30000, new Date(2024, 2, 20)),
+    starMilestone(30_000, new Date(2024, 2, 20)),
     releaseItem({
       icon: mdiChartBoxMultipleOutline,
       title: 'OpenTelemetry metrics',
@@ -601,7 +601,7 @@
       description: 'Comment a photo or a video in a shared album',
       release: 'v1.84.0',
     }),
-    starMilestone(20000, new Date(2023, 9, 28)),
+    starMilestone(20_000, new Date(2023, 9, 28)),
     releaseItem({
       icon: mdiCameraBurst,
       title: 'Stack assets',
@@ -770,7 +770,7 @@
       description: 'Manage logged-in devices and revoke access from User Settings.',
       release: 'v1.55.0',
     }),
-    starMilestone(10000, new Date(2023, 3, 18)),
+    starMilestone(10_000, new Date(2023, 3, 18)),
     releaseItem({
       icon: mdiText,
       title: 'Asset descriptions',

@@ -115,7 +115,7 @@ const getPosts = () => {
     }
   }
 
-  return posts.sort((a, b) => b.publishedAt.valueOf() - a.publishedAt.valueOf());
+  return posts.toSorted((a, b) => b.publishedAt.valueOf() - a.publishedAt.valueOf());
 };
 
 export const posts: BlogPost[] = getPosts();
