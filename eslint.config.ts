@@ -45,10 +45,15 @@ export default defineConfig([
       'unicorn/prefer-top-level-await': 'off',
       'unicorn/prefer-event-target': 'off',
       'unicorn/no-thenable': 'off',
+      'unicorn/no-nested-ternary': 'off',
       'unicorn/import-style': 'off',
       'unicorn/prefer-structured-clone': 'off',
       'unicorn/no-for-loop': 'off',
       'unicorn/no-process-exit': 'off',
+      'unicorn/no-array-reverse': 'off', // toReversed() is not supported in Chrome 109 or Safari 15.4
+      'unicorn/no-useless-undefined': 'off',
+      'unicorn/prefer-spread': 'off',
+
       'prettier/prettier': 0,
       'object-shorthand': ['error', 'always'],
       '@typescript-eslint/no-unused-vars': [
@@ -64,8 +69,12 @@ export default defineConfig([
     ignores: [
       'apps/**/.svelte-kit',
       'apps/**/build',
+      'apps/**/backend/dist',
       'apps/**/.wrangler',
       'apps/**/backend/worker-configuration.d.ts',
+      'packages/**/build/',
+      'packages/**/.svelte-kit/',
+      'packages/**/dist/',
       'common/',
     ],
   },

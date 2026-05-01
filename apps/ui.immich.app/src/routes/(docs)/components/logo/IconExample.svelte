@@ -1,0 +1,11 @@
+<script lang="ts">
+  import ComponentSizes from '$lib/components/ComponentSizes.svelte';
+  import { Logo, Text } from '@immich/ui';
+</script>
+
+<ComponentSizes>
+  {#snippet child({ size, label })}
+    <Text class="mb-1" fontWeight="bold">{label}</Text>
+    <Logo {size} variant="icon" />
+  {/snippet}
+</ComponentSizes>

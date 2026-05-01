@@ -1,0 +1,42 @@
+export const Constants = {
+  Socials: {
+    Futo: 'https://futo.org/',
+    Github: 'https://github.com/immich-app/immich',
+    Discord: 'https://discord.immich.app/',
+    Reddit: 'https://www.reddit.com/r/immich/',
+    Rss: 'https://immich.app/blog/feed.xml',
+    Weblate: 'https://hosted.weblate.org/projects/immich/immich/',
+    X: 'https://x.com/immichapp',
+    YouTube: 'https://www.youtube.com/@immich-app',
+  },
+  Get: {
+    iOS: 'https://get.immich.app/ios',
+    Android: 'https://get.immich.app/android',
+    FDroid: 'https://get.immich.app/fdroid',
+    GithubRelease: 'https://github.com/immich-app/immich/releases/latest',
+    Download: 'https://immich.app/download',
+  },
+  Sites: {
+    Api: 'https://api.immich.app/',
+    Buy: 'https://buy.immich.app/',
+    Data: 'https://data.immich.app/',
+    Datasets: 'https://datasets.immich.app/',
+    Demo: 'https://demo.immich.app/',
+    Docs: 'https://docs.immich.app/',
+    Get: 'https://get.immich.app/',
+    My: 'https://my.immich.app/',
+    Store: 'https://immich.store/',
+    Awesome: 'https://awesome.immich.app/',
+    Ui: 'https://ui.immich.app/',
+  },
+  Pages: {
+    Blog: 'https://immich.app/blog',
+    CursedKnowledge: 'https://immich.app/cursed-knowledge',
+    Roadmap: 'https://immich.app/roadmap',
+    PrivacyPolicy: 'https://immich.app/privacy-policy',
+  },
+  Npm: {
+    Sdk: 'https://www.npmjs.com/package/@immich/sdk',
+    Ui: 'https://www.npmjs.com/package/@immich/ui',
+  },
+};

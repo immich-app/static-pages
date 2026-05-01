@@ -1,0 +1,40 @@
+{
+  "name": "@immich/sql-tools",
+  "description": "Kysely-based tools and utilities for managing postgres schema",
+  "version": "0.5.2",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/immich-app/packages.git",
+    "directory": "packages/sql-tools"
+  },
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest --project unit",
+    "test:medium": "vitest --project medium"
+  },
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "bin": {
+    "sql-tools": "./sql-tools.mjs"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "commander": "^14.0.3",
+    "graph-data-structure": "^4.5.0",
+    "kysely": "^0.28.11",
+    "kysely-postgres-js": "^3.0.0",
+    "pg-connection-string": "^2.11.0",
+    "postgres": "^3.4.8"
+  },
+  "devDependencies": {
+    "testcontainers": "^11.13.0"
+  }
+}
