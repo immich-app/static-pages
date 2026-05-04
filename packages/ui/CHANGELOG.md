@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.77.2](https://github.com/immich-app/static-pages/compare/ui-v0.77.1...ui-v0.77.2) (2026-05-04)
+
+
+### Bug Fixes
+
+* add readme ([#481](https://github.com/immich-app/static-pages/issues/481)) ([d7bc22f](https://github.com/immich-app/static-pages/commit/d7bc22f4f01148b68c8bc6c43365e7ecdb321572))
+* ui gray ([#483](https://github.com/immich-app/static-pages/issues/483)) ([0428ed7](https://github.com/immich-app/static-pages/commit/0428ed768a67fc1fe87fa9fbef93e0552d9a0277))
+
 ## [0.77.1](https://github.com/immich-app/ui/compare/ui-v0.77.0...ui-v0.77.1) (2026-04-28)
 
 
