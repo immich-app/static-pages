@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.77.3](https://github.com/immich-app/static-pages/compare/ui-v0.77.2...ui-v0.77.3) (2026-05-04)
+
+
+### Bug Fixes
+
+* publish ([#484](https://github.com/immich-app/static-pages/issues/484)) ([ae86d91](https://github.com/immich-app/static-pages/commit/ae86d91734eec38de16479df9a838feacfa7426d))
+
 ## [0.77.2](https://github.com/immich-app/static-pages/compare/ui-v0.77.1...ui-v0.77.2) (2026-05-04)
 
 
