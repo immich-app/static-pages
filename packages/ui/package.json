@@ -4,7 +4,7 @@
   "license": "GNU Affero General Public License version 3",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/immich-app/ui.git",
+    "url": "git+https://github.com/immich-app/static-pages.git",
     "directory": "packages/ui"
   },
   "scripts": {
