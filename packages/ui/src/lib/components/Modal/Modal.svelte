@@ -115,7 +115,9 @@
 
 <Dialog.Root open={!isHidden} {onOpenChangeComplete}>
   <Dialog.Portal>
-    <Dialog.Overlay class="{zIndex.ModalBackdrop} fixed start-0 top-0  flex h-dvh max-h-dvh w-screen bg-black/30" />
+    <Dialog.Overlay
+      class="{zIndex.ModalBackdrop} fixed start-0 top-0  flex h-dvh max-h-dvh w-screen bg-black/30 dark:bg-black/70"
+    />
     <Dialog.Content
       onOpenAutoFocus={handleOpenAutoFocus}
       onEscapeKeydown={handleEscapeKeydown}
