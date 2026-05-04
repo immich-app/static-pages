@@ -1,0 +1,54 @@
+{
+  "name": "ui.immich.app",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "license": "GNU Affero General Public License version 3",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/immich-app/ui.git",
+    "directory": "packages/ui"
+  },
+  "scripts": {
+    "create": "node scripts/create.js",
+    "start": "vite dev",
+    "build": "npm run sync && vite build && node ../../bin/postbuild.js",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "sync": "svelte-kit sync"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-static": "^3.0.6",
+    "@sveltejs/kit": "^2.13.0",
+    "@sveltejs/package": "^2.0.0",
+    "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "@tailwindcss/postcss": "^4.2.2",
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/luxon": "^3.7.1",
+    "autoprefixer": "^10.4.20",
+    "globals": "^17.0.0",
+    "svelte": "^5.37.0",
+    "svelte-check": "^4.0.0",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^6.0.0",
+    "vite": "^8.0.0",
+    "vitest": "^4.1.0"
+  },
+  "dependencies": {
+    "@immich/svelte-markdown-preprocess": "workspace:*",
+    "@immich/ui": "workspace:*",
+    "@internationalized/date": "^3.10.0",
+    "@mdi/js": "^7.4.47",
+    "bits-ui": "^2.15.7",
+    "luxon": "^3.7.2",
+    "simple-icons": "^16.0.0",
+    "svelte": "^5.39.5",
+    "svelte-check": "^4.3.2",
+    "svelte-highlight": "^7.8.4",
+    "tailwind-merge": "^3.0.0",
+    "tailwind-variants": "^3.0.0"
+  },
+  "volta": {
+    "node": "24.15.0"
+  }
+}

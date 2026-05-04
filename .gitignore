@@ -6,9 +6,13 @@ node_modules
 # Output
 .output
 .vercel
-apps/*/.svelte-kit
-apps/*/build
-apps/*/.wrangler
+
+apps/**/.svelte-kit
+apps/**/build
+apps/**/.wrangler
+packages/**/.svelte-kit
+packages/**/build
+packages/**/dist
 
 # OS
 .DS_Store
@@ -26,4 +30,5 @@ vite.config.ts.timestamp-*
 
 # Planning
 .planning/
+.claude/
 apps/*/.planning

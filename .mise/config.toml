@@ -1,9 +1,12 @@
 [tools]
 opentofu = "1.11.6"
 terragrunt = "1.0.2"
+node = "24.15"
+pnpm = "10.33.2"
+wrangler = "4.66.0"
 
-[env]
-TF_VAR_dist_dir="{{config_root}}/dist"
+[tasks.deploy]
+run = "wrangler pages deploy ${BUILD_DIR} --project-name=${PROJECT_NAME} --branch=${BRANCH_NAME}"
 
 [tasks.tg]
 run = "op run '--env-file={{config_root}}/deployment/.env' -- terragrunt"
@@ -11,7 +14,7 @@ description = "Wrapper for terragrunt"
 dir = "{{cwd}}"
 
 [tasks."tg:fmt"]
-run = "mise run tg hclfmt"
+run = "mise run tg hcl format"
 description = "Format terragrunt files"
 
 [tasks.tf]

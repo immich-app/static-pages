@@ -1,0 +1,660 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`fixtures > check-constraint-default-name.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "id" uuid NOT NULL,
+  CONSTRAINT "table1_3985fc33_chk" CHECK (1=1)
+);"
+`;
+
+exports[`fixtures > check-constraint-default-name.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > check-constraint-override-name.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "id" uuid NOT NULL,
+  CONSTRAINT "CHK_test" CHECK (1=1)
+);"
+`;
+
+exports[`fixtures > check-constraint-override-name.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-create-date.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "createdAt" timestamp with time zone NOT NULL DEFAULT now()
+);"
+`;
+
+exports[`fixtures > column-create-date.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-default-array.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column0" character varying NOT NULL DEFAULT '{}',
+  "column1" character varying NOT NULL DEFAULT '{a,"b\\"",""," hello world "}',
+  "column2" character varying NOT NULL DEFAULT '{1,2,3}',
+  "column3" character varying NOT NULL DEFAULT '{NULL}'
+);"
+`;
+
+exports[`fixtures > column-default-array.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-default-boolean.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column1" boolean NOT NULL DEFAULT true
+);"
+`;
+
+exports[`fixtures > column-default-boolean.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-default-date.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column1" character varying NOT NULL DEFAULT '2023-01-01T00:00:00.000Z'
+);"
+`;
+
+exports[`fixtures > column-default-date.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-default-function.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column1" character varying NOT NULL DEFAULT now()
+);"
+`;
+
+exports[`fixtures > column-default-function.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-default-null.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column1" character varying
+);"
+`;
+
+exports[`fixtures > column-default-null.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-default-number.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column1" integer NOT NULL DEFAULT 0
+);"
+`;
+
+exports[`fixtures > column-default-number.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-default-string.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column1" character varying NOT NULL DEFAULT 'foo'
+);"
+`;
+
+exports[`fixtures > column-default-string.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-delete-date.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "deletedAt" timestamp with time zone
+);"
+`;
+
+exports[`fixtures > column-delete-date.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-enum-array.stub.ts 1`] = `
+"CREATE TYPE "test_enum" AS ENUM ('a','b');
+CREATE TABLE "table1" (
+  "column1" test_enum[] NOT NULL,
+  "column2" test_enum[] NOT NULL DEFAULT '{a}',
+  "column3" test_enum[] NOT NULL DEFAULT '{a,b}'
+);"
+`;
+
+exports[`fixtures > column-enum-array.stub.ts 2`] = `
+"DROP TABLE "table1";
+DROP TYPE "test_enum";"
+`;
+
+exports[`fixtures > column-enum-type.stub.ts 1`] = `
+"CREATE TYPE "test_enum" AS ENUM ('foo','bar');
+CREATE TABLE "table1" (
+  "column1" test_enum NOT NULL,
+  "column2" test_enum NOT NULL DEFAULT 'foo'
+);"
+`;
+
+exports[`fixtures > column-enum-type.stub.ts 2`] = `
+"DROP TABLE "table1";
+DROP TYPE "test_enum";"
+`;
+
+exports[`fixtures > column-generated-identity.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column1" integer NOT NULL GENERATED ALWAYS AS IDENTITY,
+  CONSTRAINT "table1_pkey" PRIMARY KEY ("column1")
+);"
+`;
+
+exports[`fixtures > column-generated-identity.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-generated-uuid.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column1" uuid NOT NULL DEFAULT uuid_generate_v4(),
+  CONSTRAINT "table1_pkey" PRIMARY KEY ("column1")
+);"
+`;
+
+exports[`fixtures > column-generated-uuid.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-index-name.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column1" character varying NOT NULL
+);
+CREATE INDEX "IDX_test" ON "table1" ("column1");"
+`;
+
+exports[`fixtures > column-index-name.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-index-name-default.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column1" character varying NOT NULL
+);
+CREATE INDEX "table1_column1_idx" ON "table1" ("column1");"
+`;
+
+exports[`fixtures > column-index-name-default.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-inferred-nullable.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column1" character varying
+);"
+`;
+
+exports[`fixtures > column-inferred-nullable.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-name-default.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column1" character varying NOT NULL
+);"
+`;
+
+exports[`fixtures > column-name-default.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-name-override.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column-1" character varying NOT NULL
+);"
+`;
+
+exports[`fixtures > column-name-override.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-name-string.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column-1" character varying NOT NULL
+);"
+`;
+
+exports[`fixtures > column-name-string.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-nullable.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column1" character varying
+);"
+`;
+
+exports[`fixtures > column-nullable.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-string-length.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column1" character varying(2) NOT NULL
+);"
+`;
+
+exports[`fixtures > column-string-length.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-unique-constraint-name-default.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "id" uuid NOT NULL,
+  CONSTRAINT "table1_id_uq" UNIQUE ("id")
+);"
+`;
+
+exports[`fixtures > column-unique-constraint-name-default.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-unique-constraint-name-override.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "id" uuid NOT NULL,
+  CONSTRAINT "UQ_test" UNIQUE ("id")
+);"
+`;
+
+exports[`fixtures > column-unique-constraint-name-override.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > column-update-date.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "updatedAt" timestamp with time zone NOT NULL DEFAULT now()
+);"
+`;
+
+exports[`fixtures > column-update-date.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > foreign-key-constraint.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "id" uuid NOT NULL,
+  CONSTRAINT "table1_pkey" PRIMARY KEY ("id")
+);
+CREATE TABLE "table2" (
+  "parentId" uuid NOT NULL,
+  CONSTRAINT "table2_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "table1" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+CREATE INDEX "table2_parentId_idx" ON "table2" ("parentId");"
+`;
+
+exports[`fixtures > foreign-key-constraint.stub.ts 2`] = `
+"DROP TABLE "table2";
+DROP TABLE "table1";"
+`;
+
+exports[`fixtures > foreign-key-constraint-column-order.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "id1" uuid NOT NULL,
+  "id2" uuid NOT NULL,
+  CONSTRAINT "table1_pkey" PRIMARY KEY ("id1", "id2")
+);
+CREATE TABLE "table2" (
+  "parentId1" uuid NOT NULL,
+  "parentId2" uuid NOT NULL,
+  CONSTRAINT "table2_parentId1_parentId2_fkey" FOREIGN KEY ("parentId1", "parentId2") REFERENCES "table1" ("id2", "id1") ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+CREATE INDEX "table2_parentId1_parentId2_idx" ON "table2" ("parentId1", "parentId2");"
+`;
+
+exports[`fixtures > foreign-key-constraint-column-order.stub.ts 2`] = `
+"DROP TABLE "table2";
+DROP TABLE "table1";"
+`;
+
+exports[`fixtures > foreign-key-constraint-multiple-columns.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "id1" uuid NOT NULL,
+  "id2" uuid NOT NULL,
+  CONSTRAINT "table1_pkey" PRIMARY KEY ("id1", "id2")
+);
+CREATE TABLE "table2" (
+  "parentId1" uuid NOT NULL,
+  "parentId2" uuid NOT NULL,
+  CONSTRAINT "table2_parentId1_parentId2_fkey" FOREIGN KEY ("parentId1", "parentId2") REFERENCES "table1" ("id1", "id2") ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+CREATE INDEX "table2_parentId1_parentId2_idx" ON "table2" ("parentId1", "parentId2");"
+`;
+
+exports[`fixtures > foreign-key-constraint-multiple-columns.stub.ts 2`] = `
+"DROP TABLE "table2";
+DROP TABLE "table1";"
+`;
+
+exports[`fixtures > foreign-key-constraint-multiple-columns-index.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "id" uuid NOT NULL,
+  CONSTRAINT "table1_pkey" PRIMARY KEY ("id")
+);
+CREATE TABLE "table2" (
+  "id" uuid NOT NULL,
+  CONSTRAINT "table2_pkey" PRIMARY KEY ("id")
+);
+CREATE TABLE "table3" (
+  "id" uuid NOT NULL,
+  "table1Id" uuid NOT NULL,
+  "table2Id" uuid NOT NULL,
+  CONSTRAINT "table3_table1Id_fkey" FOREIGN KEY ("table1Id") REFERENCES "table1" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT "table3_table2Id_fkey" FOREIGN KEY ("table2Id") REFERENCES "table2" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT "table3_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX "table3_table2Id_table1Id_idx" ON "table3" ("table2Id", "table1Id");
+CREATE INDEX "table3_table1Id_table2Id_idx" ON "table3" ("table1Id", "table2Id");"
+`;
+
+exports[`fixtures > foreign-key-constraint-multiple-columns-index.stub.ts 2`] = `
+"DROP TABLE "table3";
+DROP TABLE "table1";
+DROP TABLE "table2";"
+`;
+
+exports[`fixtures > foreign-key-constraint-no-index.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "id" uuid NOT NULL,
+  CONSTRAINT "table1_pkey" PRIMARY KEY ("id")
+);
+CREATE TABLE "table2" (
+  "parentId" uuid NOT NULL,
+  CONSTRAINT "table2_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "table1" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION
+);"
+`;
+
+exports[`fixtures > foreign-key-constraint-no-index.stub.ts 2`] = `
+"DROP TABLE "table2";
+DROP TABLE "table1";"
+`;
+
+exports[`fixtures > foreign-key-constraint-no-primary.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "foo" character varying NOT NULL,
+  CONSTRAINT "table1_foo_uq" UNIQUE ("foo")
+);
+CREATE TABLE "table2" (
+  "bar" character varying NOT NULL,
+  CONSTRAINT "table2_bar_fkey" FOREIGN KEY ("bar") REFERENCES "table1" ("foo") ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+CREATE INDEX "table2_bar_idx" ON "table2" ("bar");"
+`;
+
+exports[`fixtures > foreign-key-constraint-no-primary.stub.ts 2`] = `
+"DROP TABLE "table2";
+DROP TABLE "table1";"
+`;
+
+exports[`fixtures > foreign-key-inferred-type.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "id" uuid NOT NULL,
+  CONSTRAINT "table1_pkey" PRIMARY KEY ("id")
+);
+CREATE TABLE "table2" (
+  "parentId" uuid NOT NULL,
+  CONSTRAINT "table2_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "table1" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+CREATE INDEX "table2_parentId_idx" ON "table2" ("parentId");"
+`;
+
+exports[`fixtures > foreign-key-inferred-type.stub.ts 2`] = `
+"DROP TABLE "table2";
+DROP TABLE "table1";"
+`;
+
+exports[`fixtures > foreign-key-with-unique-constraint.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "id" uuid NOT NULL,
+  CONSTRAINT "table1_pkey" PRIMARY KEY ("id")
+);
+CREATE TABLE "table2" (
+  "parentId" uuid NOT NULL,
+  CONSTRAINT "table2_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "table1" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT "table2_parentId_uq" UNIQUE ("parentId")
+);
+CREATE INDEX "table2_parentId_idx" ON "table2" ("parentId");"
+`;
+
+exports[`fixtures > foreign-key-with-unique-constraint.stub.ts 2`] = `
+"DROP TABLE "table2";
+DROP TABLE "table1";"
+`;
+
+exports[`fixtures > index-name-default.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "id" uuid NOT NULL
+);
+CREATE INDEX "table1_id_idx" ON "table1" ("id");"
+`;
+
+exports[`fixtures > index-name-default.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > index-name-override.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "id" uuid NOT NULL
+);
+CREATE INDEX "IDX_test" ON "table1" ("id");"
+`;
+
+exports[`fixtures > index-name-override.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > index-with-expression.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column1" timestamp with time zone
+);
+CREATE INDEX "table1_da39a3ee_idx" ON "table1" ((("column1" at time zone 'UTC')::date));
+CREATE TABLE "migration_overrides" (
+  "name" character varying NOT NULL,
+  "value" jsonb NOT NULL,
+  CONSTRAINT "migration_overrides_pkey" PRIMARY KEY ("name")
+);
+INSERT INTO "migration_overrides" ("name", "value") VALUES ('index_table1_da39a3ee_idx', $json\${"type":"index","name":"table1_da39a3ee_idx","sql":"CREATE INDEX \\"table1_da39a3ee_idx\\" ON \\"table1\\" (((\\"column1\\" at time zone 'UTC')::date));"}$json$::jsonb);"
+`;
+
+exports[`fixtures > index-with-expression.stub.ts 2`] = `
+"DROP TABLE "table1";
+DELETE FROM "migration_overrides" WHERE "name" = 'index_table1_da39a3ee_idx';
+DROP TABLE "migration_overrides";"
+`;
+
+exports[`fixtures > index-with-where.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "column1" character varying
+);
+CREATE INDEX "table1_column1_idx" ON "table1" ("column1") WHERE ("column1" IS NOT NULL);
+CREATE TABLE "migration_overrides" (
+  "name" character varying NOT NULL,
+  "value" jsonb NOT NULL,
+  CONSTRAINT "migration_overrides_pkey" PRIMARY KEY ("name")
+);
+INSERT INTO "migration_overrides" ("name", "value") VALUES ('index_table1_column1_idx', $json\${"type":"index","name":"table1_column1_idx","sql":"CREATE INDEX \\"table1_column1_idx\\" ON \\"table1\\" (\\"column1\\") WHERE (\\"column1\\" IS NOT NULL);"}$json$::jsonb);"
+`;
+
+exports[`fixtures > index-with-where.stub.ts 2`] = `
+"DROP TABLE "table1";
+DELETE FROM "migration_overrides" WHERE "name" = 'index_table1_column1_idx';
+DROP TABLE "migration_overrides";"
+`;
+
+exports[`fixtures > primary-key-constraint-name-default.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "id" uuid NOT NULL,
+  CONSTRAINT "table1_pkey" PRIMARY KEY ("id")
+);"
+`;
+
+exports[`fixtures > primary-key-constraint-name-default.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > primary-key-constraint-name-override.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "id" uuid NOT NULL,
+  CONSTRAINT "PK_test" PRIMARY KEY ("id")
+);"
+`;
+
+exports[`fixtures > primary-key-constraint-name-override.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > table-name-default.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  
+);"
+`;
+
+exports[`fixtures > table-name-default.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > table-name-override.stub.ts 1`] = `
+"CREATE TABLE "table-1" (
+  
+);"
+`;
+
+exports[`fixtures > table-name-override.stub.ts 2`] = `"DROP TABLE "table-1";"`;
+
+exports[`fixtures > table-name-string-option.stub.ts 1`] = `
+"CREATE TABLE "table-1" (
+  
+);"
+`;
+
+exports[`fixtures > table-name-string-option.stub.ts 2`] = `"DROP TABLE "table-1";"`;
+
+exports[`fixtures > table-recursive-dependency.stub.ts 1`] = `
+"CREATE TABLE "stack" (
+  "id" uuid NOT NULL,
+  "primaryAssetId" uuid NOT NULL,
+  CONSTRAINT "stack_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX "stack_primaryAssetId_idx" ON "stack" ("primaryAssetId");
+CREATE TABLE "asset" (
+  "id" uuid NOT NULL,
+  "stackId" uuid NOT NULL,
+  CONSTRAINT "asset_stackId_fkey" FOREIGN KEY ("stackId") REFERENCES "stack" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT "asset_pkey" PRIMARY KEY ("id")
+);
+ALTER TABLE "stack" ADD CONSTRAINT "stack_primaryAssetId_fkey" FOREIGN KEY ("primaryAssetId") REFERENCES "asset" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+CREATE INDEX "asset_stackId_idx" ON "asset" ("stackId");"
+`;
+
+exports[`fixtures > table-recursive-dependency.stub.ts 2`] = `
+"ALTER TABLE "stack" DROP CONSTRAINT "stack_primaryAssetId_fkey";
+DROP TABLE "asset";
+DROP TABLE "stack";"
+`;
+
+exports[`fixtures > trigger-after-delete.stub.ts 1`] = `
+"CREATE OR REPLACE FUNCTION test_fn()
+  RETURNS TRIGGER
+  LANGUAGE PLPGSQL
+  AS $$
+    BEGIN
+      SELECT 1;
+      RETURN NULL;
+    END
+  $$;
+CREATE TABLE "table1" (
+  
+);
+CREATE OR REPLACE TRIGGER "my_trigger"
+  AFTER DELETE ON "table1"
+  FOR EACH ROW
+  EXECUTE FUNCTION test_fn();
+CREATE TABLE "migration_overrides" (
+  "name" character varying NOT NULL,
+  "value" jsonb NOT NULL,
+  CONSTRAINT "migration_overrides_pkey" PRIMARY KEY ("name")
+);
+INSERT INTO "migration_overrides" ("name", "value") VALUES ('function_test_fn', $json\${"type":"function","name":"test_fn","sql":"CREATE OR REPLACE FUNCTION test_fn()\\n  RETURNS TRIGGER\\n  LANGUAGE PLPGSQL\\n  AS $$\\n    BEGIN\\n      SELECT 1;\\n      RETURN NULL;\\n    END\\n  $$;"}$json$::jsonb);
+INSERT INTO "migration_overrides" ("name", "value") VALUES ('trigger_my_trigger', $json\${"type":"trigger","name":"my_trigger","sql":"CREATE OR REPLACE TRIGGER \\"my_trigger\\"\\n  AFTER DELETE ON \\"table1\\"\\n  FOR EACH ROW\\n  EXECUTE FUNCTION test_fn();"}$json$::jsonb);"
+`;
+
+exports[`fixtures > trigger-after-delete.stub.ts 2`] = `
+"DROP TRIGGER "my_trigger" ON "table1";
+DROP FUNCTION test_fn;
+DROP TABLE "table1";
+DELETE FROM "migration_overrides" WHERE "name" = 'function_test_fn';
+DELETE FROM "migration_overrides" WHERE "name" = 'trigger_my_trigger';
+DROP TABLE "migration_overrides";"
+`;
+
+exports[`fixtures > trigger-before-update.stub.ts 1`] = `
+"CREATE OR REPLACE FUNCTION test_fn()
+  RETURNS TRIGGER
+  LANGUAGE PLPGSQL
+  AS $$
+    BEGIN
+      SELECT 1;
+      RETURN NULL;
+    END
+  $$;
+CREATE TABLE "table1" (
+  
+);
+CREATE OR REPLACE TRIGGER "my_trigger"
+  BEFORE UPDATE ON "table1"
+  FOR EACH ROW
+  EXECUTE FUNCTION test_fn();
+CREATE TABLE "migration_overrides" (
+  "name" character varying NOT NULL,
+  "value" jsonb NOT NULL,
+  CONSTRAINT "migration_overrides_pkey" PRIMARY KEY ("name")
+);
+INSERT INTO "migration_overrides" ("name", "value") VALUES ('function_test_fn', $json\${"type":"function","name":"test_fn","sql":"CREATE OR REPLACE FUNCTION test_fn()\\n  RETURNS TRIGGER\\n  LANGUAGE PLPGSQL\\n  AS $$\\n    BEGIN\\n      SELECT 1;\\n      RETURN NULL;\\n    END\\n  $$;"}$json$::jsonb);
+INSERT INTO "migration_overrides" ("name", "value") VALUES ('trigger_my_trigger', $json\${"type":"trigger","name":"my_trigger","sql":"CREATE OR REPLACE TRIGGER \\"my_trigger\\"\\n  BEFORE UPDATE ON \\"table1\\"\\n  FOR EACH ROW\\n  EXECUTE FUNCTION test_fn();"}$json$::jsonb);"
+`;
+
+exports[`fixtures > trigger-before-update.stub.ts 2`] = `
+"DROP TRIGGER "my_trigger" ON "table1";
+DROP FUNCTION test_fn;
+DROP TABLE "table1";
+DELETE FROM "migration_overrides" WHERE "name" = 'function_test_fn';
+DELETE FROM "migration_overrides" WHERE "name" = 'trigger_my_trigger';
+DROP TABLE "migration_overrides";"
+`;
+
+exports[`fixtures > trigger-name-default.stub.ts 1`] = `
+"CREATE OR REPLACE FUNCTION test_fn()
+  RETURNS TRIGGER
+  LANGUAGE PLPGSQL
+  AS $$
+    BEGIN
+      SELECT 1;
+      RETURN NULL;
+    END
+  $$;
+CREATE TABLE "table1" (
+  
+);
+CREATE OR REPLACE TRIGGER "table1_test_fn"
+  BEFORE INSERT ON "table1"
+  FOR EACH ROW
+  EXECUTE FUNCTION test_fn();
+CREATE TABLE "migration_overrides" (
+  "name" character varying NOT NULL,
+  "value" jsonb NOT NULL,
+  CONSTRAINT "migration_overrides_pkey" PRIMARY KEY ("name")
+);
+INSERT INTO "migration_overrides" ("name", "value") VALUES ('function_test_fn', $json\${"type":"function","name":"test_fn","sql":"CREATE OR REPLACE FUNCTION test_fn()\\n  RETURNS TRIGGER\\n  LANGUAGE PLPGSQL\\n  AS $$\\n    BEGIN\\n      SELECT 1;\\n      RETURN NULL;\\n    END\\n  $$;"}$json$::jsonb);
+INSERT INTO "migration_overrides" ("name", "value") VALUES ('trigger_table1_test_fn', $json\${"type":"trigger","name":"table1_test_fn","sql":"CREATE OR REPLACE TRIGGER \\"table1_test_fn\\"\\n  BEFORE INSERT ON \\"table1\\"\\n  FOR EACH ROW\\n  EXECUTE FUNCTION test_fn();"}$json$::jsonb);"
+`;
+
+exports[`fixtures > trigger-name-default.stub.ts 2`] = `
+"DROP TRIGGER "table1_test_fn" ON "table1";
+DROP FUNCTION test_fn;
+DROP TABLE "table1";
+DELETE FROM "migration_overrides" WHERE "name" = 'function_test_fn';
+DELETE FROM "migration_overrides" WHERE "name" = 'trigger_table1_test_fn';
+DROP TABLE "migration_overrides";"
+`;
+
+exports[`fixtures > trigger-name-override.stub.ts 1`] = `
+"CREATE OR REPLACE FUNCTION test_fn()
+  RETURNS TRIGGER
+  LANGUAGE PLPGSQL
+  AS $$
+    BEGIN
+      SELECT 1;
+      RETURN NULL;
+    END
+  $$;
+CREATE TABLE "table1" (
+  
+);
+CREATE OR REPLACE TRIGGER "trigger1"
+  BEFORE INSERT ON "table1"
+  FOR EACH ROW
+  EXECUTE FUNCTION test_fn();
+CREATE TABLE "migration_overrides" (
+  "name" character varying NOT NULL,
+  "value" jsonb NOT NULL,
+  CONSTRAINT "migration_overrides_pkey" PRIMARY KEY ("name")
+);
+INSERT INTO "migration_overrides" ("name", "value") VALUES ('function_test_fn', $json\${"type":"function","name":"test_fn","sql":"CREATE OR REPLACE FUNCTION test_fn()\\n  RETURNS TRIGGER\\n  LANGUAGE PLPGSQL\\n  AS $$\\n    BEGIN\\n      SELECT 1;\\n      RETURN NULL;\\n    END\\n  $$;"}$json$::jsonb);
+INSERT INTO "migration_overrides" ("name", "value") VALUES ('trigger_trigger1', $json\${"type":"trigger","name":"trigger1","sql":"CREATE OR REPLACE TRIGGER \\"trigger1\\"\\n  BEFORE INSERT ON \\"table1\\"\\n  FOR EACH ROW\\n  EXECUTE FUNCTION test_fn();"}$json$::jsonb);"
+`;
+
+exports[`fixtures > trigger-name-override.stub.ts 2`] = `
+"DROP TRIGGER "trigger1" ON "table1";
+DROP FUNCTION test_fn;
+DROP TABLE "table1";
+DELETE FROM "migration_overrides" WHERE "name" = 'function_test_fn';
+DELETE FROM "migration_overrides" WHERE "name" = 'trigger_trigger1';
+DROP TABLE "migration_overrides";"
+`;
+
+exports[`fixtures > unique-constraint-name-default.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "id" uuid NOT NULL,
+  CONSTRAINT "table1_id_uq" UNIQUE ("id")
+);"
+`;
+
+exports[`fixtures > unique-constraint-name-default.stub.ts 2`] = `"DROP TABLE "table1";"`;
+
+exports[`fixtures > unique-constraint-name-override.stub.ts 1`] = `
+"CREATE TABLE "table1" (
+  "id" uuid NOT NULL,
+  CONSTRAINT "UQ_test" UNIQUE ("id")
+);"
+`;
+
+exports[`fixtures > unique-constraint-name-override.stub.ts 2`] = `"DROP TABLE "table1";"`;

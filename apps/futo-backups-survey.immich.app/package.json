@@ -8,7 +8,7 @@
     "dev": "vite dev",
     "build": "svelte-kit sync && vite build",
     "preview": "vite preview",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
     "sync": "svelte-kit sync",
     "test": "vitest",
     "db:migrate:local": "cd backend && wrangler d1 migrations apply futo-backups-survey --local"

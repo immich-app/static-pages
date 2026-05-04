@@ -1,7 +1,6 @@
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import dotenv from 'dotenv';
-import { resolve } from 'node:path';
 
 dotenv.config({ path: '../../.env' });
 
@@ -15,8 +14,6 @@ const config = {
     alias: {
       $common: '../../common',
       '$common/*': '../../common/*',
-      '@immich/ui': resolve('./node_modules/@immich/ui/dist'),
-      '@mdi/js': resolve('./node_modules/@mdi/js'),
     },
   },
 };

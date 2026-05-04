@@ -9,10 +9,15 @@
     "pnpm": ">=10.0.0"
   },
   "scripts": {
+    "watch": "pnpm --filter svelte-markdown-preprocess build &&  pnpm -r --parallel run watch",
+    "build": "pnpm build:packages && pnpm build:apps",
+    "build:packages": "pnpm --filter \"./packages/**\" sync && pnpm --filter \"./packages/**\" build",
+    "build:apps": "pnpm --filter \"./apps/**\" sync && pnpm --filter \"./apps/**\" build",
     "lint": "eslint --max-warnings 0",
     "lint:fix": "pnpm lint -- --fix",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
+    "sync": "pnpm -r sync",
     "check": "pnpm -r check",
     "test": "pnpm -r test",
     "test:medium": "pnpm -r test:medium"
