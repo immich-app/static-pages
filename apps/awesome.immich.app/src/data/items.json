@@ -110,6 +110,11 @@
         "title": "TeleImmich",
         "description": "Sync exported Telegram backups to an Immich instance",
         "href": "https://github.com/dev-mkm/TeleImmich"
+      },
+      {
+        "title": "immichpy",
+        "description": "The stable, typed Python API layer for Immich automation and integrations.",
+        "href": "https://github.com/timonrieger/immichpy"
       }
     ]
   },
