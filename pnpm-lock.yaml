@@ -383,8 +383,8 @@ importers:
   apps/futo-backups-survey.immich.app:
     dependencies:
       '@immich/ui':
-        specifier: ^0.76.0
-        version: 0.76.2(@sveltejs/kit@2.58.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.5(@typescript-eslint/types@8.59.2))(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)))(svelte@5.55.5(@typescript-eslint/types@8.59.2))(typescript@6.0.3)(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)))(svelte@5.55.5(@typescript-eslint/types@8.59.2))(tailwindcss@4.2.4)
+        specifier: ^0.77.0
+        version: 0.77.3(@sveltejs/kit@2.58.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.5(@typescript-eslint/types@8.59.2))(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)))(svelte@5.55.5(@typescript-eslint/types@8.59.2))(typescript@6.0.3)(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)))(svelte@5.55.5(@typescript-eslint/types@8.59.2))(tailwindcss@4.2.4)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -1361,14 +1361,10 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@immich/svelte-markdown-preprocess@0.4.1':
-    resolution: {integrity: sha512-/N5dhu3fnRZUoZ+Z9hrIV61o9wi6Uf70TDxqiinXNYlXfqP81p1o77Z5mhbxtNigTNcp6GwpGeHAXRHQrU9JAQ==}
+  '@immich/ui@0.77.3':
+    resolution: {integrity: sha512-h3jrYE3JyGDOwXF7A4tVUHenP0L7TsDV22FyFInBTdwlWjjXoknwE1HWeTvvLxLeMuO5SHCZ9Q2D2al84xVjNw==}
     peerDependencies:
-      svelte: ^5.0.0
-
-  '@immich/ui@0.76.2':
-    resolution: {integrity: sha512-D5oqBMyGg8x7YcrmWLgYO1z6d5BU454jejoDJqkW/oJGHMXCSSyY+l/skmVR+fLd1Pttf28gJE9TVG1xXqJ0rA==}
-    peerDependencies:
+      '@sveltejs/kit': ^2.13.0
       svelte: ^5.0.0
 
   '@internationalized/date@3.12.1':
@@ -2949,11 +2945,6 @@ packages:
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
-  marked@17.0.6:
-    resolution: {integrity: sha512-gB0gkNafnonOw0obSTEGZTT86IuhILt2Wfx0mWH/1Au83kybTayroZ/V6nS25mN7u8ASy+5fMhgB3XPNrOZdmA==}
-    engines: {node: '>= 20'}
-    hasBin: true
-
   marked@18.0.2:
     resolution: {integrity: sha512-NsmlUYBS/Zg57rgDWMYdnre6OTj4e+qq/JS2ot3KrYLSoHLw+sDu0Nm1ZGpRgYAq6c+b1ekaY5NzVchMCQnzcg==}
     engines: {node: '>= 20'}
@@ -4222,18 +4213,11 @@ snapshots:
   '@img/sharp-win32-x64@0.34.5':
     optional: true
 
-  '@immich/svelte-markdown-preprocess@0.4.1(svelte@5.55.5(@typescript-eslint/types@8.59.2))':
+  '@immich/ui@0.77.3(@sveltejs/kit@2.58.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.5(@typescript-eslint/types@8.59.2))(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)))(svelte@5.55.5(@typescript-eslint/types@8.59.2))(typescript@6.0.3)(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)))(svelte@5.55.5(@typescript-eslint/types@8.59.2))(tailwindcss@4.2.4)':
     dependencies:
-      front-matter: 4.0.2
-      marked: 17.0.6
-      node-emoji: 2.2.0
-      svelte: 5.55.5(@typescript-eslint/types@8.59.2)
-
-  '@immich/ui@0.76.2(@sveltejs/kit@2.58.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.5(@typescript-eslint/types@8.59.2))(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)))(svelte@5.55.5(@typescript-eslint/types@8.59.2))(typescript@6.0.3)(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)))(svelte@5.55.5(@typescript-eslint/types@8.59.2))(tailwindcss@4.2.4)':
-    dependencies:
-      '@immich/svelte-markdown-preprocess': 0.4.1(svelte@5.55.5(@typescript-eslint/types@8.59.2))
       '@internationalized/date': 3.12.1
       '@mdi/js': 7.4.47
+      '@sveltejs/kit': 2.58.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.5(@typescript-eslint/types@8.59.2))(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)))(svelte@5.55.5(@typescript-eslint/types@8.59.2))(typescript@6.0.3)(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))
       bits-ui: 2.18.0(@internationalized/date@3.12.1)(@sveltejs/kit@2.58.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.5(@typescript-eslint/types@8.59.2))(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)))(svelte@5.55.5(@typescript-eslint/types@8.59.2))(typescript@6.0.3)(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3)))(svelte@5.55.5(@typescript-eslint/types@8.59.2))
       luxon: 3.7.2
       simple-icons: 16.18.1
@@ -4242,7 +4226,6 @@ snapshots:
       tailwind-merge: 3.5.0
       tailwind-variants: 3.2.2(tailwind-merge@3.5.0)(tailwindcss@4.2.4)
     transitivePeerDependencies:
-      - '@sveltejs/kit'
       - tailwindcss
 
   '@internationalized/date@3.12.1':
@@ -5854,8 +5837,6 @@ snapshots:
   magic-string@0.30.21:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
-
-  marked@17.0.6: {}
 
   marked@18.0.2: {}
 
