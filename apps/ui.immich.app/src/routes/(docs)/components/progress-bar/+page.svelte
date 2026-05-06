@@ -2,8 +2,7 @@
   import ComponentExamples from '$lib/components/ComponentExamples.svelte';
   import ComponentLink from '$lib/components/ComponentLink.svelte';
   import ComponentPage from '$lib/components/ComponentPage.svelte';
-  import ComponentTipCard from '$lib/components/ComponentTipCard.svelte';
-  import { Text } from '@immich/ui';
+  import { Markdown, Text } from '@immich/ui';
   import AnimatedExample from './AnimatedExample.svelte';
   import animatedExample from './AnimatedExample.svelte?raw';
   import ColorExample from './ColorExample.svelte';
@@ -17,12 +16,12 @@
 </script>
 
 <ComponentPage name="ProgressBar" description="A component for displaying progress of a task">
-  <ComponentTipCard>
+  <Markdown.Alert variant="tip">
     <Text>
       Use a progress bar for showing the completion status of a task. See <ComponentLink name="Meter" /> to show static measurements
       like storage usage.
     </Text>
-  </ComponentTipCard>
+  </Markdown.Alert>
   <ComponentExamples
     examples={[
       { title: 'Animated Example', code: animatedExample, component: AnimatedExample },

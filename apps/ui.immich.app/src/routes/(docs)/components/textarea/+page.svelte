@@ -3,8 +3,7 @@
   import ComponentFieldCard from '$lib/components/ComponentFieldCard.svelte';
   import ComponentLink from '$lib/components/ComponentLink.svelte';
   import ComponentPage from '$lib/components/ComponentPage.svelte';
-  import ComponentTipCard from '$lib/components/ComponentTipCard.svelte';
-  import { Text } from '@immich/ui';
+  import { Markdown, Text } from '@immich/ui';
   import FormExample from './FormExample.svelte';
   import formExample from './FormExample.svelte?raw';
   import GrowExample from './GrowExample.svelte';
@@ -16,10 +15,12 @@
 </script>
 
 <ComponentPage name="Textarea" description="A multi-line text input field with auto grow/shrink functionality">
-  <ComponentFieldCard />
-  <ComponentTipCard>
-    <Text>See <ComponentLink name="Input" /> for single-line input fields</Text>
-  </ComponentTipCard>
+  <div class="flex flex-col gap-2">
+    <ComponentFieldCard />
+    <Markdown.Alert variant="tip">
+      <Text>See <ComponentLink name="Input" /> for single-line input fields</Text>
+    </Markdown.Alert>
+  </div>
   <ComponentExamples
     examples={[
       { title: 'Form', code: formExample, component: FormExample },

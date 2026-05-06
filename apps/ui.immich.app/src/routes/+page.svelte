@@ -62,11 +62,11 @@
       <div class="flex flex-col gap-2">
         <Heading tag="h3">Looking for Immich?</Heading>
         <Text color="muted">
-          Read the Immich Documentation at <Link href={Constants.Sites.Docs}>{Constants.Sites.Docs}</Link>
+          Read the Immich Documentation at <Link href={Constants.Sites.Docs} />
         </Text>
       </div>
       <Button href={Constants.Sites.Docs} target="_blank" color="secondary" shape="round" leadingIcon={mdiOpenInNew}
-        >Open the Docs</Button
+        >Open Docs</Button
       >
     </VStack>
   </Container>
