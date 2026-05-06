@@ -4,11 +4,6 @@
   "version": "0.0.1",
   "type": "module",
   "license": "GNU Affero General Public License version 3",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/immich-app/ui.git",
-    "directory": "packages/ui"
-  },
   "scripts": {
     "create": "node scripts/create.js",
     "start": "vite dev",

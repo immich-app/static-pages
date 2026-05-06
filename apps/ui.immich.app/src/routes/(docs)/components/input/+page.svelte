@@ -3,8 +3,7 @@
   import ComponentFieldCard from '$lib/components/ComponentFieldCard.svelte';
   import ComponentLink from '$lib/components/ComponentLink.svelte';
   import ComponentPage from '$lib/components/ComponentPage.svelte';
-  import ComponentTipCard from '$lib/components/ComponentTipCard.svelte';
-  import { Text } from '@immich/ui';
+  import { Markdown, Text } from '@immich/ui';
   import BasicExample from './BasicExample.svelte';
   import basicExample from './BasicExample.svelte?raw';
   import IconExample from './IconExample.svelte';
@@ -18,10 +17,12 @@
 </script>
 
 <ComponentPage name="Input" description="Accept text input from the user">
-  <ComponentFieldCard />
-  <ComponentTipCard>
-    <Text>See <ComponentLink name="PasswordInput" /> for password input fields</Text>
-  </ComponentTipCard>
+  <div class="flex flex-col gap-2">
+    <ComponentFieldCard />
+    <Markdown.Alert variant="tip">
+      <Text>See <ComponentLink name="PasswordInput" /> for password input fields</Text>
+    </Markdown.Alert>
+  </div>
   <ComponentExamples
     examples={[
       { title: 'States', code: basicExample, component: BasicExample },

@@ -1,10 +1,8 @@
 <script lang="ts">
   import ComponentExamples from '$lib/components/ComponentExamples.svelte';
   import ComponentLink from '$lib/components/ComponentLink.svelte';
-  import ComponentNoteCard from '$lib/components/ComponentNoteCard.svelte';
   import ComponentPage from '$lib/components/ComponentPage.svelte';
-  import ComponentTipCard from '$lib/components/ComponentTipCard.svelte';
-  import { Text } from '@immich/ui';
+  import { Markdown, Text } from '@immich/ui';
   import BasicExample from './BasicExample.svelte';
   import basicExample from './BasicExample.svelte?raw';
   import ConfirmDialogExample from './ConfirmDialogExample.svelte';
@@ -20,14 +18,16 @@
 </script>
 
 <ComponentPage name="Modal" description="A component for displaying content in a modal dialog">
-  <ComponentNoteCard>
-    <Text>Modals are always screen width and height on small devices</Text>
-  </ComponentNoteCard>
-  <ComponentTipCard>
-    <Text>
-      See <ComponentLink name="ConfirmModal" /> for a basic confirm modal
-    </Text>
-  </ComponentTipCard>
+  <div class="flex flex-col gap-2">
+    <Markdown.Alert variant="note">
+      <Text>Modals are always screen width and height on small devices</Text>
+    </Markdown.Alert>
+    <Markdown.Alert variant="tip">
+      <Text>
+        See <ComponentLink name="ConfirmModal" /> for a basic confirm modal
+      </Text>
+    </Markdown.Alert>
+  </div>
   <ComponentExamples
     examples={[
       { title: 'Basic', code: basicExample, component: BasicExample },

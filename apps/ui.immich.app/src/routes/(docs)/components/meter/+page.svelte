@@ -2,8 +2,7 @@
   import ComponentExamples from '$lib/components/ComponentExamples.svelte';
   import ComponentLink from '$lib/components/ComponentLink.svelte';
   import ComponentPage from '$lib/components/ComponentPage.svelte';
-  import ComponentTipCard from '$lib/components/ComponentTipCard.svelte';
-  import { Text } from '@immich/ui';
+  import { Markdown, Text } from '@immich/ui';
   import ColorExample from './ColorExample.svelte';
   import colorExample from './ColorExample.svelte?raw';
   import OtherExample from './OtherExample.svelte';
@@ -15,12 +14,12 @@
 </script>
 
 <ComponentPage name="Meter" description="A component for displaying a static measurement within a known range">
-  <ComponentTipCard>
+  <Markdown.Alert variant="tip">
     <Text>
       Use a meter to show static measurements like storage usage. See <ComponentLink name="ProgressBar" /> for showing the
       completion status of a task.
     </Text>
-  </ComponentTipCard>
+  </Markdown.Alert>
   <ComponentExamples
     examples={[
       { title: 'Size', code: sizeExample, component: SizeExample },
