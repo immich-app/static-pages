@@ -11,7 +11,7 @@ const config = {
   preprocess: [
     svelteMarkdownPreprocess({
       layouts: {
-        default: '$lib/components/MarkdownPage.svelte',
+        default: { name: 'Markdown.Page', source: '@immich/ui', import: false },
       },
     }),
     vitePreprocess(),

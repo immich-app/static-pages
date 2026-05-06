@@ -9,7 +9,7 @@ export type FileWithContent = { filename: string; content: string };
 export type FileWithFrontMatter = { filename: string; attributes: FrontMatterAttributes; body: string };
 export type FileWithScriptBody = FileWithFrontMatter & { scriptBody: string };
 export type FileWithMarkup = FileWithScriptBody & { markup: string };
-export type FileWithLayout = FileWithMarkup & { layout?: string };
+export type FileWithLayout = FileWithMarkup & { layout?: SvelteMarkdownImport };
 export type FileWithSvelte = FileWithLayout & { svelte: string };
 
 export type FrontMatterAttributes = {
@@ -17,10 +17,14 @@ export type FrontMatterAttributes = {
   [key: string]: unknown;
 };
 
+export type SvelteMarkdownLayoutHandler = (file: FileWithMarkup) => SvelteMarkdownImportLike;
+export type SvelteMarkdownImportLike = SvelteMarkdownImport | string;
+export type SvelteMarkdownImport = { name: string; import?: string | false; source: string };
+
 export type SvelteMarkdownPreprocessLayouts = {
-  _?: string;
-  default?: string;
-  [key: string]: string | undefined;
+  _?: SvelteMarkdownImportLike | SvelteMarkdownLayoutHandler;
+  default?: SvelteMarkdownImportLike | SvelteMarkdownLayoutHandler;
+  [key: string]: SvelteMarkdownImportLike | SvelteMarkdownLayoutHandler | undefined;
 };
 
 const SCRIPT_BODY_REGEX = /<script.*>(?<body>(.|\n)*?)<\/script>/;
@@ -97,7 +101,21 @@ export class SvelteMarkdownPreprocess {
 
   parseLayout(file: FileWithMarkup): MaybePromise<FileWithLayout> {
     const layoutKey = file.attributes.layout;
-    const layout = layoutKey ? this.#layouts[layoutKey] : (this.#layouts.default ?? this.#layouts._);
+
+    let layout = layoutKey ? this.#layouts[layoutKey] : (this.#layouts.default ?? this.#layouts._);
+
+    if (layoutKey && !layout) {
+      throw new Error(`File references unknown layout key: ${file.filename} => ${layoutKey} => ?`);
+    }
+
+    if (typeof layout === 'function') {
+      layout = layout(file);
+    }
+
+    if (typeof layout === 'string') {
+      layout = { name: 'Layout', source: layout };
+    }
+
     return { ...file, layout };
   }
 
@@ -108,10 +126,12 @@ export class SvelteMarkdownPreprocess {
     return { ...file, svelte };
   }
 
-  scriptImports(file: FileWithLayout): Array<string | undefined> {
+  scriptImports({ layout }: FileWithLayout): Array<string | undefined> {
     return [
       `  import { Markdown } from '@immich/ui';`,
-      file.layout ? `  import Layout from '${file.layout}';` : undefined,
+      layout && layout.import !== false
+        ? `  import ${layout.import ?? layout.name} from '${layout.source}';`
+        : undefined,
     ];
   }
 
@@ -132,7 +152,9 @@ export class SvelteMarkdownPreprocess {
   }
 
   createSvelteTemplate(file: FileWithLayout): string {
-    return (file.layout ? [`<Layout {attributes}>`, file.markup, '</Layout>'] : [file.markup]).join('\n');
+    return (
+      file.layout ? [`<${file.layout.name} {attributes}>`, file.markup, `</${file.layout.name}>`] : [file.markup]
+    ).join('\n');
   }
 }
 

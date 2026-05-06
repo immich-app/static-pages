@@ -4,6 +4,7 @@ pnpm-lock.yaml
 yarn.lock
 src/lib/assets
 dist/
+deployment/
 CHANGELOG.md
 .svelte-kit/
 .release-please-manifest.json

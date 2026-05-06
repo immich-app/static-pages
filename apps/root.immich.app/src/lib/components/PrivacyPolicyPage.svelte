@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { siteMetadata } from '$lib';
   import { Card, CardBody, Container, Heading, SiteMetadata, Text } from '@immich/ui';
   import { DateTime } from 'luxon';
   import type { Snippet } from 'svelte';
@@ -22,7 +21,7 @@
   });
 </script>
 
-<SiteMetadata site={siteMetadata} page={pageMetadata} />
+<SiteMetadata page={pageMetadata} />
 
 <Container size="medium" center>
   <section class="flex flex-col gap-2">
