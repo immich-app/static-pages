@@ -43,6 +43,11 @@
         "title": "Mimick",
         "description": "Unofficial GTK4 Immich client for Linux with persistent background sync.",
         "href": "https://github.com/nicx17/mimick"
+      },
+      {
+        "title": "Harbour-Immich",
+        "description": "Unofficial Immich Sailfish OS application.",
+        "href": "https://github.com/mezmerize/harbour-immich"
       }
     ]
   },
