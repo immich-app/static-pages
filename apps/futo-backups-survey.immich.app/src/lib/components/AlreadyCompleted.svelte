@@ -3,7 +3,7 @@
 
   async function startOver() {
     await fetch('/api/reset', { method: 'POST', credentials: 'same-origin' });
-    window.location.reload();
+    globalThis.location.reload();
   }
 </script>
 

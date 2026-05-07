@@ -1,11 +1,9 @@
 packages:
   - apps/*
-  - apps/datasets.immich.app/backend
-  - apps/futo-backups-survey.immich.app/backend
+  - apps/*/backend
+  - packages/*
 
 dedupePeerDependents: true
-
-injectWorkspacePackages: true
 
 onlyBuiltDependencies:
   - '@tailwindcss/oxide'

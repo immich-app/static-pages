@@ -18,6 +18,7 @@
   $effect(() => {
     emailValue = answer?.value ?? '';
     if (answer?.otherText) {
+      // eslint-disable-next-line svelte/prefer-svelte-reactivity
       selected = new Set(answer.otherText.split(','));
     } else if (!initialized) {
       // Pre-check all options by default
@@ -65,7 +66,7 @@
 />
 
 <div class="mt-4 flex flex-col gap-3">
-  {#each question.options ?? [] as option}
+  {#each question.options ?? [] as option, i (i)}
     <button
       class="flex min-h-12 w-full items-center gap-3 rounded-lg border-2 p-4 text-left transition-all duration-150
         {selected.has(option.value)
@@ -73,7 +74,11 @@
         : 'border-gray-200 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400'}"
       onclick={() => toggleOption(option.value)}
     >
-      <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded {selected.has(option.value) ? 'bg-immich-primary text-white' : 'border-2 border-gray-300 dark:border-gray-500'}">
+      <span
+        class="flex size-6 shrink-0 items-center justify-center rounded-sm {selected.has(option.value)
+          ? 'bg-immich-primary text-white'
+          : 'border-2 border-gray-300 dark:border-gray-500'}"
+      >
         {#if selected.has(option.value)}
           <Icon icon={mdiCheck} size="14" />
         {/if}

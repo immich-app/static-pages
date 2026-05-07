@@ -1,0 +1,121 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schemaFromDatabase > index-create.sql 1`] = `
+{
+  "databaseName": "postgres",
+  "enums": [],
+  "extensions": [],
+  "functions": [],
+  "overrides": [],
+  "parameters": [],
+  "schemaName": "public",
+  "tables": [
+    {
+      "columns": [
+        {
+          "default": undefined,
+          "isArray": false,
+          "length": undefined,
+          "name": "column1",
+          "nullable": false,
+          "numericPrecision": undefined,
+          "numericScale": undefined,
+          "primary": false,
+          "synchronize": true,
+          "tableName": "table1",
+          "type": "uuid",
+        },
+        {
+          "default": undefined,
+          "isArray": false,
+          "length": undefined,
+          "name": "column2",
+          "nullable": false,
+          "numericPrecision": undefined,
+          "numericScale": undefined,
+          "primary": false,
+          "synchronize": true,
+          "tableName": "table1",
+          "type": "uuid",
+        },
+      ],
+      "constraints": [],
+      "indexes": [
+        {
+          "columnNames": [
+            "column1",
+            "column2",
+          ],
+          "expression": undefined,
+          "name": "index1",
+          "override": undefined,
+          "synchronize": true,
+          "tableName": "table1",
+          "unique": false,
+          "using": "btree",
+          "where": undefined,
+        },
+        {
+          "columnNames": [
+            "column2",
+            "column1",
+          ],
+          "expression": undefined,
+          "name": "index2",
+          "override": undefined,
+          "synchronize": true,
+          "tableName": "table1",
+          "unique": false,
+          "using": "btree",
+          "where": undefined,
+        },
+      ],
+      "name": "table1",
+      "synchronize": true,
+      "triggers": [],
+    },
+  ],
+  "warnings": [
+    "[Overrides] Error reading override table: PostgresError: relation "migration_overrides" does not exist",
+  ],
+}
+`;
+
+exports[`schemaFromDatabase > table-create.sql 1`] = `
+{
+  "databaseName": "postgres",
+  "enums": [],
+  "extensions": [],
+  "functions": [],
+  "overrides": [],
+  "parameters": [],
+  "schemaName": "public",
+  "tables": [
+    {
+      "columns": [
+        {
+          "default": "0",
+          "isArray": false,
+          "length": undefined,
+          "name": "column1",
+          "nullable": false,
+          "numericPrecision": 32,
+          "numericScale": 0,
+          "primary": false,
+          "synchronize": true,
+          "tableName": "table1",
+          "type": "integer",
+        },
+      ],
+      "constraints": [],
+      "indexes": [],
+      "name": "table1",
+      "synchronize": true,
+      "triggers": [],
+    },
+  ],
+  "warnings": [
+    "[Overrides] Error reading override table: PostgresError: relation "migration_overrides" does not exist",
+  ],
+}
+`;

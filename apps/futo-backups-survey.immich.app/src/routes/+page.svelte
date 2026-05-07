@@ -3,7 +3,15 @@
   import { onMount } from 'svelte';
   import { Turnstile } from 'svelte-turnstile';
   import { createSurveyEngine } from '$lib/survey-engine.svelte';
-  import { fetchResume, bufferAnswer, flushBuffer, flushBufferSync, postComplete, onSaveError, verifyTurnstile } from '$lib/api-client';
+  import {
+    fetchResume,
+    bufferAnswer,
+    flushBuffer,
+    flushBufferSync,
+    postComplete,
+    onSaveError,
+    verifyTurnstile,
+  } from '$lib/api-client';
   import SurveyShell from '$lib/components/SurveyShell.svelte';
   import ThankYouScreen from '$lib/components/ThankYouScreen.svelte';
   import AlreadyCompleted from '$lib/components/AlreadyCompleted.svelte';
@@ -40,8 +48,8 @@
         } else {
           showWelcome = true;
         }
-      } catch (e) {
-        error = e instanceof Error ? e.message : 'Something went wrong. Please try again later.';
+      } catch (error_) {
+        error = error_ instanceof Error ? error_.message : 'Something went wrong. Please try again later.';
       }
       loading = false;
     })();
@@ -64,14 +72,14 @@
       }
       await postComplete();
       surveyFinished = true;
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Failed to submit survey. Please try again.';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Failed to submit survey. Please try again.';
     }
   }
 </script>
 
 {#if error && !showWelcome && !alreadyCompleted && !surveyFinished}
-  <div class="fixed top-2 left-1/2 z-[100] w-full max-w-lg -translate-x-1/2 px-4">
+  <div class="fixed top-2 left-1/2 z-100 w-full max-w-lg -translate-x-1/2 px-4">
     <div class="flex items-center justify-between gap-3 rounded-lg bg-red-600 px-4 py-3 text-sm text-white shadow-lg">
       <p>{error}</p>
       <button onclick={() => (error = null)} class="shrink-0 font-semibold hover:underline">Dismiss</button>

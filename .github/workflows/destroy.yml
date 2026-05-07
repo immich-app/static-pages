@@ -4,8 +4,7 @@ on:
     types: [closed]
 
 env:
-  tofu_version: '1.10.2'
-  tg_version: '0.83.0'
+  MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}/.mise/config.toml
 
 jobs:
   deploy:
@@ -14,31 +13,31 @@ jobs:
       fail-fast: false
       matrix:
         environment: ['dev', 'prod']
-        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets']
+        app_name: ['root', 'ui', 'api', 'awesome', 'my', 'get', 'buy', 'datasets']
     steps:
       - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
+      - id: token
+        uses: immich-app/devtools/actions/create-workflow-token@caa599d954228439ea3e8ce1c3328f41ab120ee6 # create-workflow-token-action-v2.0.0
+        with:
+          client-id: ${{ secrets.PUSH_O_MATIC_APP_CLIENT_ID }}
+          private-key: ${{ secrets.PUSH_O_MATIC_APP_KEY }}
+
+      - name: Setup Mise
+        uses: immich-app/devtools/actions/use-mise@01a4d354b70f99a6baf4a1b72827f6d4922e4978 # use-mise-action-v2.0.0
+        with:
+          github_token: ${{ steps.token.outputs.token }}
+
       - name: Install 1Password CLI
         uses: 1password/install-cli-action@8d006a0d0a4fd505af7f7ce589e7f768385ff5e4 # v3.0.0
-
-      - name: Install Terragrunt
-        uses: eLco/setup-terragrunt@2c5116f8979bb261072ef57c97ac026cd9c27434 # v1.0.3
-        with:
-          terragrunt_version: ${{ env.tg_version }}
-
-      - name: 'Install OpenTofu'
-        uses: opentofu/setup-opentofu@fc711fa910b93cba0f3fbecaafc9f42fd0c411cb # v2.0.0
-        with:
-          tofu_version: ${{ env.tofu_version }}
-          tofu_wrapper: false
 
       - name: Destroy All
         working-directory: ${{ github.workspace }}/deployment
         env:
           ENVIRONMENT: ${{ matrix.environment }}
           TF_VAR_app_name: ${{ matrix.app_name }}
-          TF_VAR_dist_dir: ${{ github.workspace }}/dist
+          TF_VAR_dist_dir: ${{ github.workspace }}/apps/${{ matrix.app_name }}.immich.app/backend/dist
           TF_VAR_stage: pr-${{ github.event.number }}
           OP_SERVICE_ACCOUNT_TOKEN: ${{ matrix.environment == 'prod' && secrets.OP_TF_PROD_ENV || secrets.OP_TF_DEV_ENV }}
         run: op run --env-file=".env" -- terragrunt run --all destroy --non-interactive --queue-exclude-dir '**/pages-project' -- -refresh=false -lock-timeout=5m

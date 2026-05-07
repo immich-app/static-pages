@@ -8,7 +8,7 @@
   "main": "src/index.ts",
   "compatibility_date": "2025-06-03",
   "observability": {
-    "enabled": true,
+    "enabled": true
   },
   /**
    * Smart Placement
@@ -26,8 +26,8 @@
   "r2_buckets": [
     {
       "binding": "IMAGE_UPLOADS",
-      "bucket_name": "datasets-uploads",
-    },
+      "bucket_name": "datasets-uploads"
+    }
   ],
 
   /**
@@ -36,8 +36,8 @@
    */
   "vars": {
     "CF_TURNSTILE_SECRET": "DEV_TURNSTILE_TOKEN",
-    "JWT_SECRET": "DEV_JWT_SECRET",
-  },
+    "JWT_SECRET": "DEV_JWT_SECRET"
+  }
 
   /**
    * Note: Use secrets to store sensitive data.

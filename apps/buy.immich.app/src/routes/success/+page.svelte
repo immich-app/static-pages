@@ -28,18 +28,21 @@
     response = newResponse;
 
     switch (response.status) {
-      case PurchaseStatus.Failed:
+      case PurchaseStatus.Failed: {
         isLoading = false;
         break;
-      case PurchaseStatus.Succeeded:
+      }
+      case PurchaseStatus.Succeeded: {
         isLoading = false;
         if (data.instanceUrl && response.purchaseId) {
           const url = getRedirectUrl(response.purchaseId, data.instanceUrl);
-          setTimeout(() => (window.location.href = url), 2000);
+          setTimeout(() => (globalThis.location.href = url), 2000);
         }
         break;
-      default:
+      }
+      default: {
         break;
+      }
     }
   };
 
@@ -52,7 +55,7 @@
     } else {
       clearTimers();
     }
-  }, 5_000);
+  }, 5000);
 
   onMount(() => {
     return () => clearTimers();

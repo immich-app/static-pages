@@ -12,7 +12,7 @@
 </script>
 
 <Scrollable>
-  <section class="flex flex-col h-dvh">
+  <section class="flex h-dvh flex-col">
     <div class="grow">
       <Container {size} center class="p-4 sm:p-8 lg:p-10">
         {@render children?.()}

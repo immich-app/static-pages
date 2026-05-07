@@ -8,7 +8,7 @@ dotenv.config({ path: '../../.env' });
 
 process.env.PUBLIC_IMMICH_ENV = process.env.PUBLIC_IMMICH_ENV ?? 'production';
 
-const staticFiles = ['/favicon.ico', '/img/social-preview.png'];
+const staticFiles = new Set(['/favicon.ico', '/img/social-preview.png']);
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -27,11 +27,12 @@ const config = {
     alias: {
       $common: '../../common',
       '$common/*': '../../common/*',
-      '@immich/ui': resolve('./node_modules/@immich/ui/dist'),
+      // TODO remove after $common is gone...
+      '@immich/ui': resolve('../../packages/ui/dist'),
     },
     prerender: {
       handleHttpError: ({ path, message }) => {
-        if (staticFiles.includes(path)) {
+        if (staticFiles.has(path)) {
           return;
         }
 

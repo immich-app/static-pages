@@ -115,6 +115,11 @@
         "title": "Immich Face Recognition Export Tool",
         "description": "A Python tool to export face recognition data from Immich photo management system to DigiKam-compatible XMP format files.",
         "href": "https://github.com/yuhuan417/immich-scripts"
+      },
+      {
+        "title": "immichpy",
+        "description": "The stable, typed Python API layer for Immich automation and integrations.",
+        "href": "https://github.com/timonrieger/immichpy"
       }
     ]
   },

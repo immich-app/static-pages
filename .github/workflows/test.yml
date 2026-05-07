@@ -9,65 +9,68 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}/.mise/config.toml
+
 jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets']
-
-    defaults:
-      run:
-        working-directory: apps/${{ matrix.app_name }}.immich.app
-
     steps:
       - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@903f9c1a6ebcba6cf41d87230be49611ac97822e # v6.0.3
-
-      - name: Setup Node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+      - id: token
+        uses: immich-app/devtools/actions/create-workflow-token@caa599d954228439ea3e8ce1c3328f41ab120ee6 # create-workflow-token-action-v2.0.0
         with:
-          node-version-file: './.nvmrc'
-          cache: 'pnpm'
-          cache-dependency-path: '**/pnpm-lock.yaml'
+          client-id: ${{ secrets.PUSH_O_MATIC_APP_CLIENT_ID }}
+          private-key: ${{ secrets.PUSH_O_MATIC_APP_KEY }}
 
-      - name: Install
-        run: pnpm install
+      - name: Setup Mise
+        uses: immich-app/devtools/actions/use-mise@01a4d354b70f99a6baf4a1b72827f6d4922e4978 # use-mise-action-v2.0.0
+        with:
+          github_token: ${{ steps.token.outputs.token }}
 
-      - name: Lint
-        run: pnpm lint
-        if: ${{ !cancelled() }}
+      - name: Get pnpm store directory
+        id: pnpm-store
+        run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
 
-      - name: Format
-        run: pnpm format
+      - name: Cache pnpm store
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ${{ steps.pnpm-store.outputs.path }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Run install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build:packages
+
+      - name: Run sync
+        run: pnpm sync
         if: ${{ !cancelled() }}
 
       - name: Type check
         run: pnpm check
         if: ${{ !cancelled() }}
 
-      - name: Test
+      - name: Run linter
+        run: pnpm lint
+        if: ${{ !cancelled() }}
+
+      - name: Run formatter
+        run: pnpm format
+        if: ${{ !cancelled() }}
+
+      - name: Run unit tests
         run: pnpm test
         if: ${{ !cancelled() }}
 
-      - name: Check for app backend
-        id: check-backend
-        run: |
-          if [ -d "backend" ]; then
-            echo "has_backend=true" >> $GITHUB_ENV
-          else
-            echo "has_backend=false" >> $GITHUB_ENV
-          fi
-
-      - name: Test backend
-        if: ${{ env.has_backend == 'true' }}
-        working-directory: 'apps/${{ matrix.app_name }}.immich.app/backend'
-        run: |
-          pnpm install
-          pnpm test
+      - name: Run medium tests
+        run: pnpm test:medium
+        if: ${{ !cancelled() }}

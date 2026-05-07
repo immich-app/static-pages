@@ -5,11 +5,11 @@
     error?: { message: string; code?: string | number; stack?: string } | undefined | null;
   };
 
-  let { error = undefined }: Props = $props();
+  let { error }: Props = $props();
 </script>
 
 <Container size="full" center class="h-dvh">
-  <div class="border-subtle border-b p-2">
+  <div class="border-b border-subtle p-2">
     <a class="flex place-items-center gap-2 hover:cursor-pointer" href="/photos">
       <Logo variant="inline" />
     </a>

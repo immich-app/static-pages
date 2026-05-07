@@ -23,7 +23,7 @@
           >
             <div class="flex flex-col gap-4 sm:flex-row sm:items-start lg:flex-col lg:items-start">
               <div class="w-full shrink-0 sm:w-32 md:w-48 lg:w-full">
-                <div class="text-primary flex flex-col items-start gap-1">
+                <div class="flex flex-col items-start gap-1 text-primary">
                   <Icon icon={mdiServer} size="56" />
                   <Text fontWeight="bold" size="large">Server</Text>
                 </div>
@@ -55,7 +55,7 @@
           >
             <div class="flex flex-col gap-4 sm:flex-row sm:items-start lg:flex-col lg:items-start">
               <div class="w-full shrink-0 sm:w-32 md:w-48 lg:w-full">
-                <div class="text-primary flex flex-col items-start gap-1">
+                <div class="flex flex-col items-start gap-1 text-primary">
                   <Icon icon={mdiAccount} size="56" />
                   <Text fontWeight="bold" size="large">Individual</Text>
                 </div>

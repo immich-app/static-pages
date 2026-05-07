@@ -52,7 +52,7 @@
                 <img class="mx-auto h-24" alt="Get it on Google Play" src={playStoreBadge} />
               </a>
               <a href={Constants.Get.FDroid}>
-                <img class="border-dark mx-auto h-16 rounded-xl border" alt="Get it on F-Droid" src={fdroidBadge} />
+                <img class="mx-auto h-16 rounded-xl border border-dark" alt="Get it on F-Droid" src={fdroidBadge} />
               </a>
               <Button
                 class="mx-auto mt-4 h-16 dark:bg-black dark:text-white"
@@ -92,7 +92,7 @@
             <CardTitle>Docker Compose</CardTitle>
             <CardDescription>Run Immich on <Link href="https://www.docker.com/">Docker</Link></CardDescription>
           </CardHeader>
-          <CardBody class="flex items-center justify-center align-middle ">
+          <CardBody class="flex items-center justify-center align-middle">
             <Icon icon={mdiDocker} size="6rem" color="#0db7ed" />
           </CardBody>
           <CardFooter class="flex flex-col gap-2">
@@ -105,7 +105,7 @@
             <CardTitle>Portainer</CardTitle>
             <CardDescription>Run Immich on <Link href="https://www.portainer.io/">Portainer</Link></CardDescription>
           </CardHeader>
-          <CardBody class="flex items-center justify-center align-middle ">
+          <CardBody class="flex items-center justify-center align-middle">
             <img src={portainerIcon} class="w-20" alt="Portainer logo" />
           </CardBody>
           <CardFooter>
@@ -118,7 +118,7 @@
             <CardTitle>Unraid</CardTitle>
             <CardDescription>Run Immich on <Link href="https://unraid.net/">Unraid</Link></CardDescription>
           </CardHeader>
-          <CardBody class="flex items-center justify-center align-middle ">
+          <CardBody class="flex items-center justify-center align-middle">
             <img src={unraidIcon} class="w-24" alt="UnRaid logo" />
           </CardBody>
           <CardFooter>
@@ -133,7 +133,7 @@
               >Run Immich on <Link href="https://www.truenas.com/truenas-scale/">TrueNAS SCALE</Link></CardDescription
             >
           </CardHeader>
-          <CardBody class="flex items-center justify-center align-middle ">
+          <CardBody class="flex items-center justify-center align-middle">
             <img src={truenasIcon} class="w-24" alt="TrueNAS SCALE logo" />
           </CardBody>
           <CardFooter>

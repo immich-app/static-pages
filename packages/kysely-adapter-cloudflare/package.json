@@ -1,0 +1,35 @@
+{
+  "name": "@immich/kysely-adapter-cloudflare",
+  "description": "A Kysely adapter for cloudflare databases",
+  "version": "0.1.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/immich-app/static-pages.git",
+    "directory": "packages/kysely-adapter-cloudflare"
+  },
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest"
+  },
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260331.1",
+    "kysely": "^0.28.14",
+    "vitest": "^4.1.0"
+  },
+  "peerDependencies": {
+    "kysely": "^0.28.14"
+  }
+}

@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`svelteMarkdownPreprocess > should work 1`] = `
+{
+  "code": "<script>
+  import { Markdown } from '@immich/ui';
+</script>
+<Markdown.Heading id="hello" level={1}>Hello</Markdown.Heading>
+",
+}
+`;

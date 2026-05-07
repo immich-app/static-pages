@@ -14,7 +14,7 @@ jobs:
         id: generate-token
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
-          app-id: ${{ secrets.PUSH_O_MATIC_APP_ID }}
+          client-id: ${{ secrets.PUSH_O_MATIC_APP_CLIENT_ID }}
           private-key: ${{ secrets.PUSH_O_MATIC_APP_KEY }}
 
       - name: Checkout code
@@ -22,12 +22,12 @@ jobs:
         with:
           persist-credentials: false
           ref: 'main'
-      
+
       - name: Install uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@903f9c1a6ebcba6cf41d87230be49611ac97822e # v6.0.3
+        uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4
 
       - name: Import post
         id: import
@@ -38,7 +38,7 @@ jobs:
           R2_ENDPOINT_URL: ${{ secrets.STATIC_BUCKET_ENDPOINT }}
           R2_ACCESS_KEY_ID: ${{ secrets.STATIC_BUCKET_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.STATIC_BUCKET_KEY_SECRET }}
-          R2_PUBLIC_URL: "https://static.immich.cloud"
+          R2_PUBLIC_URL: 'https://static.immich.cloud'
         run: uv run --script import-post.py
 
       - name: Format
@@ -49,6 +49,6 @@ jobs:
         with:
           token: ${{ steps.generate-token.outputs.token }}
           add-paths: apps/root.immich.app/src/routes/blog
-          commit-message: "feat: import ${{ steps.import.outputs.slug }}"
-          title: "feat: import ${{ steps.import.outputs.slug }}"
-          branch: "blog/${{ steps.import.outputs.uuid }}"
+          commit-message: 'feat: import ${{ steps.import.outputs.slug }}'
+          title: 'feat: import ${{ steps.import.outputs.slug }}'
+          branch: 'blog/${{ steps.import.outputs.uuid }}'

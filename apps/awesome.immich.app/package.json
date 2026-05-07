@@ -7,17 +7,11 @@
     "start": "vite dev",
     "build": "npm run sync && vite build && node ../../bin/postbuild.js",
     "preview": "vite preview",
-    "check": "npm run sync && svelte-check --tsconfig ./tsconfig.json",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
     "sync": "svelte-kit sync",
-    "test": "vitest",
-    "lint": "eslint . --max-warnings 0",
-    "lint:fix": "npm run lint -- --fix",
-    "format": "prettier --check .",
-    "format:fix": "prettier --write ."
+    "test": "vitest"
   },
   "devDependencies": {
-    "@eslint/compat": "^2.0.0",
-    "@eslint/js": "^10.0.0",
     "@sveltejs/adapter-static": "^3.0.9",
     "@sveltejs/kit": "^2.55.0",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
@@ -26,29 +20,22 @@
     "@types/node": "^24.12.2",
     "@vitest/browser": "^4.1.0",
     "dotenv": "^17.2.3",
-    "eslint": "^10.0.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-svelte": "^3.12.4",
     "front-matter": "^4.0.2",
     "globals": "^17.0.0",
     "luxon": "^3.7.2",
     "marked": "^18.0.0",
     "playwright": "^1.55.1",
-    "prettier": "^3.6.2",
-    "prettier-plugin-svelte": "^3.4.0",
-    "prettier-plugin-tailwindcss": "^0.7.2",
     "simple-icons": "^16.0.0",
     "svelte": "^5.39.5",
     "svelte-check": "^4.3.2",
     "tailwindcss": "^4.2.2",
     "typescript": "^6.0.0",
-    "typescript-eslint": "^8.44.1",
     "vite": "^8.0.0",
     "vitest": "^4.0.12",
     "vitest-browser-svelte": "^2.0.0"
   },
   "dependencies": {
-    "@immich/ui": "^0.76.0",
+    "@immich/ui": "workspace:*",
     "@mdi/js": "^7.4.47"
   }
 }

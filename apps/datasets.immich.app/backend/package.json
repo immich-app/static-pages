@@ -5,12 +5,13 @@
   "scripts": {
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
+    "build": "wrangler build",
     "start": "wrangler dev",
     "test": "vitest",
     "cf-typegen": "wrangler types"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.14.0",
+    "@cloudflare/vitest-pool-workers": "^0.15.0",
     "@types/luxon": "^3.6.2",
     "typescript": "^6.0.0",
     "vitest": "^4.1.0",

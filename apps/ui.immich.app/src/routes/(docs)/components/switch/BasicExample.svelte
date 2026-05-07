@@ -1,0 +1,14 @@
+<script>
+  import { Field, Stack, Switch } from '@immich/ui';
+</script>
+
+<Stack>
+  <Switch />
+  <Switch checked />
+  <Field disabled>
+    <Switch />
+  </Field>
+  <Field label="Required" required="indicator">
+    <Switch />
+  </Field>
+</Stack>
