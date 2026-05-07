@@ -19,7 +19,7 @@
 <SiteMetadata site={blogMetadata} page={{ title, description }} />
 
 <div>
-  <ul class="text-muted flex place-items-center gap-1">
+  <ul class="flex place-items-center gap-1 text-muted">
     <li class="flex place-items-center">
       <Link href="/blog" underline={false}><span class="hover:underline">Blog</span></Link>
       <Icon icon={mdiChevronRight} size="1rem" />
@@ -47,7 +47,7 @@
         class="aspect-21/9 w-full rounded-lg border object-cover"
       />
       {#if post.coverAttribution}
-        <figcaption class="text-muted mt-2 text-center text-sm">
+        <figcaption class="mt-2 text-center text-sm text-muted">
           <!-- eslint-disable-next-line svelte/no-at-html-tags -->
           {@html post.coverAttribution}
         </figcaption>

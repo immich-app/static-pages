@@ -126,7 +126,7 @@
         </span>
       </Text>
     </div>
-    <hr class="border-subtle mt-4 border" />
+    <hr class="mt-4 border border-subtle" />
   </section>
 
   {#if endpoint.deprecated}

@@ -79,7 +79,7 @@
 </script>
 
 {#if error && !showWelcome && !alreadyCompleted && !surveyFinished}
-  <div class="fixed top-2 left-1/2 z-[100] w-full max-w-lg -translate-x-1/2 px-4">
+  <div class="fixed top-2 left-1/2 z-100 w-full max-w-lg -translate-x-1/2 px-4">
     <div class="flex items-center justify-between gap-3 rounded-lg bg-red-600 px-4 py-3 text-sm text-white shadow-lg">
       <p>{error}</p>
       <button onclick={() => (error = null)} class="shrink-0 font-semibold hover:underline">Dismiss</button>

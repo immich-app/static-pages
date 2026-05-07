@@ -115,7 +115,7 @@
   <button onclick={() => exifUploaderManager.openFilePicker()} class="w-full">
     <Card color="secondary">
       <CardBody>
-        <div class="flex h-full min-h-[25vh] w-full flex-col justify-center gap-2 text-center align-middle">
+        <div class="flex size-full min-h-[25vh] flex-col justify-center gap-2 text-center align-middle">
           <Heading size="large">Ready to add some photos?</Heading>
           <Text size="small">Drag photos anywhere to upload</Text>
           <div class="flex justify-center">
@@ -173,10 +173,10 @@
               >
                 {#if selected}
                   <div
-                    class="bg-primary light absolute start-2 top-2 rounded-full p-1 shadow"
+                    class="light absolute inset-s-2 top-2 rounded-full bg-primary p-1 shadow-sm"
                     transition:scale={{ duration: 100 }}
                   >
-                    <Icon icon={mdiCheck} class="text-light h-4 w-4" />
+                    <Icon icon={mdiCheck} class="size-4 text-light" />
                   </div>
                 {/if}
 
@@ -196,7 +196,7 @@
                   class="flex h-48 w-full flex-col items-center justify-center bg-neutral-900/10 p-4"
                   id={`error-${asset.metadata.assetId}`}
                 >
-                  <Icon icon={mdiCameraOff} class="mb-2 h-8 w-8" />
+                  <Icon icon={mdiCameraOff} class="mb-2 size-8" />
                   <Text class="text-center">This file cannot be viewed on the web.</Text>
                 </div>
 
@@ -206,18 +206,18 @@
                   <Text size="medium" color={asset.metadata.captureType ? 'primary' : 'danger'}>
                     <Icon
                       icon={AssetTypeIcons[asset.metadata.captureType as AssetType] || mdiHelp}
-                      class="mb-0.5 inline-block h-4 w-4 align-middle"
+                      class="mb-0.5 inline-block size-4 align-middle"
                     />
                     {AssetTypeNames[asset.metadata.captureType as AssetType] || 'Missing type'}
                   </Text>
 
                   <Text size="medium" color={asset.metadata.cameraMake ? 'primary' : 'danger'}>
-                    <Icon icon={mdiDomain} class="mb-0.5 inline-block h-4 w-4 align-middle" />
+                    <Icon icon={mdiDomain} class="mb-0.5 inline-block size-4 align-middle" />
                     {asset.metadata.cameraMake || 'Missing brand'}
                   </Text>
 
                   <Text size="medium" color={asset.metadata.cameraModel ? 'primary' : 'danger'}>
-                    <Icon icon={mdiCamera} class="mb-0.5 inline-block h-4 w-4 align-middle" />
+                    <Icon icon={mdiCamera} class="mb-0.5 inline-block size-4 align-middle" />
                     {asset.metadata.cameraModel || 'Missing model'}
                   </Text>
                 </div>

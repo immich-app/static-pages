@@ -5,6 +5,9 @@ import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import eslintPluginUnicorn from 'eslint-plugin-unicorn';
+import eslintPluginBetterTailwindcss from 'eslint-plugin-better-tailwindcss';
+import { readdirSync } from 'node:fs';
+import { RulesConfig } from 'eslint';
 
 export default defineConfig([
   js.configs.recommended,
@@ -33,6 +36,20 @@ export default defineConfig([
       'svelte/no-navigation-without-resolve': 'off',
     },
   },
+  ...readdirSync('apps').map((name) => ({
+    files: ['apps/**/*.svelte'],
+    extends: [eslintPluginBetterTailwindcss.configs.recommended],
+    settings: {
+      'better-tailwindcss': {
+        entryPoint: 'src/lib/app.css',
+        cwd: `apps/${name}`,
+      },
+    },
+    rules: {
+      'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
+      'better-tailwindcss/no-unknown-classes': 'off',
+    } as Partial<RulesConfig>,
+  })),
   {
     rules: {
       curly: 2,

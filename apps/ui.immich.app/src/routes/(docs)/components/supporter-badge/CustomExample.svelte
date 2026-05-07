@@ -17,6 +17,6 @@
 
   <Stack>
     <Heading size="tiny">Center</Heading>
-    <SupporterBadge effect="hover" center class="bg-light-200 border-0" />
+    <SupporterBadge effect="hover" center class="border-0 bg-light-200" />
   </Stack>
 </Stack>
