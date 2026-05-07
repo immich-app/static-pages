@@ -75,7 +75,7 @@
       onclick={() => toggleOption(option.value)}
     >
       <span
-        class="flex h-6 w-6 shrink-0 items-center justify-center rounded {selected.has(option.value)
+        class="flex size-6 shrink-0 items-center justify-center rounded-sm {selected.has(option.value)
           ? 'bg-immich-primary text-white'
           : 'border-2 border-gray-300 dark:border-gray-500'}"
       >

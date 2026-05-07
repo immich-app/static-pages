@@ -142,7 +142,7 @@
             <div class="h-12 w-20 rounded-lg {color.class} shrink-0 border border-gray-300 dark:border-gray-600"></div>
             <div class="grid grid-cols-1 grid-rows-2">
               <Text class="font-semibold">{color.name}</Text>
-              <Text class="text-muted text-xs">{color.class}</Text>
+              <Text class="text-xs text-muted">{color.class}</Text>
             </div>
           </HStack>
         {/each}

@@ -57,7 +57,7 @@
   {/if}
 </div>
 
-<div class="bg-light fixed bottom-0 left-0 z-40 flex w-full justify-center px-4 pt-4 pb-6">
+<div class="fixed bottom-0 left-0 z-40 flex w-full justify-center bg-light px-4 pt-4 pb-6">
   <div class="flex w-full max-w-[640px] items-center gap-3">
     {#if canGoBack}
       <Button variant="outline" onclick={onBack}>Back</Button>

@@ -33,7 +33,7 @@
   <CardBody>
     <Stack gap={4}>
       <div>
-        <div class="bg-primary/10 rounded-lg px-6 py-2">
+        <div class="rounded-lg bg-primary/10 px-6 py-2">
           <Text color="primary">{productKey}</Text>
         </div>
       </div>

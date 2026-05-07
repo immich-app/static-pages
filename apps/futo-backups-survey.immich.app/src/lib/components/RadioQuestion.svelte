@@ -38,7 +38,7 @@
       onclick={() => select(option.value)}
     >
       <span
-        class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full {answer?.value === option.value
+        class="flex size-6 shrink-0 items-center justify-center rounded-full {answer?.value === option.value
           ? 'bg-immich-primary text-white'
           : 'border-2 border-gray-300 dark:border-gray-500'}"
       >
@@ -58,7 +58,7 @@
         : 'border-gray-200 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400'}"
     >
       <span
-        class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full {answer?.value === 'Other'
+        class="flex size-6 shrink-0 items-center justify-center rounded-full {answer?.value === 'Other'
           ? 'bg-immich-primary text-white'
           : 'border-2 border-gray-300 dark:border-gray-500'}"
       >
