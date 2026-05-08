@@ -27,7 +27,7 @@
   let filteredCategories = $derived(filterProjects(query));
 </script>
 
-<SiteMetadata site={siteMetadata} />
+<SiteMetadata />
 
 <Heading size="giant">{siteMetadata.title}</Heading>
 <Text size="large" color="muted">{siteMetadata.description}</Text>

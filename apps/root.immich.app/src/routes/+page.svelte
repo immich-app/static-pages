@@ -4,7 +4,6 @@
   import qrCodeLight from '$common/img/app-qr-code-light.svg';
   import screenshotDark from '$common/img/screenshot-dark.webp';
   import screenshotLight from '$common/img/screenshot-light.webp';
-  import { siteMetadata } from '$lib';
   import {
     appStoreBadge,
     Button,
@@ -30,8 +29,7 @@
   ];
 </script>
 
-<!-- only SSR SiteMetadata  -->
-<SiteMetadata site={siteMetadata} />
+<SiteMetadata />
 
 {#if browser}
   <VStack gap={8} class="mt-4 text-center lg:mt-16">

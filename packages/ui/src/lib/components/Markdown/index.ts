@@ -7,6 +7,7 @@ import LineBreak from './LineBreak.svelte';
 import Link from './Link.svelte';
 import List from './List.svelte';
 import ListItem from './ListItem.svelte';
+import Page from './Page.svelte';
 import Paragraph from './Paragraph.svelte';
 import Space from './Space.svelte';
 import Table from './Table.svelte';
@@ -27,6 +28,7 @@ export const Markdown = {
   Image,
   ListItem,
   List,
+  Page,
   Paragraph,
   Table,
   TableHeader,

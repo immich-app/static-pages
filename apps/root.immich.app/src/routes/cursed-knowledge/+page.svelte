@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { TimelineItem } from '$lib';
-  import { posts, siteMetadata } from '$lib';
+  import { posts } from '$lib';
   import Timeline from '$lib/components/Timeline.svelte';
   import { asGithubLink, Heading, SiteMetadata, Stack, Text } from '@immich/ui';
   import {
@@ -234,7 +234,7 @@
   };
 </script>
 
-<SiteMetadata site={siteMetadata} page={pageMetadata} />
+<SiteMetadata page={pageMetadata} />
 
 <Stack class="text-center" gap={4}>
   <Heading size="title" tag="h1">{pageMetadata.title}</Heading>

@@ -63,7 +63,7 @@
       <button
         type="button"
         aria-label={expanded ? t('collapse') : t('expand')}
-        class="hover:bg-subtle hover:text-primary absolute me-2 hidden h-full rounded-lg px-0.5 md:block"
+        class="hover:bg-subtle hover:text-primary absolute me-2 h-full rounded-lg px-0.5 md:block"
         onclick={() => (expanded = !expanded)}
       >
         <Icon
