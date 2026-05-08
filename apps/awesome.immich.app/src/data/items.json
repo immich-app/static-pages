@@ -43,6 +43,11 @@
         "title": "Mimick",
         "description": "Unofficial GTK4 Immich client for Linux with persistent background sync.",
         "href": "https://github.com/nicx17/mimick"
+      },
+      {
+        "title": "Immich Companion",
+        "description": "Browser extension that adds right-click save to Immich, CLIP-powered search from the toolbar, optional new tab photo memories, and inline search results that show your photos alongside Google/DuckDuckGo results.",
+        "href": "https://github.com/bjoernch/immich-companion"
       }
     ]
   },
