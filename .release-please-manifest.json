@@ -1,6 +1,6 @@
 {
   "packages/sql-tools": "0.5.2",
   "packages/kysely-adapter-cloudflare": "0.1.0",
-  "packages/svelte-markdown-preprocess": "0.5.1",
+  "packages/svelte-markdown-preprocess": "0.5.2",
   "packages/ui": "0.77.3"
 }
