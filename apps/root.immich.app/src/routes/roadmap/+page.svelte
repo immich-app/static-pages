@@ -278,6 +278,7 @@
   }));
 
   const milestones: TimelineItem[] = [
+    starMilestone(100_000, new Date(2026, 4, 8)),
     releaseItem({
       icon: mdiSecurity,
       title: 'Content Security Policy',
