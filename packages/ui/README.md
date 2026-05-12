@@ -29,20 +29,16 @@ Import components from `@immich/ui`. For example:
 </Card>
 ```
 
-## Documentation
-
-To view the examples located at `src/routes/examples`, run `npm start` and navigate to http://localhost:5173/.
-
 ## Contributing
 
 PR's are welcome! Also feel free to reach out to the team on [Discord](https://discord.immich.app).
 
 ```
-mise install
-pnpm install
-pnpm build
-cd packages/ui
-pnpm start
+mise install             # install pnpm, npm, etc.
+pnpm install             # install deps
+pnpm -w watch            # automatically rebuild `@immich/ui` on changes
+cd apps/ui.immich.app
+pnpm start               # view component documentation and examples
 ```
 
 ## Technology

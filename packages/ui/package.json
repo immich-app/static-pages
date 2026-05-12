@@ -8,7 +8,6 @@
     "directory": "packages/ui"
   },
   "scripts": {
-    "create": "node scripts/create.js",
     "start": "npm run start:dev",
     "start:dev": "vite dev",
     "watch": "svelte-package --watch",
