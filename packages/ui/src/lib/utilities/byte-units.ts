@@ -37,9 +37,9 @@ export function getBytesWithUnit(bytes: number, maxPrecision = 1): [number, Byte
  * @param maxPrecision maximum number of decimal places, default is `1`
  * @returns localized bytes with unit as string
  */
-export function getByteUnitString(bytes: number, locale?: string, maxPrecision = 1): string {
+export function getByteUnitString(bytes: number, locale?: string, maxPrecision = 1, separator = ' '): string {
   const [size, unit] = getBytesWithUnit(bytes, maxPrecision);
-  return `${size.toLocaleString(locale)} ${unit}`;
+  return `${size.toLocaleString(locale)}${separator}${unit}`;
 }
 
 /**

@@ -8,7 +8,7 @@
     "directory": "packages/ui"
   },
   "scripts": {
-    "start": "npm run start:dev",
+    "start": "pnpm run start:dev",
     "start:dev": "vite dev",
     "watch": "svelte-package --watch",
     "build": "pnpm package",
