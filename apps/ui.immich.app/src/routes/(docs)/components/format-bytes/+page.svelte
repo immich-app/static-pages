@@ -5,6 +5,10 @@
   import basicExample from './BasicExample.svelte?raw';
 </script>
 
-<ComponentPage name="FormatBytes" description="A utility component to format byte sizes into human-readable strings">
+<ComponentPage
+  name="FormatBytes"
+  description="A utility component to format byte sizes into human-readable strings"
+  localeSensitive
+>
   <ComponentExamples examples={[{ title: 'Basic', code: basicExample, component: BasicExample }]} />
 </ComponentPage>

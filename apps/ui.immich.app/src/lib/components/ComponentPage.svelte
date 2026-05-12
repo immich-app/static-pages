@@ -6,11 +6,12 @@
   type Props = {
     name: string;
     description: string;
+    localeSensitive?: boolean;
     size?: ContainerSize;
     children?: Snippet;
   };
 
-  const { size, name, description, children }: Props = $props();
+  const { size, name, localeSensitive = false, description, children }: Props = $props();
 </script>
 
-<MarkdownPage attributes={{ title: name, description }} {size} {children} />
+<MarkdownPage attributes={{ title: name, description }} {localeSensitive} {size} {children} />
