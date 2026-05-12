@@ -13,6 +13,7 @@
     ControlBarHeader,
     ControlBarOverflow,
     getSiteProviders,
+    globalManager,
     Logo,
     ThemeSwitcher,
     TooltipProvider,
@@ -26,6 +27,7 @@
 
   const { children }: Props = $props();
 
+  globalManager.setSiteMetadata(siteMetadata);
   commandPaletteManager.enable();
 </script>
 

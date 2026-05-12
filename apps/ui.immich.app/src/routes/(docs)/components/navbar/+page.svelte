@@ -1,9 +1,8 @@
 <script lang="ts">
   import ComponentExamples from '$lib/components/ComponentExamples.svelte';
   import ComponentPage from '$lib/components/ComponentPage.svelte';
-  import PageDescription from '$lib/components/PageDescription.svelte';
   import { asComponentHref } from '$lib/utilities.js';
-  import { Link } from '@immich/ui';
+  import { Link, Text } from '@immich/ui';
   import BasicExample from './BasicExample.svelte';
   import basicExample from './BasicExample.svelte?raw';
   import ExpandExample from './ExpandExample.svelte';
@@ -15,10 +14,10 @@
 </script>
 
 <ComponentPage name="Navbar" description="A component for creating navigation items in a sidebar">
-  <PageDescription
-    >This component exports a NavbarItem for creating navigation menus. This is usually used in conjunction with the <Link
+  <Text>
+    This component exports a NavbarItem for creating navigation menus. This is usually used in conjunction with the <Link
       href={asComponentHref('AppShell')}>AppSidebar</Link
-    > component</PageDescription
+    > component</Text
   >
   <ComponentExamples
     examples={[

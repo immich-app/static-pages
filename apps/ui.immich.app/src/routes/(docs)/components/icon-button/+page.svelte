@@ -2,7 +2,6 @@
   import ComponentExamples from '$lib/components/ComponentExamples.svelte';
   import ComponentLink from '$lib/components/ComponentLink.svelte';
   import ComponentPage from '$lib/components/ComponentPage.svelte';
-  import PageDescription from '$lib/components/PageDescription.svelte';
   import BasicExample from './BasicExample.svelte';
   import basicExample from './BasicExample.svelte?raw';
   import ColorExample from './ColorExample.svelte';
@@ -22,7 +21,9 @@
 </script>
 
 <ComponentPage name="IconButton" description="An icon-only version of the Button component">
-  <PageDescription>An icon-only version of the <ComponentLink name="Button" /> component</PageDescription>
+  {#snippet descriptionBody()}
+    An icon-only version of the <ComponentLink name="Button" /> component
+  {/snippet}
   <ComponentExamples
     examples={[
       { title: 'Basic', code: basicExample, component: BasicExample },

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { siteMetadata } from '$lib';
   import {
     Card,
     CardBody,
@@ -256,7 +255,7 @@
   };
 </script>
 
-<SiteMetadata site={siteMetadata} page={pageMetadata} />
+<SiteMetadata page={pageMetadata} />
 
 <Stack gap={8}>
   <Stack>

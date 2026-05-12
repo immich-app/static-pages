@@ -106,11 +106,6 @@ export type ExampleItem = {
 
 export type ExampleCardProps = ExampleItem;
 
-export const siteMetadata = {
-  title: 'Immich UI',
-  description: 'A Svelte component library for Immich',
-};
-
 export type ComponentItem = {
   name: string;
   title?: string;

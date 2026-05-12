@@ -2,7 +2,6 @@
   import portainerIcon from '$common/img/portainer.svg';
   import truenasIcon from '$common/img/truenas-scale.svg';
   import unraidIcon from '$common/img/unraid.svg';
-  import { siteMetadata } from '$lib';
   import {
     appStoreBadge,
     Button,
@@ -30,7 +29,7 @@
   };
 </script>
 
-<SiteMetadata site={siteMetadata} page={pageMetadata} />
+<SiteMetadata page={pageMetadata} />
 
 <Heading size="title" class="mb-4" tag="h1">{pageMetadata.title}</Heading>
 

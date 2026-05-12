@@ -1,16 +1,16 @@
 <script lang="ts">
-  import MarkdownPage from '$lib/components/MarkdownPage.svelte';
-  import { type ContainerSize } from '@immich/ui';
+  import { Markdown, type ContainerSize } from '@immich/ui';
   import type { Snippet } from 'svelte';
 
   type Props = {
     name: string;
     description: string;
+    descriptionBody?: Snippet;
     size?: ContainerSize;
     children?: Snippet;
   };
 
-  const { size, name, description, children }: Props = $props();
+  const { size, name, description, descriptionBody, children }: Props = $props();
 </script>
 
-<MarkdownPage attributes={{ title: name, description }} {size} {children} />
+<Markdown.Page attributes={{ title: name, description }} description={descriptionBody} {size} {children} />

@@ -89,10 +89,11 @@ export default defineConfig([
       'apps/**/backend/dist',
       'apps/**/.wrangler',
       'apps/**/backend/worker-configuration.d.ts',
+      'common/',
+      'deployment/**',
       'packages/**/build/',
       'packages/**/.svelte-kit/',
       'packages/**/dist/',
-      'common/',
     ],
   },
 ]);

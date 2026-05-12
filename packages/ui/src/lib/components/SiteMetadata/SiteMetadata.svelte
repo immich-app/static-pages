@@ -1,15 +1,16 @@
 <script lang="ts">
+  import { globalManager } from '$lib/services/global-manager.svelte.js';
   import { resolveMetadata, resolveUrl, type ArticleMetadata, type Metadata } from '$lib/utilities/common.js';
 
   type Props = {
-    site: Metadata;
+    site?: Metadata;
     page?: Metadata;
     article?: ArticleMetadata;
   };
 
   const { site, page, article }: Props = $props();
 
-  let resolved = $derived(resolveMetadata(site, page, article));
+  let resolved = $derived(resolveMetadata(site ?? globalManager.siteMetadata, page, article));
 </script>
 
 <svelte:head>
