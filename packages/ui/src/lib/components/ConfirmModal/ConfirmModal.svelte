@@ -35,7 +35,7 @@
   };
 </script>
 
-<Modal {title} onClose={() => onClose(false)} {size} {icon}>
+<Modal {title} onClose={() => onClose(false)} {size} {icon} focusOnOpen>
   <ModalBody>
     {#if typeof prompt === 'string'}
       <p>{prompt}</p>
