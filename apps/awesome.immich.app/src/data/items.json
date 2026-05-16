@@ -125,6 +125,11 @@
         "title": "immichpy",
         "description": "The stable, typed Python API layer for Immich automation and integrations.",
         "href": "https://github.com/timonrieger/immichpy"
+      },
+      {
+        "title": "lrimmich",
+        "description": "Sync albums and metadata from a Lightroom Classic catalog to Immich when both share the same photo folder via an external library.",
+        "href": "https://github.com/haavardnk/lrimmich"
       }
     ]
   },
