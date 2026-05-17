@@ -161,6 +161,11 @@
     "types": ["tool", "tools"],
     "projects": [
       {
+        "title": "Media Date Fixer",
+        "description": "Fix incorrect photo and video dates in an Immich library by detecting dates from filenames and updating media metadata for Immich to pick up on rescan.",
+        "href": "https://github.com/xam-ps/Media-Date-Fixer"
+      },
+      {
         "title": "Immich-Tiktok-Remover",
         "description": "Script to search for and remove TikTok videos from your Immich library.",
         "href": "https://github.com/mxc2/immich-tiktok-remover"
