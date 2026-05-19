@@ -26,7 +26,7 @@
   "author": "",
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260331.1",
-    "kysely": "^0.28.14",
+    "kysely": "^0.29.0",
     "vitest": "^4.1.0"
   },
   "peerDependencies": {
