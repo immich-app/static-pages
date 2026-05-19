@@ -1,4 +1,5 @@
-import { FileMigrationProvider, Kysely, Migrator as KyselyMigrator } from 'kysely';
+import { Kysely } from 'kysely';
+import { FileMigrationProvider, Migrator as KyselyMigrator } from 'kysely/migration';
 import { PostgresJSDialect } from 'kysely-postgres-js';
 import { existsSync, mkdirSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
