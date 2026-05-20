@@ -5,11 +5,15 @@ packages:
 
 dedupePeerDependents: true
 
-onlyBuiltDependencies:
-  - '@tailwindcss/oxide'
-  - esbuild
-  - sharp
-  - workerd
+allowBuilds:
+  '@tailwindcss/oxide': true
+  cpu-features: false
+  esbuild: true
+  exifreader: false
+  protobufjs: false
+  sharp: true
+  ssh2: false
+  workerd: true
 
 preferWorkspacePackages: true
 
