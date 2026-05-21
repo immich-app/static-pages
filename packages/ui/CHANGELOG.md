@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.78.0](https://github.com/immich-app/static-pages/compare/ui-v0.77.3...ui-v0.78.0) (2026-05-21)
+
+
+### Features
+
+* change locale on ui lib docs pages ([#509](https://github.com/immich-app/static-pages/issues/509)) ([7c6f74b](https://github.com/immich-app/static-pages/commit/7c6f74bf8a9f45aa7c9ef3a823cf711d68ecdbd5))
+* custom logo override ([#527](https://github.com/immich-app/static-pages/issues/527)) ([1bd1a4e](https://github.com/immich-app/static-pages/commit/1bd1a4e62573df96ce085bfdc38df54a70101dfd))
+
+
+### Bug Fixes
+
+* collapsed header border ([#526](https://github.com/immich-app/static-pages/issues/526)) ([43247b5](https://github.com/immich-app/static-pages/commit/43247b5b370a39b2122469785d6789f938e3942a))
+* **confirm-modal:** focus on open ([#515](https://github.com/immich-app/static-pages/issues/515)) ([4a9ce20](https://github.com/immich-app/static-pages/commit/4a9ce2025ed7a635dd281dcaedc9a4068f148580))
+
 ## [0.77.3](https://github.com/immich-app/static-pages/compare/ui-v0.77.2...ui-v0.77.3) (2026-05-04)
 
 
