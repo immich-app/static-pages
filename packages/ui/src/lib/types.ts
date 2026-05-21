@@ -456,3 +456,21 @@ export type GithubLinkProps = {
   LinkCommon;
 
 export type MarkdownAlertVariant = 'note' | 'tip' | 'important' | 'warning' | 'caution' | 'info' | 'success' | 'danger';
+
+export type LogoSet = {
+  stacked: {
+    light: string;
+    dark: string;
+  };
+  unstacked: {
+    light: string;
+    dark: string;
+  };
+  stacked_futo: {
+    light: string;
+    dark: string;
+  };
+  icon: string;
+};
+
+export type LogoVariants = 'stacked' | 'inline' | 'logo' | 'icon' | 'stacked-futo';
