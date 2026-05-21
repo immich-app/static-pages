@@ -1,43 +1,17 @@
 <script lang="ts">
-  import futoDark from '$lib/assets/immich-logo-futo-dark.svg';
-  import futoLight from '$lib/assets/immich-logo-futo-light.svg';
-  import inlineDark from '$lib/assets/immich-logo-inline-dark.svg';
-  import inlineLight from '$lib/assets/immich-logo-inline-light.svg';
-  import stackedDark from '$lib/assets/immich-logo-stacked-dark.svg';
-  import stackedLight from '$lib/assets/immich-logo-stacked-light.svg';
-  import icon from '$lib/assets/immich-logo.svg';
+  import { logoManager } from '$lib/services/logo-manager.svelte';
   import { themeManager } from '$lib/services/theme-manager.svelte.js';
-  import { Theme, type Size } from '$lib/types.js';
+  import type { LogoVariants, Size } from '$lib/types.js';
   import { cleanClass } from '$lib/utilities/internal.js';
   import { tv } from 'tailwind-variants';
 
   type Props = {
     size?: Size | 'landing';
-    variant?: 'stacked' | 'inline' | 'logo' | 'icon' | 'stacked-futo';
+    variant?: LogoVariants;
     class?: string;
   };
 
   const { variant = 'logo', size = 'medium', class: className }: Props = $props();
-
-  const getUrl = (variant: Props['variant']): string => {
-    switch (variant) {
-      case 'stacked': {
-        return themeManager.value === Theme.Light ? stackedLight : stackedDark;
-      }
-
-      case 'inline': {
-        return themeManager.value === Theme.Light ? inlineLight : inlineDark;
-      }
-
-      case 'stacked-futo': {
-        return themeManager.value === Theme.Light ? futoLight : futoDark;
-      }
-
-      default: {
-        return icon;
-      }
-    }
-  };
 
   const styles = tv({
     variants: {
@@ -60,7 +34,7 @@
     },
   });
 
-  const src = $derived(getUrl(variant));
+  const src = $derived(logoManager.getLogo(variant, themeManager.value));
 </script>
 
 <img {src} class={cleanClass(styles({ size, variant }), className)} alt="Immich logo" />
