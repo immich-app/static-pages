@@ -37,12 +37,12 @@
     variants: {
       shape: styleVariants.shape,
       color: {
-        primary: 'bg-primary-100 text-primary-800',
-        secondary: 'bg-light-100 text-light-800',
-        success: 'bg-success-100 text-success-700',
-        info: 'bg-info-100 text-info-800',
-        warning: 'bg-warning-100 text-warning-800',
-        danger: 'bg-danger-100 text-danger-800',
+        primary: 'bg-primary-100 text-primary-800 border border-primary-200',
+        secondary: 'bg-light-100 text-light-800 border border-light-200',
+        success: 'bg-success-100 text-success-700 border border-success-200',
+        info: 'bg-info-100 text-info-800 border border-info-200',
+        warning: 'bg-warning-100 text-warning-800 border border-warning-200',
+        danger: 'bg-danger-100 text-danger-800 border border-danger-200',
       },
       textSize: styleVariants.textSize,
       paddingSize: {
