@@ -83,7 +83,7 @@
   const bodyChild = $derived(getByKey(ChildKey.CardBody));
   const footerChild = $derived(getByKey(ChildKey.CardFooter));
 
-  const headerBorder = $derived(!color);
+  const headerBorder = $derived(!color && expanded);
   const headerPadding = $derived(headerBorder || !expanded);
 
   const headerContainerClasses = $derived(
