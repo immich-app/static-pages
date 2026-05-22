@@ -5,6 +5,8 @@
   import { Markdown, Text } from '@immich/ui';
   import BasicExample from './BasicExample.svelte';
   import basicExample from './BasicExample.svelte?raw';
+  import ShapeExample from './ShapeExample.svelte';
+  import shapeExample from './ShapeExample.svelte?raw';
   import VariantExample from './VariantExample.svelte';
   import variantExample from './VariantExample.svelte?raw';
 </script>
@@ -17,6 +19,7 @@
     examples={[
       { title: 'Basic', code: basicExample, component: BasicExample },
       { title: 'Variant', code: variantExample, component: VariantExample },
+      { title: 'Shape', code: shapeExample, component: ShapeExample },
     ]}
   />
 </ComponentPage>

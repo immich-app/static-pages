@@ -88,12 +88,12 @@
         info: 'border-info bg-info/10 text-info not-disabled:hover:bg-info/20 border',
       },
       ghostColor: {
-        primary: 'text-primary not-disabled:hover:bg-primary-50',
-        secondary: 'text-dark not-disabled:hover:bg-light-100',
-        success: 'text-success not-disabled:hover:bg-success-50',
-        danger: 'text-danger not-disabled:hover:bg-danger-50',
-        warning: 'text-warning not-disabled:hover:bg-warning-50',
-        info: 'text-info not-disabled:hover:bg-info-50',
+        primary: 'text-primary not-disabled:hover:bg-primary/15',
+        secondary: 'text-dark not-disabled:hover:bg-dark/10',
+        success: 'text-success not-disabled:hover:bg-success/15',
+        danger: 'text-danger not-disabled:hover:bg-danger/15',
+        warning: 'text-warning not-disabled:hover:bg-warning/15',
+        info: 'text-info not-disabled:hover:bg-info/15',
       },
     },
   });

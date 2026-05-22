@@ -28,11 +28,12 @@
     base: `h-control-bar flex w-full items-center gap-2 px-2`,
     variants: {
       variant: {
-        filled: 'bg-subtle',
+        filled: 'bg-light-100',
         outline: 'dark:border-light-200 shadow-md dark:border',
         ghost: '',
       },
       shape: {
+        round: 'rounded-full',
         'semi-round': 'rounded-lg',
         rectangle: 'rounded-none',
       },

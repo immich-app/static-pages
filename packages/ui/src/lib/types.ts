@@ -418,7 +418,7 @@ export type ControlBarProps = {
   ref?: HTMLElement | null;
   closeIcon?: IconLike | Snippet;
   variant?: Variants;
-  shape?: 'semi-round' | 'rectangle';
+  shape?: 'semi-round' | 'rectangle' | 'round';
   translations?: TranslationProps<'close'>;
   onClose?: () => void;
   children?: Snippet;
