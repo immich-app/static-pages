@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.79.0](https://github.com/immich-app/static-pages/compare/ui-v0.78.0...ui-v0.79.0) (2026-05-22)
+
+
+### Features
+
+* control bar variants variant and ghost button colors ([#528](https://github.com/immich-app/static-pages/issues/528)) ([23ca17f](https://github.com/immich-app/static-pages/commit/23ca17ff48897de5985a7c4955fc8bf658403eaa))
+
 ## [0.78.0](https://github.com/immich-app/static-pages/compare/ui-v0.77.3...ui-v0.78.0) (2026-05-21)
 
 
