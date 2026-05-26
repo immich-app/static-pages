@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.79.2](https://github.com/immich-app/static-pages/compare/ui-v0.79.1...ui-v0.79.2) (2026-05-26)
+
+
+### Bug Fixes
+
+* overflow menu items ([#538](https://github.com/immich-app/static-pages/issues/538)) ([b09aa89](https://github.com/immich-app/static-pages/commit/b09aa89e4b493f47bdfe855a6e17e7858489d899))
+
 ## [0.79.1](https://github.com/immich-app/static-pages/compare/ui-v0.79.0...ui-v0.79.1) (2026-05-26)
 
 
