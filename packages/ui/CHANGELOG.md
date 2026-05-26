@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.79.1](https://github.com/immich-app/static-pages/compare/ui-v0.79.0...ui-v0.79.1) (2026-05-26)
+
+
+### Bug Fixes
+
+* context menu click event ([#536](https://github.com/immich-app/static-pages/issues/536)) ([701acb5](https://github.com/immich-app/static-pages/commit/701acb5aba85b31ffdf463fc8c91c5bcf6e1d058))
+
 ## [0.79.0](https://github.com/immich-app/static-pages/compare/ui-v0.78.0...ui-v0.79.0) (2026-05-22)
 
 
