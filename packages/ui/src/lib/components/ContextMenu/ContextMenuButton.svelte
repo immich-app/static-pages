@@ -19,6 +19,8 @@
   }: ContextMenuButtonProps = $props();
 
   const onclick = async (event: Event) => {
+    event.stopPropagation();
+    event.preventDefault();
     await menuManager.show({ target: event.currentTarget as HTMLElement, position, items, bottomItems });
   };
 </script>
