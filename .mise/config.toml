@@ -1,7 +1,7 @@
 [tools]
 opentofu = "1.11.6"
 terragrunt = "1.0.4"
-node = "24.15"
+node = "24.16"
 pnpm = "11.1.2"
 wrangler = "4.90.1"
 
