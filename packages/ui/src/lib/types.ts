@@ -428,7 +428,7 @@ export type ControlBarProps = {
 
 export type ActionBarProps = ControlBarProps & {
   actions?: ActionItem[];
-  overflowActions?: ActionItem[];
+  overflowActions?: MenuItems;
 };
 
 export type ChildContext = {

@@ -11,6 +11,7 @@
     ControlBarTitle,
     Heading,
     ImageCarousel,
+    MenuItemType,
     NavbarItem,
     Stack,
   } from '@immich/ui';
@@ -58,7 +59,12 @@
   <div class="border">
     <AppShell class="h-[400px]">
       <AppShellBar>
-        <ActionBar static closeIcon={mdiArrowLeft} onClose={() => {}} overflowActions={[ExampleActions.Delete]}>
+        <ActionBar
+          static
+          closeIcon={mdiArrowLeft}
+          onClose={() => {}}
+          overflowActions={[ExampleActions.Download, MenuItemType.Divider, ExampleActions.Delete]}
+        >
           <ControlBarHeader>
             <ControlBarTitle>Mich's photos</ControlBarTitle>
           </ControlBarHeader>
