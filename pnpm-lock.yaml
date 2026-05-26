@@ -15,7 +15,7 @@ importers:
         specifier: ^10.0.0
         version: 10.0.1(@eslint/js@10.0.1(eslint@10.4.0(jiti@2.7.0)))(@stylistic/eslint-plugin@5.10.0(eslint@10.4.0(jiti@2.7.0)))(eslint-config-prettier@10.1.8(eslint@10.4.0(jiti@2.7.0)))(eslint-plugin-n@18.0.1(eslint@10.4.0(jiti@2.7.0))(typescript@6.0.3))(eslint-plugin-svelte@3.17.1(eslint@10.4.0(jiti@2.7.0))(svelte@5.55.9(@typescript-eslint/types@8.59.4)))(eslint@10.4.0(jiti@2.7.0))(typescript-eslint@8.59.4(eslint@10.4.0(jiti@2.7.0))(typescript@6.0.3))(typescript@6.0.3)
       '@types/node':
-        specifier: ^25.8.0
+        specifier: ^25.9.1
         version: 25.9.1
       eslint:
         specifier: ^10.0.0
