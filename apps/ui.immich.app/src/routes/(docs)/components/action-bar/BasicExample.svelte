@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ExampleActions, exampleActions } from '$lib/constants.js';
-  import { ActionBar, ControlBarHeader, ControlBarTitle, Stack } from '@immich/ui';
+  import { ActionBar, ControlBarHeader, ControlBarTitle, MenuItemType, Stack } from '@immich/ui';
 
   const onClose = () => {};
 </script>
@@ -15,7 +15,7 @@
   <ActionBar
     {onClose}
     actions={[ExampleActions.Share, ExampleActions.Copy, ExampleActions.Download]}
-    overflowActions={[ExampleActions.Edit, ExampleActions.Delete]}
+    overflowActions={[ExampleActions.Edit, MenuItemType.Divider, ExampleActions.Delete]}
   >
     <ControlBarHeader>
       <ControlBarTitle>2 Selected</ControlBarTitle>
