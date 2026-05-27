@@ -76,17 +76,8 @@
   };
 
   const handleClick = () => {
-    for (const color of ['primary', 'secondary', 'success', 'info', 'warning', 'danger'] as const) {
-      toastManager.show(
-        {
-          title: color,
-          description,
-          color,
-        },
-        {
-          timeout,
-        },
-      );
+    for (const { label: title, value: color } of colors) {
+      toastManager.show({ title, description, color }, { timeout });
     }
   };
 
