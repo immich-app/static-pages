@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.79.3](https://github.com/immich-app/static-pages/compare/ui-v0.79.2...ui-v0.79.3) (2026-05-27)
+
+
+### Bug Fixes
+
+* license ([#543](https://github.com/immich-app/static-pages/issues/543)) ([043b7db](https://github.com/immich-app/static-pages/commit/043b7dbbfd1a9bb7b2445fe228eb2fb392ef0bea))
+* toast title ([#541](https://github.com/immich-app/static-pages/issues/541)) ([8979cd1](https://github.com/immich-app/static-pages/commit/8979cd11094f6592709da3fd2559e5c4f20ccd03))
+
 ## [0.79.2](https://github.com/immich-app/static-pages/compare/ui-v0.79.1...ui-v0.79.2) (2026-05-26)
 
 
