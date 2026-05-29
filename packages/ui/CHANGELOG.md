@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.79.4](https://github.com/immich-app/static-pages/compare/ui-v0.79.3...ui-v0.79.4) (2026-05-29)
+
+
+### Bug Fixes
+
+* markdown spacing ([#544](https://github.com/immich-app/static-pages/issues/544)) ([9aff1ba](https://github.com/immich-app/static-pages/commit/9aff1ba99ec40250bc3860b0b3464c82a7cf3836))
+
 ## [0.79.3](https://github.com/immich-app/static-pages/compare/ui-v0.79.2...ui-v0.79.3) (2026-05-27)
 
 
