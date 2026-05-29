@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.2](https://github.com/immich-app/static-pages/compare/svelte-markdown-preprocess-v0.5.1...svelte-markdown-preprocess-v0.5.2) (2026-05-29)
+
+
+### Bug Fixes
+
+* license ([#543](https://github.com/immich-app/static-pages/issues/543)) ([043b7db](https://github.com/immich-app/static-pages/commit/043b7dbbfd1a9bb7b2445fe228eb2fb392ef0bea))
+* publish ([#484](https://github.com/immich-app/static-pages/issues/484)) ([ae86d91](https://github.com/immich-app/static-pages/commit/ae86d91734eec38de16479df9a838feacfa7426d))
+
 ## [0.5.1](https://github.com/immich-app/packages/compare/svelte-markdown-preprocess-v0.5.0...svelte-markdown-preprocess-v0.5.1) (2026-04-28)
 
 
