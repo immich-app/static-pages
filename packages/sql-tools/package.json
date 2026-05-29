@@ -1,7 +1,7 @@
 {
   "name": "@immich/sql-tools",
   "description": "Kysely-based tools and utilities for managing postgres schema",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "license": "MIT",
   "repository": {
     "type": "git",
