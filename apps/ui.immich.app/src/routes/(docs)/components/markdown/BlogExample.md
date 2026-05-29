@@ -1,10 +1,9 @@
 ---
-authors: [Immich Team]
-description: A review of the major milestones accomplished in 2025.
 id: 153e5050-88b9-43e7-8b7b-ef0c0438057d
-publishedAt: 2025-12-22
-slug: 2025-year-in-review
 title: 2025 - A year in review
+description: A review of the major milestones accomplished in 2025.
+publishedAt: 2025-12-22
+authors: [Immich Team]
 ---
 
 # 2025 - A year in review (H1)

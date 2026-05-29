@@ -1,5 +1,4 @@
 import { goto } from '$app/navigation';
-import { PUBLIC_IMMICH_ENV } from '$env/static/public';
 import { defaultProvider, type ActionItem } from '@immich/ui';
 import fm from 'front-matter';
 import { DateTime } from 'luxon';
@@ -110,9 +109,7 @@ const getPosts = () => {
       post.title = post.title.replaceAll(' recap', ` ${post.publishedAt.year} recap`);
     }
 
-    if (PUBLIC_IMMICH_ENV === 'development' || (post.publishedAt <= DateTime.now() && !post.draft)) {
-      posts.push(post);
-    }
+    posts.push(post);
   }
 
   return posts.toSorted((a, b) => b.publishedAt.valueOf() - a.publishedAt.valueOf());
