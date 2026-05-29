@@ -206,6 +206,31 @@
     };
   };
 
+  type CommitItem = {
+    commit: { value: string; date: Date };
+    number: number;
+    title?: string;
+    description?: string;
+  };
+
+  const commitItem = (item: CommitItem) => {
+    const { value: commit, date } = item.commit;
+    const value = item.number.toLocaleString();
+    const title = item.title ?? `${value} Commits`;
+    const description = item.description ?? `${value} Commits on GitHub`;
+
+    return {
+      icon: mdiPartyPopper,
+      title,
+      description,
+      link: {
+        href: `https://github.com/immich-app/immich/commit/${commit}`,
+        text: commit.slice(0, 8),
+      },
+      getDateLabel: withLanguage(date),
+    };
+  };
+
   const starMilestone = (count: number, date: Date) => ({
     icon: mdiStar,
     iconClass: 'text-warning',
@@ -278,6 +303,13 @@
   }));
 
   const milestones: TimelineItem[] = [
+    commitItem({
+      number: 10_000,
+      commit: {
+        value: 'fb0a54d548ffa1baa39bdbffba5758101538aa78',
+        date: new Date(2026, 4, 11),
+      },
+    }),
     starMilestone(100_000, new Date(2026, 4, 8)),
     releaseItem({
       icon: mdiSecurity,
@@ -934,12 +966,15 @@
       description: 'Play videos in the web and on mobile.',
       release: 'v1.2.0',
     }),
-    {
-      icon: mdiPartyPopper,
+    commitItem({
+      number: 1,
       title: 'First commit',
       description: 'First commit on GitHub, Immich is born.',
-      getDateLabel: withLanguage(new Date(2022, 1, 3)),
-    },
+      commit: {
+        date: new Date(2022, 1, 3),
+        value: 'af2efbdbbddc27cd06142f22253ccbbbbeec1f55',
+      },
+    }),
   ];
 
   const pageMetadata = {
