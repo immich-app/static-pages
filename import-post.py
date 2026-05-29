@@ -13,6 +13,7 @@ import hashlib
 import os
 import re
 import yaml
+import time
 from io import BytesIO
 from pathlib import Path
 from typing import Iterable
@@ -158,9 +159,7 @@ class ImageProcessingRenderer(MarkdownRenderer):
 class PostImporter:
   def __init__(self):
     self.outline_auth_header = f"Bearer {os.environ["OUTLINE_API_KEY"]}"
-
     self.outline_url_parts = urlparse(os.environ["OUTLINE_POST_URL"])
-
     self.r2_bucket_name = os.environ["R2_BUCKET_NAME"]
     self.r2_public_url = os.environ["R2_PUBLIC_URL"].rstrip('/')
 
@@ -236,7 +235,9 @@ class PostImporter:
       post_data.content = renderer.render(doc)
       post_data['id'] = uuid
       post_data['title'] = title
-      post_data['publishedAt'] = datetime.date.today()
+
+      if 'publishedAt' not in post_data:
+        post_data['publishedAt'] = datetime.date.today()
       post_data['authors'] = FlowList(['Immich Team'])
       post_data['slug'] = slug
 
