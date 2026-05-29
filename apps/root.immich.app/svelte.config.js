@@ -6,8 +6,6 @@ import { resolve } from 'node:path';
 
 dotenv.config({ path: '../../.env' });
 
-process.env.PUBLIC_IMMICH_ENV = process.env.PUBLIC_IMMICH_ENV ?? 'production';
-
 const staticFiles = new Set(['/favicon.ico', '/img/social-preview.png']);
 
 /** @type {import('@sveltejs/kit').Config} */
