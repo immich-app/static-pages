@@ -34,7 +34,7 @@
 
 <SiteMetadata site={siteMetadata} {page} />
 
-<Container {size} center class="my-4 flex flex-col p-4 lg:my-8">
+<Container {size} center class="my-4 p-4 lg:my-8">
   <section class="mb-8">
     <div class="flex justify-between">
       <Heading tag="h1" size="giant">{page.title}</Heading>

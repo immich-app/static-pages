@@ -29,7 +29,6 @@ The new reverse geocoding system is almost done being built and offers many impr
 
 :::info
 We also do our best to keep the API documentation up to date as well and you can see a list of known, deprecated endpoints [here](https://api.immich.app/endpoints/deprecated).
-
 :::
 
 There is an ever-growing list of [breaking changes](https://github.com/immich-app/immich/pulls?q=is%3Apr+label%3Achangelog%3Abreaking-change+is%3Aclosed) that have been merged into main. So far, we've deleted over 69k lines of code, which has been awesome. Here are some of the more significant changes:
