@@ -19,7 +19,7 @@
     shape?: Shape;
     stop?: boolean;
     type?: 'meter' | 'progress';
-    animated?: boolean;
+    animate?: boolean;
     valueLabel?: string;
     thresholds?: { from: number; className: string }[];
     ref?: HTMLElement | null;
@@ -39,7 +39,7 @@
     size = 'medium',
     stop = true,
     type = 'progress',
-    animated = true,
+    animate = true,
     label,
     valueLabel,
     children,
@@ -89,7 +89,7 @@
         large: 'rounded-lg',
         giant: 'rounded-xl',
       },
-      animated: {
+      animate: {
         true: 'duration-700',
         false: 'duration-0',
       },
@@ -153,7 +153,7 @@
           shape,
           size: value > 0 ? size : undefined,
           roundedSize: shape === 'semi-round' ? size : undefined,
-          animated,
+          animate,
         }),
         barClass,
       )}
