@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.80.0](https://github.com/immich-app/static-pages/compare/ui-v0.79.3...ui-v0.80.0) (2026-06-02)
+
+
+### Features
+
+* animation toggle on progress bar ([#556](https://github.com/immich-app/static-pages/issues/556)) ([d76a325](https://github.com/immich-app/static-pages/commit/d76a3254af61562a306e167f2296a8a20a212977))
+
+
+### Bug Fixes
+
+* code padding ([#557](https://github.com/immich-app/static-pages/issues/557)) ([33e1ca0](https://github.com/immich-app/static-pages/commit/33e1ca010648bcb05352899b1f551c8d0eb7c10b))
+* markdown spacing ([#544](https://github.com/immich-app/static-pages/issues/544)) ([9aff1ba](https://github.com/immich-app/static-pages/commit/9aff1ba99ec40250bc3860b0b3464c82a7cf3836))
+
 ## [0.79.3](https://github.com/immich-app/static-pages/compare/ui-v0.79.2...ui-v0.79.3) (2026-05-27)
 
 
