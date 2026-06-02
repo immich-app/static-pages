@@ -12,6 +12,8 @@ import datetime
 import hashlib
 import os
 import re
+import select
+import sys
 import yaml
 from io import BytesIO
 from pathlib import Path
@@ -227,6 +229,14 @@ class PostImporter:
     uuid = post['data']['id']
     title = post['data']['title']
     slug = post_data.get('slug') or slugify(title)
+
+    print(f"Importing:\n  ID:    {uuid}\n  Title: {title}\n  Path:  routes/blog/{slug}/+page.md\n")
+    print("Continue? [Y/n] (continuing in 5s) ", end="", flush=True)
+    ready, _, _ = select.select([sys.stdin], [], [], 5)
+    answer = sys.stdin.readline().strip().lower() if ready else ""
+    print()
+    if answer.startswith("n"):
+      return
 
     self.clear_s3_directory(f"{BLOG_PREFIX}/{uuid}/")
 
