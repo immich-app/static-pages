@@ -139,7 +139,7 @@ I made some significant headway on bringing editing support to Live Photos. This
 
 ![Retro DVD](https://static.immich.cloud/blog/5b54d5d9-ee80-4d49-b9a9-63b99269bc89/0ae9786ad8bd154cb0500bd1f1fa8b1a.webp)
 
-We recently sold the remaining retro DVDs from our [stable release](https://immich.app/blog/stable-release) back in October. As such, we have released the source code for building the Alpine Linux based ISO that was burned onto the DVDs. You can check out the source code at <https://github.com/immich-app/retro>!
+We recently sold the remaining retro DVDs from our [stable release](/blog/v2.0.0-release) back in October. As such, we have released the source code for building the Alpine Linux based ISO that was burned onto the DVDs. You can check out the source code at <https://github.com/immich-app/retro>!
 
 I worked on this project all the way back in August of 2025. It was the last week of my summer internship with Immich and originally started as a "Wouldn't it be funny if…." joke. I did some digging on how to make a bootable live DVD and I had a working image by the end of the week!
 

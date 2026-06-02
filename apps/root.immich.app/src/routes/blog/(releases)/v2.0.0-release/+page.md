@@ -1,9 +1,9 @@
 ---
 id: 0199ca17-0cf1-768e-83f8-3049b22212ec
-title: Stable release
+title: Release v2.0.0 - Stable 🎉
 description: Read about the Immich v2.0.0 stable release and what it means for you.
-publishedAt: 2025-10-09
-authors: [Alex Tran, Jason Rasmussen, Zack Pollard]
+publishedAt: 2025-10-01
+authors: [Immich Team]
 ---
 
 <script lang="ts">

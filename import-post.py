@@ -226,7 +226,7 @@ class PostImporter:
   def run(self) -> None:
     post, post_data = self.fetch_post_from_outline()
     uuid = post['data']['id']
-    title = post['data']['title']
+    title = post_data.get('title') or post['data']['title']
     slug = post_data.get('slug') or slugify(title)
 
     print(f"Importing:\n  ID:    {uuid}\n  Title: {title}\n  Path:  routes/blog/{slug}/+page.md\n")
@@ -239,7 +239,7 @@ class PostImporter:
 
     self.clear_s3_directory(f"{BLOG_PREFIX}/{uuid}/")
 
-    with ImageProcessingRenderer(self, uuid, first_as_cover=True) as renderer:
+    with ImageProcessingRenderer(self, uuid, first_as_cover=False) as renderer:
       doc = mistletoe.Document(post_data.content)
 
       post_data.content = renderer.render(doc)

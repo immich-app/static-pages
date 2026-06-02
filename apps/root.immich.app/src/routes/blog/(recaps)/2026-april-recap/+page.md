@@ -13,7 +13,7 @@ title: April recap
 
 Hello everyone!
 
-April has been all about preparing for Immich `v3.0.0`, which will be our first major release since the [stable release](https://immich.app/blog/stable-release) last October. The major release primarily revolves around a number of deprecated items we have wanted to delete for some time. The good news is that **most** of the changes are behind-the-scenes and won't require user intervention. Keep reading below for more details on all this and more.
+April has been all about preparing for Immich `v3.0.0`, which will be our first major release since the [stable release](/blog/v2.0.0-release) last October. The major release primarily revolves around a number of deprecated items we have wanted to delete for some time. The good news is that **most** of the changes are behind-the-scenes and won't require user intervention. Keep reading below for more details on all this and more.
 
 ## Roadmap update
 

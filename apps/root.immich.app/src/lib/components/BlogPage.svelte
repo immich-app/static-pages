@@ -1,5 +1,6 @@
 <script lang="ts">
   import { blogMetadata, posts } from '$lib';
+  import BlogTypeBadge from '$lib/components/BlogTypeBadge.svelte';
   import { Heading, Icon, Link, Markdown, SiteMetadata, Text } from '@immich/ui';
   import { mdiChevronRight } from '@mdi/js';
   import { DateTime } from 'luxon';
@@ -32,12 +33,14 @@
     {post.title}
   </Heading>
 
-  <div class="mt-6 mb-2 flex gap-1">
+  <div class="mt-4 mb-2 flex gap-1">
     <Text color="muted" size="small" variant="italic">{publishedAt.toLocaleString(DateTime.DATE_FULL)}</Text>
     <Text color="muted" size="small">— {authors.join(', ')}</Text>
   </div>
 
   <Markdown.Paragraph><em>{description}</em></Markdown.Paragraph>
+
+  <BlogTypeBadge class="mt-2" size="small" type={post.type} />
 
   {#if post.coverUrl}
     <figure class="my-6">
