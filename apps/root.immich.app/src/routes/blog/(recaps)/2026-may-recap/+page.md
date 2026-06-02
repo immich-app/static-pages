@@ -13,7 +13,7 @@ title: May recap
 
 Hello everyone!
 
-While May was a relatively quiet month, there are a few updates that we are excited to share. We have started to build out support for release candidates (a.k.a prereleases), have made great progress on Workflows, HLS, and better sharing, and we also just had both our 100,000th star and 10,000th commit to the repository! Keep reading below for more details on all this and more.
+While May was a relatively quiet month, there are a few updates that we are excited to share. We have started to build out support for release candidates (a.k.a prereleases), have made great progress on Workflows, HLS, and better sharing, and we also just had our 100,000th star, 10,000th commit, and passed [2 years since joining FUTO](/blog/futo-two-years-later)! Keep reading below for more details on all this and more.
 
 ## Release candidates
 
