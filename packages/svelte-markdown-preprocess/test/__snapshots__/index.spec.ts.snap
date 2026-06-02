@@ -155,6 +155,17 @@ This is an image with alt and a title <Markdown.Image src="https://immich.app/,"
 }
 `;
 
+exports[`markup > should render 'img-attribute-quote.md' correctly 1`] = `
+{
+  "code": "<script>
+  import { Markdown } from '@immich/ui';
+</script>
+<Markdown.Paragraph>This is an image with alt with quotes <Markdown.Image src="https://immich.app/" alt="alt &quot;text&quot;"/>
+</Markdown.Paragraph>
+",
+}
+`;
+
 exports[`markup > should render 'link.md' correctly 1`] = `
 {
   "code": "<script>

@@ -44,7 +44,7 @@ export const createAttributes = (attributes: Record<string, string | boolean | n
         return value ? `${key}` : `${key}={false}`;
       }
 
-      return `${key}="${value}"`;
+      return `${key}="${String(value).replaceAll('"', '&quot;')}"`;
     });
   if (results.length === 0) {
     return '';
