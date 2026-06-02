@@ -2,6 +2,35 @@ import { goto } from '$app/navigation';
 import { MenuItemType, type ActionItem, type GithubLinkProps, type GithubLinkType, type IfLike } from '$lib/types.js';
 import type { DateTime } from 'luxon';
 
+export type QueryValue = number | string;
+export const asQueryString = (
+  params?: Record<string, QueryValue | undefined>,
+  options?: { skipEmptyStrings?: boolean; skipNullValues?: boolean },
+) => {
+  const { skipEmptyStrings = true, skipNullValues = true } = options ?? {};
+  const items = Object.entries(params ?? {})
+    .filter((item): item is [string, QueryValue] => {
+      const value = item[1];
+
+      if (value === undefined) {
+        return false;
+      }
+
+      if (skipNullValues && value === null) {
+        return false;
+      }
+
+      if (skipEmptyStrings && value === '') {
+        return false;
+      }
+
+      return true;
+    })
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+
+  return items.length === 0 ? '' : `?${items.join('&')}`;
+};
+
 const urlTypes: Record<GithubLinkType, string> = {
   issue: 'issues',
   pr: 'pull',
