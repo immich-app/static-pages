@@ -19,6 +19,7 @@
     shape?: Shape;
     stop?: boolean;
     type?: 'meter' | 'progress';
+    animate?: boolean;
     valueLabel?: string;
     thresholds?: { from: number; className: string }[];
     ref?: HTMLElement | null;
@@ -38,6 +39,7 @@
     size = 'medium',
     stop = true,
     type = 'progress',
+    animate = true,
     label,
     valueLabel,
     children,
@@ -69,7 +71,7 @@
   });
 
   const barStyles = tv({
-    base: 'h-full transition-all duration-700 ease-in-out',
+    base: 'h-full transition-all ease-in-out',
     variants: {
       color: styleVariants.filledColor,
       shape: styleVariants.shape,
@@ -86,6 +88,10 @@
         medium: 'rounded-md',
         large: 'rounded-lg',
         giant: 'rounded-xl',
+      },
+      animate: {
+        true: 'duration-700',
+        false: 'duration-0',
       },
     },
   });
@@ -147,6 +153,7 @@
           shape,
           size: value > 0 ? size : undefined,
           roundedSize: shape === 'semi-round' ? size : undefined,
+          animate,
         }),
         barClass,
       )}

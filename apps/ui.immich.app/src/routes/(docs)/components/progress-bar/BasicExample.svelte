@@ -19,7 +19,13 @@
 </script>
 
 <HStack wrap>
+  <Text>Animate</Text>
   <ProgressBar {progress} size="large" border stop={false}>
+    <Text size="small" class={progress > 0.5 ? 'text-light' : 'text-dark'}>Loading...</Text>
+  </ProgressBar>
+
+  <Text>No Animation</Text>
+  <ProgressBar {progress} size="large" border stop={false} animate={false}>
     <Text size="small" class={progress > 0.5 ? 'text-light' : 'text-dark'}>Loading...</Text>
   </ProgressBar>
 </HStack>
