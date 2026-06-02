@@ -40,5 +40,5 @@
 </script>
 
 <Text {tag} {fontWeight} class={classList} {...restProps}>
-  {@render children()}
+  {@render children?.()}
 </Text>

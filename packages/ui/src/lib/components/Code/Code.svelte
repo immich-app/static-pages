@@ -17,7 +17,7 @@
   const { class: className, size, variant = 'filled', color = 'primary', children, ...restProps }: Props = $props();
 
   const styles = tv({
-    base: 'font-monospace rounded-lg px-2 py-1',
+    base: 'font-monospace rounded-sm px-1 py-0.5',
     variants: {
       ghostTheme: {
         false: '',
