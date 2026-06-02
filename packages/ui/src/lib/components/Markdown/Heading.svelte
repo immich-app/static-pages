@@ -1,6 +1,7 @@
 <script lang="ts">
   import Heading from '$lib/components/Heading/Heading.svelte';
   import type { HeadingTag, Size } from '$lib/types.js';
+  import { cleanClass } from '$lib/utilities/internal.js';
   import type { Snippet } from 'svelte';
 
   type Props = {
@@ -37,4 +38,4 @@
   let { size, tag, class: className } = $derived(getSizeAndTag(level));
 </script>
 
-<Heading {size} {tag} class={className} {id} {children} />
+<Heading {size} {tag} class={cleanClass('flex items-center gap-1', className)} {id} {children} />

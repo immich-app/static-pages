@@ -37,5 +37,5 @@
     <CodeBlock {code} {language} />
   </div>
 {:else}
-  <Code>{code}</Code>
+  <Code class="text-[0.75em]">{code}</Code>
 {/if}
