@@ -42,6 +42,39 @@ dir = "{{cwd}}"
 run = "mise run tf destroy"
 dir = "{{cwd}}"
 
+[tasks.dev]
+description = "Run a dev server"
+usage = '''
+arg "<app>" help="Target app" {
+  choices "api" "awesome" "buy" "datasets" "get" "my" "root" "ui"
+  default "root"
+}
+'''
+run = [
+  "pnpm --filter @immich/ui --filter @immich/svelte-markdown-preprocess build",
+  { task = "watch-and-open", args = ["{{usage.app}}"] }
+]
+
+[tasks."watch-and-open"]
+description = "Run watch and open in parallel"
+usage = '''
+arg "<app>" help="Target app"
+'''
+depends = [ { task = "watch" }, { task = "open", args = ["{{usage.app}}"] } ]
+
+[tasks.watch]
+run = "pnpm --filter @immich/ui --filter @immich/svelte-markdown-preprocess --parallel run watch"
+
+[tasks.open]
+usage = '''
+arg "<app>" help="Target app"
+'''
+run = [
+  "sleep 3",
+  'echo "Launching apps/{{usage.app}}.immich.app..."',
+  'pnpm --filter "{{usage.app}}.immich.app" start --open'
+]
+
 [settings]
 experimental = true
 idiomatic_version_file_enable_tools = []
