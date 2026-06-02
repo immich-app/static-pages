@@ -23,11 +23,11 @@ authors: [Immich Team]
 
 Hello everyone!
 
-The month of October was an exciting and busy month for the Immich team. We had our [stable release](/blog/stable-release), were trending on [Hacker News](https://news.ycombinator.com/item?id=45675015), launched [new websites](https://awesome.immich.app/), delivered [OCR](https://github.com/immich-app/immich/releases/tag/v2.2.0), and much more. Continue below to read the full recap of October 2025, as well as a developer update and upcoming goals.
+The month of October was an exciting and busy month for the Immich team. We had our [stable release](/blog/v2.0.0-release), were trending on [Hacker News](https://news.ycombinator.com/item?id=45675015), launched [new websites](https://awesome.immich.app/), delivered [OCR](https://github.com/immich-app/immich/releases/tag/v2.2.0), and much more. Continue below to read the full recap of October 2025, as well as a developer update and upcoming goals.
 
 ## Stable release
 
-The month kicked off with the announcement of our long-awaited [stable release](/blog/stable-release) 🎉!
+The month kicked off with the announcement of our long-awaited [stable release](/blog/v2.0.0-release) 🎉!
 
 Preparing for and releasing `v2.0.0` was actually a bit more stressful than you might have imagined. It took a lot of work and coordination from the entire team, and we are all very excited to have successfully delivered it this month. To celebrate the release, we also launched [new merch](https://immich.store/collections/immich-2-0) 👕, the limited-edition [Retro DVD](https://immich.store/products/immich-retro) 📀, and our [new website](https://immich.app/).
 

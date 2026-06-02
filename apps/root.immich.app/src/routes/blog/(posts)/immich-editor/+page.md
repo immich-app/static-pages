@@ -142,7 +142,7 @@ Our image processing library, [Sharp](https://www.npmjs.com/package/sharp) (base
 
 ## Breaking changes
 
-Ever since [Immich went stable](/blog/stable-release), we have been hard at work making sure that new features do not conflict with varying versions of client and server on the same major version. Additionally, we ensure that changes to the API do not cause issues with consumers of said API. The biggest question we faced with this version was whether we should send the edited version of an asset by default at the `downloadAsset` and `viewAsset` endpoints. We opted to keep those endpoints returning the unedited versions to maintain stability. To fetch the edited version with either endpoint, a simple query param (`?edited=true`) can be added to communicate to the client that an edited version, if available, should be used.
+Ever since [Immich went stable](/blog/v2.0.0-release), we have been hard at work making sure that new features do not conflict with varying versions of client and server on the same major version. Additionally, we ensure that changes to the API do not cause issues with consumers of said API. The biggest question we faced with this version was whether we should send the edited version of an asset by default at the `downloadAsset` and `viewAsset` endpoints. We opted to keep those endpoints returning the unedited versions to maintain stability. To fetch the edited version with either endpoint, a simple query param (`?edited=true`) can be added to communicate to the client that an edited version, if available, should be used.
 
 Editing became available with a server version of `v2.5.0` and mobile clients will similarly see the edited version of thumbnails and previews once they are on `v2.5.0` or later.
 
