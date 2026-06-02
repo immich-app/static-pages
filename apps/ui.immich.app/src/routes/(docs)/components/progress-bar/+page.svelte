@@ -3,8 +3,8 @@
   import ComponentLink from '$lib/components/ComponentLink.svelte';
   import ComponentPage from '$lib/components/ComponentPage.svelte';
   import { Markdown, Text } from '@immich/ui';
-  import AnimatedExample from './AnimatedExample.svelte';
-  import animatedExample from './AnimatedExample.svelte?raw';
+  import BasicExample from './BasicExample.svelte';
+  import basicExample from './BasicExample.svelte?raw';
   import ColorExample from './ColorExample.svelte';
   import colorExample from './ColorExample.svelte?raw';
   import OtherExample from './OtherExample.svelte';
@@ -24,7 +24,7 @@
   </Markdown.Alert>
   <ComponentExamples
     examples={[
-      { title: 'Animated Example', code: animatedExample, component: AnimatedExample },
+      { title: 'Example', code: basicExample, component: BasicExample },
       { title: 'Size', code: sizeExample, component: SizeExample },
       { title: 'Shape', code: shapeExample, component: ShapeExample },
       { title: 'Color', code: colorExample, component: ColorExample },
