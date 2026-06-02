@@ -11,7 +11,7 @@
     "start": "npm run start:dev",
     "build": "tsc --project ./tsconfig.json",
     "test": "vitest",
-    "watch": "tsc --project ./tsconfig.json --watch"
+    "watch": "tsc --project ./tsconfig.json --watch --preserveWatchOutput"
   },
   "files": [
     "dist",
