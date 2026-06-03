@@ -215,8 +215,8 @@ class PostImporter:
     etag = response.get('ETag', '').strip('"')
     print(f"Uploaded to S3: {key} (ETag: {etag})")
 
-  def write_output(self, post_data: frontmatter.Post, slug: str) -> Path:
-    output_dir = OUTPUT_BASE / slug
+  def write_output(self, post_data: frontmatter.Post, folder: str) -> Path:
+    output_dir = OUTPUT_BASE / folder
     output_dir.mkdir(parents=True, exist_ok=True)
     output_file = output_dir / "+page.md"
 
@@ -228,8 +228,10 @@ class PostImporter:
     uuid = post['data']['id']
     title = post_data.get('title') or post['data']['title']
     slug = post_data.get('slug') or slugify(title)
+    post_type = post_data.get('type') or 'post'
+    folder = f"({post_type}s)/{slug}"
 
-    print(f"Importing:\n  ID:    {uuid}\n  Title: {title}\n  Path:  routes/blog/{slug}/+page.md\n")
+    print(f"Importing:\n  ID:    {uuid}\n  Title: {title}\n  Path:  routes/blog/{folder}/+page.md\n")
     print("Continue? [Y/n] (continuing in 5s) ", end="", flush=True)
     ready, _, _ = select.select([sys.stdin], [], [], 5)
     answer = sys.stdin.readline().strip().lower() if ready else ""
@@ -239,7 +241,7 @@ class PostImporter:
 
     self.clear_s3_directory(f"{BLOG_PREFIX}/{uuid}/")
 
-    with ImageProcessingRenderer(self, uuid, first_as_cover=False) as renderer:
+    with ImageProcessingRenderer(self, uuid, first_as_cover=post_type != 'release') as renderer:
       doc = mistletoe.Document(post_data.content)
 
       post_data.content = renderer.render(doc)
@@ -255,7 +257,7 @@ class PostImporter:
         post_data['coverUrl'] = renderer.cover_image.src
         post_data['coverAlt'] = "".join(child.content for child in getattr(renderer.cover_image, "children", []) if hasattr(child, "content"))
 
-    output_file = self.write_output(post_data, slug)
+    output_file = self.write_output(post_data, folder)
 
     print(f"\nPost written to: {output_file}")
     print(f"Post slug: {slug}")
