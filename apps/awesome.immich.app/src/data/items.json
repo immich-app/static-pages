@@ -25,6 +25,11 @@
         "href": "https://github.com/giejay/Immich-Android-TV"
       },
       {
+        "title": "Immich Gallery",
+        "description": "Unofficial Apple TV Client for your Apple TV.",
+        "href": "https://github.com/mensadilabs/Immich-Gallery"
+      },
+      {
         "title": "Immich Apple TV",
         "description": "Unofficial Immich Apple TV app.",
         "href": "https://github.com/adriankraemer/Immich-Viewer"
