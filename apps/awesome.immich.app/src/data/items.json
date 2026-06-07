@@ -15,6 +15,11 @@
         "href": "https://github.com/damongolding/immich-kiosk"
       },
       {
+        "title": "immichSlides",
+        "description": "Unofficial native Apple TV, iPad, and iPhone app that turns your Immich library into a living-room slideshow, with album/person filters and PIN-protected controls.",
+        "href": "https://github.com/by331works/immichSlides"
+      },
+      {
         "title": "Immich Slides",
         "description": "Yet another Immich slideshow app — but with an actual settings UI. Configure layouts, filters, timing, and animations directly from the interface instead of Docker env files or URL parameters.",
         "href": "https://github.com/ntrampe/slides"
