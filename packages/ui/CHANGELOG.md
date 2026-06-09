@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.81.0](https://github.com/immich-app/static-pages/compare/ui-v0.80.0...ui-v0.81.0) (2026-06-09)
+
+
+### Features
+
+* as query string utility ([#560](https://github.com/immich-app/static-pages/issues/560)) ([911e965](https://github.com/immich-app/static-pages/commit/911e965f112213b545d9fdd91e36d76599907a17))
+
 ## [0.80.0](https://github.com/immich-app/static-pages/compare/ui-v0.79.3...ui-v0.80.0) (2026-06-02)
 
 
