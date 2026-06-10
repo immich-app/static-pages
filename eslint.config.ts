@@ -1,13 +1,13 @@
 import js from '@eslint/js';
+import { RulesConfig } from 'eslint';
 import prettier from 'eslint-config-prettier';
+import eslintPluginBetterTailwindcss from 'eslint-plugin-better-tailwindcss';
 import svelte from 'eslint-plugin-svelte';
+import eslintPluginUnicorn from 'eslint-plugin-unicorn';
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
-import tseslint from 'typescript-eslint';
-import eslintPluginUnicorn from 'eslint-plugin-unicorn';
-import eslintPluginBetterTailwindcss from 'eslint-plugin-better-tailwindcss';
 import { readdirSync } from 'node:fs';
-import { RulesConfig } from 'eslint';
+import tseslint from 'typescript-eslint';
 
 export default defineConfig([
   js.configs.recommended,
@@ -29,7 +29,7 @@ export default defineConfig([
       parserOptions: {
         parser: tseslint.parser,
         extraFileExtensions: ['.svelte'],
-        // tsconfigRootDir: import.meta.dirname,
+        tsconfigRootDir: import.meta.dirname,
       },
     },
     rules: {
