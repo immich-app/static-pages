@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/state';
   import { Logo } from '@immich/ui';
   import { fade } from 'svelte/transition';
 
@@ -9,6 +10,11 @@
   const { onFiles }: Props = $props();
 
   let dragStartTarget: EventTarget | null = $state(null);
+  let onPetsPage = $derived(page.url.pathname === '/projects/pets');
+  let internalDrag = false;
+
+  const onDragStart = () => (internalDrag = true);
+  const onDragEnd = () => (internalDrag = false);
 
   /** Determines whether an event should be ignored. The event will be ignored if:
    *  - The element dispatching the event is not the same as the element which the event listener is attached to
@@ -23,6 +29,9 @@
   };
 
   const onDragEnter = (e: DragEvent) => {
+    if (internalDrag && onPetsPage) {
+      return;
+    }
     if (e.dataTransfer && e.dataTransfer.types.includes('Files')) {
       dragStartTarget = e.target;
     }
@@ -36,6 +45,10 @@
 
   const onDrop = async (e: DragEvent) => {
     dragStartTarget = null;
+    if (internalDrag && onPetsPage) {
+      internalDrag = false;
+      return;
+    }
     await handleDataTransfer(e.dataTransfer);
   };
 
@@ -150,7 +163,7 @@
   };
 </script>
 
-<svelte:window onpaste={onPaste} />
+<svelte:window onpaste={onPaste} ondragstart={onDragStart} ondragend={onDragEnd} />
 
 <svelte:body {ondragenter} {ondragleave} {ondrop} />
 

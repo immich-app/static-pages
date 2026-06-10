@@ -3,18 +3,17 @@
   import type { HeaderItem } from '$common/types';
   import {
     Button,
-    commandPaletteManager,
     CommandPaletteButton,
     HStack,
-    Icon,
     IconButton,
     isExternalLink,
     Logo,
-    Text,
+    Modal,
+    ModalBody,
+    ModalFooter,
     ThemeSwitcher,
   } from '@immich/ui';
-  import { mdiMagnify, mdiMenu, mdiOpenInNew } from '@mdi/js';
-
+  import { mdiInformationOutline, mdiMenu, mdiOpenInNew } from '@mdi/js';
   type Props = {
     items?: HeaderItem[];
     onToggleSidebar?: () => void;
@@ -22,12 +21,38 @@
 
   const isActive = (path: string, options?: { prefix?: boolean }) =>
     path === page.url.pathname || (options?.prefix && page.url.pathname.startsWith(path));
-
+  let displayInstructions = $state(false);
   let { items = [], onToggleSidebar }: Props = $props();
+
+  let onPetsPage = $derived(isActive('/projects/pets'));
 </script>
 
-<nav class="flex w-full items-center justify-between p-2 md:gap-2">
-  <div class="flex place-items-center gap-2">
+{#if onPetsPage && displayInstructions}
+  <Modal title="Instructions" onClose={() => (displayInstructions = false)}>
+    <ModalBody>
+      <div class="flex list-decimal flex-col gap-2 px-8">
+        <li>Drag photos anywhere onto the page, or press the + button on the carousel to add them.</li>
+        <li>
+          Click a photo and add a box around the faces of your pets using the "Add Box" button. Drag the corners so the
+          box fits the face.
+          <img
+            src="/img/petface-example.png"
+            alt="Example of a box drawn around a pet's face"
+            class="mx-auto mt-2 w-64 rounded-lg"
+            draggable="false"
+          />
+        </li>
+        <li>If creating a new pet, choose a name, animal, breed and birthday, then select "Create Pet".</li>
+        <li>Add at least 1 pet per image and 10 images per pet, then submit your photos.</li>
+      </div>
+    </ModalBody>
+    <ModalFooter>
+      <Button shape="round" onclick={() => (displayInstructions = false)}>Ok</Button>
+    </ModalFooter>
+  </Modal>
+{/if}
+<nav class="grid w-full grid-cols-[1fr_auto_1fr] items-center p-2 md:gap-4">
+  <div class="flex place-items-center gap-2 justify-self-start">
     {#if onToggleSidebar}
       <IconButton
         shape="round"
@@ -45,8 +70,8 @@
       <Logo variant="logo" class="sm:hidden" />
     </a>
   </div>
-
-  <HStack gap={1}>
+  <div class="justify-self-center whitespace-nowrap px-4"></div>
+  <HStack gap={1} class="justify-self-end px-2">
     {#each items as item (item.href)}
       <Button
         class={item.show === 'always' ? '' : 'hidden md:flex'}
@@ -60,5 +85,15 @@
     {/each}
     <CommandPaletteButton />
     <ThemeSwitcher />
+    {#if onPetsPage}
+      <IconButton
+        shape="round"
+        color="secondary"
+        variant="ghost"
+        aria-label="Display Instructions"
+        icon={mdiInformationOutline}
+        onclick={() => (displayInstructions = true)}
+      />
+    {/if}
   </HStack>
 </nav>

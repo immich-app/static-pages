@@ -1,4 +1,4 @@
-import { plainToClass } from 'class-transformer';
+import { type ClassConstructor, plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Dataset, MetadataType } from '../../types/metadata';
 import { DatasetMetadataValidatorMap } from './validators';
@@ -19,10 +19,10 @@ export async function uploadAssetWithMetadata<D extends Dataset>(
   assetFile: File,
   metadata: MetadataType<D>,
   dataset: D,
+  writeMetadata: boolean = true,
 ) {
   const assetId = metadata.assetId;
   const fileExtension = assetFile.name.split('.').pop()?.toLowerCase();
-  const metadataName = `${assetId}-info.json`;
 
   // only tack on the file extension if it exists
   // we will have to infer extension during processing if not provided
@@ -32,7 +32,10 @@ export async function uploadAssetWithMetadata<D extends Dataset>(
   await env.IMAGE_UPLOADS.put(`datasets/${dataset}/${uploaderId}/${imageName}`, assetFile);
 
   // upload json payload to R2
-  await env.IMAGE_UPLOADS.put(`datasets/${dataset}/${uploaderId}/${metadataName}`, JSON.stringify(metadata));
+  if (writeMetadata) {
+    const metadataName = `${assetId}-info.json`;
+    await env.IMAGE_UPLOADS.put(`datasets/${dataset}/${uploaderId}/${metadataName}`, JSON.stringify(metadata));
+  }
 }
 
 export async function validateAssetWithMetadata<D extends Dataset>(
@@ -62,7 +65,7 @@ export async function validateAssetWithMetadata<D extends Dataset>(
   }
 
   // type check metadata before upload
-  const metadataValidatorClass = DatasetMetadataValidatorMap[dataset];
+  const metadataValidatorClass = DatasetMetadataValidatorMap[dataset] as ClassConstructor<MetadataType<D>>;
   const metadata = plainToClass(metadataValidatorClass, JSON.parse(formMetadata as string));
   const validationErrors = await validate(metadata, { whitelist: true, forbidNonWhitelisted: true });
   if (validationErrors.length > 0) {

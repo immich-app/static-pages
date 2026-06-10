@@ -15,7 +15,6 @@
   <AppShellHeader>
     <Header items={[]} />
   </AppShellHeader>
-
   <PageContent>
     {@render children?.()}
   </PageContent>
