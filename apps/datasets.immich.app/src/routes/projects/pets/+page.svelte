@@ -34,7 +34,13 @@
     mdiCameraOff,
     mdiCheck,
     mdiCloudUpload,
+    mdiImageFilterCenterFocus,
     mdiImageRemoveOutline,
+    mdiLock,
+    mdiLockOpenVariant,
+    mdiMagnifyMinusOutline,
+    mdiMagnifyPlusOutline,
+    //mdiPaw,
     mdiPlus,
     mdiTooltipMinusOutline,
     mdiVectorSquare,
@@ -49,7 +55,14 @@
   let selectedAssetTypeAnimal = $derived(petsUploaderManager.selectedMetadata.animal);
   let petCount = $state(0);
   let petAsset = $derived(petsUploaderManager.assets[petCount]);
-  let squareEditor = $state<{ addSquare: () => void; deleteSquare: () => void; deselectr: () => void }>();
+  let squareEditor = $state<{
+    addSquare: () => void;
+    deleteSquare: () => void;
+    deselectr: () => void;
+    zoomIn: () => void;
+    zoomOut: () => void;
+    resetView: () => void;
+  }>();
   let petImageUrl = $derived(petAsset ? URL.createObjectURL(petAsset.preview) : '');
   let activeSquare = $state(false);
   let buttonEnable = $derived(
@@ -58,6 +71,8 @@
       petsUploaderManager.selectedMetadata.age &&
       petsUploaderManager.selectedMetadata.breed,
   );
+  let panEnabled = $state(true);
+
   const createSquare = () => {
     const asset = petsUploaderManager.assets[petCount];
     if (asset) {
@@ -168,7 +183,7 @@
   <section>
     <!-- Columns -->
     <div class="my-4 grid grid-cols-1 gap-4 lg:grid-cols-[auto_1fr_minmax(280px,340px)]">
-      <Card color="secondary" class="lg:w-auto">
+      <Card color="secondary" class="h-fit lg:w-auto">
         <CardBody>
           <Stack gap={3}>
             <IconButton
@@ -188,43 +203,72 @@
               onclick={() => (displayInstructions = true)}
             />
 
-            <div data-square-control class="contents">
-              {#if activeSquare}
-                <div transition:scale={{ duration: 100 }}>
-                  <IconButton
-                    icon={mdiVectorSquareRemove}
-                    size="small"
-                    color="danger"
-                    variant="ghost"
-                    aria-label="Delete Square"
-                    onclick={() => {
-                      squareEditor?.deleteSquare();
-                    }}
-                  />
-                </div>
-              {:else}
+            {#if activeSquare}
+              <div transition:scale={{ duration: 100 }}>
                 <IconButton
-                  icon={mdiVectorSquare}
+                  icon={mdiVectorSquareRemove}
                   size="small"
-                  color="secondary"
+                  color="danger"
                   variant="ghost"
-                  aria-label="Add Square"
-                  onclick={createSquare}
+                  aria-label="Delete Square"
+                  onclick={() => {
+                    squareEditor?.deleteSquare();
+                  }}
                 />
-              {/if}
+              </div>
+            {:else}
               <IconButton
-                icon={mdiImageRemoveOutline}
+                icon={mdiVectorSquare}
                 size="small"
                 color="secondary"
                 variant="ghost"
-                aria-label="Delete Photo"
-                onclick={() => {
-                  petsUploaderManager.deselectAll();
-                  petsUploaderManager.toggleSelect(petAsset);
-                  petsUploaderManager.deleteSelected();
-                }}
+                aria-label="Add Square"
+                onclick={createSquare}
               />
-            </div>
+            {/if}
+            <IconButton
+              icon={mdiImageRemoveOutline}
+              size="small"
+              color="secondary"
+              variant="ghost"
+              aria-label="Delete Photo"
+              onclick={() => {
+                petsUploaderManager.deselectAll();
+                petsUploaderManager.toggleSelect(petAsset);
+                petsUploaderManager.deleteSelected();
+              }}
+            />
+            <IconButton
+              icon={mdiMagnifyPlusOutline}
+              size="small"
+              color="secondary"
+              variant="ghost"
+              aria-label="Zoom in"
+              onclick={() => squareEditor?.zoomIn()}
+            />
+            <IconButton
+              icon={mdiMagnifyMinusOutline}
+              size="small"
+              color="secondary"
+              variant="ghost"
+              aria-label="Zoom out"
+              onclick={() => squareEditor?.zoomOut()}
+            />
+            <IconButton
+              icon={mdiImageFilterCenterFocus}
+              size="small"
+              color="secondary"
+              variant="ghost"
+              aria-label="Center image"
+              onclick={() => squareEditor?.resetView()}
+            />
+            <IconButton
+              icon={panEnabled ? mdiLockOpenVariant : mdiLock}
+              size="small"
+              color={panEnabled ? 'primary' : 'secondary'}
+              aria-label={panEnabled ? 'Lock image dragging' : 'Unlock image dragging'}
+              onclick={() => (panEnabled = !panEnabled)}
+            />
           </Stack>
         </CardBody>
       </Card>
@@ -239,6 +283,7 @@
                   src={petImageUrl}
                   alt={petAsset.name}
                   boxes={petAsset.boxes}
+                  bind:panEnabled
                   onChange={(boxes) => petsUploaderManager.setBoxes(petAsset.metadata.assetId, boxes)}
                   onActiveChange={(active) => (activeSquare = active)}
                 />
@@ -291,12 +336,17 @@
                       <Icon icon={mdiCheck} class="size-3 text-light" />
                     </div>
                   {/if}
+
                   <img
                     src={URL.createObjectURL(asset.preview)}
                     alt={asset.name}
                     class="size-20 rounded-sm object-cover"
-                    loading="lazy"
+                    loading="eager"
                     draggable="false"
+                    onerror={() => {
+                      toastManager.danger(`This file couldn't be displayed and was removed.`);
+                      petsUploaderManager.deleteById(asset.metadata.assetId!);
+                    }}
                   />
                 </button>
               {/each}

@@ -5,9 +5,12 @@ packages:
 
 dedupePeerDependents: true
 
+ignoredOptionalDependencies:
+  - canvas
+  - jsdom
+
 allowBuilds:
   '@tailwindcss/oxide': true
-  canvas: true
   cpu-features: false
   esbuild: true
   exifreader: false

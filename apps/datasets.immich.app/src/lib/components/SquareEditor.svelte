@@ -1,13 +1,5 @@
 <script lang="ts">
   import type { squareBox } from '$lib/pets-uploader-manager.svelte';
-  import { IconButton } from '@immich/ui';
-  import {
-    mdiImageFilterCenterFocus,
-    mdiLock,
-    mdiLockOpenVariant,
-    mdiMagnifyMinusOutline,
-    mdiMagnifyPlusOutline,
-  } from '@mdi/js';
   import { Canvas, type FabricObject, InteractiveFabricObject, Rect } from 'fabric';
   import { onMount } from 'svelte';
 
@@ -15,11 +7,12 @@
     src: string;
     alt?: string;
     boxes?: squareBox[];
+    panEnabled?: boolean;
     onChange?: (boxes: squareBox[]) => void;
     onActiveChange?: (active: boolean) => void;
   };
 
-  let { src, alt = '', boxes = [], onChange, onActiveChange }: Props = $props();
+  let { src, alt = '', boxes = [], panEnabled = $bindable(true), onChange, onActiveChange }: Props = $props();
 
   let rootEl = $state<HTMLDivElement>();
   let imgEl = $state<HTMLImageElement>();
@@ -30,7 +23,6 @@
   let panY = $state(26);
   const MIN_ZOOM = 0.25;
   const MAX_ZOOM = 6;
-  let panEnabled = $state(true);
   let panning = false;
   let panOrigin = { x: 0, y: 0, panX: 0, panY: 0 };
   let lastWidth = 0;
@@ -227,18 +219,26 @@
     zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, factor);
   };
 
-  const resetView = () => {
+  export function zoomIn() {
+    zoomFromCenter(1.2);
+  }
+
+  export function zoomOut() {
+    zoomFromCenter(1 / 1.2);
+  }
+
+  export function resetView() {
     zoom = 0.9;
     panX = 0;
     panY = 26;
-  };
+  }
 
-  const togglePan = () => {
-    panEnabled = !panEnabled;
+  // keep the Fabric cursor in sync when the parent toggles the pan lock
+  $effect(() => {
     if (canvas) {
       canvas.defaultCursor = panEnabled ? 'grab' : 'default';
     }
-  };
+  });
 
   const onPanMove = (event: PointerEvent) => {
     if (!panning) {
@@ -356,36 +356,5 @@
       draggable="false"
     />
     <canvas bind:this={canvasEl}></canvas>
-  </div>
-
-  <div class="absolute inset-e-2 top-2 z-10 flex flex-col gap-1">
-    <IconButton
-      icon={mdiMagnifyPlusOutline}
-      size="small"
-      color="secondary"
-      aria-label="Zoom in"
-      onclick={() => zoomFromCenter(1.2)}
-    />
-    <IconButton
-      icon={mdiMagnifyMinusOutline}
-      size="small"
-      color="secondary"
-      aria-label="Zoom out"
-      onclick={() => zoomFromCenter(1 / 1.2)}
-    />
-    <IconButton
-      icon={mdiImageFilterCenterFocus}
-      size="small"
-      color="secondary"
-      aria-label="Center image"
-      onclick={resetView}
-    />
-    <IconButton
-      icon={panEnabled ? mdiLockOpenVariant : mdiLock}
-      size="small"
-      color={panEnabled ? 'primary' : 'secondary'}
-      aria-label={panEnabled ? 'Lock image dragging' : 'Unlock image dragging'}
-      onclick={togglePan}
-    />
   </div>
 </div>
