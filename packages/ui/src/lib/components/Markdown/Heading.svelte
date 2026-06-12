@@ -18,13 +18,13 @@
         return { size: 'giant', tag: 'h1', class: 'mt-8 mb-3' };
       }
       case 2: {
-        return { size: 'large', tag: 'h2', class: 'mt-6 mb-3' };
+        return { size: 'large', tag: 'h2', class: 'mt-6 mb-2' };
       }
       case 3: {
-        return { size: 'medium', tag: 'h3', class: 'mt-4 mb-3' };
+        return { size: 'medium', tag: 'h3', class: 'mt-6 mb-2' };
       }
       case 4: {
-        return { size: 'small', tag: 'h4', class: 'my-3' };
+        return { size: 'small', tag: 'h4', class: 'mt-6 mb-2' };
       }
       case 5: {
         return { size: 'tiny', tag: 'h5', class: 'my-3' };
