@@ -39,10 +39,7 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.STATIC_BUCKET_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.STATIC_BUCKET_KEY_SECRET }}
           R2_PUBLIC_URL: 'https://static.immich.cloud'
-        run: uv run --script import-post.py
-
-      - name: Format
-        run: pnpm --filter root.immich.app run format:fix
+        run: uv run --script import-post.py "$OUTLINE_POST_URL"
 
       - name: Create PR
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
