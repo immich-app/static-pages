@@ -1,6 +1,6 @@
 import { MarkedExtension, Token, Tokens } from 'marked';
 import { emojify } from 'node-emoji';
-import { createAttributes, escapeSvelteCode, getIdFromText } from './utility.js';
+import { createAttributes, escapeHtml, escapeSvelteCode, getIdFromText } from './utility.js';
 
 const ALERT_VARIANTS = ['note', 'tip', 'important', 'warning', 'caution', 'info', 'success', 'danger'] as const;
 
@@ -23,6 +23,8 @@ const renderAlert = (
   title: string | undefined,
   tokens: Token[],
 ) => `<Markdown.Alert${createAttributes({ variant, title })}>${parser.parse(tokens)}</Markdown.Alert>\n`;
+
+const normalizeText = (text: string) => escapeHtml(emojify(text));
 
 export const markedSvelte = (): MarkedExtension => ({
   gfm: true,
@@ -147,7 +149,7 @@ export const markedSvelte = (): MarkedExtension => ({
 
     text(token) {
       if (token.type === 'text') {
-        return token.tokens ? this.parser.parseInline(token.tokens) : emojify(token.text);
+        return token.tokens ? this.parser.parseInline(token.tokens) : normalizeText(token.text);
       }
 
       return token.text;
