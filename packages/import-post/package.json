@@ -1,0 +1,39 @@
+{
+  "name": "@immich/import-post",
+  "description": "Import Outline documents into the blog, optimizing media for CDN/web delivery",
+  "version": "0.1.0",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/immich-app/static-pages.git",
+    "directory": "packages/import-post"
+  },
+  "type": "module",
+  "bin": {
+    "import-post": "./src/index.ts"
+  },
+  "scripts": {
+    "import": "tsx src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.738.0",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "sharp": "^0.34.2",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.0.0",
+    "yaml": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^25.9.1",
+    "tsx": "^4.20.0",
+    "typescript": "^6.0.0",
+    "vitest": "^4.1.0"
+  }
+}

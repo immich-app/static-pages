@@ -23,11 +23,25 @@ jobs:
           persist-credentials: false
           ref: 'main'
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+      - name: Setup Mise
+        uses: immich-app/devtools/actions/use-mise@7b8610a904d57da241e4ddba17fa62b62b15aed4 # use-mise-action-v2.0.2
+        with:
+          github_token: ${{ steps.generate-token.outputs.token }}
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
+      - name: Get pnpm store directory
+        id: pnpm-store
+        run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm store
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ${{ steps.pnpm-store.outputs.path }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
 
       - name: Import post
         id: import
@@ -39,7 +53,7 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.STATIC_BUCKET_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.STATIC_BUCKET_KEY_SECRET }}
           R2_PUBLIC_URL: 'https://static.immich.cloud'
-        run: uv run --script import-post.py "$OUTLINE_POST_URL"
+        run: mise import-post "$OUTLINE_POST_URL"
 
       - name: Create PR
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1

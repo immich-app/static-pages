@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "declaration": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": false,
+    "strict": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2023",
+    "outDir": "./dist",
+    "types": ["node"],
+    "rootDir": "./src"
+  },
+  "include": ["src"],
+  "exclude": ["dist", "**/*.spec.ts", "vitest.config.ts"]
+}
