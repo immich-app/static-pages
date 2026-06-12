@@ -12,6 +12,15 @@ export const getIdFromText = (text: string) => {
   return id;
 };
 
+export const escapeHtml = (text: string) => {
+  return text
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+};
+
 export const escapeSvelteCode = (text: string) => {
   let escaped = text;
 

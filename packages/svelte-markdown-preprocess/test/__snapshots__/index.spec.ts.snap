@@ -200,6 +200,16 @@ exports[`markup > should render 'list.md' correctly 1`] = `
 }
 `;
 
+exports[`markup > should render 'p.md' correctly 1`] = `
+{
+  "code": "<script>
+  import { Markdown } from '@immich/ui';
+</script>
+<Markdown.Paragraph>Can I write something with a <placeholder text example> example?</Markdown.Paragraph>
+",
+}
+`;
+
 exports[`markup > should render 'snippets.md' correctly 1`] = `
 {
   "code": "<script>
