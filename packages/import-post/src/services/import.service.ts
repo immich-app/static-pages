@@ -118,8 +118,6 @@ export class ImportService {
 
       console.log(`Processing attachment: ${attachmentId} (${originalContentType})`);
 
-      const hash = this.systemRepository.md5(buffer);
-
       const {
         buffer: body,
         extension,
@@ -127,6 +125,8 @@ export class ImportService {
       } = await (attachment.type === 'video'
         ? this.mediaRepository.optimizeVideo(buffer)
         : this.mediaRepository.optimizeImage(buffer));
+
+      const hash = this.systemRepository.md5(body);
 
       const filename = `${hash}.${extension}`;
 
