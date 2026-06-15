@@ -65,6 +65,12 @@ depends = [ { task = "watch" }, { task = "open", args = ["{{usage.app}}"] } ]
 [tasks.watch]
 run = "pnpm --filter @immich/ui --filter @immich/svelte-markdown-preprocess --parallel run watch"
 
+[tasks.import-post]
+dir = "{{config_root}}"
+run = "pnpm --filter @immich/import-post run import"
+env = { _.file = ".env" }
+
+
 [tasks.open]
 usage = '''
 arg "<app>" help="Target app"
