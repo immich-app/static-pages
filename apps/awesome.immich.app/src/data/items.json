@@ -50,6 +50,11 @@
         "href": "https://github.com/nicx17/mimick"
       },
       {
+        "title": "Harbour-Immich",
+        "description": "Unofficial Immich Sailfish OS application.",
+        "href": "https://github.com/mezmerize/harbour-immich"
+      },
+      {
         "title": "Immich Companion",
         "description": "Browser extension that adds right-click save to Immich, CLIP-powered search from the toolbar, optional new tab photo memories, and inline search results that show your photos alongside Google/DuckDuckGo results.",
         "href": "https://github.com/bjoernch/immich-companion"
