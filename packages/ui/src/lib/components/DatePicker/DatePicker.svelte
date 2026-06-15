@@ -16,7 +16,7 @@
 
   // Convert DateTime to DateValue
   const toDateValue = (dateTime?: DateTime): DateValue | undefined => {
-    if (!dateTime) {
+    if (!dateTime?.isValid) {
       return;
     }
     return new CalendarDate(dateTime.year, dateTime.month, dateTime.day);
