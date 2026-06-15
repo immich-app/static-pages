@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { squareBox } from '$lib/pets-uploader-manager.svelte';
   import { Canvas, type FabricObject, InteractiveFabricObject, Rect } from 'fabric';
-  import { onMount } from 'svelte';
+  import { onMount, type Snippet } from 'svelte';
 
   type Props = {
     src: string;
@@ -10,13 +10,15 @@
     panEnabled?: boolean;
     onChange?: (boxes: squareBox[]) => void;
     onActiveChange?: (active: boolean) => void;
+    follow?: Snippet<[squareBox]>;
   };
 
-  let { src, alt = '', boxes = [], panEnabled = $bindable(true), onChange, onActiveChange }: Props = $props();
+  let { src, alt = '', boxes = [], panEnabled = $bindable(true), onChange, onActiveChange, follow }: Props = $props();
 
   let rootEl = $state<HTMLDivElement>();
   let imgEl = $state<HTMLImageElement>();
   let canvasEl = $state<HTMLCanvasElement>();
+  let followEl = $state<HTMLDivElement>();
   let canvas: Canvas | undefined;
   let zoom = $state(0.9);
   let panX = $state(1);
@@ -27,6 +29,11 @@
   let panOrigin = { x: 0, y: 0, panX: 0, panY: 0 };
   let lastWidth = 0;
   let lastHeight = 0;
+
+  let activeBox = $state<squareBox>({ left: 0, top: 0, width: 0, height: 0 });
+  const petIds = new WeakMap<FabricObject, string | undefined>();
+
+  const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
   const configureControlStyle = () => {
     InteractiveFabricObject.ownDefaults = {
@@ -104,11 +111,16 @@
       top: object.top / ch,
       width: (object.width * object.scaleX) / cw,
       height: (object.height * object.scaleY) / ch,
+      petId: petIds.get(object),
     }));
   };
 
   const emitChange = () => onChange?.(snapshot());
-  const syncActive = () => onActiveChange?.(!!canvas?.getActiveObject());
+  const syncActive = () => {
+    onActiveChange?.(!!canvas?.getActiveObject());
+    positionFollow();
+  };
+
   const loadBoxes = (source: squareBox[]) => {
     if (!canvas) {
       return;
@@ -117,7 +129,9 @@
     const ch = canvas.height;
     canvas.remove(...canvas.getObjects());
     for (const box of source) {
-      canvas.add(makeRect(box.left * cw, box.top * ch, box.width * cw, box.height * ch));
+      const rect = makeRect(box.left * cw, box.top * ch, box.width * cw, box.height * ch);
+      petIds.set(rect, box.petId);
+      canvas.add(rect);
     }
     canvas.discardActiveObject();
     canvas.requestRenderAll();
@@ -164,6 +178,7 @@
     }
     const size = Math.min(120, canvas.width, canvas.height);
     const rect = makeRect((canvas.width - size) / 2, (canvas.height - size) / 2, size, size);
+    petIds.set(rect, undefined);
     canvas.add(rect);
     canvas.setActiveObject(rect);
     constrainToCanvas(rect);
@@ -191,6 +206,7 @@
     if (canvas?.getActiveObject()) {
       canvas.discardActiveObject();
       canvas.requestRenderAll();
+      syncActive();
     }
   }
 
@@ -233,7 +249,6 @@
     panY = 26;
   }
 
-  // keep the Fabric cursor in sync when the parent toggles the pan lock
   $effect(() => {
     if (canvas) {
       canvas.defaultCursor = panEnabled ? 'grab' : 'default';
@@ -285,6 +300,91 @@
     }
     deselectr();
   };
+  const FOLLOW_GAP = 15;
+
+  function positionFollow() {
+    if (!canvas || !followEl) {
+      return;
+    }
+    const active = canvas.getActiveObject();
+    if (!active) {
+      followEl.style.display = 'none';
+      return;
+    }
+    followEl.style.display = '';
+
+    const cw = canvas.width;
+    const ch = canvas.height;
+    const gap = FOLLOW_GAP;
+    const padding = active.padding ?? 0;
+    const rawBox = active.getBoundingRect();
+    const box = {
+      left: rawBox.left - padding,
+      top: rawBox.top - padding,
+      width: rawBox.width + padding * 2,
+      height: rawBox.height + padding * 2,
+    };
+    const panelWidth = followEl.offsetWidth;
+    const panelHeight = followEl.offsetHeight;
+
+    const clampTop = (top: number) => clamp(top, gap, Math.max(gap, ch - panelHeight - gap));
+    const clampLeft = (left: number) => clamp(left, gap, Math.max(gap, cw - panelWidth - gap));
+
+    const overlapArea = (position: { top: number; left: number }) => {
+      const panelRight = position.left + panelWidth;
+      const panelBottom = position.top + panelHeight;
+      const boxRight = box.left + box.width;
+      const boxBottom = box.top + box.height;
+
+      const overlapX = Math.max(0, Math.min(panelRight, boxRight) - Math.max(position.left, box.left));
+      const overlapY = Math.max(0, Math.min(panelBottom, boxBottom) - Math.max(position.top, box.top));
+      return overlapX * overlapY;
+    };
+
+    const boxBottom = box.top + box.height;
+    const boxRight = box.left + box.width;
+
+    const positions = [
+      { top: clampTop(boxBottom + gap), left: clampLeft(box.left) },
+      { top: clampTop(box.top - panelHeight - gap), left: clampLeft(box.left) },
+      { top: clampTop(box.top), left: clampLeft(boxRight + gap) },
+      { top: clampTop(box.top), left: clampLeft(box.left - panelWidth - gap) },
+    ];
+
+    let bestPosition = positions[0];
+    let leastOverlap = Infinity;
+
+    for (const position of positions) {
+      const overlap = overlapArea(position);
+      if (overlap < leastOverlap) {
+        leastOverlap = overlap;
+        bestPosition = position;
+        if (overlap === 0) {
+          break;
+        }
+      }
+    }
+
+    followEl.style.top = `${bestPosition.top}px`;
+    followEl.style.left = `${bestPosition.left}px`;
+    activeBox = {
+      left: box.left / cw,
+      top: box.top / ch,
+      width: box.width / cw,
+      height: box.height / ch,
+      petId: petIds.get(active),
+    };
+  }
+
+  export function assignActivePet(petId: string | undefined) {
+    const active = canvas?.getActiveObject();
+    if (!active) {
+      return;
+    }
+    petIds.set(active, petId);
+    positionFollow();
+    emitChange();
+  }
 
   onMount(() => {
     if (!canvasEl) {
@@ -302,10 +402,12 @@
     canvas.on('selection:cleared', syncActive);
     canvas.on('object:moving', (event) => {
       constrainToCanvas(event.target);
+      positionFollow();
       emitChange();
     });
     canvas.on('object:scaling', (event) => {
       constrainToCanvas(event.target);
+      positionFollow();
       emitChange();
     });
     canvas.on('object:modified', emitChange);
@@ -355,6 +457,17 @@
       class="block max-h-[60dvh] w-auto select-none"
       draggable="false"
     />
-    <canvas bind:this={canvasEl}></canvas>
+    <canvas bind:this={canvasEl}> </canvas>
+
+    {#if follow}
+      <div
+        bind:this={followEl}
+        data-square-control
+        class="absolute z-10 transition-[top,left] duration-200 ease-out"
+        style="display: none;"
+      >
+        {@render follow(activeBox)}
+      </div>
+    {/if}
   </div>
 </div>

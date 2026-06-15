@@ -16,7 +16,6 @@
     Button,
     Card,
     CardBody,
-    CardFooter,
     CardHeader,
     CardTitle,
     Field,
@@ -42,14 +41,13 @@
     mdiMagnifyPlusOutline,
     //mdiPaw,
     mdiPlus,
-    mdiTooltipMinusOutline,
+    mdiTrashCanOutline,
     mdiVectorSquare,
     mdiVectorSquareRemove,
   } from '@mdi/js';
-  import { fade, scale } from 'svelte/transition';
+  import { scale } from 'svelte/transition';
 
   //let shiftHeld = $state(false);
-  let displayInstructions = $state(true);
   //let disabledMetadataEditing = $derived(petsUploaderManager.selection.length === 0);
   let selectedAssetTypeAge = $derived(petsUploaderManager.selectedMetadata.age);
   let selectedAssetTypeAnimal = $derived(petsUploaderManager.selectedMetadata.animal);
@@ -62,6 +60,7 @@
     zoomIn: () => void;
     zoomOut: () => void;
     resetView: () => void;
+    assignActivePet: (petId: string | undefined) => void;
   }>();
   let petImageUrl = $derived(petAsset ? URL.createObjectURL(petAsset.preview) : '');
   let activeSquare = $state(false);
@@ -141,30 +140,6 @@
 
 <DragAndDropUpload onFiles={onDragAndDropUpload} />
 
-<div class="mb-4">
-  <Heading tag="h1" size="giant">Pets Dataset</Heading>
-  <Text color="muted">Contribute to the Pets Dataset (Minimum requirement of 10-15 images per pet)</Text>
-</div>
-
-{#if displayInstructions}
-  <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-    transition:fade|global={{ duration: 150 }}
-  >
-    <Card color="secondary" class="w-full max-w-lg">
-      <CardHeader>
-        <div class="flex justify-between">
-          <CardTitle>Instructions</CardTitle>
-        </div>
-      </CardHeader>
-      <CardBody>hi</CardBody>
-      <CardFooter>
-        <Button color="primary" onclick={() => (displayInstructions = false)}>Ok</Button>
-      </CardFooter>
-    </Card>
-  </div>
-{/if}
-
 {#if petsUploaderManager.assets.length === 0}
   <button onclick={() => petsUploaderManager.openFilePicker()} class="w-full">
     <Card color="secondary">
@@ -186,89 +161,76 @@
       <Card color="secondary" class="h-fit lg:w-auto">
         <CardBody>
           <Stack gap={3}>
-            <IconButton
-              icon={mdiPlus}
-              size="small"
-              color="secondary"
-              variant="ghost"
-              aria-label="Add More"
+            <Button
               onclick={() => petsUploaderManager.openFilePicker()}
-            />
-            <IconButton
-              icon={mdiTooltipMinusOutline}
+              leadingIcon={mdiPlus}
               size="small"
-              color="secondary"
-              variant="ghost"
-              aria-label="Display Instructions"
-              onclick={() => (displayInstructions = true)}
-            />
+              variant="outline"
+              aria-label="Add More"
+              >Add More
+            </Button>
 
             {#if activeSquare}
               <div transition:scale={{ duration: 100 }}>
-                <IconButton
-                  icon={mdiVectorSquareRemove}
+                <Button
+                  leadingIcon={mdiVectorSquareRemove}
                   size="small"
                   color="danger"
-                  variant="ghost"
+                  variant="outline"
                   aria-label="Delete Square"
                   onclick={() => {
                     squareEditor?.deleteSquare();
                   }}
-                />
+                  >Delete Square
+                </Button>
               </div>
             {:else}
-              <IconButton
-                icon={mdiVectorSquare}
+              <Button
+                leadingIcon={mdiVectorSquare}
                 size="small"
-                color="secondary"
-                variant="ghost"
+                variant="outline"
                 aria-label="Add Square"
                 onclick={createSquare}
-              />
+                >Add Square
+              </Button>
             {/if}
-            <IconButton
-              icon={mdiImageRemoveOutline}
+            <Button
+              leadingIcon={mdiImageRemoveOutline}
               size="small"
-              color="secondary"
-              variant="ghost"
+              variant="outline"
               aria-label="Delete Photo"
+              color="danger"
               onclick={() => {
                 petsUploaderManager.deselectAll();
                 petsUploaderManager.toggleSelect(petAsset);
                 petsUploaderManager.deleteSelected();
               }}
-            />
-            <IconButton
-              icon={mdiMagnifyPlusOutline}
+              >Delete Photo
+            </Button>
+            <Button
+              leadingIcon={mdiMagnifyPlusOutline}
               size="small"
-              color="secondary"
-              variant="ghost"
+              variant="outline"
               aria-label="Zoom in"
               onclick={() => squareEditor?.zoomIn()}
-            />
-            <IconButton
-              icon={mdiMagnifyMinusOutline}
+              >Zoom In
+            </Button>
+            <Button
+              leadingIcon={mdiMagnifyMinusOutline}
               size="small"
-              color="secondary"
-              variant="ghost"
+              variant="outline"
               aria-label="Zoom out"
               onclick={() => squareEditor?.zoomOut()}
-            />
-            <IconButton
-              icon={mdiImageFilterCenterFocus}
+              >Zoom Out
+            </Button>
+            <Button
+              leadingIcon={mdiImageFilterCenterFocus}
               size="small"
-              color="secondary"
-              variant="ghost"
+              variant="outline"
               aria-label="Center image"
               onclick={() => squareEditor?.resetView()}
-            />
-            <IconButton
-              icon={panEnabled ? mdiLockOpenVariant : mdiLock}
-              size="small"
-              color={panEnabled ? 'primary' : 'secondary'}
-              aria-label={panEnabled ? 'Lock image dragging' : 'Unlock image dragging'}
-              onclick={() => (panEnabled = !panEnabled)}
-            />
+              >Center Image
+            </Button>
           </Stack>
         </CardBody>
       </Card>
@@ -276,7 +238,7 @@
       <Card color="secondary">
         <CardBody>
           <Stack gap={4}>
-            <div class="flex min-h-[50dvh] items-center justify-center overflow-clip border-8 bg-neutral-900/10">
+            <div class="relative flex min-h-auto items-center justify-center overflow-clip border-8 bg-neutral-900/10">
               {#if petAsset}
                 <SquareEditor
                   bind:this={squareEditor}
@@ -285,8 +247,114 @@
                   boxes={petAsset.boxes}
                   bind:panEnabled
                   onChange={(boxes) => petsUploaderManager.setBoxes(petAsset.metadata.assetId, boxes)}
-                  onActiveChange={(active) => (activeSquare = active)}
-                />
+                  onActiveChange={(active) => {
+                    activeSquare = active;
+                    if (active && petAsset) {
+                      petsUploaderManager.deselectAll();
+                      petsUploaderManager.toggleSelect(petAsset);
+                    }
+                  }}
+                >
+                  {#snippet follow(box)}
+                    {@const assignedPet = petsUploaderManager.getPet(box.petId)}
+                    <Card color="secondary" class="w-64 shadow-lg">
+                      <CardBody>
+                        {#if assignedPet}
+                          <Stack gap={2}>
+                            <Text class="font-medium">{assignedPet.name}</Text>
+                            <Text size="small" color="secondary"
+                              >{assignedPet.animal} · {assignedPet.breed} · {AssetTypeAgeNames[
+                                assignedPet.age as AssetTypeAge
+                              ]}</Text
+                            >
+                            <Button
+                              size="small"
+                              variant="outline"
+                              color="danger"
+                              class="w-full"
+                              onclick={() => squareEditor?.assignActivePet(undefined)}>Unassign</Button
+                            >
+                          </Stack>
+                        {:else}
+                          <Stack gap={2}>
+                            <Field label="Name">
+                              <Input
+                                placeholder=""
+                                onchange={(e) =>
+                                  petsUploaderManager.updateSelectedMetadata(
+                                    'name',
+                                    (e?.target as HTMLInputElement).value,
+                                  )}
+                                bind:value={petsUploaderManager.selectedMetadata.name}
+                              />
+                            </Field>
+                            <Field label="Age">
+                              <Select
+                                onChange={(e) => petsUploaderManager.updateSelectedMetadata('age', e)}
+                                options={Object.entries(AssetTypeAgeNames).map(([value, label]) => ({
+                                  value: value as AssetTypeAge,
+                                  label,
+                                }))}
+                                bind:value={selectedAssetTypeAge}
+                              />
+                            </Field>
+                            <Field label="Animal">
+                              <Select
+                                onChange={(e) => {
+                                  petsUploaderManager.updateSelectedMetadata('animal', e);
+                                  petsUploaderManager.updateSelectedMetadata('breed', undefined);
+                                }}
+                                options={Object.entries(AssetTypeAnimalNames).map(([value, label]) => ({
+                                  value: value as AssetTypeAnimal,
+                                  label,
+                                }))}
+                                bind:value={selectedAssetTypeAnimal}
+                              />
+                            </Field>
+                            <Field label="Breed" disabled={!selectedAssetTypeAnimal}>
+                              <Select
+                                onChange={(e) => petsUploaderManager.updateSelectedMetadata('breed', e)}
+                                options={(selectedAssetTypeAnimal
+                                  ? AssetTypeBreedNames[selectedAssetTypeAnimal]
+                                  : []
+                                ).map((breed) => ({
+                                  value: breed,
+                                  label: breed,
+                                }))}
+                                bind:value={petsUploaderManager.selectedMetadata.breed}
+                              />
+                            </Field>
+                            <Button
+                              size="small"
+                              leadingIcon={mdiPlus}
+                              class="w-full"
+                              aria-label="Create Pet"
+                              disabled={!buttonEnable}
+                              onclick={() => {
+                                const pet = petsUploaderManager.createPet({
+                                  name: petsUploaderManager.selectedMetadata.name ?? '',
+                                  age: petsUploaderManager.selectedMetadata.age ?? '',
+                                  animal: petsUploaderManager.selectedMetadata.animal ?? '',
+                                  breed: petsUploaderManager.selectedMetadata.breed ?? '',
+                                });
+                                squareEditor?.assignActivePet(pet.id);
+                              }}>Create Pet</Button
+                            >
+                          </Stack>
+                        {/if}
+                      </CardBody>
+                    </Card>
+                  {/snippet}
+                </SquareEditor>
+                <div class="absolute top-2 right-2 z-10">
+                  <IconButton
+                    icon={panEnabled ? mdiLockOpenVariant : mdiLock}
+                    size="small"
+                    color={panEnabled ? 'secondary' : 'danger'}
+                    aria-label={panEnabled ? 'Switch to draw mode' : 'Switch to pan mode'}
+                    onclick={() => (panEnabled = !panEnabled)}
+                  />
+                </div>
               {:else}
                 <div class="flex-flex col items-center gap-2 p-8 text-center">
                   <Icon icon={mdiCameraOff} class="size-8" />
@@ -294,31 +362,6 @@
                 </div>
               {/if}
             </div>
-
-            <!-- {#if petAsset}
-              <div transition:scale={{ duration: 100 }} class="flex items-center justify-center"></div>
-              <HStack gap={4} class="flex-wrap justify-center">
-                <Text size="small" color={petAsset.metadata.name ? 'primary' : 'danger'}>
-                  <Icon icon={mdiRename} class="mb-0.5 inline-block size-4 align-middle" />
-                  {petAsset.metadata.name || 'Missing Name'}
-                </Text>
-
-                <Text size="small" color={petAsset.metadata.age ? 'primary' : 'danger'}>
-                  <Icon icon={mdiClock} class="mb-0.5 inline-block size-4 align-middle" />
-                  {petAsset.metadata.age || 'Missing Age'}
-                </Text>
-
-                <Text size="small" color={petAsset.metadata.animal ? 'primary' : 'danger'}>
-                  <Icon icon={mdiPaw} class="mb-0.5 inline-block size-4 align-middle" />
-                  {petAsset.metadata.animal || 'Missing Animal'}
-                </Text>
-
-                <Text size="small" color={petAsset.metadata.breed ? 'primary' : 'danger'}>
-                  <Icon icon={mdiHelp} class="mb-0.5 inline-block size-4 align-middle" />
-                  {petAsset.metadata.breed || 'Missing Breed'}
-                </Text>
-              </HStack>
-            {/if} -->
 
             <div class="flex gap-2 overflow-x-auto pb-2 select-none">
               {#each petsUploaderManager.assets as asset, i (asset.metadata.assetId)}
@@ -376,65 +419,42 @@
       </Card>
       <Card color="secondary">
         <CardHeader>
-          <CardTitle>Pet Information</CardTitle>
+          <CardTitle>Pets</CardTitle>
         </CardHeader>
         <CardBody>
-          <Stack gap={4}>
-            <Field label="Name" disabled={!activeSquare}>
-              <Input
-                placeholder=""
-                onchange={(e) =>
-                  petsUploaderManager.updateSelectedMetadata('name', (e?.target as HTMLInputElement).value)}
-                bind:value={petsUploaderManager.selectedMetadata.name}
-              />
-            </Field>
-            <Field label="Age" disabled={!activeSquare}>
-              <Select
-                onChange={(e) => petsUploaderManager.updateSelectedMetadata('age', e)}
-                options={Object.entries(AssetTypeAgeNames).map(([value, label]) => ({
-                  value: value as AssetTypeAge,
-                  label,
-                }))}
-                bind:value={selectedAssetTypeAge}
-              />
-            </Field>
-            <Field label="Animal" disabled={!activeSquare}>
-              <Select
-                onChange={(e) => {
-                  petsUploaderManager.updateSelectedMetadata('animal', e);
-                  petsUploaderManager.updateSelectedMetadata('breed', undefined);
-                }}
-                options={Object.entries(AssetTypeAnimalNames).map(([value, label]) => ({
-                  value: value as AssetTypeAnimal,
-                  label,
-                }))}
-                bind:value={selectedAssetTypeAnimal}
-              />
-            </Field>
-            <Field label="Breed" disabled={!activeSquare || !selectedAssetTypeAnimal}>
-              <Select
-                onChange={(e) => petsUploaderManager.updateSelectedMetadata('breed', e)}
-                options={(selectedAssetTypeAnimal ? AssetTypeBreedNames[selectedAssetTypeAnimal] : []).map((breed) => ({
-                  value: breed,
-                  label: breed,
-                }))}
-                bind:value={petsUploaderManager.selectedMetadata.breed}
-              />
-            </Field>
-            <Button
-              onclick={() => {
-                if (petAsset) {
-                  petsUploaderManager.deselectAll();
-                  petsUploaderManager.toggleSelect(petAsset);
-                }
-              }}
-              leadingIcon={mdiPlus}
-              class="light w-35"
-              size="small"
-              aria-label="Create Pet"
-              disabled={!buttonEnable}
-              >Create Pet
-            </Button>
+          <Stack gap={2}>
+            {#each petsUploaderManager.pets as pet (pet.id)}
+              <div
+                data-square-control
+                class="flex items-center justify-between gap-2 rounded-lg p-2 hover:bg-primary/10"
+              >
+                <button
+                  type="button"
+                  class="min-w-0 flex-1 text-left"
+                  aria-label="Assign pet to selected box"
+                  onclick={() => {
+                    petsUploaderManager.applyPet(pet);
+                    squareEditor?.assignActivePet(pet.id);
+                  }}
+                >
+                  <Text class="truncate font-medium">{pet.name || 'Unnamed pet'}</Text>
+                  <Text size="small" color="secondary" class="truncate"
+                    >{pet.animal} · {pet.breed} · {AssetTypeAgeNames[pet.age as AssetTypeAge]}</Text
+                  >
+                </button>
+                <IconButton
+                  size="small"
+                  variant="ghost"
+                  color="danger"
+                  shape="round"
+                  icon={mdiTrashCanOutline}
+                  aria-label="Delete pet"
+                  onclick={() => petsUploaderManager.deletePet(pet.id)}
+                />
+              </div>
+            {:else}
+              <Text size="small" color="secondary">No pets yet. Select a box and create one.</Text>
+            {/each}
           </Stack>
         </CardBody>
       </Card>

@@ -3,18 +3,21 @@
   import type { HeaderItem } from '$common/types';
   import {
     Button,
-    commandPaletteManager,
+    Card,
+    CardBody,
+    CardFooter,
+    CardHeader,
+    CardTitle,
     CommandPaletteButton,
+    Heading,
     HStack,
-    Icon,
     IconButton,
     isExternalLink,
     Logo,
-    Text,
     ThemeSwitcher,
   } from '@immich/ui';
-  import { mdiMagnify, mdiMenu, mdiOpenInNew } from '@mdi/js';
-
+  import { mdiHelp, mdiMenu, mdiOpenInNew } from '@mdi/js';
+  import { fade } from 'svelte/transition';
   type Props = {
     items?: HeaderItem[];
     onToggleSidebar?: () => void;
@@ -22,12 +25,30 @@
 
   const isActive = (path: string, options?: { prefix?: boolean }) =>
     path === page.url.pathname || (options?.prefix && page.url.pathname.startsWith(path));
-
+  let displayInstructions = $state(true);
   let { items = [], onToggleSidebar }: Props = $props();
 </script>
 
-<nav class="flex w-full items-center justify-between p-2 md:gap-2">
-  <div class="flex place-items-center gap-2">
+{#if displayInstructions}
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    transition:fade|global={{ duration: 150 }}
+  >
+    <Card color="secondary" class="w-full max-w-lg">
+      <CardHeader>
+        <div class="flex justify-between">
+          <CardTitle>Instructions</CardTitle>
+        </div>
+      </CardHeader>
+      <CardBody>hi</CardBody>
+      <CardFooter>
+        <Button color="primary" onclick={() => (displayInstructions = false)}>Ok</Button>
+      </CardFooter>
+    </Card>
+  </div>
+{/if}
+<nav class="grid w-full grid-cols-[1fr_auto_1fr] items-center p-2 md:gap-4">
+  <div class="flex place-items-center gap-2 justify-self-start">
     {#if onToggleSidebar}
       <IconButton
         shape="round"
@@ -45,8 +66,10 @@
       <Logo variant="logo" class="sm:hidden" />
     </a>
   </div>
-
-  <HStack gap={1}>
+  <div class="justify-self-center whitespace-nowrap px-4">
+    <Heading tag="h1" size="large">Pets Dataset</Heading>
+  </div>
+  <HStack gap={1} class="justify-self-end">
     {#each items as item (item.href)}
       <Button
         class={item.show === 'always' ? '' : 'hidden md:flex'}
@@ -58,6 +81,14 @@
         color={item.color ?? (isActive(item.href) ? 'primary' : 'secondary')}>{item.title}</Button
       >
     {/each}
+    <Button
+      onclick={() => (displayInstructions = true)}
+      leadingIcon={mdiHelp}
+      size="small"
+      variant="outline"
+      aria-label="Display Instructions"
+      >Instructions
+    </Button>
     <CommandPaletteButton />
     <ThemeSwitcher />
   </HStack>

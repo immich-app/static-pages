@@ -1,6 +1,5 @@
 import { toastManager } from '@immich/ui';
-import type { PetDatasetMetadata } from '../../types/metadata';
-//import { Pet } from '../../types/metadata';
+import type { Pet, PetDatasetMetadata } from '../../types/metadata';
 import type { UploadableAssets } from '../../types/upload-manager';
 
 export type AssetTypeAnimal = PetDatasetMetadata['animal'];
@@ -67,7 +66,7 @@ export const AssetTypeAgeNames: Record<AssetTypeAge, string> = {
   Senior: 'Senior',
 };
 
-export type squareBox = { left: number; top: number; width: number; height: number };
+export type squareBox = { left: number; top: number; width: number; height: number; petId?: string };
 
 export interface PetAsset {
   data: File;
@@ -87,6 +86,8 @@ class PetsUploaderManager implements UploadableAssets {
   // Metadata for the selected assets
   selectedMetadata = $state<Partial<PetAsset['metadata']>>({});
   submitDisabled = $state(true);
+
+  pets = $state<Pet[]>([]);
 
   constructor() {
     this.assets = [];
@@ -213,6 +214,34 @@ class PetsUploaderManager implements UploadableAssets {
     if (asset) {
       asset.boxes = boxes;
     }
+  }
+
+  getPet(id?: string): Pet | undefined {
+    return id ? this.pets.find((p) => p.id === id) : undefined;
+  }
+
+  createPet(data: Omit<Pet, 'id'>): Pet {
+    const pet: Pet = { id: crypto.randomUUID(), ...data };
+    this.pets.push(pet);
+    return this.pets.at(-1) ?? pet;
+  }
+
+  deletePet(id: string) {
+    this.pets = this.pets.filter((p) => p.id !== id);
+    for (const asset of this.assets) {
+      for (const box of asset.boxes) {
+        if (box.petId === id) {
+          box.petId = undefined;
+        }
+      }
+    }
+  }
+
+  applyPet(pet: Pet) {
+    this.updateSelectedMetadata('name', pet.name);
+    this.updateSelectedMetadata('animal', pet.animal as AssetTypeAnimal);
+    this.updateSelectedMetadata('breed', pet.breed);
+    this.updateSelectedMetadata('age', pet.age as AssetTypeAge);
   }
 
   updateSelectedMetadata<K extends keyof PetAsset['metadata']>(metadataKey: K, value: PetAsset['metadata'][K]) {
