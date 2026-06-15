@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.81.1](https://github.com/immich-app/static-pages/compare/ui-v0.81.0...ui-v0.81.1) (2026-06-15)
+
+
+### Bug Fixes
+
+* heading margin ([#575](https://github.com/immich-app/static-pages/issues/575)) ([9aa2010](https://github.com/immich-app/static-pages/commit/9aa201087f2d2d3bdbe20056a7b5949d97d1bb01))
+* **ui:** date picker invalid inputs ([#580](https://github.com/immich-app/static-pages/issues/580)) ([2cf6a20](https://github.com/immich-app/static-pages/commit/2cf6a20cee7a38ddc0c825948ea770e9b23f8492))
+
 ## [0.81.0](https://github.com/immich-app/static-pages/compare/ui-v0.80.0...ui-v0.81.0) (2026-06-09)
 
 
