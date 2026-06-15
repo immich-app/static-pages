@@ -12,22 +12,36 @@ jobs:
     steps:
       - name: Generate a token
         id: generate-token
-        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.PUSH_O_MATIC_APP_ID }}
+          client-id: ${{ secrets.PUSH_O_MATIC_APP_CLIENT_ID }}
           private-key: ${{ secrets.PUSH_O_MATIC_APP_KEY }}
 
       - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
           ref: 'main'
-      
-      - name: Install uv
-        uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v8.0.0
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+      - name: Setup Mise
+        uses: immich-app/devtools/actions/use-mise@7b8610a904d57da241e4ddba17fa62b62b15aed4 # use-mise-action-v2.0.2
+        with:
+          github_token: ${{ steps.generate-token.outputs.token }}
+
+      - name: Get pnpm store directory
+        id: pnpm-store
+        run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm store
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ${{ steps.pnpm-store.outputs.path }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
 
       - name: Import post
         id: import
@@ -38,17 +52,14 @@ jobs:
           R2_ENDPOINT_URL: ${{ secrets.STATIC_BUCKET_ENDPOINT }}
           R2_ACCESS_KEY_ID: ${{ secrets.STATIC_BUCKET_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.STATIC_BUCKET_KEY_SECRET }}
-          R2_PUBLIC_URL: "https://static.immich.cloud"
-        run: uv run --script import-post.py
-
-      - name: Format
-        run: pnpm --filter root.immich.app run format:fix
+          R2_PUBLIC_URL: 'https://static.immich.cloud'
+        run: mise import-post "$OUTLINE_POST_URL"
 
       - name: Create PR
-        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0 # v8.1.0
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ steps.generate-token.outputs.token }}
           add-paths: apps/root.immich.app/src/routes/blog
-          commit-message: "feat: import ${{ steps.import.outputs.slug }}"
-          title: "feat: import ${{ steps.import.outputs.slug }}"
-          branch: "blog/${{ steps.import.outputs.uuid }}"
+          commit-message: 'feat: import ${{ steps.import.outputs.slug }}'
+          title: 'feat: import ${{ steps.import.outputs.slug }}'
+          branch: 'blog/${{ steps.import.outputs.uuid }}'

@@ -4,8 +4,7 @@ on:
     types: [closed]
 
 env:
-  tofu_version: '1.10.2'
-  tg_version: '0.83.0'
+  MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}/.mise/config.toml
 
 jobs:
   deploy:
@@ -14,38 +13,38 @@ jobs:
       fail-fast: false
       matrix:
         environment: ['dev', 'prod']
-        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets']
+        app_name: ['root', 'ui', 'api', 'awesome', 'my', 'get', 'buy', 'datasets']
     steps:
       - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - id: token
+        uses: immich-app/devtools/actions/create-workflow-token@9db058b2e6eec20e07760b0e17a0505c78ec3191 # create-workflow-token-action-v2.0.1
+        with:
+          client-id: ${{ secrets.PUSH_O_MATIC_APP_CLIENT_ID }}
+          private-key: ${{ secrets.PUSH_O_MATIC_APP_KEY }}
+
+      - name: Setup Mise
+        uses: immich-app/devtools/actions/use-mise@7b8610a904d57da241e4ddba17fa62b62b15aed4 # use-mise-action-v2.0.2
+        with:
+          github_token: ${{ steps.token.outputs.token }}
 
       - name: Install 1Password CLI
         uses: 1password/install-cli-action@8d006a0d0a4fd505af7f7ce589e7f768385ff5e4 # v3.0.0
-
-      - name: Install Terragrunt
-        uses: eLco/setup-terragrunt@2c5116f8979bb261072ef57c97ac026cd9c27434 # v1.0.3
-        with:
-          terragrunt_version: ${{ env.tg_version }}
-
-      - name: 'Install OpenTofu'
-        uses: opentofu/setup-opentofu@fc711fa910b93cba0f3fbecaafc9f42fd0c411cb # v2.0.0
-        with:
-          tofu_version: ${{ env.tofu_version }}
-          tofu_wrapper: false
 
       - name: Destroy All
         working-directory: ${{ github.workspace }}/deployment
         env:
           ENVIRONMENT: ${{ matrix.environment }}
           TF_VAR_app_name: ${{ matrix.app_name }}
-          TF_VAR_dist_dir: ${{ github.workspace }}/dist
+          TF_VAR_dist_dir: ${{ github.workspace }}/apps/${{ matrix.app_name }}.immich.app/backend/dist
           TF_VAR_stage: pr-${{ github.event.number }}
           OP_SERVICE_ACCOUNT_TOKEN: ${{ matrix.environment == 'prod' && secrets.OP_TF_PROD_ENV || secrets.OP_TF_DEV_ENV }}
         run: op run --env-file=".env" -- terragrunt run --all destroy --non-interactive --queue-exclude-dir '**/pages-project' -- -refresh=false -lock-timeout=5m
 
       - name: Comment
-        uses: actions-cool/maintain-one-comment@4b2dbf086015f892dcb5e8c1106f5fccd6c1476b # v3.2.0
+        uses: immich-app/devtools/actions/sticky-comment@0135acd12ad9f3369b94a2aa3c0ae8c835a4e926 # sticky-comment-action-v1.0.0
         with:
-          number: ${{ github.event.number }}
+          id: preview-urls
+          token: ${{ steps.token.outputs.token }}
           delete: true
-          body-include: '<!-- Docs PR URL -->'

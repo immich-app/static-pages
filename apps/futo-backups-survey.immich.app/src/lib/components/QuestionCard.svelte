@@ -31,6 +31,18 @@
       autoNextTimer = setTimeout(() => onNext(), 200);
     }
   }
+
+  const buttonText = $derived.by(() => {
+    if (isLast) {
+      return 'Submit';
+    }
+
+    if (hasAnswer || !isOptional) {
+      return 'Next';
+    }
+
+    return 'Skip';
+  });
 </script>
 
 <div class="w-full max-w-[640px] px-4">
@@ -45,17 +57,13 @@
   {/if}
 </div>
 
-<div class="fixed bottom-0 left-0 z-40 flex w-full justify-center bg-light px-4 pb-6 pt-4">
+<div class="fixed bottom-0 left-0 z-40 flex w-full justify-center bg-light px-4 pt-4 pb-6">
   <div class="flex w-full max-w-[640px] items-center gap-3">
     {#if canGoBack}
       <Button variant="outline" onclick={onBack}>Back</Button>
     {/if}
-    <Button
-      color="primary"
-      disabled={!hasAnswer && !isOptional}
-      onclick={onNext}
-    >
-      {isLast ? 'Submit' : hasAnswer || !isOptional ? 'Next' : 'Skip'}
+    <Button color="primary" disabled={!hasAnswer && !isOptional} onclick={onNext}>
+      {buttonText}
     </Button>
   </div>
 </div>

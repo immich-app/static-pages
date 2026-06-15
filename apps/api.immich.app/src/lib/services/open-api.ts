@@ -77,7 +77,7 @@ const isParameterObject =
   (param: unknown): param is ParameterObject =>
     (param as ParameterObject).in === type;
 
-const asSlug = (tag: string) => tag.toLowerCase().replace(/\s/g, '-');
+const asSlug = (tag: string) => tag.toLowerCase().replaceAll(/\s/g, '-');
 const getModelHref = (model: string) => `${ApiPage.Models}/${model}` as Pathname;
 const getTagHref = (tag: string) => `${ApiPage.Endpoints}/${asSlug(tag)}` as Pathname;
 
@@ -127,7 +127,7 @@ export const parseSpec = (spec: OpenAPIObject) => {
       }
 
       const { description: descriptionRaw, operationId, security, summary, tags } = item;
-      const description = descriptionRaw?.replaceAll(/`/g, "'");
+      const description = descriptionRaw?.replaceAll('`', "'");
 
       if (!operationId) {
         console.log('Skipping route without an operationId', { route });
@@ -275,6 +275,25 @@ export const parseSpec = (spec: OpenAPIObject) => {
       }
 
       console.log('Unable to resolve schema from $ref', ref);
+    },
+
+    getById: (id: string) => {
+      const endpoint = endpointsMap[id];
+      if (!endpoint) {
+        return;
+      }
+
+      for (const value of endpoint.tags) {
+        const tag = tagsMap[value];
+        if (!tag) {
+          continue;
+        }
+
+        const endpoint = tag.endpoints.find((endpoint) => endpoint.operationId === id);
+        if (endpoint) {
+          return endpoint;
+        }
+      }
     },
   };
 };

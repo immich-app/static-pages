@@ -9,6 +9,9 @@ export default defineConfig({
       allow: ['../../common'],
     },
   },
+  optimizeDeps: {
+    exclude: ['@immich/ui', '@immich/svelte-markdown-preprocess'],
+  },
   test: {
     expect: { requireAssertions: true },
     environment: 'node',

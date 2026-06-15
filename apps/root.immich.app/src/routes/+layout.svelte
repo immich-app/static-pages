@@ -2,7 +2,7 @@
   import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/state';
   import PageContent from '$common/components/PageContent.svelte';
-  import { getBlogProvider } from '$lib';
+  import { getBlogProvider, posts } from '$lib';
   import '$lib/app.css';
   import {
     AnnouncementBanner,
@@ -33,7 +33,6 @@
     mdiScriptTextOutline,
     mdiShoppingOutline,
   } from '@mdi/js';
-  import { DateTime } from 'luxon';
   import { siGithub } from 'simple-icons';
   import { onMount, type Snippet } from 'svelte';
   import { MediaQuery } from 'svelte/reactivity';
@@ -78,6 +77,8 @@
   };
 
   commandPaletteManager.enable();
+
+  const featuredPost = posts.find((post) => post.featured);
 </script>
 
 <CommandPaletteProvider providers={[getBlogProvider(), ...getSiteProviders()]} />
@@ -88,13 +89,13 @@
   <AppShell>
     <AppShellHeader>
       <div class="w-full">
-        {#if !page.url.pathname.startsWith('/blog')}
-          <AnnouncementBanner until={DateTime.fromObject({ year: 2026, month: 2, day: 7 })}>
+        {#if !page.url.pathname.startsWith('/blog') && featuredPost}
+          <AnnouncementBanner until={featuredPost.publishedAt.plus({ week: 1 })}>
             {#snippet content()}
-              <div class="flex justify-center">
-                <Text color="secondary" size="small">
-                  Read our <Link href="/blog/2026-january-recap">January recap</Link> &dash; roadmap changes, developer updates,
-                  and more!
+              <div class="flex items-center justify-center gap-1">
+                Read our latest post:
+                <Text color="primary">
+                  <Link href={featuredPost.url}>{featuredPost.title}</Link>
                 </Text>
               </div>
             {/snippet}

@@ -9,11 +9,7 @@
   }
 
   let { question, answer, onAnswer }: Props = $props();
-  let emailValue = $state('');
-
-  $effect(() => {
-    emailValue = answer?.value ?? '';
-  });
+  let emailValue = $derived(answer?.value ?? '');
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const isValid = $derived(emailValue.length > 0 && emailPattern.test(emailValue));

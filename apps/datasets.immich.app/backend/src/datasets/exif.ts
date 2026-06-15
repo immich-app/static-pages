@@ -16,11 +16,11 @@ exifRouter.put('/upload', withJWTAuth, async (req, env) => {
     const uploadId = req.extras?.authID;
     await uploadAssetWithMetadata(env, uploadId, file, metadata, Dataset.Exif);
 
-    return new Response(
-      JSON.stringify({
+    return Response.json(
+      {
         success: true,
         uploadID: metadata.assetId,
-      }),
+      },
       { status: 201 },
     );
   } catch (error) {

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "4390115d102085b6bb00d8f604b696954ec66f21",
+  "separate-pull-requests": true,
+  "always-update": true,
+  "include-v-in-tag": true,
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": false,
+  "draft": false,
+  "prerelease": false,
+  "release-type": "node",
+  "initial-version": "0.1.0",
+  "changelog-path": "CHANGELOG.md",
+  "changelog-type": "default",
+  "packages": {
+    "packages/sql-tools": {
+      "component": "sql-tools"
+    },
+    "packages/kysely-adapter-cloudflare": {
+      "component": "kysely-adapter-cloudflare"
+    },
+    "packages/svelte-markdown-preprocess": {
+      "component": "svelte-markdown-preprocess"
+    },
+    "packages/ui": {
+      "component": "ui"
+    }
+  }
+}

@@ -4,11 +4,11 @@ import { Dataset, MetadataType } from '../../types/metadata';
 import { DatasetMetadataValidatorMap } from './validators';
 
 export function handleError(message: string, returnCode: number = 400): Response {
-  return new Response(
-    JSON.stringify({
+  return Response.json(
+    {
       success: false,
       error: message,
-    }),
+    },
     { status: returnCode },
   );
 }
@@ -53,7 +53,7 @@ export async function validateAssetWithMetadata<D extends Dataset>(
     throw new Error("Missing required fields: 'file' or 'data'");
   }
 
-  if ((imageUpload as File).size == 0) {
+  if ((imageUpload as File).size === 0) {
     throw new Error('Image file is empty, please upload a valid image');
   }
 

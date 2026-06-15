@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { questions } from './survey-definition';
-import type { SurveyAnswer, SurveyQuestion } from './types';
+import type { SurveyAnswer } from './types';
 import {
   shouldShowQuestion,
   findNextVisibleIndex,

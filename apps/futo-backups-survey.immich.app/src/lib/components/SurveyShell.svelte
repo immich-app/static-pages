@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { fly } from 'svelte/transition';
-  import { cubicOut } from 'svelte/easing';
   import { questions, sections } from '$lib/survey-definition';
-  import type { SurveySection } from '$lib/types';
   import type { createSurveyEngine } from '$lib/survey-engine.svelte';
   import { findNextVisibleIndex } from '$lib/survey-engine.svelte';
+  import { cubicOut } from 'svelte/easing';
+  import { fly } from 'svelte/transition';
   import QuestionCard from './QuestionCard.svelte';
   import SectionHeader from './SectionHeader.svelte';
 
@@ -22,7 +21,9 @@
 
   const needsSectionHeader = $derived.by(() => {
     const q = engine.currentQuestion;
-    if (!q) return null;
+    if (!q) {
+      return null;
+    }
     return sections.find((s) => s.questionIds[0] === q.id) ?? null;
   });
 
@@ -44,13 +45,16 @@
   function dismissSection() {
     if (currentSection) {
       dismissedSections.add(currentSection.number);
+      // eslint-disable-next-line svelte/prefer-svelte-reactivity
       dismissedSections = new Set(dismissedSections);
     }
     window.scrollTo(0, 0);
   }
 
   function skipSection() {
-    if (!currentSection) return;
+    if (!currentSection) {
+      return;
+    }
     const nextSection = sections.find((s) => s.number === currentSection!.number + 1);
     if (nextSection) {
       engine.goTo(nextSection.questionIds[0]);
@@ -65,7 +69,9 @@
   }
 
   function handleNext() {
-    if (transitioning) return;
+    if (transitioning) {
+      return;
+    }
     transitioning = true;
     direction = 1;
     engine.next();
@@ -79,7 +85,9 @@
   }
 
   function handleBack() {
-    if (transitioning) return;
+    if (transitioning) {
+      return;
+    }
     transitioning = true;
     direction = -1;
 
@@ -110,10 +118,7 @@
 
 <div class="relative min-h-screen">
   <div class="fixed top-0 left-0 z-50 h-1 w-full bg-gray-700">
-    <div
-      class="h-full bg-immich-primary transition-all duration-300"
-      style="width: {engine.progress}%"
-    ></div>
+    <div class="bg-immich-primary h-full transition-all duration-300" style="width: {engine.progress}%"></div>
   </div>
 
   <div class="relative min-h-screen overflow-hidden">

@@ -9,11 +9,7 @@
   }
 
   let { question, answer, onAnswer }: Props = $props();
-  let textValue = $state('');
-
-  $effect(() => {
-    textValue = answer?.value ?? '';
-  });
+  let textValue = $derived(answer?.value ?? '');
 
   const maxLength = $derived(question.maxLength ?? 5000);
 
@@ -34,11 +30,6 @@
   <p class="mb-6 text-base text-gray-500">{question.description}</p>
 {/if}
 
-<Textarea
-  bind:value={textValue}
-  rows={6}
-  maxlength={maxLength}
-  oninput={handleInput}
-/>
+<Textarea bind:value={textValue} rows={6} maxlength={maxLength} oninput={handleInput} />
 
 <p class="mt-1 text-right text-sm text-gray-400">{textValue.length}/{maxLength}</p>

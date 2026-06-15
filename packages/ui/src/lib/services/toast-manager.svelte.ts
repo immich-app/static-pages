@@ -1,0 +1,92 @@
+import ToastPanel from '$lib/components/Toast/ToastPanel.svelte';
+import { t } from '$lib/services/translation.svelte.js';
+import type { ToastCustom, ToastItem, ToastOptions, ToastPanelProps, ToastShow, ToastWithId } from '$lib/types.js';
+import { generateId } from '$lib/utilities/internal.js';
+import { mount, unmount } from 'svelte';
+
+export const isCustomToast = (item: ToastItem): item is ToastCustom => !!(item as ToastCustom).component;
+
+const expand = (item?: string | ToastShow): ToastShow =>
+  typeof item === 'string' ? { description: item } : (item ?? {});
+
+class ToastManager {
+  #ref: unknown;
+  #props = $state<ToastPanelProps>({ items: [] });
+
+  show(item: ToastShow, options?: ToastOptions) {
+    return this.open(item, options);
+  }
+
+  custom(item: ToastCustom, options?: ToastOptions) {
+    return this.open(item, options);
+  }
+
+  setOptions(options: Omit<ToastPanelProps, 'items'>) {
+    Object.assign(this.#props, options);
+  }
+
+  open(item: ToastItem, options?: ToastOptions) {
+    const { timeout = 3000, closable = true, id = generateId() } = options || {};
+
+    const toast = item as ToastWithId;
+
+    toast.id = id;
+
+    if (closable) {
+      const onClose = () => this.remove(toast);
+      if (isCustomToast(item)) {
+        item.props.onClose = onClose;
+      } else {
+        item.onClose = onClose;
+      }
+    }
+
+    this.#props.items.push(toast);
+    void this.mount();
+
+    if (timeout) {
+      setTimeout(() => this.remove(toast), timeout);
+    }
+  }
+
+  async mount() {
+    if (!this.#ref) {
+      this.#ref = await mount(ToastPanel, {
+        target: document.body,
+        props: this.#props,
+      });
+    }
+  }
+
+  async unmount() {
+    if (this.#ref) {
+      await unmount(this.#ref);
+    }
+  }
+
+  primary(item?: string | ToastShow, options?: ToastOptions) {
+    this.show({ title: t('toast_success_title'), color: 'primary', ...expand(item) }, options);
+  }
+
+  success(item?: string | ToastShow, options?: ToastOptions) {
+    this.show({ title: t('toast_success_title'), color: 'success', ...expand(item) }, options);
+  }
+
+  info(item?: string | ToastShow, options?: ToastOptions) {
+    this.show({ title: t('toast_info_title'), color: 'info', ...expand(item) }, options);
+  }
+
+  warning(item?: string | ToastShow, options?: ToastOptions) {
+    this.show({ title: t('toast_warning_title'), color: 'warning', ...expand(item) }, options);
+  }
+
+  danger(item?: string | ToastShow, options?: ToastOptions) {
+    this.show({ title: t('toast_danger_title'), color: 'danger', ...expand(item) }, options);
+  }
+
+  private remove(target: ToastWithId) {
+    this.#props.items = this.#props.items.filter((item) => item.id !== target.id);
+  }
+}
+
+export const toastManager = new ToastManager();

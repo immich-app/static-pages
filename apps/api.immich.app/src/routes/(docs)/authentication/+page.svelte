@@ -89,7 +89,7 @@
     </Card>
   </section>
 
-  <Alert color="success" icon={mdiLightbulbOnOutline} class="mt-4">
+  <Alert color="success" icon={mdiLightbulbOnOutline} class="mt-4" shape="rectangle">
     <Text
       >User-scoped api keys can be created in <Link href="https://my.immich.app/user-settings?isOpen=api-keys"
         >user settings</Link

@@ -11,3 +11,10 @@ module "pages_project" {
 output "pages_project" {
   value = module.pages_project.pages_project
 }
+
+
+import {
+  for_each = var.app_name == "ui" && var.env == "prod" ? toset(["this"]) : toset([])
+  to       = module.pages_project.cloudflare_pages_project.project
+  id       = "ui-immich-app-prod"
+}

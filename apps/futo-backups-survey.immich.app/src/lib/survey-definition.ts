@@ -67,7 +67,8 @@ export const questions: SurveyQuestion[] = [
     section: 1,
     sectionTitle: 'Questions about your Immich server, your library and your internet speed',
     text: 'What is the total size of your Immich library?',
-    description: 'You can find this on your <a href="https://my.immich.app/admin/server-status" target="_blank" rel="noopener noreferrer" class="underline text-immich-primary">server status page</a>.',
+    description:
+      'You can find this on your <a href="https://my.immich.app/admin/server-status" target="_blank" rel="noopener noreferrer" class="underline text-immich-primary">server status page</a>.',
     type: 'radio',
     required: true,
     options: [
@@ -86,8 +87,7 @@ export const questions: SurveyQuestion[] = [
     section: 1,
     sectionTitle: 'Questions about your Immich server, your library and your internet speed',
     text: 'Roughly what percentage of your library by storage used is video?',
-    description:
-      'Example: If you have 600GB of photos & videos combined and 500GB of that is videos, select 80%.',
+    description: 'Example: If you have 600GB of photos & videos combined and 500GB of that is videos, select 80%.',
     type: 'radio',
     required: true,
     options: [
@@ -177,12 +177,7 @@ export const questions: SurveyQuestion[] = [
     text: 'How interested are you in a service like this?',
     type: 'radio',
     required: true,
-    options: [
-      opt('Very interested'),
-      opt('Interested'),
-      opt('Undecided / Need more details'),
-      opt('Not interested'),
-    ],
+    options: [opt('Very interested'), opt('Interested'), opt('Undecided / Need more details'), opt('Not interested')],
   },
   {
     id: 'q11',
@@ -207,8 +202,7 @@ export const questions: SurveyQuestion[] = [
     section: 3,
     sectionTitle: 'The Backup Service',
     text: 'How many copies of your backup would you want stored in the cloud?',
-    description:
-      'Each additional copy is stored in a separate location for extra redundancy and will cost extra',
+    description: 'Each additional copy is stored in a separate location for extra redundancy and will cost extra',
     type: 'radio',
     required: true,
     options: [
@@ -231,10 +225,7 @@ export const questions: SurveyQuestion[] = [
     type: 'email-signup',
     required: false,
     placeholder: 'name@example.com',
-    options: [
-      opt('Join the closed beta'),
-      opt('Receive product updates'),
-    ],
+    options: [opt('Join the closed beta'), opt('Receive product updates')],
   },
 
   // Section 5: Additional questions about how you host Immich
@@ -312,9 +303,8 @@ export const questions: SurveyQuestion[] = [
     id: 'q19',
     section: 6,
     sectionTitle: 'Final Thoughts',
-    text: 'Is there anything else you\'d like to share?',
-    description:
-      "Any thoughts, concerns, features you'd want, or questions about a managed backup service for Immich",
+    text: "Is there anything else you'd like to share?",
+    description: "Any thoughts, concerns, features you'd want, or questions about a managed backup service for Immich",
     type: 'textarea',
     required: false,
     maxLength: 5000,
@@ -330,8 +320,7 @@ export const sections: SurveySection[] = [
   {
     number: 2,
     title: 'Three questions about your current backup methodology',
-    description:
-      "We'd like to know how many of your precious memories are at risk of going 💨",
+    description: "We'd like to know how many of your precious memories are at risk of going 💨",
     questionIds: ['q7', 'q8', 'q9'],
   },
   {

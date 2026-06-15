@@ -1,5 +1,6 @@
 <script lang="ts">
   import { blogMetadata, posts } from '$lib';
+  import BlogTypeBadge from '$lib/components/BlogTypeBadge.svelte';
   import { Heading, Icon, Link, Markdown, SiteMetadata, Text } from '@immich/ui';
   import { mdiChevronRight } from '@mdi/js';
   import { DateTime } from 'luxon';
@@ -19,7 +20,7 @@
 <SiteMetadata site={blogMetadata} page={{ title, description }} />
 
 <div>
-  <ul class="text-muted flex place-items-center gap-1">
+  <ul class="flex place-items-center gap-1 text-muted">
     <li class="flex place-items-center">
       <Link href="/blog" underline={false}><span class="hover:underline">Blog</span></Link>
       <Icon icon={mdiChevronRight} size="1rem" />
@@ -32,12 +33,14 @@
     {post.title}
   </Heading>
 
-  <div class="mt-6 mb-2 flex gap-1">
+  <div class="mt-4 mb-2 flex gap-1">
     <Text color="muted" size="small" variant="italic">{publishedAt.toLocaleString(DateTime.DATE_FULL)}</Text>
     <Text color="muted" size="small">— {authors.join(', ')}</Text>
   </div>
 
   <Markdown.Paragraph><em>{description}</em></Markdown.Paragraph>
+
+  <BlogTypeBadge class="mt-2" size="small" type={post.type} />
 
   {#if post.coverUrl}
     <figure class="my-6">
@@ -47,7 +50,7 @@
         class="aspect-21/9 w-full rounded-lg border object-cover"
       />
       {#if post.coverAttribution}
-        <figcaption class="text-muted mt-2 text-center text-sm">
+        <figcaption class="mt-2 text-center text-sm text-muted">
           <!-- eslint-disable-next-line svelte/no-at-html-tags -->
           {@html post.coverAttribution}
         </figcaption>

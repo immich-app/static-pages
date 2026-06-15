@@ -12,6 +12,9 @@ export default defineConfig({
       '/api': 'http://localhost:8787',
     },
   },
+  optimizeDeps: {
+    exclude: ['@immich/ui', '@immich/svelte-markdown-preprocess'],
+  },
   test: {
     expect: { requireAssertions: true },
     environment: 'node',

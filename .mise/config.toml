@@ -1,9 +1,12 @@
 [tools]
-opentofu = "1.11.5"
-terragrunt = "1.0.0"
+opentofu = "1.12.1"
+terragrunt = "1.0.7"
+node = "24.16"
+pnpm = "11.5.3"
+wrangler = "4.99.0"
 
-[env]
-TF_VAR_dist_dir="{{config_root}}/dist"
+[tasks.deploy]
+run = "wrangler pages deploy ${BUILD_DIR} --project-name=${PROJECT_NAME} --branch=${BRANCH_NAME}"
 
 [tasks.tg]
 run = "op run '--env-file={{config_root}}/deployment/.env' -- terragrunt"
@@ -11,7 +14,7 @@ description = "Wrapper for terragrunt"
 dir = "{{cwd}}"
 
 [tasks."tg:fmt"]
-run = "mise run tg hclfmt"
+run = "mise run tg hcl format"
 description = "Format terragrunt files"
 
 [tasks.tf]
@@ -38,6 +41,45 @@ dir = "{{cwd}}"
 [tasks."tf:destroy"]
 run = "mise run tf destroy"
 dir = "{{cwd}}"
+
+[tasks.dev]
+description = "Run a dev server"
+usage = '''
+arg "<app>" help="Target app" {
+  choices "api" "awesome" "buy" "datasets" "get" "my" "root" "ui"
+  default "root"
+}
+'''
+run = [
+  "pnpm --filter @immich/ui --filter @immich/svelte-markdown-preprocess build",
+  { task = "watch-and-open", args = ["{{usage.app}}"] }
+]
+
+[tasks."watch-and-open"]
+description = "Run watch and open in parallel"
+usage = '''
+arg "<app>" help="Target app"
+'''
+depends = [ { task = "watch" }, { task = "open", args = ["{{usage.app}}"] } ]
+
+[tasks.watch]
+run = "pnpm --filter @immich/ui --filter @immich/svelte-markdown-preprocess --parallel run watch"
+
+[tasks.import-post]
+dir = "{{config_root}}"
+run = "pnpm --filter @immich/import-post run import"
+env = { _.file = ".env" }
+
+
+[tasks.open]
+usage = '''
+arg "<app>" help="Target app"
+'''
+run = [
+  "sleep 3",
+  'echo "Launching apps/{{usage.app}}.immich.app..."',
+  'pnpm --filter "{{usage.app}}.immich.app" start --open'
+]
 
 [settings]
 experimental = true

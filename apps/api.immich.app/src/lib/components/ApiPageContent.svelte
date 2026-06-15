@@ -21,7 +21,7 @@
     </div>
   </div>
 
-  <hr class="border-subtle border" />
+  <hr class="border border-subtle" />
 
   {@render children?.()}
 

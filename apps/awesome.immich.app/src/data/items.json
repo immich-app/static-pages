@@ -25,6 +25,11 @@
         "href": "https://github.com/giejay/Immich-Android-TV"
       },
       {
+        "title": "Immich Gallery",
+        "description": "Unofficial Apple TV Client for your Apple TV.",
+        "href": "https://github.com/mensadilabs/Immich-Gallery"
+      },
+      {
         "title": "Immich Apple TV",
         "description": "Unofficial Immich Apple TV app.",
         "href": "https://github.com/adriankraemer/Immich-Viewer"
@@ -48,6 +53,11 @@
         "title": "Harbour-Immich",
         "description": "Unofficial Immich Sailfish OS application.",
         "href": "https://github.com/mezmerize/harbour-immich"
+      },
+      {
+        "title": "Immich Companion",
+        "description": "Browser extension that adds right-click save to Immich, CLIP-powered search from the toolbar, optional new tab photo memories, and inline search results that show your photos alongside Google/DuckDuckGo results.",
+        "href": "https://github.com/bjoernch/immich-companion"
       }
     ]
   },
@@ -115,6 +125,21 @@
         "title": "TeleImmich",
         "description": "Sync exported Telegram backups to an Immich instance",
         "href": "https://github.com/dev-mkm/TeleImmich"
+      },
+      {
+        "title": "Immich Face Recognition Export Tool",
+        "description": "A Python tool to export face recognition data from Immich photo management system to DigiKam-compatible XMP format files.",
+        "href": "https://github.com/yuhuan417/immich-scripts"
+      },
+      {
+        "title": "immichpy",
+        "description": "The stable, typed Python API layer for Immich automation and integrations.",
+        "href": "https://github.com/timonrieger/immichpy"
+      },
+      {
+        "title": "lrimmich",
+        "description": "Sync albums and metadata from a Lightroom Classic catalog to Immich when both share the same photo folder via an external library.",
+        "href": "https://github.com/haavardnk/lrimmich"
       }
     ]
   },

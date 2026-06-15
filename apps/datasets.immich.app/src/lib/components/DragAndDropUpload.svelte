@@ -157,7 +157,7 @@
 {#if dragStartTarget}
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div
-    class="text-immich-dark-gray dark:text-immich-gray fixed inset-0 z-10 flex h-full w-full flex-col items-center justify-center bg-gray-100/90 dark:bg-neutral-900/90"
+    class="text-immich-dark-gray dark:text-immich-gray fixed inset-0 z-10 flex size-full flex-col items-center justify-center bg-gray-100/90 dark:bg-neutral-900/90"
     transition:fade={{ duration: 250 }}
     ondragover={onDragOver}
   >

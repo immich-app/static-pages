@@ -5,8 +5,6 @@ interface SurveyQuestion {
   };
 }
 
-const opt = (label: string) => ({ label, value: label });
-
 export const questions: SurveyQuestion[] = [
   { id: 'q1' },
   { id: 'q2' },

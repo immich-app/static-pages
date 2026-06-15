@@ -74,8 +74,8 @@ class ExifUploaderManager implements UploadableAssets {
     let previewBlob: Blob | null = null;
     try {
       previewBlob = await this.generatePreview(asset);
-    } catch (e) {
-      console.error('Preview generation failed', e);
+    } catch (error) {
+      console.error('Preview generation failed', error);
     }
 
     // if the preview generation failed, use the original file as the preview
@@ -105,9 +105,9 @@ class ExifUploaderManager implements UploadableAssets {
     if (this.selection.length === 0) {
       this.selectedMetadata = {};
     } else {
-      const metadataKeys = Array.from(
-        new Set(this.selection.flatMap((asset) => Object.keys(asset.metadata))),
-      ) as (keyof EXIFAsset['metadata'])[];
+      const metadataKeys = [
+        ...new Set(this.selection.flatMap((asset) => Object.keys(asset.metadata))),
+      ] as (keyof EXIFAsset['metadata'])[];
 
       for (const key of metadataKeys) {
         const allSame = this.selection.every((a) => a.metadata[key] === this.selection[0].metadata[key]);
@@ -125,11 +125,15 @@ class ExifUploaderManager implements UploadableAssets {
     if (shiftHeld) {
       // find the index of the asset in the assets array
       const index = this.assets.indexOf(asset);
-      if (index === -1) return;
+      if (index === -1) {
+        return;
+      }
 
       // find the last selected asset
       const lastSelectedIndex = this.assets.findIndex((a) => a.selected);
-      if (lastSelectedIndex === -1) return;
+      if (lastSelectedIndex === -1) {
+        return;
+      }
 
       // select all assets between the last selected and the current asset
       const start = Math.min(index, lastSelectedIndex);
@@ -212,13 +216,13 @@ class ExifUploaderManager implements UploadableAssets {
     input.accept = '*';
     input.multiple = true;
 
-    input.onchange = async () => {
+    input.addEventListener('change', async () => {
       if (input.files) {
-        for (const file of Array.from(input.files)) {
+        for (const file of input.files) {
           await this.addAsset(file);
         }
       }
-    };
+    });
 
     input.click();
   }

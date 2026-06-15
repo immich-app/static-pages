@@ -92,7 +92,7 @@
   {/if}
 
   {#if schema.nullable}
-    <span class="text-dark font-thin">|</span>
+    <span class="font-thin text-dark">|</span>
     <span class={cleanClass(badgeClasses, Colors.Gray)}>Null</span>
   {/if}
 </div>

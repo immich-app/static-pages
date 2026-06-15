@@ -86,17 +86,17 @@ describe('bufferAnswer', () => {
     bufferAnswer({ questionId: 'q1', value: 'a' });
 
     // Wait 8 seconds, then add another answer
-    await vi.advanceTimersByTimeAsync(8_000);
+    await vi.advanceTimersByTimeAsync(8000);
     expect(mockFetch).not.toHaveBeenCalled();
 
     bufferAnswer({ questionId: 'q2', value: 'b' });
 
     // 8 more seconds — still within the new 10s window
-    await vi.advanceTimersByTimeAsync(8_000);
+    await vi.advanceTimersByTimeAsync(8000);
     expect(mockFetch).not.toHaveBeenCalled();
 
     // 2 more seconds — now 10s since last answer
-    await vi.advanceTimersByTimeAsync(2_000);
+    await vi.advanceTimersByTimeAsync(2000);
     expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 

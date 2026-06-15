@@ -1,5 +1,3 @@
-import type { SurveyAnswer } from './types';
-
 /**
  * Verifies a Cloudflare Turnstile token with the backend.
  */
@@ -21,7 +19,7 @@ interface PendingSave {
   otherText?: string;
 }
 
-let answerBuffer: Map<string, PendingSave> = new Map();
+const answerBuffer: Map<string, PendingSave> = new Map();
 let inactivityTimer: ReturnType<typeof setTimeout> | null = null;
 let unflushedCount = 0;
 
@@ -73,8 +71,12 @@ async function saveBatch(answers: PendingSave[]): Promise<boolean> {
         body: JSON.stringify({ answers }),
         credentials: 'same-origin',
       });
-      if (res.ok) return true;
-      if (res.status < 500) return false;
+      if (res.ok) {
+        return true;
+      }
+      if (res.status < 500) {
+        return false;
+      }
     } catch {
       // network error, retry
     }
@@ -91,7 +93,9 @@ async function saveBatch(answers: PendingSave[]): Promise<boolean> {
  * On failure, items are re-added to the buffer for the next flush attempt.
  */
 export async function flushBuffer(): Promise<boolean> {
-  if (answerBuffer.size === 0) return true;
+  if (answerBuffer.size === 0) {
+    return true;
+  }
 
   if (inactivityTimer !== null) {
     clearTimeout(inactivityTimer);
@@ -119,7 +123,9 @@ export async function flushBuffer(): Promise<boolean> {
  * Synchronous flush for beforeunload — uses sendBeacon.
  */
 export function flushBufferSync(): void {
-  if (answerBuffer.size === 0) return;
+  if (answerBuffer.size === 0) {
+    return;
+  }
 
   if (inactivityTimer !== null) {
     clearTimeout(inactivityTimer);

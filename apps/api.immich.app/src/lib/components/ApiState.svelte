@@ -10,32 +10,38 @@
   const { state, short }: Props = $props();
 
   const styles = tv({
-    base: 'text-dark rounded-lg px-2 py-0.5 text-sm',
+    base: 'rounded-lg px-2 py-0.5 text-sm text-dark',
     variants: {
       state: {
-        Stable: 'text-dark bg-green-200 dark:bg-green-900',
-        Beta: 'text-dark bg-yellow-200 dark:bg-yellow-900 ',
-        Deprecated: 'bg-red-200 dark:bg-red-900 ',
-        Alpha: 'bg-purple-200 dark:bg-purple-900 ',
-        Internal: 'bg-gray-300 dark:bg-gray-600 ',
+        Stable: 'bg-green-200 text-dark dark:bg-green-900',
+        Beta: 'bg-yellow-200 text-dark dark:bg-yellow-900',
+        Deprecated: 'bg-red-200 dark:bg-red-900',
+        Alpha: 'bg-purple-200 dark:bg-purple-900',
+        Internal: 'bg-gray-300 dark:bg-gray-600',
       },
     },
   });
 
   const getTitle = (state: State) => {
     switch (state) {
-      case 'Stable':
+      case 'Stable': {
         return 'Considered stable and ready for general use.';
-      case 'Beta':
+      }
+      case 'Beta': {
         return 'Considered unstable and may change in future releases.';
-      case 'Deprecated':
+      }
+      case 'Deprecated': {
         return 'Deprecated and should not be used in new implementations. It will likely be removed in a future release.';
-      case 'Alpha':
+      }
+      case 'Alpha': {
         return 'Considered unstable and subject to significant changes.';
-      case 'Internal':
+      }
+      case 'Internal': {
         return 'For internal use only and may change at any time without notice.';
-      default:
+      }
+      default: {
         return 'Unknown state';
+      }
     }
   };
 </script>

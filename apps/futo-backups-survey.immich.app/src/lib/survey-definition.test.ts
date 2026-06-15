@@ -8,12 +8,7 @@ describe('survey-definition', () => {
 
   test('questions have expected ids in order', () => {
     const ids = questions.map((q) => q.id);
-    const expected = [
-      ...Array.from({ length: 12 }, (_, i) => `q${i + 1}`),
-      'q17',
-      'q13', 'q14', 'q15', 'q16',
-      'q19',
-    ];
+    const expected = [...Array.from({ length: 12 }, (_, i) => `q${i + 1}`), 'q17', 'q13', 'q14', 'q15', 'q16', 'q19'];
     expect(ids).toEqual(expected);
   });
 

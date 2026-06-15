@@ -1,0 +1,180 @@
+import { BaseContext } from 'src/contexts/base-context';
+import { transformColumns } from 'src/transformers/column.transformer';
+import { DatabaseColumn } from 'src/types';
+import { describe, expect, it } from 'vitest';
+
+const ctx = new BaseContext({});
+
+describe(transformColumns.name, () => {
+  describe('ColumnAdd', () => {
+    it('should work', () => {
+      expect(
+        transformColumns(ctx, {
+          type: 'ColumnAdd',
+          object: {
+            name: 'column1',
+            tableName: 'table1',
+            primary: false,
+            type: 'character varying',
+            nullable: false,
+            isArray: false,
+            synchronize: true,
+          },
+          reason: 'unknown',
+        }),
+      ).toEqual('ALTER TABLE "table1" ADD "column1" character varying NOT NULL;');
+    });
+
+    it('should add a nullable column', () => {
+      expect(
+        transformColumns(ctx, {
+          type: 'ColumnAdd',
+          object: {
+            name: 'column1',
+            tableName: 'table1',
+            primary: false,
+            type: 'character varying',
+            nullable: true,
+            isArray: false,
+            synchronize: true,
+          },
+          reason: 'unknown',
+        }),
+      ).toEqual('ALTER TABLE "table1" ADD "column1" character varying;');
+    });
+
+    it('should add a column with an enum type', () => {
+      expect(
+        transformColumns(ctx, {
+          type: 'ColumnAdd',
+          object: {
+            name: 'column1',
+            tableName: 'table1',
+            primary: false,
+            type: 'character varying',
+            enumName: 'table1_column1_enum',
+            nullable: true,
+            isArray: false,
+            synchronize: true,
+          },
+          reason: 'unknown',
+        }),
+      ).toEqual('ALTER TABLE "table1" ADD "column1" table1_column1_enum;');
+    });
+
+    it('should add a column that is an array type', () => {
+      expect(
+        transformColumns(ctx, {
+          type: 'ColumnAdd',
+          object: {
+            name: 'column1',
+            tableName: 'table1',
+            primary: false,
+            type: 'boolean',
+            nullable: true,
+            isArray: true,
+            synchronize: true,
+          },
+          reason: 'unknown',
+        }),
+      ).toEqual('ALTER TABLE "table1" ADD "column1" boolean[];');
+    });
+  });
+
+  describe('ColumnAlter', () => {
+    it('should make a column nullable', () => {
+      expect(
+        transformColumns(ctx, {
+          type: 'ColumnAlter',
+          object: {
+            new: {
+              name: 'column1',
+              tableName: 'table1',
+            } as DatabaseColumn,
+            old: {
+              name: 'column1',
+              tableName: 'table1',
+            } as DatabaseColumn,
+            changes: { nullable: true },
+          },
+          reason: 'unknown',
+        }),
+      ).toEqual([`ALTER TABLE "table1" ALTER COLUMN "column1" DROP NOT NULL;`]);
+    });
+
+    it('should make a column non-nullable', () => {
+      expect(
+        transformColumns(ctx, {
+          type: 'ColumnAlter',
+          object: {
+            new: {
+              name: 'column1',
+              tableName: 'table1',
+            } as DatabaseColumn,
+            old: {
+              name: 'column1',
+              tableName: 'table1',
+            } as DatabaseColumn,
+            changes: { nullable: false },
+          },
+          reason: 'unknown',
+        }),
+      ).toEqual([`ALTER TABLE "table1" ALTER COLUMN "column1" SET NOT NULL;`]);
+    });
+
+    it('should update the default value', () => {
+      expect(
+        transformColumns(ctx, {
+          type: 'ColumnAlter',
+          object: {
+            new: {
+              name: 'column1',
+              tableName: 'table1',
+            } as DatabaseColumn,
+            old: {
+              name: 'column1',
+              tableName: 'table1',
+            } as DatabaseColumn,
+            changes: { default: 'uuid_generate_v4()' },
+          },
+          reason: 'unknown',
+        }),
+      ).toEqual([`ALTER TABLE "table1" ALTER COLUMN "column1" SET DEFAULT uuid_generate_v4();`]);
+    });
+
+    it('should update the default value to NULL', () => {
+      expect(
+        transformColumns(ctx, {
+          type: 'ColumnAlter',
+          object: {
+            new: {
+              name: 'column1',
+              tableName: 'table1',
+            } as DatabaseColumn,
+            old: {
+              name: 'column1',
+              tableName: 'table1',
+            } as DatabaseColumn,
+            changes: { default: 'NULL' },
+          },
+          reason: 'unknown',
+        }),
+      ).toEqual([`ALTER TABLE "table1" ALTER COLUMN "column1" SET DEFAULT NULL;`]);
+    });
+  });
+
+  describe('ColumnDrop', () => {
+    it('should work', () => {
+      expect(
+        transformColumns(ctx, {
+          type: 'ColumnDrop',
+          object: {
+            name: 'column1',
+            tableName: 'table1',
+          } as DatabaseColumn,
+          reason: 'unknown',
+        }),
+      ).toEqual(`ALTER TABLE "table1" DROP COLUMN "column1";`);
+    });
+  });
+});

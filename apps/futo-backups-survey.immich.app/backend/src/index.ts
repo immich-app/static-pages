@@ -42,10 +42,7 @@ router.post('/api/verify', async (request, env) => {
 
   const respondentId = getRespondentId(request);
   if (respondentId) {
-    await db
-      .prepare('UPDATE respondents SET is_verified = 1 WHERE id = ?')
-      .bind(respondentId)
-      .run();
+    await db.prepare('UPDATE respondents SET is_verified = 1 WHERE id = ?').bind(respondentId).run();
   }
 
   return Response.json({ success: true });
@@ -92,10 +89,7 @@ router.post('/api/answers', async (request, env) => {
     otherText?: string;
   };
 
-  const ip =
-    request.headers.get('CF-Connecting-IP') ??
-    request.headers.get('x-forwarded-for') ??
-    'unknown';
+  const ip = request.headers.get('CF-Connecting-IP') ?? request.headers.get('x-forwarded-for') ?? 'unknown';
 
   let respondentId = getRespondentId(request);
   const headers = new Headers();
@@ -133,10 +127,7 @@ router.get('/api/resume', async (request, env) => {
 
   if (!respondentId) {
     respondentId = crypto.randomUUID();
-    const ip =
-      request.headers.get('CF-Connecting-IP') ??
-      request.headers.get('x-forwarded-for') ??
-      'unknown';
+    const ip = request.headers.get('CF-Connecting-IP') ?? request.headers.get('x-forwarded-for') ?? 'unknown';
     await db
       .prepare('INSERT INTO respondents (id, ip_address, created_at) VALUES (?, ?, ?)')
       .bind(respondentId, ip, new Date().toISOString())
@@ -207,7 +198,7 @@ router.post('/api/complete', async (request, env) => {
   return new Response(null, { status: 204 });
 });
 
-router.post('/api/reset', async (request) => {
+router.post('/api/reset', async () => {
   const headers = new Headers();
   deleteRespondentCookie(headers);
   return new Response(null, { status: 204, headers });

@@ -41,7 +41,7 @@
 
     localStorage.setItem(StorageKey.INSTANCE_URL, instanceUrl);
     if (targetUrl && instanceUrl) {
-      window.location.href = new URL(targetUrl, instanceUrl).toString();
+      globalThis.location.href = new URL(targetUrl, instanceUrl).toString();
     } else {
       saved = true;
     }
