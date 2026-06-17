@@ -12,7 +12,7 @@
 
 <div class="mx-auto flex h-full flex-col">
   <div class="grow {className ? className : ''}">
-    <div class="h-full w-full p-4 md:p-6 lg:p-8">
+    <div class="w-full px-3">
       {@render children?.()}
     </div>
   </div>

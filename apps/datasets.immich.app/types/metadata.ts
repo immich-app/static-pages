@@ -12,7 +12,8 @@ class BaseMetadata {
 export class Pet {
   id!: string;
   name!: string;
-  age!: string;
+  birthMonth!: number;
+  birthYear!: number;
   animal!: string;
   breed!: string;
 }
@@ -37,7 +38,8 @@ export class PetDatasetMetadata extends BaseMetadata {
     | 'Other';
 
   breed!: string;
-  age!: 'Young' | 'Adult' | 'Senior';
+  birthMonth!: number;
+  birthYear!: number;
   name!: string;
 }
 type DatasetMetadataMap = {

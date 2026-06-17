@@ -8,23 +8,33 @@
     alt?: string;
     boxes?: squareBox[];
     panEnabled?: boolean;
+    zoom?: number;
     onChange?: (boxes: squareBox[]) => void;
-    onActiveChange?: (active: boolean) => void;
+    onActiveChange?: (active: boolean, petId?: string) => void;
     follow?: Snippet<[squareBox]>;
   };
 
-  let { src, alt = '', boxes = [], panEnabled = $bindable(true), onChange, onActiveChange, follow }: Props = $props();
+  let {
+    src,
+    alt = '',
+    boxes = [],
+    panEnabled = $bindable(true),
+    zoom = $bindable(1),
+    onChange,
+    onActiveChange,
+    follow,
+  }: Props = $props();
 
   let rootEl = $state<HTMLDivElement>();
   let imgEl = $state<HTMLImageElement>();
   let canvasEl = $state<HTMLCanvasElement>();
   let followEl = $state<HTMLDivElement>();
   let canvas: Canvas | undefined;
-  let zoom = $state(0.9);
-  let panX = $state(1);
-  let panY = $state(26);
-  const MIN_ZOOM = 0.25;
-  const MAX_ZOOM = 6;
+  let panX = $state(0);
+  let panY = $state(0);
+  const minZoom = 1;
+  const maxZoom = 6;
+  const minBoxSize = 10;
   let panning = false;
   let panOrigin = { x: 0, y: 0, panX: 0, panY: 0 };
   let lastWidth = 0;
@@ -32,9 +42,68 @@
 
   let activeBox = $state<squareBox>({ left: 0, top: 0, width: 0, height: 0 });
   const petIds = new WeakMap<FabricObject, string | undefined>();
-
   const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+  let drawing = false;
+  let drawOrigin = { x: 0, y: 0 };
+  let draftRect: Rect | undefined;
 
+  const startDraw = (event: MouseEvent) => {
+    if (!canvas) {
+      return;
+    }
+    const p = canvas.getScenePoint(event);
+    drawing = true;
+    drawOrigin = { x: p.x, y: p.y };
+    draftRect = makeRect(p.x, p.y, 0, 0);
+    draftRect.selectable = false;
+    draftRect.evented = false;
+    petIds.set(draftRect, undefined);
+    canvas.add(draftRect);
+    canvas.requestRenderAll();
+  };
+
+  const onDrawMove = (event: MouseEvent) => {
+    if (!drawing || !canvas || !draftRect) {
+      return;
+    }
+    const p = canvas.getScenePoint(event);
+    const px = clamp(p.x, 0, canvas.width);
+    const py = clamp(p.y, 0, canvas.height);
+    draftRect.set({
+      left: Math.min(drawOrigin.x, px),
+      top: Math.min(drawOrigin.y, py),
+      width: Math.abs(px - drawOrigin.x),
+      height: Math.abs(py - drawOrigin.y),
+    });
+    draftRect.setCoords();
+    canvas.requestRenderAll();
+  };
+
+  const endDraw = () => {
+    if (!drawing || !canvas) {
+      return;
+    }
+    drawing = false;
+    const rect = draftRect;
+    draftRect = undefined;
+    if (!rect) {
+      return;
+    }
+
+    if (rect.width < minBoxSize || rect.height < minBoxSize) {
+      canvas.remove(rect);
+      canvas.requestRenderAll();
+      return;
+    }
+
+    rect.selectable = true;
+    rect.evented = true;
+    constrainToCanvas(rect);
+    canvas.setActiveObject(rect);
+    canvas.requestRenderAll();
+    emitChange();
+    syncActive();
+  };
   const configureControlStyle = () => {
     InteractiveFabricObject.ownDefaults = {
       ...InteractiveFabricObject.ownDefaults,
@@ -55,6 +124,8 @@
       top,
       width,
       height,
+      originX: 'left',
+      originY: 'top',
       scaleX: 1,
       scaleY: 1,
       fill: 'rgba(66,80,175,0.25)',
@@ -117,8 +188,30 @@
 
   const emitChange = () => onChange?.(snapshot());
   const syncActive = () => {
-    onActiveChange?.(!!canvas?.getActiveObject());
+    const active = canvas?.getActiveObject();
+    onActiveChange?.(!!active, active ? petIds.get(active) : undefined);
     positionFollow();
+  };
+
+  let loadingBoxes = false;
+
+  const removeUnassigned = () => {
+    if (!canvas || loadingBoxes) {
+      return;
+    }
+    const active = canvas.getActiveObject();
+    const soloBoxes = canvas.getObjects().filter((object) => object !== active && petIds.get(object) == null);
+    if (soloBoxes.length === 0) {
+      return;
+    }
+    canvas.remove(...soloBoxes);
+    canvas.requestRenderAll();
+    emitChange();
+  };
+
+  const onSelectionChange = () => {
+    removeUnassigned();
+    syncActive();
   };
 
   const loadBoxes = (source: squareBox[]) => {
@@ -127,6 +220,7 @@
     }
     const cw = canvas.width;
     const ch = canvas.height;
+    loadingBoxes = true;
     canvas.remove(...canvas.getObjects());
     for (const box of source) {
       const rect = makeRect(box.left * cw, box.top * ch, box.width * cw, box.height * ch);
@@ -135,8 +229,13 @@
     }
     canvas.discardActiveObject();
     canvas.requestRenderAll();
+    loadingBoxes = false;
     syncActive();
   };
+
+  export function refresh() {
+    loadBoxes(boxes);
+  }
 
   const sizeCanvasToImage = () => {
     if (!canvas || !imgEl) {
@@ -166,6 +265,8 @@
     if (!canvas) {
       return;
     }
+    panX = 0;
+    panY = 0;
     lastWidth = 0;
     lastHeight = 0;
     sizeCanvasToImage();
@@ -202,7 +303,7 @@
     syncActive();
   }
 
-  export function deselectr() {
+  export function deselector() {
     if (canvas?.getActiveObject()) {
       canvas.discardActiveObject();
       canvas.requestRenderAll();
@@ -214,7 +315,7 @@
     if (!rootEl) {
       return;
     }
-    const next = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom * factor));
+    const next = Math.min(maxZoom, Math.max(minZoom, zoom * factor));
     if (next === zoom) {
       return;
     }
@@ -244,15 +345,21 @@
   }
 
   export function resetView() {
-    zoom = 0.9;
+    zoom = 1;
     panX = 0;
-    panY = 26;
+    panY = 0;
   }
 
   $effect(() => {
     if (canvas) {
-      canvas.defaultCursor = panEnabled ? 'grab' : 'default';
+      canvas.defaultCursor = panEnabled ? 'grab' : 'crosshair';
+      canvas.hoverCursor = panEnabled ? 'move' : 'crosshair';
+      canvas.moveCursor = panEnabled ? 'move' : 'crosshair';
     }
+  });
+
+  $effect(() => {
+    positionFollow();
   });
 
   const onPanMove = (event: PointerEvent) => {
@@ -269,7 +376,7 @@
     }
     panning = false;
     if (canvas) {
-      canvas.defaultCursor = panEnabled ? 'grab' : 'default';
+      canvas.defaultCursor = panEnabled ? 'grab' : 'crosshair';
     }
     globalThis.removeEventListener('pointermove', onPanMove);
     globalThis.removeEventListener('pointerup', onPanEnd);
@@ -290,18 +397,6 @@
     zoomAt(event.clientX, event.clientY, event.deltaY < 0 ? 1.1 : 1 / 1.1);
   };
 
-  const onWindowPointerDown = (event: PointerEvent) => {
-    if (!canvas?.getActiveObject()) {
-      return;
-    }
-    const target = event.target as HTMLElement | null;
-    if (!target || rootEl?.contains(target) || target.closest('[data-square-control]') || !canvasEl?.contains(target)) {
-      return;
-    }
-    deselectr();
-  };
-  const FOLLOW_GAP = 15;
-
   function positionFollow() {
     if (!canvas || !followEl) {
       return;
@@ -315,63 +410,77 @@
 
     const cw = canvas.width;
     const ch = canvas.height;
-    const gap = FOLLOW_GAP;
-    const padding = active.padding ?? 0;
-    const rawBox = active.getBoundingRect();
+    const followBox = active.getBoundingRect();
+
     const box = {
-      left: rawBox.left - padding,
-      top: rawBox.top - padding,
-      width: rawBox.width + padding * 2,
-      height: rawBox.height + padding * 2,
+      left: panX + followBox.left * zoom,
+      top: panY + followBox.top * zoom,
+      width: followBox.width * zoom,
+      height: followBox.height * zoom,
     };
     const panelWidth = followEl.offsetWidth;
     const panelHeight = followEl.offsetHeight;
 
-    const clampTop = (top: number) => clamp(top, gap, Math.max(gap, ch - panelHeight - gap));
-    const clampLeft = (left: number) => clamp(left, gap, Math.max(gap, cw - panelWidth - gap));
-
-    const overlapArea = (position: { top: number; left: number }) => {
-      const panelRight = position.left + panelWidth;
-      const panelBottom = position.top + panelHeight;
-      const boxRight = box.left + box.width;
-      const boxBottom = box.top + box.height;
-
-      const overlapX = Math.max(0, Math.min(panelRight, boxRight) - Math.max(position.left, box.left));
-      const overlapY = Math.max(0, Math.min(panelBottom, boxBottom) - Math.max(position.top, box.top));
-      return overlapX * overlapY;
-    };
-
+    const wrapper = followEl.offsetParent as HTMLElement | null;
+    const clipEl = wrapper?.parentElement ?? wrapper;
+    let bounds: { top: number; left: number; right: number; bottom: number } | undefined;
+    if (wrapper && clipEl) {
+      const wrapperRect = wrapper.getBoundingClientRect();
+      const clipRect = clipEl.getBoundingClientRect();
+      bounds = {
+        top: clipRect.top - wrapperRect.top,
+        left: clipRect.left - wrapperRect.left,
+        right: clipRect.right - wrapperRect.left,
+        bottom: clipRect.bottom - wrapperRect.top,
+      };
+    }
     const boxBottom = box.top + box.height;
     const boxRight = box.left + box.width;
 
-    const positions = [
-      { top: clampTop(boxBottom + gap), left: clampLeft(box.left) },
-      { top: clampTop(box.top - panelHeight - gap), left: clampLeft(box.left) },
-      { top: clampTop(box.top), left: clampLeft(boxRight + gap) },
-      { top: clampTop(box.top), left: clampLeft(box.left - panelWidth - gap) },
+    const clampX = (left: number) =>
+      bounds ? clamp(left, bounds.left, Math.max(bounds.left, bounds.right - panelWidth)) : left;
+    const clampY = (top: number) =>
+      bounds ? clamp(top, bounds.top, Math.max(bounds.top, bounds.bottom - panelHeight)) : top;
+
+    const placements = [
+      {
+        room: bounds ? bounds.bottom - boxBottom : Infinity,
+        need: panelHeight,
+        top: boxBottom,
+        left: clampX(box.left),
+      },
+      { room: bounds ? bounds.right - boxRight : Infinity, need: panelWidth, top: clampY(box.top), left: boxRight },
+      {
+        room: bounds ? box.left - bounds.left : Infinity,
+        need: panelWidth,
+        top: clampY(box.top),
+        left: box.left - panelWidth,
+      },
+      {
+        room: bounds ? box.top - bounds.top : Infinity,
+        need: panelHeight,
+        top: box.top - panelHeight,
+        left: clampX(box.left),
+      },
     ];
 
-    let bestPosition = positions[0];
-    let leastOverlap = Infinity;
-
-    for (const position of positions) {
-      const overlap = overlapArea(position);
-      if (overlap < leastOverlap) {
-        leastOverlap = overlap;
-        bestPosition = position;
-        if (overlap === 0) {
-          break;
+    let position = placements.find((p) => p.room >= p.need);
+    if (!position) {
+      position = placements[0];
+      for (const p of placements) {
+        if (p.room > position.room) {
+          position = p;
         }
       }
     }
 
-    followEl.style.top = `${bestPosition.top}px`;
-    followEl.style.left = `${bestPosition.left}px`;
+    followEl.style.top = `${position.top}px`;
+    followEl.style.left = `${position.left}px`;
     activeBox = {
-      left: box.left / cw,
-      top: box.top / ch,
-      width: box.width / cw,
-      height: box.height / ch,
+      left: followBox.left / cw,
+      top: followBox.top / ch,
+      width: followBox.width / cw,
+      height: followBox.height / ch,
       petId: petIds.get(active),
     };
   }
@@ -382,6 +491,7 @@
       return;
     }
     petIds.set(active, petId);
+    onActiveChange?.(true, petId);
     positionFollow();
     emitChange();
   }
@@ -397,9 +507,9 @@
     canvas.wrapperEl.style.top = '0';
     canvas.wrapperEl.style.left = '0';
 
-    canvas.on('selection:created', syncActive);
-    canvas.on('selection:updated', syncActive);
-    canvas.on('selection:cleared', syncActive);
+    canvas.on('selection:created', onSelectionChange);
+    canvas.on('selection:updated', onSelectionChange);
+    canvas.on('selection:cleared', onSelectionChange);
     canvas.on('object:moving', (event) => {
       constrainToCanvas(event.target);
       positionFollow();
@@ -413,11 +523,18 @@
     canvas.on('object:modified', emitChange);
 
     canvas.on('mouse:down', (opt) => {
-      if (panEnabled && !opt.target) {
+      if (opt.target) {
+        return;
+      }
+      if (panEnabled) {
         startPan(opt.e as MouseEvent);
+      } else {
+        startDraw(opt.e as MouseEvent);
       }
     });
-    canvas.defaultCursor = panEnabled ? 'grab' : 'default';
+    canvas.on('mouse:move', (opt) => onDrawMove(opt.e as MouseEvent));
+    canvas.on('mouse:up', endDraw);
+    canvas.defaultCursor = panEnabled ? 'grab' : 'crosshair';
 
     sizeCanvasToImage();
     if (imgEl?.complete) {
@@ -429,11 +546,8 @@
       observer.observe(imgEl);
     }
 
-    globalThis.addEventListener('pointerdown', onWindowPointerDown);
-
     return () => {
       observer.disconnect();
-      globalThis.removeEventListener('pointerdown', onWindowPointerDown);
       globalThis.removeEventListener('pointermove', onPanMove);
       globalThis.removeEventListener('pointerup', onPanEnd);
       canvas?.dispose();
@@ -454,20 +568,20 @@
       {src}
       {alt}
       onload={onImageLoad}
-      class="block max-h-[60dvh] w-auto select-none"
+      class="block h-[60dvh] w-auto select-none"
       draggable="false"
     />
-    <canvas bind:this={canvasEl}> </canvas>
-
-    {#if follow}
-      <div
-        bind:this={followEl}
-        data-square-control
-        class="absolute z-10 transition-[top,left] duration-200 ease-out"
-        style="display: none;"
-      >
-        {@render follow(activeBox)}
-      </div>
-    {/if}
+    <canvas bind:this={canvasEl}></canvas>
   </div>
+
+  {#if follow}
+    <div
+      bind:this={followEl}
+      data-square-control
+      class="pointer-events-none absolute z-10 transition-[top,left] duration-200 ease-out"
+      style="display: none;"
+    >
+      {@render follow(activeBox)}
+    </div>
+  {/if}
 </div>

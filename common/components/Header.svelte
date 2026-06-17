@@ -9,14 +9,13 @@
     CardHeader,
     CardTitle,
     CommandPaletteButton,
-    Heading,
     HStack,
     IconButton,
     isExternalLink,
     Logo,
     ThemeSwitcher,
   } from '@immich/ui';
-  import { mdiHelp, mdiMenu, mdiOpenInNew } from '@mdi/js';
+  import { mdiInformationOutline, mdiMenu, mdiOpenInNew } from '@mdi/js';
   import { fade } from 'svelte/transition';
   type Props = {
     items?: HeaderItem[];
@@ -25,11 +24,13 @@
 
   const isActive = (path: string, options?: { prefix?: boolean }) =>
     path === page.url.pathname || (options?.prefix && page.url.pathname.startsWith(path));
-  let displayInstructions = $state(true);
+  let displayInstructions = $state(false);
   let { items = [], onToggleSidebar }: Props = $props();
+
+  let onPetsPage = $derived(isActive('/projects/pets'));
 </script>
 
-{#if displayInstructions}
+{#if onPetsPage && displayInstructions}
   <div
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
     transition:fade|global={{ duration: 150 }}
@@ -66,9 +67,7 @@
       <Logo variant="logo" class="sm:hidden" />
     </a>
   </div>
-  <div class="justify-self-center whitespace-nowrap px-4">
-    <Heading tag="h1" size="large">Pets Dataset</Heading>
-  </div>
+  <div class="justify-self-center whitespace-nowrap px-4"></div>
   <HStack gap={1} class="justify-self-end">
     {#each items as item (item.href)}
       <Button
@@ -81,14 +80,16 @@
         color={item.color ?? (isActive(item.href) ? 'primary' : 'secondary')}>{item.title}</Button
       >
     {/each}
-    <Button
-      onclick={() => (displayInstructions = true)}
-      leadingIcon={mdiHelp}
-      size="small"
-      variant="outline"
-      aria-label="Display Instructions"
-      >Instructions
-    </Button>
+    {#if onPetsPage}
+      <IconButton
+        shape="round"
+        color="secondary"
+        variant="ghost"
+        aria-label="Display Instructions"
+        icon={mdiInformationOutline}
+        onclick={() => (displayInstructions = true)}
+      />
+    {/if}
     <CommandPaletteButton />
     <ThemeSwitcher />
   </HStack>

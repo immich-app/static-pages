@@ -1,4 +1,4 @@
-import { IsEmail, IsIn, IsString, IsUUID } from 'class-validator';
+import { IsEmail, IsIn, IsInt, IsString, IsUUID, Max, Min } from 'class-validator';
 import { AuthRequest } from '../../types/auth';
 import { Dataset, ExifDatasetMetadata, PetDatasetMetadata } from '../../types/metadata';
 
@@ -46,8 +46,15 @@ export class PetDatasetMetadataValidator extends PetDatasetMetadata {
   @IsString()
   breed!: string;
 
-  @IsIn(['Young', 'Adult', 'Senior'])
-  age!: 'Young' | 'Adult' | 'Senior';
+  @IsInt()
+  @Min(1)
+  @Max(12)
+  birthMonth!: number;
+
+  @IsInt()
+  @Min(1900)
+  @Max(new Date().getFullYear())
+  birthYear!: number;
 
   @IsString()
   name!: string;

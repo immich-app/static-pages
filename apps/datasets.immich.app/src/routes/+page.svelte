@@ -7,7 +7,7 @@
 
 <DefaultPageLayout>
   <Stack gap={8}>
-    <div class="flex flex-col gap-1">
+    <div class="p1 gap flex flex-col py-6">
       <Heading size="giant" tag="h1">Immich Datasets</Heading>
       <Text color="muted">Open, community-driven photo & video collections</Text>
     </div>
