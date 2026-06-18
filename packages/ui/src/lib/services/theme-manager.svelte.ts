@@ -100,7 +100,7 @@ class ThemeManager {
       case Theme.Light: {
         element.classList.add(LIGHT_CLASS);
         element.classList.remove(DARK_CLASS);
-        const lockRef = document.querySelector(`head > meta[name=${DARK_READER_LOCK_NAME}]`);
+        const lockRef = document.querySelector(`head > meta[name=${CSS.escape(DARK_READER_LOCK_NAME)}]`);
         if (lockRef) {
           lockRef.remove();
         }

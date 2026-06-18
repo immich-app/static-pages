@@ -42,7 +42,7 @@ export class OutlineRepository {
   // https://outline.immich.cloud/api/attachments.redirect?id=1315cf2a-... -> 1315cf2a-...
   getAttachmentId(url: string): string {
     try {
-      return new URL(url, 'http://outline.invalid').searchParams.get('id') ?? url;
+      return new URL(url, 'https://outline.invalid').searchParams.get('id') ?? url;
     } catch {
       return url;
     }

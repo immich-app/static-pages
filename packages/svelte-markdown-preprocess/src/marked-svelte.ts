@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-this-outside-of-class */
 import { MarkedExtension, Token, Tokens } from 'marked';
 import { emojify } from 'node-emoji';
 import { createAttributes, escapeHtml, escapeSvelteCode, getIdFromText } from './utility.js';
@@ -62,7 +63,7 @@ export const markedSvelte = (): MarkedExtension => ({
 
   tokenizer: {
     code(src) {
-      if (src.startsWith('    ')) {
+      if (src.startsWith(' '.repeat(4))) {
         return false;
       }
     },

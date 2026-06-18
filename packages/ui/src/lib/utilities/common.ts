@@ -67,7 +67,7 @@ const getImmichApp = (host: string | undefined) => {
     return 'root';
   }
 
-  return host.split('.')[0];
+  return host.split('.', 1)[0];
 };
 
 export const navigateTo = async (url: string) => {

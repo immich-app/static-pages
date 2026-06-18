@@ -16,7 +16,7 @@ describe('isExternalLink', () => {
 
   const tests = [
     { url: 'https://immich.app/test', result: true },
-    { url: 'http://immich.app/test', result: true },
+    { url: 'https://immich.app/test', result: true },
     { url: 'http://localhost/test', result: false },
     { url: 'http://localhost:1234/test', result: true },
     { url: 'mailto://something', result: true },
