@@ -70,7 +70,7 @@ export async function withJWTAuth(request: IRequest, env: Env) {
     return handleError('Missing Authorization header', 401);
   }
 
-  const token = authHeader.split(' ')[1];
+  const token = authHeader.split(' ', 2)[1];
   if (!token) {
     return handleError('Invalid Authorization header format', 401);
   }

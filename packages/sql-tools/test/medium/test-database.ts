@@ -70,7 +70,7 @@ export class TestDatabase {
   }
 
   debug(message: string) {
-    return '\n> ' + message.split('\n').join('\n> ');
+    return '\n> ' + message.replaceAll('\n', '\n> ');
   }
 
   schemaFromDatabase() {
