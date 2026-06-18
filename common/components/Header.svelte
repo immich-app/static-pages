@@ -68,7 +68,7 @@
     </a>
   </div>
   <div class="justify-self-center whitespace-nowrap px-4"></div>
-  <HStack gap={1} class="justify-self-end">
+  <HStack gap={1} class="justify-self-end px-2">
     {#each items as item (item.href)}
       <Button
         class={item.show === 'always' ? '' : 'hidden md:flex'}
@@ -80,6 +80,8 @@
         color={item.color ?? (isActive(item.href) ? 'primary' : 'secondary')}>{item.title}</Button
       >
     {/each}
+    <CommandPaletteButton />
+    <ThemeSwitcher />
     {#if onPetsPage}
       <IconButton
         shape="round"
@@ -90,7 +92,5 @@
         onclick={() => (displayInstructions = true)}
       />
     {/if}
-    <CommandPaletteButton />
-    <ThemeSwitcher />
   </HStack>
 </nav>

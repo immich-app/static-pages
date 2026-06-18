@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { zoomImageAction } from '$lib/components/zoom-image.svelte';
   import type { squareBox } from '$lib/pets-uploader-manager.svelte';
   import { Canvas, type FabricObject, InteractiveFabricObject, Rect } from 'fabric';
   import { onMount, type Snippet } from 'svelte';
@@ -7,103 +8,35 @@
     src: string;
     alt?: string;
     boxes?: squareBox[];
-    panEnabled?: boolean;
-    zoom?: number;
     onChange?: (boxes: squareBox[]) => void;
     onActiveChange?: (active: boolean, petId?: string) => void;
     follow?: Snippet<[squareBox]>;
   };
 
-  let {
-    src,
-    alt = '',
-    boxes = [],
-    panEnabled = $bindable(true),
-    zoom = $bindable(1),
-    onChange,
-    onActiveChange,
-    follow,
-  }: Props = $props();
+  let { src, alt = '', boxes = [], onChange, onActiveChange, follow }: Props = $props();
 
-  let rootEl = $state<HTMLDivElement>();
+  let containerEl = $state<HTMLDivElement>();
+  let zoomEl = $state<HTMLDivElement>();
   let imgEl = $state<HTMLImageElement>();
   let canvasEl = $state<HTMLCanvasElement>();
   let followEl = $state<HTMLDivElement>();
   let canvas: Canvas | undefined;
-  let panX = $state(0);
-  let panY = $state(0);
-  const minZoom = 1;
-  const maxZoom = 6;
-  const minBoxSize = 10;
-  let panning = false;
-  let panOrigin = { x: 0, y: 0, panX: 0, panY: 0 };
   let lastWidth = 0;
   let lastHeight = 0;
+  let currentZoom = 1;
+  let currentPositionX = 0;
+  let currentPositionY = 0;
+  const onZoomChange = (state: { currentZoom: number; currentPositionX: number; currentPositionY: number }) => {
+    currentZoom = state.currentZoom;
+    currentPositionX = state.currentPositionX;
+    currentPositionY = state.currentPositionY;
+    positionFollow();
+  };
 
   let activeBox = $state<squareBox>({ left: 0, top: 0, width: 0, height: 0 });
   const petIds = new WeakMap<FabricObject, string | undefined>();
   const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
-  let drawing = false;
-  let drawOrigin = { x: 0, y: 0 };
-  let draftRect: Rect | undefined;
 
-  const startDraw = (event: MouseEvent) => {
-    if (!canvas) {
-      return;
-    }
-    const p = canvas.getScenePoint(event);
-    drawing = true;
-    drawOrigin = { x: p.x, y: p.y };
-    draftRect = makeRect(p.x, p.y, 0, 0);
-    draftRect.selectable = false;
-    draftRect.evented = false;
-    petIds.set(draftRect, undefined);
-    canvas.add(draftRect);
-    canvas.requestRenderAll();
-  };
-
-  const onDrawMove = (event: MouseEvent) => {
-    if (!drawing || !canvas || !draftRect) {
-      return;
-    }
-    const p = canvas.getScenePoint(event);
-    const px = clamp(p.x, 0, canvas.width);
-    const py = clamp(p.y, 0, canvas.height);
-    draftRect.set({
-      left: Math.min(drawOrigin.x, px),
-      top: Math.min(drawOrigin.y, py),
-      width: Math.abs(px - drawOrigin.x),
-      height: Math.abs(py - drawOrigin.y),
-    });
-    draftRect.setCoords();
-    canvas.requestRenderAll();
-  };
-
-  const endDraw = () => {
-    if (!drawing || !canvas) {
-      return;
-    }
-    drawing = false;
-    const rect = draftRect;
-    draftRect = undefined;
-    if (!rect) {
-      return;
-    }
-
-    if (rect.width < minBoxSize || rect.height < minBoxSize) {
-      canvas.remove(rect);
-      canvas.requestRenderAll();
-      return;
-    }
-
-    rect.selectable = true;
-    rect.evented = true;
-    constrainToCanvas(rect);
-    canvas.setActiveObject(rect);
-    canvas.requestRenderAll();
-    emitChange();
-    syncActive();
-  };
   const configureControlStyle = () => {
     InteractiveFabricObject.ownDefaults = {
       ...InteractiveFabricObject.ownDefaults,
@@ -265,8 +198,6 @@
     if (!canvas) {
       return;
     }
-    panX = 0;
-    panY = 0;
     lastWidth = 0;
     lastHeight = 0;
     sizeCanvasToImage();
@@ -311,91 +242,17 @@
     }
   }
 
-  const zoomAt = (clientX: number, clientY: number, factor: number) => {
-    if (!rootEl) {
-      return;
-    }
-    const next = Math.min(maxZoom, Math.max(minZoom, zoom * factor));
-    if (next === zoom) {
-      return;
-    }
-
-    const rect = rootEl.getBoundingClientRect();
-    const px = clientX - rect.left;
-    const py = clientY - rect.top;
-    panX += px * (1 - next / zoom);
-    panY += py * (1 - next / zoom);
-    zoom = next;
-  };
-
-  const zoomFromCenter = (factor: number) => {
-    if (!rootEl) {
-      return;
-    }
-    const rect = rootEl.getBoundingClientRect();
-    zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, factor);
-  };
-
-  export function zoomIn() {
-    zoomFromCenter(1.2);
-  }
-
-  export function zoomOut() {
-    zoomFromCenter(1 / 1.2);
-  }
-
-  export function resetView() {
-    zoom = 1;
-    panX = 0;
-    panY = 0;
-  }
-
   $effect(() => {
     if (canvas) {
-      canvas.defaultCursor = panEnabled ? 'grab' : 'crosshair';
-      canvas.hoverCursor = panEnabled ? 'move' : 'crosshair';
-      canvas.moveCursor = panEnabled ? 'move' : 'crosshair';
+      canvas.defaultCursor = 'default';
+      canvas.hoverCursor = 'move';
+      canvas.moveCursor = 'move';
     }
   });
 
   $effect(() => {
     positionFollow();
   });
-
-  const onPanMove = (event: PointerEvent) => {
-    if (!panning) {
-      return;
-    }
-    panX = panOrigin.panX + (event.clientX - panOrigin.x);
-    panY = panOrigin.panY + (event.clientY - panOrigin.y);
-  };
-
-  const onPanEnd = () => {
-    if (!panning) {
-      return;
-    }
-    panning = false;
-    if (canvas) {
-      canvas.defaultCursor = panEnabled ? 'grab' : 'crosshair';
-    }
-    globalThis.removeEventListener('pointermove', onPanMove);
-    globalThis.removeEventListener('pointerup', onPanEnd);
-  };
-
-  const startPan = (event: MouseEvent) => {
-    panning = true;
-    panOrigin = { x: event.clientX, y: event.clientY, panX, panY };
-    if (canvas) {
-      canvas.defaultCursor = 'grabbing';
-    }
-    globalThis.addEventListener('pointermove', onPanMove);
-    globalThis.addEventListener('pointerup', onPanEnd);
-  };
-
-  const onWheel = (event: WheelEvent) => {
-    event.preventDefault();
-    zoomAt(event.clientX, event.clientY, event.deltaY < 0 ? 1.1 : 1 / 1.1);
-  };
 
   function positionFollow() {
     if (!canvas || !followEl) {
@@ -413,10 +270,10 @@
     const followBox = active.getBoundingRect();
 
     const box = {
-      left: panX + followBox.left * zoom,
-      top: panY + followBox.top * zoom,
-      width: followBox.width * zoom,
-      height: followBox.height * zoom,
+      left: currentPositionX + followBox.left * currentZoom,
+      top: currentPositionY + followBox.top * currentZoom,
+      width: followBox.width * currentZoom,
+      height: followBox.height * currentZoom,
     };
     const panelWidth = followEl.offsetWidth;
     const panelHeight = followEl.offsetHeight;
@@ -437,45 +294,45 @@
     const boxBottom = box.top + box.height;
     const boxRight = box.left + box.width;
 
-    const clampX = (left: number) =>
+    const clampLeft = (left: number) =>
       bounds ? clamp(left, bounds.left, Math.max(bounds.left, bounds.right - panelWidth)) : left;
-    const clampY = (top: number) =>
+    const clampTop = (top: number) =>
       bounds ? clamp(top, bounds.top, Math.max(bounds.top, bounds.bottom - panelHeight)) : top;
 
-    const placements = [
+    const positions = [
       {
         room: bounds ? bounds.bottom - boxBottom : Infinity,
         need: panelHeight,
         top: boxBottom,
-        left: clampX(box.left),
+        left: clampLeft(box.left),
       },
-      { room: bounds ? bounds.right - boxRight : Infinity, need: panelWidth, top: clampY(box.top), left: boxRight },
+      { room: bounds ? bounds.right - boxRight : Infinity, need: panelWidth, top: clampTop(box.top), left: boxRight },
       {
         room: bounds ? box.left - bounds.left : Infinity,
         need: panelWidth,
-        top: clampY(box.top),
+        top: clampTop(box.top),
         left: box.left - panelWidth,
       },
       {
         room: bounds ? box.top - bounds.top : Infinity,
         need: panelHeight,
         top: box.top - panelHeight,
-        left: clampX(box.left),
+        left: clampLeft(box.left),
       },
     ];
 
-    let position = placements.find((p) => p.room >= p.need);
-    if (!position) {
-      position = placements[0];
-      for (const p of placements) {
-        if (p.room > position.room) {
-          position = p;
+    let bestPosition = positions.find((position) => position.room >= position.need);
+    if (!bestPosition) {
+      bestPosition = positions[0];
+      for (const position of positions) {
+        if (position.room > bestPosition.room) {
+          bestPosition = position;
         }
       }
     }
 
-    followEl.style.top = `${position.top}px`;
-    followEl.style.left = `${position.left}px`;
+    followEl.style.top = `${bestPosition.top}px`;
+    followEl.style.left = `${bestPosition.left}px`;
     activeBox = {
       left: followBox.left / cw,
       top: followBox.top / ch,
@@ -506,6 +363,7 @@
     canvas.wrapperEl.style.position = 'absolute';
     canvas.wrapperEl.style.top = '0';
     canvas.wrapperEl.style.left = '0';
+    canvas.wrapperEl.dataset.overlayInteractive = '';
 
     canvas.on('selection:created', onSelectionChange);
     canvas.on('selection:updated', onSelectionChange);
@@ -522,19 +380,7 @@
     });
     canvas.on('object:modified', emitChange);
 
-    canvas.on('mouse:down', (opt) => {
-      if (opt.target) {
-        return;
-      }
-      if (panEnabled) {
-        startPan(opt.e as MouseEvent);
-      } else {
-        startDraw(opt.e as MouseEvent);
-      }
-    });
-    canvas.on('mouse:move', (opt) => onDrawMove(opt.e as MouseEvent));
-    canvas.on('mouse:up', endDraw);
-    canvas.defaultCursor = panEnabled ? 'grab' : 'crosshair';
+    canvas.defaultCursor = 'default';
 
     sizeCanvasToImage();
     if (imgEl?.complete) {
@@ -548,8 +394,6 @@
 
     return () => {
       observer.disconnect();
-      globalThis.removeEventListener('pointermove', onPanMove);
-      globalThis.removeEventListener('pointerup', onPanEnd);
       canvas?.dispose();
       canvas = undefined;
     };
@@ -557,21 +401,26 @@
 </script>
 
 <div class="relative inline-block leading-none">
+  <!-- Zoom container: the action attaches wheel/pointer listeners here and measures it to clamp the
+       pan. Sized to the image, so zoom 1 == the image frame, centered by the parent's flex layout. -->
   <div
-    bind:this={rootEl}
-    onwheel={onWheel}
+    bind:this={containerEl}
+    use:zoomImageAction={{ zoomTarget: zoomEl, src, onZoomChange }}
     class="relative inline-block leading-none"
-    style="transform: translate({panX}px, {panY}px) scale({zoom}); transform-origin: 0 0;"
   >
-    <img
-      bind:this={imgEl}
-      {src}
-      {alt}
-      onload={onImageLoad}
-      class="block h-[60dvh] w-auto select-none"
-      draggable="false"
-    />
-    <canvas bind:this={canvasEl}></canvas>
+    <!-- Zoom target: the action transforms this element, so the image and the Fabric canvas overlay
+         scale together. -->
+    <div bind:this={zoomEl} class="relative inline-block leading-none">
+      <img
+        bind:this={imgEl}
+        {src}
+        {alt}
+        onload={onImageLoad}
+        class="block h-[67dvh] w-auto select-none"
+        draggable="false"
+      />
+      <canvas bind:this={canvasEl}></canvas>
+    </div>
   </div>
 
   {#if follow}

@@ -85,7 +85,6 @@ export interface PetAsset {
   metadata: Partial<PetDatasetMetadata>;
   selected: boolean;
   boxes: squareBox[];
-  zoom: number;
 }
 
 const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB
@@ -93,6 +92,9 @@ const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB
 class PetsUploaderManager implements UploadableAssets {
   assets = $state<PetAsset[]>([]);
   selection = $derived(this.assets.filter((a) => a.selected));
+
+  // Number of images that have at least one pet-tagged box (i.e. what gets submitted).
+  taggedAssetCount = $derived(this.assets.filter((a) => a.boxes.some((box) => box.petId)).length);
 
   // Metadata for the selected assets
   selectedMetadata = $state<Partial<PetAsset['metadata']>>({});
@@ -134,7 +136,6 @@ class PetsUploaderManager implements UploadableAssets {
       },
       selected: false,
       boxes: [],
-      zoom: 1,
     };
 
     this.assets.push(newAsset);

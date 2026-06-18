@@ -106,7 +106,7 @@
 
 <DragAndDropUpload onFiles={onDragAndDropUpload} />
 
-<div class="mb-4">
+<div class="mt-4 mb-4">
   <Heading tag="h1" size="giant">EXIF Dataset</Heading>
   <Text color="muted">Contribute to the EXIF Dataset</Text>
 </div>

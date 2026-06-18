@@ -33,6 +33,7 @@
   "dependencies": {
     "@immich/ui": "workspace:*",
     "@mdi/js": "^7.4.47",
+    "@zoom-image/core": "^0.42.0",
     "exifreader": "^4.32.0",
     "fabric": "^7.4.0",
     "mediabunny": "^1.31.0",

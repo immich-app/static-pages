@@ -275,6 +275,9 @@ importers:
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
+      '@zoom-image/core':
+        specifier: ^0.42.0
+        version: 0.42.0
       exifreader:
         specifier: ^4.32.0
         version: 4.41.0
@@ -1698,6 +1701,9 @@ packages:
   '@mdi/js@7.4.47':
     resolution: {integrity: sha512-KPnNOtm5i2pMabqZxpUz7iQf+mfrYZyKCZ8QNz85czgEt7cuHcGorWfdzUMWYA0SD+a6Hn4FmJ+YhzzzjkTZrQ==}
 
+  '@namnode/store@0.1.0':
+    resolution: {integrity: sha512-4NGTldxKcmY0UuZ7OEkvCjs8ZEoeYB6M2UwMu74pdLiFMKxXbj9HdNk1Qn213bxX1O7bY5h+PLh5DZsTURZkYA==}
+
   '@napi-rs/wasm-runtime@1.1.4':
     resolution: {integrity: sha512-3NQNNgA1YSlJb/kMH1ildASP9HW7/7kYnRI2szWJaofaS1hWmbGI4H+d3+22aGzXXN9IJ+n+GiFVcGipJP18ow==}
     peerDependencies:
@@ -2274,6 +2280,9 @@ packages:
   '@xmldom/xmldom@0.9.10':
     resolution: {integrity: sha512-A9gOqLdi6cV4ibazAjcQufGj0B1y/vDqYrcuP6d/6x8P27gRS8643Dj9o1dEKtB6O7fwxb2FgBmJS2mX7gpvdw==}
     engines: {node: '>=14.6'}
+
+  '@zoom-image/core@0.42.0':
+    resolution: {integrity: sha512-aF7siQqxqmOVlBd65deaCM7L/6V80Rp7HazZJpxtErh8zAn5itXXKBv1KA1NufSPfRZsXl1QtysxkjB3gVIzxw==}
 
   abort-controller@3.0.0:
     resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}
@@ -5024,6 +5033,8 @@ snapshots:
 
   '@mdi/js@7.4.47': {}
 
+  '@namnode/store@0.1.0': {}
+
   '@napi-rs/wasm-runtime@1.1.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)':
     dependencies:
       '@emnapi/core': 1.10.0
@@ -5644,6 +5655,10 @@ snapshots:
 
   '@xmldom/xmldom@0.9.10':
     optional: true
+
+  '@zoom-image/core@0.42.0':
+    dependencies:
+      '@namnode/store': 0.1.0
 
   abort-controller@3.0.0:
     dependencies:
