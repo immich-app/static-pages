@@ -309,6 +309,7 @@ export type ToastShow = {
 
 export type ToastOptions = {
   id?: string;
+  /** default: 3000ms */
   timeout?: number;
   closable?: boolean;
 };
