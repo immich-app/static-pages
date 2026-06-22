@@ -10,9 +10,8 @@ const asTouchEvent = (event: Event) => event as unknown as TouchEventLike;
 
 type ZoomImageActionOptions = {
   zoomTarget?: HTMLElement;
-  // Passing the current image source lets the action reset zoom whenever the image changes, so each
-  // image keeps its own (fresh) zoom instead of carrying zoom across images.
   src?: string;
+  locked?: boolean;
   onZoomChange?: (state: ZoomImageWheelState) => void;
 };
 
@@ -99,8 +98,9 @@ export const zoomImageAction = (node: HTMLElement, options?: ZoomImageActionOpti
   node.addEventListener('touchmove', interceptOverlayTouchEvent, { capture: true, signal });
   node.addEventListener('touchend', resetTouchGesture, { capture: true, signal });
 
-  // Dblclick interception for overlay elements and all touch double-taps (Safari fires synthetic
-  // dblclick on double-tap, which conflicts with zoom-image's touch zoom handler).
+  // Wheel and dblclick interception on overlay elements.
+  // Dblclick also intercepted for all touch double-taps (Safari fires synthetic dblclick
+  // on double-tap, which conflicts with zoom-image's touch zoom handler).
   let lastPointerWasTouch = false;
   node.addEventListener('pointerdown', (event) => (lastPointerWasTouch = event.pointerType === 'touch'), {
     capture: true,
@@ -125,9 +125,16 @@ export const zoomImageAction = (node: HTMLElement, options?: ZoomImageActionOpti
       if (newOptions?.zoomTarget !== undefined) {
         zoomInstance.setState({ zoomTarget: newOptions.zoomTarget });
       }
-      // New image → reset to zoom 1 (which also re-centers, since the library pins position to 0,0).
       if (newOptions?.src !== previous?.src) {
         zoomInstance.setState({ currentZoom: 1 });
+      }
+      if (newOptions?.locked !== previous?.locked) {
+        if (newOptions?.locked) {
+          zoomInstance.setState({ currentZoom: 1 });
+          zoomInstance.setState({ enable: false });
+        } else {
+          zoomInstance.setState({ enable: true });
+        }
       }
     },
     destroy() {

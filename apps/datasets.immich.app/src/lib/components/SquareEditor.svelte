@@ -21,16 +21,22 @@
   let canvasEl = $state<HTMLCanvasElement>();
   let followEl = $state<HTMLDivElement>();
   let canvas: Canvas | undefined;
-  let lastWidth = 0;
-  let lastHeight = 0;
+  let imgW = 0;
+  let imgH = 0;
   let currentZoom = 1;
   let currentPositionX = 0;
   let currentPositionY = 0;
+  let boxActive = $state(false);
   const onZoomChange = (state: { currentZoom: number; currentPositionX: number; currentPositionY: number }) => {
     currentZoom = state.currentZoom;
     currentPositionX = state.currentPositionX;
     currentPositionY = state.currentPositionY;
+    applyViewport();
     positionFollow();
+  };
+
+  const applyViewport = () => {
+    canvas?.setViewportTransform([currentZoom, 0, 0, currentZoom, currentPositionX, currentPositionY]);
   };
 
   let activeBox = $state<squareBox>({ left: 0, top: 0, width: 0, height: 0 });
@@ -74,8 +80,8 @@
     if (!canvas || !object) {
       return;
     }
-    const cw = canvas.width;
-    const ch = canvas.height;
+    const cw = imgW;
+    const ch = imgH;
 
     const sw = object.strokeWidth ?? 0;
     object.setCoords();
@@ -105,11 +111,11 @@
   };
 
   const snapshot = (): squareBox[] => {
-    if (!canvas || !canvas.width || !canvas.height) {
+    if (!canvas || !imgW || !imgH) {
       return [];
     }
-    const cw = canvas.width;
-    const ch = canvas.height;
+    const cw = imgW;
+    const ch = imgH;
     return canvas.getObjects().map((object) => ({
       left: object.left / cw,
       top: object.top / ch,
@@ -122,6 +128,7 @@
   const emitChange = () => onChange?.(snapshot());
   const syncActive = () => {
     const active = canvas?.getActiveObject();
+    boxActive = !!active;
     onActiveChange?.(!!active, active ? petIds.get(active) : undefined);
     positionFollow();
   };
@@ -151,8 +158,8 @@
     if (!canvas) {
       return;
     }
-    const cw = canvas.width;
-    const ch = canvas.height;
+    const cw = imgW;
+    const ch = imgH;
     loadingBoxes = true;
     canvas.remove(...canvas.getObjects());
     for (const box of source) {
@@ -174,23 +181,25 @@
     if (!canvas || !imgEl) {
       return;
     }
-    const width = imgEl.clientWidth;
-    const height = imgEl.clientHeight;
-    if (!width || !height) {
+    const iw = imgEl.clientWidth;
+    const ih = imgEl.clientHeight;
+    if (!iw || !ih) {
       return;
     }
-    if (width === lastWidth && height === lastHeight) {
+    if (iw === imgW && ih === imgH) {
+      applyViewport();
       return;
     }
 
     const current = snapshot();
-    canvas.setDimensions({ width, height });
-    lastWidth = width;
-    lastHeight = height;
+    imgW = iw;
+    imgH = ih;
+    canvas.setDimensions({ width: iw, height: ih });
+    applyViewport();
     if (current.length > 0) {
       loadBoxes(current);
     } else {
-      canvas.renderAll();
+      canvas.requestRenderAll();
     }
   };
 
@@ -198,8 +207,6 @@
     if (!canvas) {
       return;
     }
-    lastWidth = 0;
-    lastHeight = 0;
     sizeCanvasToImage();
     loadBoxes(boxes);
   };
@@ -208,8 +215,8 @@
     if (!canvas) {
       return;
     }
-    const size = Math.min(120, canvas.width, canvas.height);
-    const rect = makeRect((canvas.width - size) / 2, (canvas.height - size) / 2, size, size);
+    const size = Math.min(120, imgW, imgH);
+    const rect = makeRect((imgW - size) / 2, (imgH - size) / 2, size, size);
     petIds.set(rect, undefined);
     canvas.add(rect);
     canvas.setActiveObject(rect);
@@ -265,16 +272,9 @@
     }
     followEl.style.display = '';
 
-    const cw = canvas.width;
-    const ch = canvas.height;
-    const followBox = active.getBoundingRect();
-
-    const box = {
-      left: currentPositionX + followBox.left * currentZoom,
-      top: currentPositionY + followBox.top * currentZoom,
-      width: followBox.width * currentZoom,
-      height: followBox.height * currentZoom,
-    };
+    const cw = imgW;
+    const ch = imgH;
+    const box = active.getBoundingRect();
     const panelWidth = followEl.offsetWidth;
     const panelHeight = followEl.offsetHeight;
 
@@ -334,10 +334,10 @@
     followEl.style.top = `${bestPosition.top}px`;
     followEl.style.left = `${bestPosition.left}px`;
     activeBox = {
-      left: followBox.left / cw,
-      top: followBox.top / ch,
-      width: followBox.width / cw,
-      height: followBox.height / ch,
+      left: box.left / cw,
+      top: box.top / ch,
+      width: box.width / cw,
+      height: box.height / ch,
       petId: petIds.get(active),
     };
   }
@@ -391,6 +391,10 @@
     if (imgEl) {
       observer.observe(imgEl);
     }
+    const clipEl = containerEl?.parentElement?.parentElement;
+    if (clipEl) {
+      observer.observe(clipEl);
+    }
 
     return () => {
       observer.disconnect();
@@ -401,15 +405,11 @@
 </script>
 
 <div class="relative inline-block leading-none">
-  <!-- Zoom container: the action attaches wheel/pointer listeners here and measures it to clamp the
-       pan. Sized to the image, so zoom 1 == the image frame, centered by the parent's flex layout. -->
   <div
     bind:this={containerEl}
-    use:zoomImageAction={{ zoomTarget: zoomEl, src, onZoomChange }}
+    use:zoomImageAction={{ zoomTarget: zoomEl, src, onZoomChange, locked: boxActive }}
     class="relative inline-block leading-none"
   >
-    <!-- Zoom target: the action transforms this element, so the image and the Fabric canvas overlay
-         scale together. -->
     <div bind:this={zoomEl} class="relative inline-block leading-none">
       <img
         bind:this={imgEl}
@@ -419,8 +419,8 @@
         class="block h-[67dvh] w-auto select-none"
         draggable="false"
       />
-      <canvas bind:this={canvasEl}></canvas>
     </div>
+    <canvas bind:this={canvasEl}></canvas>
   </div>
 
   {#if follow}

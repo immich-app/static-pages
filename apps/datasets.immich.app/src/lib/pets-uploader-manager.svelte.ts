@@ -35,28 +35,40 @@ export const AssetTypeBreedNames: Record<AssetTypeAnimal, string[]> = {
     'Unknown',
   ],
   Rabbit: ['Netherland Dwarf', 'Lop Ear', 'Lion Rabbit', 'Mini Rabbit', 'Holland Lop', 'Mini Rex', 'Other', 'Unknown'],
-  Pig: ['White', 'Black', 'Brown', 'Pink', 'Mixed', 'Unknown', 'Other'],
-  Bird: [
-    'White',
-    'Black',
-    'Brown',
-    'Pink',
-    'Red',
-    'Blue',
-    'Orange',
-    'Yellow',
-    'Green',
-    'Purple',
-    'Multiple',
-    'Unknown',
+  Pig: [
+    'Pot-bellied',
+    'Kunekune',
+    'Juliana',
+    'American Mini Pig',
+    'Mini Pig',
+    'Teacup',
+    'Farm Pig',
     'Other',
+    'Unknown',
+  ],
+  Bird: [
+    'Parakeet',
+    'Cockatiel',
+    'Cockatoo',
+    'Parrot',
+    'Macaw',
+    'African Grey',
+    'Conure',
+    'Lovebird',
+    'Canary',
+    'Finch',
+    'Dove',
+    'Pigeon',
+    'Owl',
+    'Other',
+    'Unknown',
   ],
   Chinchilla: ['Standard Gray', 'White', 'Beige', 'Ebony', 'Violet', 'Black Velvet', 'Other', 'Unknown'],
   Ferret: ['Sable', 'Albino', 'Champagne', 'Cinnamon', 'Black Sable', 'Other', 'Unknown'],
   GuineaPig: ['American', 'Abyssinian', 'Peruvian', 'Teddy', 'Silkie', 'Other', 'Unknown'],
   Hamster: ['Syrian', 'Winter White Dwarf', 'Campbell Dwarf', 'Roborovski Dwarf', 'Chinese', 'Other', 'Unknown'],
   Hedgehog: ['African Pygmy', 'Algerian', 'Pinto', 'Snowflake', 'Albino', 'Other', 'Unknown'],
-  Other: ['Other', 'Unknown'],
+  Other: ['n/a'],
 };
 
 export const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
@@ -93,7 +105,6 @@ class PetsUploaderManager implements UploadableAssets {
   assets = $state<PetAsset[]>([]);
   selection = $derived(this.assets.filter((a) => a.selected));
 
-  // Number of images that have at least one pet-tagged box (i.e. what gets submitted).
   taggedAssetCount = $derived(this.assets.filter((a) => a.boxes.some((box) => box.petId)).length);
 
   // Metadata for the selected assets
@@ -244,6 +255,20 @@ class PetsUploaderManager implements UploadableAssets {
     const pet: Pet = { id: crypto.randomUUID(), ...data };
     this.pets.push(pet);
     return this.pets.at(-1) ?? pet;
+  }
+
+  editPet(id: string, data: Omit<Pet, 'id'>): Pet | undefined {
+    const existing = this.findMatchingPet(data);
+    if (existing) {
+      return existing;
+    }
+    const pet = this.pets.find((p) => p.id === id);
+    if (!pet) {
+      return undefined;
+    }
+    Object.assign(pet, data);
+    this.relabelFromBoxes();
+    return pet;
   }
 
   findMatchingPet(data: Omit<Pet, 'id'>): Pet | undefined {
