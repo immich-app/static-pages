@@ -196,6 +196,11 @@
         "href": "https://github.com/ArnaudCrl/immich-automated-selfie-timelapse"
       },
       {
+        "title": "Immich ReverseGeo",
+        "description": "Improve, correct, and get more precise reverse geocoding using Overture and GADM. Integrated geocoding",
+        "href": "https://immich-reversegeo.github.io"
+      },
+      {
         "title": "Immich Power Tools",
         "description": "A unofficial Immich client to provide better tools to organize and manage your Immich account.",
         "href": "https://github.com/immich-power-tools/immich-power-tools"
