@@ -12,8 +12,8 @@
     {@render children()}
   {:else if title}
     <ToastContent {title} {description} {icon} {onClose} {...props}>
-      {#if button}
-        {@const { label, ...rest } = button}
+      {#if button && onClose}
+        {@const { label, ...rest } = button(onClose)}
         <div class="flex justify-end px-3 pt-2">
           <Button color="primary" size="small" {...rest}>
             {label}
