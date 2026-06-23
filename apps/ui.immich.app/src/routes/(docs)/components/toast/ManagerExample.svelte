@@ -88,7 +88,13 @@
       shape,
       color,
       size,
-      button: { label: 'Action!', onclick: () => console.log('clicked!') },
+      button: (close) => ({
+        label: 'Undo',
+        onclick: () => {
+          close();
+          toastManager.primary('Undo success');
+        },
+      }),
     });
   };
 

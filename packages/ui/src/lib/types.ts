@@ -266,20 +266,26 @@ export type MultiSelectProps<T extends string> = SelectCommonProps<T> & {
 
 export type ToastWithId = ToastItem & { id: string };
 
-type ToastCommonProps = {
+type ToastOpenProps = {
+  title?: string;
+  description?: string;
+  icon?: IconLike | false;
+  button?: (close: () => void) => ToastButton;
+};
+
+type ToastComponentBaseProps = {
   color?: Color;
 };
 
-export type ToastContentProps = ToastCommonProps & {
-  title?: string | Snippet;
-  description?: string | Snippet;
-  icon?: IconLike | false;
-  onClose?: () => void;
-  children?: Snippet;
-  button?: ToastButton;
-};
+export type ToastContentProps = ToastComponentBaseProps &
+  ToastOpenProps & {
+    title?: string | Snippet;
+    description?: string | Snippet;
+    onClose?: () => void;
+    children?: Snippet;
+  };
 
-export type ToastContainerProps = ToastCommonProps & {
+export type ToastContainerProps = ToastComponentBaseProps & {
   shape?: Shape;
   size?: ContainerSize;
 } & Omit<HTMLAttributes<HTMLElement>, 'title' | 'color' | 'size'>;
@@ -297,14 +303,10 @@ export type ToastCustom<T extends Closable = any> = {
   props: T;
 };
 
-export type ToastShow = {
-  title?: string;
-  description?: string;
+export type ToastShow = ToastOpenProps & {
   color?: Color;
   shape?: Shape;
-  icon?: IconLike | false;
   size?: ContainerSize;
-  button?: ToastButton;
 };
 
 export type ToastOptions = {
