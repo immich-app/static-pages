@@ -33,6 +33,7 @@
   import {
     mdiCameraOff,
     mdiCheck,
+    mdiClose,
     mdiCloudUpload,
     mdiImageRemove,
     mdiPencilOutline,
@@ -43,22 +44,34 @@
   } from '@mdi/js';
   import { fade } from 'svelte/transition';
 
+  type PetDraft = {
+    name?: string;
+    animal?: AssetTypeAnimal;
+    breed?: string;
+    birthMonth?: number;
+    birthYear?: number;
+  };
+
   let makePet = $state(false);
   let editPet = $state(false);
   let editingPetId = $state<string | undefined>(undefined);
-  let selectedAssetTypeAnimal = $derived(petsUploaderManager.selectedMetadata.animal);
+  let petDraft = $state<PetDraft>({});
   const currentYear = new Date().getFullYear();
 
-  const monthOptions: { value: string; label: string }[] = [];
+  const blankOption = { value: '', label: '-' };
+  const monthOptions: { value: string; label: string }[] = [blankOption];
   for (let month = 1; month <= 12; month++) {
     monthOptions.push({ value: String(month), label: monthNames[month - 1] });
   }
-  const yearOptions: { value: string; label: string }[] = [];
+  const yearOptions: { value: string; label: string }[] = [blankOption];
   for (let year = currentYear; year > currentYear - 60; year--) {
     yearOptions.push({ value: String(year), label: String(year) });
   }
   let petCount = $state(0);
   let petAsset = $derived(petsUploaderManager.assets[petCount]);
+  let imagePets = $derived(
+    petsUploaderManager.pets.filter((pet) => petAsset?.boxes.some((box) => box.petId === pet.id)),
+  );
   let squareEditor = $state<{
     addSquare: () => void;
     deleteSquare: () => void;
@@ -71,11 +84,7 @@
   let activePetId = $state<string | undefined>(undefined);
   let addBlocked = $derived(activeSquare && activePetId == null);
 
-  let buttonEnable = $derived(
-    petsUploaderManager.selectedMetadata.name &&
-      petsUploaderManager.selectedMetadata.animal &&
-      petsUploaderManager.selectedMetadata.breed,
-  );
+  let buttonEnable = $derived(petDraft.animal && petDraft.breed);
 
   const createSquare = () => {
     const asset = petsUploaderManager.assets[petCount];
@@ -162,55 +171,56 @@
       </CardHeader>
       <CardBody>
         <Field label="Name">
-          <Input
-            class="transition-none"
-            placeholder=""
-            onchange={(e) => petsUploaderManager.updateSelectedMetadata('name', (e?.target as HTMLInputElement).value)}
-            bind:value={petsUploaderManager.selectedMetadata.name}
-          />
+          <Input class="transition-none" placeholder="" bind:value={petDraft.name} />
         </Field>
         <div class="grid grid-cols-2 gap-2">
           <Field label="Birth month">
             <Select
-              value={petsUploaderManager.selectedMetadata.birthMonth?.toString()}
-              onChange={(e) => petsUploaderManager.updateSelectedMetadata('birthMonth', e ? Number(e) : undefined)}
+              value={petDraft.birthMonth?.toString()}
+              onChange={(e) => (petDraft.birthMonth = e ? Number(e) : undefined)}
               options={monthOptions}
             />
           </Field>
 
           <Field label="Birth year">
             <Select
-              value={petsUploaderManager.selectedMetadata.birthYear?.toString()}
-              onChange={(e) => petsUploaderManager.updateSelectedMetadata('birthYear', e ? Number(e) : undefined)}
+              value={petDraft.birthYear?.toString()}
+              onChange={(e) => (petDraft.birthYear = e ? Number(e) : undefined)}
               options={yearOptions}
             />
           </Field>
         </div>
-        <Field label="Animal">
+        <Field label="Animal" required="indicator">
           <Select
             onChange={(e) => {
-              petsUploaderManager.updateSelectedMetadata('animal', e);
-              petsUploaderManager.updateSelectedMetadata('breed', undefined);
+              petDraft.animal = (e || undefined) as AssetTypeAnimal | undefined;
+              petDraft.breed = undefined;
             }}
-            options={Object.entries(AssetTypeAnimalNames).map(([value, label]) => ({
-              value: value as AssetTypeAnimal,
-              label,
-            }))}
-            bind:value={selectedAssetTypeAnimal}
+            options={[
+              blankOption,
+              ...Object.entries(AssetTypeAnimalNames).map(([value, label]) => ({
+                value: value as AssetTypeAnimal,
+                label,
+              })),
+            ]}
+            bind:value={petDraft.animal}
           />
         </Field>
-        <Field label="Breed" disabled={!selectedAssetTypeAnimal}>
+        <Field label="Breed" required="indicator" disabled={!petDraft.animal}>
           <Select
-            onChange={(e) => petsUploaderManager.updateSelectedMetadata('breed', e)}
-            options={(selectedAssetTypeAnimal ? AssetTypeBreedNames[selectedAssetTypeAnimal] : []).map((breed) => ({
-              value: breed,
-              label: breed,
-            }))}
-            bind:value={petsUploaderManager.selectedMetadata.breed}
+            onChange={(e) => (petDraft.breed = e || undefined)}
+            options={[
+              blankOption,
+              ...(petDraft.animal ? AssetTypeBreedNames[petDraft.animal] : []).map((breed) => ({
+                value: breed,
+                label: breed,
+              })),
+            ]}
+            bind:value={petDraft.breed}
           />
         </Field>
       </CardBody>
-      <CardFooter>
+      <CardFooter class="gap-2">
         {#if makePet}
           <Button
             color="primary"
@@ -220,16 +230,27 @@
             size="small"
             onclick={() => {
               const pet = petsUploaderManager.createPet({
-                name: petsUploaderManager.selectedMetadata.name ?? '',
-                birthMonth: petsUploaderManager.selectedMetadata.birthMonth ?? 0,
-                birthYear: petsUploaderManager.selectedMetadata.birthYear ?? 0,
-                animal: petsUploaderManager.selectedMetadata.animal ?? '',
-                breed: petsUploaderManager.selectedMetadata.breed ?? '',
+                name: petDraft.name ?? '',
+                birthMonth: petDraft.birthMonth ?? 0,
+                birthYear: petDraft.birthYear ?? 0,
+                animal: petDraft.animal ?? '',
+                breed: petDraft.breed ?? '',
               });
               squareEditor?.assignActivePet(pet.id);
               makePet = false;
             }}>Create Pet</Button
           >
+          <Button
+            leadingIcon={mdiClose}
+            size="small"
+            color="danger"
+            variant="outline"
+            aria-label="Cancel Pet"
+            onclick={() => {
+              makePet = false;
+            }}
+            >Cancel
+          </Button>
         {/if}
         {#if editPet}
           <Button
@@ -241,17 +262,28 @@
             onclick={() => {
               if (editingPetId) {
                 petsUploaderManager.editPet(editingPetId, {
-                  name: petsUploaderManager.selectedMetadata.name ?? '',
-                  birthMonth: petsUploaderManager.selectedMetadata.birthMonth ?? 0,
-                  birthYear: petsUploaderManager.selectedMetadata.birthYear ?? 0,
-                  animal: petsUploaderManager.selectedMetadata.animal ?? '',
-                  breed: petsUploaderManager.selectedMetadata.breed ?? '',
+                  name: petDraft.name ?? '',
+                  birthMonth: petDraft.birthMonth ?? 0,
+                  birthYear: petDraft.birthYear ?? 0,
+                  animal: petDraft.animal ?? '',
+                  breed: petDraft.breed ?? '',
                 });
               }
               editPet = false;
               editingPetId = undefined;
             }}>Confirm Edits</Button
           >
+          <Button
+            leadingIcon={mdiClose}
+            size="small"
+            color="danger"
+            variant="outline"
+            aria-label="Cancel Edit"
+            onclick={() => {
+              editPet = false;
+            }}
+            >Cancel
+          </Button>
         {/if}
       </CardFooter>
     </Card>
@@ -281,7 +313,7 @@
           <Stack>
             <!-- svelte-ignore a11y_no_static_element_interactions -->
             <div
-              class="relative flex min-h-[67dvh] items-center justify-center overflow-hidden bg-neutral-900/10"
+              class="relative flex items-center justify-center overflow-hidden bg-neutral-900/10 p-4"
               onpointerdown={(e) => {
                 const t = e.target as HTMLElement;
                 if (!t.closest('canvas, button, input, select, textarea, a, [data-square-control]')) {
@@ -313,10 +345,15 @@
                   {#snippet follow(box)}
                     {@const assignedPet = petsUploaderManager.getPet(box.petId)}
                     <Card color="primary" class="pointer-events-auto w-64 scale-80 shadow-lg">
+                      {#if !assignedPet}
+                        <CardHeader>
+                          <Text class="font-small self-center">Select a pet to tag</Text>
+                        </CardHeader>
+                      {/if}
                       <CardBody>
                         {#if assignedPet}
                           <Stack gap={2}>
-                            <Text class="font-medium">{assignedPet.name}</Text>
+                            <Text class="font-medium">{assignedPet.name || 'Unnamed Pet'}</Text>
                             <Text size="small" color="secondary"
                               >{assignedPet.animal}, {assignedPet.breed}, {formatAge(
                                 assignedPet.birthMonth,
@@ -343,6 +380,7 @@
                               leadingIcon={mdiPlus}
                               class="w-full"
                               onclick={() => {
+                                petDraft = {};
                                 makePet = true;
                               }}>Create Pet</Button
                             >
@@ -397,7 +435,7 @@
                     <IconButton
                       size="tiny"
                       color="danger"
-                      class="absolute inset-0.5 z-100"
+                      class="absolute inset-0.5 z-1"
                       icon={mdiImageRemove}
                       aria-label="Delete Photo"
                       onclick={() => {
@@ -443,7 +481,7 @@
           </CardHeader>
           <CardBody>
             <Stack gap={2}>
-              {#each petsUploaderManager.pets as pet (pet.id)}
+              {#each imagePets as pet (pet.id)}
                 <div data-square-control class="rounded-lg border-4 p-2 hover:bg-primary/10">
                   <button
                     type="button"
@@ -477,7 +515,7 @@
                       aria-label="Edit Pet"
                       onclick={() => {
                         editingPetId = pet.id;
-                        petsUploaderManager.selectedMetadata = {
+                        petDraft = {
                           name: pet.name,
                           animal: pet.animal as AssetTypeAnimal,
                           breed: pet.breed,

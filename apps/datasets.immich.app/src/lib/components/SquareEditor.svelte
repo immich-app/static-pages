@@ -15,6 +15,8 @@
 
   let { src, alt = '', boxes = [], onChange, onActiveChange, follow }: Props = $props();
 
+  const dragPadding = 16;
+
   let containerEl = $state<HTMLDivElement>();
   let zoomEl = $state<HTMLDivElement>();
   let imgEl = $state<HTMLImageElement>();
@@ -36,7 +38,14 @@
   };
 
   const applyViewport = () => {
-    canvas?.setViewportTransform([currentZoom, 0, 0, currentZoom, currentPositionX, currentPositionY]);
+    canvas?.setViewportTransform([
+      currentZoom,
+      0,
+      0,
+      currentZoom,
+      currentPositionX + dragPadding,
+      currentPositionY + dragPadding,
+    ]);
   };
 
   let activeBox = $state<squareBox>({ left: 0, top: 0, width: 0, height: 0 });
@@ -194,7 +203,7 @@
     const current = snapshot();
     imgW = iw;
     imgH = ih;
-    canvas.setDimensions({ width: iw, height: ih });
+    canvas.setDimensions({ width: iw + dragPadding * 2, height: ih + dragPadding * 2 });
     applyViewport();
     if (current.length > 0) {
       loadBoxes(current);
@@ -361,8 +370,9 @@
     canvas = new Canvas(canvasEl, { selection: false });
 
     canvas.wrapperEl.style.position = 'absolute';
-    canvas.wrapperEl.style.top = '0';
-    canvas.wrapperEl.style.left = '0';
+    canvas.wrapperEl.style.top = `-${dragPadding}px`;
+    canvas.wrapperEl.style.left = `-${dragPadding}px`;
+    canvas.wrapperEl.style.overflow = 'visible';
     canvas.wrapperEl.dataset.overlayInteractive = '';
 
     canvas.on('selection:created', onSelectionChange);
