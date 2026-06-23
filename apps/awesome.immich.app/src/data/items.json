@@ -58,6 +58,11 @@
         "title": "Immich Companion",
         "description": "Browser extension that adds right-click save to Immich, CLIP-powered search from the toolbar, optional new tab photo memories, and inline search results that show your photos alongside Google/DuckDuckGo results.",
         "href": "https://github.com/bjoernch/immich-companion"
+      },
+      {
+        "title": "Picture Frame",
+        "description": "Self-hosted digital photo frame for the Raspberry Pi that syncs an Immich album, with smooth crossfades even on a Pi Zero, motion-aware screen power, and Home Assistant control over MQTT.",
+        "href": "https://github.com/MateEke/picture-frame"
       }
     ]
   },
