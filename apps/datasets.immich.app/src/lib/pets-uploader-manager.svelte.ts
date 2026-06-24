@@ -325,17 +325,6 @@ class PetsUploaderManager implements UploadableAssets {
     this.validateUploads();
   }
 
-  submitWarning(): string | undefined {
-    const untagged = this.assets.filter((asset) => !asset.boxes.some((box) => box.petId));
-    if (untagged.length > 0) {
-      return 'Every photo needs at least one pet attached';
-    }
-    const shortPets = this.pets.filter((pet) => this.boxCountForPet(pet.id) < 10);
-    if (shortPets.length > 0) {
-      return 'Each pet needs at least 10 boxes';
-    }
-    return undefined;
-  }
 
   applyPet(pet: Pet) {
     this.updateSelectedMetadata('name', pet.name);

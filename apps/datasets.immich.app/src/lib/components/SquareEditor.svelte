@@ -16,7 +16,6 @@
   let { src, alt = '', boxes = [], onChange, onActiveChange, follow }: Props = $props();
 
   const dragPadding = 16;
-
   let containerEl = $state<HTMLDivElement>();
   let zoomEl = $state<HTMLDivElement>();
   let imgEl = $state<HTMLImageElement>();
@@ -38,14 +37,19 @@
   };
 
   const applyViewport = () => {
-    canvas?.setViewportTransform([
-      currentZoom,
-      0,
-      0,
-      currentZoom,
-      currentPositionX + dragPadding,
-      currentPositionY + dragPadding,
-    ]);
+    if (!canvas) {
+      return;
+    }
+    canvas.setViewportTransform([1, 0, 0, 1, dragPadding, dragPadding]);
+
+    const offset = dragPadding * (1 - currentZoom);
+    const x = currentPositionX + offset;
+    const y = currentPositionY + offset;
+
+    const style = canvas.wrapperEl.style;
+    style.transformOrigin = '0 0';
+    style.translate = `${x}px ${y}px`;
+    style.scale = `${currentZoom}`;
   };
 
   let activeBox = $state<squareBox>({ left: 0, top: 0, width: 0, height: 0 });
