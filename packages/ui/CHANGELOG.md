@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.82.0](https://github.com/immich-app/static-pages/compare/ui-v0.81.1...ui-v0.82.0) (2026-06-24)
+
+
+### Features
+
+* close toast ([#600](https://github.com/immich-app/static-pages/issues/600)) ([0458b35](https://github.com/immich-app/static-pages/commit/0458b353a6e4bfc78795c3774e148e6cf6e1f5ea))
+
+
+### Bug Fixes
+
+* document default toast timeout ([f536e59](https://github.com/immich-app/static-pages/commit/f536e59b80b6f1f008039d32cb5fa49d0515737e))
+* **ui:** document default toast timeout ([#592](https://github.com/immich-app/static-pages/issues/592)) ([f536e59](https://github.com/immich-app/static-pages/commit/f536e59b80b6f1f008039d32cb5fa49d0515737e))
+
 ## [0.81.1](https://github.com/immich-app/static-pages/compare/ui-v0.81.0...ui-v0.81.1) (2026-06-15)
 
 
