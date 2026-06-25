@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.2](https://github.com/immich-app/static-pages/compare/svelte-markdown-preprocess-v0.5.1...svelte-markdown-preprocess-v0.5.2) (2026-06-25)
+
+
+### Bug Fixes
+
+* attribute quotes ([#562](https://github.com/immich-app/static-pages/issues/562)) ([f3cd681](https://github.com/immich-app/static-pages/commit/f3cd6818b42f42e10c2afd8154aeaa2b41b8d6b7))
+* escape html characters ([#576](https://github.com/immich-app/static-pages/issues/576)) ([b6b2270](https://github.com/immich-app/static-pages/commit/b6b2270ab6ee56f3283f7066c69fcdcd837bff7b))
+* license ([#543](https://github.com/immich-app/static-pages/issues/543)) ([043b7db](https://github.com/immich-app/static-pages/commit/043b7dbbfd1a9bb7b2445fe228eb2fb392ef0bea))
+* publish ([#484](https://github.com/immich-app/static-pages/issues/484)) ([ae86d91](https://github.com/immich-app/static-pages/commit/ae86d91734eec38de16479df9a838feacfa7426d))
+
 ## [0.5.1](https://github.com/immich-app/packages/compare/svelte-markdown-preprocess-v0.5.0...svelte-markdown-preprocess-v0.5.1) (2026-04-28)
 
 
