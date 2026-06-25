@@ -270,7 +270,7 @@ type ToastOpenProps = {
   title?: string;
   description?: string;
   icon?: IconLike | false;
-  button?: (close: () => void) => ToastButton;
+  button?: ToastButton | ((close: () => void) => ToastButton);
 };
 
 type ToastComponentBaseProps = {
