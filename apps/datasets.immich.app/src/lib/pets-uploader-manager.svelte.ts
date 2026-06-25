@@ -325,7 +325,6 @@ class PetsUploaderManager implements UploadableAssets {
     this.validateUploads();
   }
 
-
   applyPet(pet: Pet) {
     this.updateSelectedMetadata('name', pet.name);
     this.updateSelectedMetadata('animal', pet.animal as AssetTypeAnimal);

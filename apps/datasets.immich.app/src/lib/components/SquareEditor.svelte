@@ -430,7 +430,7 @@
         {src}
         {alt}
         onload={onImageLoad}
-        class="block h-[67dvh] w-auto select-none"
+        class="block h-[63dvh] w-auto select-none"
         draggable="false"
       />
     </div>

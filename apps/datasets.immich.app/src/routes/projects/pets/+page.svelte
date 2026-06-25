@@ -25,6 +25,7 @@
     Icon,
     IconButton,
     Input,
+    Logo,
     modalManager,
     Select,
     Stack,
@@ -34,16 +35,16 @@
   import {
     mdiCameraOff,
     mdiCheck,
-    mdiCheckboxBlankOutline,
-    mdiCheckboxMarkedOutline,
+    mdiCheckBold,
     mdiClose,
     mdiCloudUpload,
-    mdiImageRemove,
+    mdiDelete,
     mdiPencilOutline,
     mdiPlus,
     mdiTrashCanOutline,
     mdiVectorSquare,
     mdiVectorSquareRemove,
+    mdiWindowClose,
   } from '@mdi/js';
   import { fade } from 'svelte/transition';
 
@@ -67,7 +68,7 @@
     monthOptions.push({ value: String(month), label: monthNames[month - 1] });
   }
   const yearOptions: { value: string; label: string }[] = [blankOption];
-  for (let year = currentYear; year > currentYear - 60; year--) {
+  for (let year = currentYear; year > currentYear - 80; year--) {
     yearOptions.push({ value: String(year), label: String(year) });
   }
   let petCount = $state(0);
@@ -157,7 +158,8 @@
   >
     <Card color="secondary" class="w-full max-w-lg">
       <CardHeader>
-        <div class="flex justify-between">
+        <div class="flex items-center gap-1">
+          <Logo variant="icon" size="tiny" />
           <CardTitle>{editPet ? 'Edit Pet' : 'Create Pet'}</CardTitle>
         </div>
       </CardHeader>
@@ -343,7 +345,7 @@
                             <div class="flex items-center justify-between">
                               <Text class="font-small">Select a pet to tag</Text>
                               <IconButton
-                                icon={mdiClose}
+                                icon={mdiWindowClose}
                                 size="small"
                                 color="secondary"
                                 variant="ghost"
@@ -381,7 +383,7 @@
                           {:else}
                             <Stack gap={2}>
                               {#if petsUploaderManager.pets.length > 0}
-                                <div class="max-h-40 overflow-y-auto">
+                                <div class="border- max-h-40 overflow-y-auto rounded-lg border border-muted p-1">
                                   <Stack gap={1}>
                                     {#each petsUploaderManager.pets as pet (pet.id)}
                                       <button
@@ -441,7 +443,7 @@
                 <button
                   type="button"
                   color={selected ? 'primary' : 'secondary'}
-                  class="relative shrink-0 rounded-lg border-3 {i === petCount
+                  class="group relative shrink-0 rounded-lg border-3 {i === petCount
                     ? 'border-primary'
                     : 'dark:border-secondary'}"
                   onclick={() => {
@@ -451,20 +453,20 @@
                     }
                   }}
                 >
-                  {#if i === petCount}
-                    <IconButton
-                      size="tiny"
-                      color="danger"
-                      class="absolute inset-0.5 z-1"
-                      icon={mdiImageRemove}
-                      aria-label="Delete Photo"
-                      onclick={() => {
-                        petsUploaderManager.deselectAll();
-                        petsUploaderManager.toggleSelect(petAsset);
-                        petsUploaderManager.deleteSelected();
-                      }}
-                    />
-                  {/if}
+                  <IconButton
+                    color="danger"
+                    class="absolute inset-x-0 bottom-1 z-2 mx-auto flex h-6 w-12 rounded-full opacity-0 transition-all group-hover:opacity-100"
+                    icon={mdiDelete}
+                    variant="ghost"
+                    aria-label="Delete Photo"
+                    onclick={async () => {
+                      const hasPet = asset.boxes.some((box) => box.petId);
+                      if (hasPet && !(await modalManager.showDialog({ prompt: 'Delete this photo?' }))) {
+                        return;
+                      }
+                      petsUploaderManager.deleteById(asset.metadata.assetId!);
+                    }}
+                  />
                   <img
                     src={URL.createObjectURL(asset.preview)}
                     alt={asset.name}
@@ -477,8 +479,10 @@
                     }}
                   />
                   {#if asset.boxes.some((box) => box.petId)}
-                    <div class="light absolute inset-e-1 top-0.5 rounded-full bg-success p-0.5">
-                      <Icon icon={mdiCheck} class="size-4 text-light" />
+                    <div
+                      class="light absolute inset-x-0 top-0 mx-auto flex h-3 w-9 items-end justify-center rounded-b-full bg-success/90 pb-px"
+                    >
+                      <Icon icon={mdiCheck} class="size-3 text-light" />
                     </div>
                   {/if}
                 </button>
@@ -494,113 +498,113 @@
           </Stack>
         </CardBody>
       </Card>
-      <div class="flex h-fit w-3xs flex-col gap-2">
-        <Card color="secondary">
-          <CardBody class="p-4">
-            <Text class="truncate pb-1 text-left font-bold" size="large">Pets</Text>
-            <Stack gap={2}>
-              {#each imagePets as pet (pet.id)}
-                <div data-square-control class="rounded-lg border-4 p-2 hover:bg-primary/10">
-                  <Text class="truncate text-left font-medium">{pet.name || 'Unnamed pet'}</Text>
-                  <Text size="tiny" color="secondary" class="truncate"
-                    >{pet.animal}, {pet.breed}, {formatAge(pet.birthMonth, pet.birthYear)}</Text
-                  >
-                  <div class="mt-2 flex items-center gap-1">
-                    <IconButton
-                      size="small"
-                      class=""
-                      variant="ghost"
-                      icon={mdiPencilOutline}
-                      disabled={addBlocked}
-                      aria-label="Edit Pet"
-                      onclick={() => {
-                        editingPetId = pet.id;
-                        petDraft = {
-                          name: pet.name,
-                          animal: pet.animal as AssetTypeAnimal,
-                          breed: pet.breed,
-                          birthMonth: pet.birthMonth,
-                          birthYear: pet.birthYear,
-                        };
-                        editPet = true;
-                      }}
-                    />
-                    <IconButton
-                      size="small"
-                      variant="ghost"
-                      class="mr-auto"
-                      color="danger"
-                      shape="round"
-                      icon={mdiTrashCanOutline}
-                      aria-label="Delete pet"
-                      onclick={() => {
-                        petsUploaderManager.deletePet(pet.id);
-                        squareEditor?.refresh();
-                      }}
-                    />
-                    <Badge size="small" color="primary">{petsUploaderManager.boxCountForPet(pet.id)}/10</Badge>
+      <div class="w-full lg:relative lg:w-3xs">
+        <div class="flex flex-col gap-4 lg:absolute lg:inset-0">
+          <Card color="secondary" class="min-h-0 flex-1">
+            <CardBody class="min-h-0 p-4">
+              <Text class="truncate pb-2 text-left font-bold" size="large">Pets</Text>
+              <Stack gap={2}>
+                {#each imagePets as pet (pet.id)}
+                  <div data-square-control class="rounded-lg border-4 p-2 hover:bg-primary/10">
+                    <Text class="truncate text-left font-medium">{pet.name || 'Unnamed pet'}</Text>
+                    <Text size="tiny" color="secondary" class="truncate"
+                      >{pet.animal}, {pet.breed}, {formatAge(pet.birthMonth, pet.birthYear)}</Text
+                    >
+                    <div class="mt-2 flex items-center gap-1">
+                      <IconButton
+                        size="small"
+                        class=""
+                        variant="ghost"
+                        icon={mdiPencilOutline}
+                        disabled={addBlocked}
+                        aria-label="Edit Pet"
+                        onclick={() => {
+                          editingPetId = pet.id;
+                          petDraft = {
+                            name: pet.name,
+                            animal: pet.animal as AssetTypeAnimal,
+                            breed: pet.breed,
+                            birthMonth: pet.birthMonth,
+                            birthYear: pet.birthYear,
+                          };
+                          editPet = true;
+                        }}
+                      />
+                      <IconButton
+                        size="small"
+                        variant="ghost"
+                        class="mr-auto"
+                        color="danger"
+                        shape="round"
+                        icon={mdiTrashCanOutline}
+                        aria-label="Delete pet"
+                        onclick={() => {
+                          petsUploaderManager.deletePet(pet.id);
+                          squareEditor?.refresh();
+                        }}
+                      />
+                      <Badge size="small" color="primary">{petsUploaderManager.boxCountForPet(pet.id)}/10</Badge>
+                    </div>
+                  </div>
+                {:else}
+                  <Text size="tiny" color="secondary">No pets yet. Add a box and create one.</Text>
+                {/each}
+                <Button
+                  leadingIcon={mdiVectorSquare}
+                  size="small"
+                  variant="outline"
+                  disabled={addBlocked}
+                  aria-label="Add Box"
+                  onclick={createSquare}
+                  >Add Box
+                </Button>
+              </Stack>
+            </CardBody>
+          </Card>
+          <Card color="secondary">
+            <CardBody>
+              <Stack gap={2}>
+                <Text size="large" class="font-bold" color="secondary">Submission</Text>
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2">
+                    <Icon
+                      icon={petsUploaderManager.assets.length > 0 &&
+                      petsUploaderManager.taggedAssetCount === petsUploaderManager.assets.length
+                        ? mdiCheckBold
+                        : mdiClose}
+                    ></Icon>
+
+                    <Text size="tiny" color="secondary">At least 1 pet per image</Text>
                   </div>
                 </div>
-              {:else}
-                <Text size="tiny" color="secondary">No pets yet. Add a box and create one.</Text>
-              {/each}
-              <Button
-                leadingIcon={mdiVectorSquare}
-                size="small"
-                variant="outline"
-                disabled={addBlocked}
-                aria-label="Add Box"
-                onclick={createSquare}
-                >Add Box
-              </Button>
-            </Stack>
-          </CardBody>
-        </Card>
-        <Card color="secondary">
-          <CardBody>
-            <Stack gap={2}>
-              <Text size="medium" color="secondary" class="font-bold">Submission:</Text>
-              <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2">
                   <Icon
-                    icon={petsUploaderManager.assets.length > 0 &&
-                    petsUploaderManager.taggedAssetCount === petsUploaderManager.assets.length
-                      ? mdiCheckboxMarkedOutline
-                      : mdiCheckboxBlankOutline}
+                    icon={petsUploaderManager.pets.length > 0 &&
+                    petsUploaderManager.pets.every((p) => petsUploaderManager.boxCountForPet(p.id) >= 10)
+                      ? mdiCheckBold
+                      : mdiClose}
                   ></Icon>
-                  <Text size="small" color="secondary">At least 1 pet per image</Text>
+                  <Text size="tiny" color="secondary">At least 10 boxes per pet</Text>
                 </div>
-                <Text size="small" color="secondary"
-                  >{petsUploaderManager.taggedAssetCount}/{petsUploaderManager.assets.length}</Text
+                <Button
+                  color="primary"
+                  size="small"
+                  class="light w-full whitespace-nowrap"
+                  leadingIcon={mdiCheck}
+                  disabled={!(
+                    petsUploaderManager.assets.length > 0 &&
+                    petsUploaderManager.taggedAssetCount === petsUploaderManager.assets.length &&
+                    petsUploaderManager.pets.length > 0 &&
+                    petsUploaderManager.pets.every((p) => petsUploaderManager.boxCountForPet(p.id) >= 10)
+                  )}
+                  onclick={() => doUpload()}
                 >
-              </div>
-              <div class="flex items-center gap-2">
-                <Icon
-                  icon={petsUploaderManager.pets.length > 0 &&
-                  petsUploaderManager.pets.every((p) => petsUploaderManager.boxCountForPet(p.id) >= 10)
-                    ? mdiCheckboxMarkedOutline
-                    : mdiCheckboxBlankOutline}
-                ></Icon>
-                <Text size="small" color="secondary">At least 10 boxes per pet</Text>
-              </div>
-              <Button
-                color="primary"
-                size="small"
-                class="light w-full whitespace-nowrap"
-                leadingIcon={mdiCheck}
-                disabled={!(
-                  petsUploaderManager.assets.length > 0 &&
-                  petsUploaderManager.taggedAssetCount === petsUploaderManager.assets.length &&
-                  petsUploaderManager.pets.length > 0 &&
-                  petsUploaderManager.pets.every((p) => petsUploaderManager.boxCountForPet(p.id) >= 10)
-                )}
-                onclick={() => doUpload()}
-              >
-                Submit {petsUploaderManager.taggedAssetCount} photo(s)
-              </Button>
-            </Stack>
-          </CardBody>
-        </Card>
+                  Submit {petsUploaderManager.taggedAssetCount} photo(s)
+                </Button>
+              </Stack>
+            </CardBody>
+          </Card>
+        </div>
       </div>
     </div>
   </section>
