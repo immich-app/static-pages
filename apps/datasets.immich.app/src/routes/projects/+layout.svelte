@@ -1,6 +1,5 @@
 <script lang="ts">
   import Header from '$common/components/Header.svelte';
-  import PageContent from '$common/components/PageContent.svelte';
   import { AppShell, AppShellHeader } from '@immich/ui';
   import type { Snippet } from 'svelte';
 
@@ -15,8 +14,11 @@
   <AppShellHeader>
     <Header items={[]} />
   </AppShellHeader>
-
-  <PageContent>
-    {@render children?.()}
-  </PageContent>
+  <div class="mx-auto flex h-full flex-col">
+    <div class="grow">
+      <div class="w-full px-3">
+        {@render children?.()}
+      </div>
+    </div>
+  </div>
 </AppShell>

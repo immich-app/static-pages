@@ -1,4 +1,4 @@
-import { plainToClass } from 'class-transformer';
+import { type ClassConstructor, plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Dataset, MetadataType } from '../../types/metadata';
 import { DatasetMetadataValidatorMap } from './validators';
@@ -62,7 +62,7 @@ export async function validateAssetWithMetadata<D extends Dataset>(
   }
 
   // type check metadata before upload
-  const metadataValidatorClass = DatasetMetadataValidatorMap[dataset];
+  const metadataValidatorClass = DatasetMetadataValidatorMap[dataset] as ClassConstructor<MetadataType<D>>;
   const metadata = plainToClass(metadataValidatorClass, JSON.parse(formMetadata as string));
   const validationErrors = await validate(metadata, { whitelist: true, forbidNonWhitelisted: true });
   if (validationErrors.length > 0) {
