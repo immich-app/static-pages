@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.83.0](https://github.com/immich-app/static-pages/compare/ui-v0.82.0...ui-v0.83.0) (2026-06-25)
+
+
+### Features
+
+* more flexible toast button ([#601](https://github.com/immich-app/static-pages/issues/601)) ([e0e22f7](https://github.com/immich-app/static-pages/commit/e0e22f78f99264015a3add30eb410781dfefc093))
+
 ## [0.82.0](https://github.com/immich-app/static-pages/compare/ui-v0.81.1...ui-v0.82.0) (2026-06-24)
 
 
