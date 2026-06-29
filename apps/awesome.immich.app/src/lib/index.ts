@@ -5,7 +5,7 @@ export const siteMetadata = {
   title: 'Awesome Immich',
   description: 'A list of awesome Immich apps, integrations, tools, distributions, and guides',
   imageUrl: '/img/social-preview.png',
-  editUrl: 'https://github.com/immich-app/static-pages/edit/main/apps/awesome.immich.app/src/data/items.json',
+  editUrl: 'https://github.com/immich-app/static-pages/blob/main/apps/awesome.immich.app/README.md#adding-projects',
 };
 
 export type Category = {
