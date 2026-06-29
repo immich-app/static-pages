@@ -31,6 +31,7 @@ export const AssetTypeBreedNames: Record<AssetTypeAnimal, string[]> = {
     'Maltese',
     'Yorkshire Terrier',
     'French Bulldog',
+    'Maltipoo',
     'Other',
     'Unknown',
   ],
@@ -68,10 +69,25 @@ export const AssetTypeBreedNames: Record<AssetTypeAnimal, string[]> = {
   GuineaPig: ['American', 'Abyssinian', 'Peruvian', 'Teddy', 'Silkie', 'Other', 'Unknown'],
   Hamster: ['Syrian', 'Winter White Dwarf', 'Campbell Dwarf', 'Roborovski Dwarf', 'Chinese', 'Other', 'Unknown'],
   Hedgehog: ['African Pygmy', 'Algerian', 'Pinto', 'Snowflake', 'Albino', 'Other', 'Unknown'],
-  Other: ['n/a'],
+  Other: ['Other'],
 };
 
 export const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+
+export const boxColors = [
+  'rgb(66,80,175)',
+  'rgb(229,57,53)',
+  'rgb(67,160,71)',
+  'rgb(251,140,0)',
+  'rgb(142,36,170)',
+  'rgb(0,172,193)',
+  'rgb(216,27,96)',
+  'rgb(109,76,65)',
+];
+
+export const boxFill = (color: string, alpha = 0.15) => color.replace('rgb(', 'rgba(').replace(')', `, ${alpha})`);
+
+export const animalLabel = (animal: string) => AssetTypeAnimalNames[animal as AssetTypeAnimal] ?? animal;
 
 export const formatAge = (birthMonth?: number, birthYear?: number): string => {
   if (!birthMonth || !birthYear) {
@@ -303,6 +319,11 @@ class PetsUploaderManager implements UploadableAssets {
     }
     this.updateMetadataInputs();
     this.validateUploads();
+  }
+
+  colorForPet(id: string): string {
+    const index = this.pets.findIndex((p) => p.id === id);
+    return boxColors[Math.max(0, index) % boxColors.length];
   }
 
   boxCountForPet(id: string): number {

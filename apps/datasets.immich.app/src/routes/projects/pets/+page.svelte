@@ -5,9 +5,11 @@
   import UploadErrorModal from '$lib/components/UploadErrorModal.svelte';
   import UploadModal from '$lib/components/UploadModal.svelte';
   import {
+    animalLabel,
     type AssetTypeAnimal,
     AssetTypeAnimalNames,
     AssetTypeBreedNames,
+    boxFill,
     formatAge,
     monthNames,
     petsUploaderManager,
@@ -38,9 +40,9 @@
     mdiCheckBold,
     mdiClose,
     mdiCloudUpload,
-    mdiDelete,
     mdiPencilOutline,
     mdiPlus,
+    mdiTrashCan,
     mdiTrashCanOutline,
     mdiVectorSquare,
     mdiVectorSquareRemove,
@@ -55,11 +57,13 @@
     birthMonth?: number;
     birthYear?: number;
   };
-
+  let displayInstructions = $state(true);
   let makePet = $state(false);
   let editPet = $state(false);
   let editingPetId = $state<string | undefined>(undefined);
   let petDraft = $state<PetDraft>({});
+  let otherAnimal = $state('');
+  let otherBreed = $state('');
   const currentYear = new Date().getFullYear();
 
   const blankOption = { value: '', label: '-' };
@@ -88,7 +92,9 @@
   let activePetId = $state<string | undefined>(undefined);
   let addBlocked = $derived(activeSquare && activePetId == null);
 
-  let buttonEnable = $derived(petDraft.animal && petDraft.breed);
+  let finalAnimal = $derived(petDraft.animal === 'Other' ? otherAnimal : (petDraft.animal ?? ''));
+  let finalBreed = $derived(petDraft.breed === 'Other' ? otherBreed : (petDraft.breed ?? ''));
+  let buttonEnable = $derived(finalAnimal && finalBreed);
 
   const createSquare = () => {
     const asset = petsUploaderManager.assets[petCount];
@@ -165,7 +171,7 @@
       </CardHeader>
       <CardBody>
         <Field label="Name">
-          <Input class="transition-none" placeholder="" bind:value={petDraft.name} />
+          <Input bind:value={petDraft.name} maxlength={30} />
         </Field>
         <div class="grid grid-cols-2 gap-2">
           <Field label="Birth month">
@@ -186,23 +192,17 @@
         </div>
         <Field label="Animal" required="indicator">
           <Select
-            onChange={(e) => {
-              petDraft.animal = (e || undefined) as AssetTypeAnimal | undefined;
-              petDraft.breed = undefined;
-            }}
-            options={[
-              blankOption,
-              ...Object.entries(AssetTypeAnimalNames).map(([value, label]) => ({
-                value: value as AssetTypeAnimal,
-                label,
-              })),
-            ]}
             bind:value={petDraft.animal}
+            onChange={() => (petDraft.breed = undefined)}
+            options={[blankOption, ...Object.entries(AssetTypeAnimalNames).map(([value, label]) => ({ value, label }))]}
           />
+          {#if petDraft.animal === 'Other'}
+            <Input bind:value={otherAnimal} placeholder="Enter animal" class="w-fit" maxlength={30} />
+          {/if}
         </Field>
         <Field label="Breed" required="indicator" disabled={!petDraft.animal}>
           <Select
-            onChange={(e) => (petDraft.breed = e || undefined)}
+            bind:value={petDraft.breed}
             options={[
               blankOption,
               ...(petDraft.animal ? AssetTypeBreedNames[petDraft.animal] : []).map((breed) => ({
@@ -210,8 +210,10 @@
                 label: breed,
               })),
             ]}
-            bind:value={petDraft.breed}
           />
+          {#if petDraft.breed === 'Other'}
+            <Input bind:value={otherBreed} placeholder="Enter breed" class="w-fit" maxlength={30} />
+          {/if}
         </Field>
       </CardBody>
       <CardFooter class="gap-2">
@@ -227,8 +229,8 @@
                 name: petDraft.name ?? '',
                 birthMonth: petDraft.birthMonth ?? 0,
                 birthYear: petDraft.birthYear ?? 0,
-                animal: petDraft.animal ?? '',
-                breed: petDraft.breed ?? '',
+                animal: finalAnimal,
+                breed: finalBreed,
               });
               squareEditor?.assignActivePet(pet.id);
               makePet = false;
@@ -259,9 +261,10 @@
                   name: petDraft.name ?? '',
                   birthMonth: petDraft.birthMonth ?? 0,
                   birthYear: petDraft.birthYear ?? 0,
-                  animal: petDraft.animal ?? '',
-                  breed: petDraft.breed ?? '',
+                  animal: finalAnimal,
+                  breed: finalBreed,
                 });
+                squareEditor?.refresh();
               }
               editPet = false;
               editingPetId = undefined;
@@ -299,6 +302,24 @@
     </Card>
   </button>
 {:else}
+  {#if displayInstructions}
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      transition:fade|global={{ duration: 150 }}
+    >
+      <Card color="secondary" class="w-full max-w-lg">
+        <CardHeader>
+          <div class="flex justify-between">
+            <CardTitle>Instructions</CardTitle>
+          </div>
+        </CardHeader>
+        <CardBody>hi</CardBody>
+        <CardFooter>
+          <Button color="primary" onclick={() => (displayInstructions = false)}>Ok</Button>
+        </CardFooter>
+      </Card>
+    </div>
+  {/if}
   <section>
     <!-- Columns -->
     <div class="my-4 grid grid-cols-1 gap-4 px-4 lg:grid-cols-[1fr_auto]">
@@ -321,6 +342,7 @@
                   src={petImageUrl}
                   alt={petAsset.name}
                   boxes={petAsset.boxes}
+                  colorForPet={(petId) => petsUploaderManager.colorForPet(petId)}
                   onChange={(boxes) => petsUploaderManager.setBoxes(petAsset.metadata.assetId, boxes)}
                   onActiveChange={(active, petId) => {
                     activeSquare = active;
@@ -362,7 +384,7 @@
                             <Stack gap={2}>
                               <Text class="font-medium">{assignedPet.name || 'Unnamed Pet'}</Text>
                               <Text size="small" color="secondary"
-                                >{assignedPet.animal}, {assignedPet.breed}, {formatAge(
+                                >{animalLabel(assignedPet.animal)}, {assignedPet.breed}, {formatAge(
                                   assignedPet.birthMonth,
                                   assignedPet.birthYear,
                                 )}</Text
@@ -383,12 +405,14 @@
                           {:else}
                             <Stack gap={2}>
                               {#if petsUploaderManager.pets.length > 0}
-                                <div class="border- max-h-40 overflow-y-auto rounded-lg border border-muted p-1">
-                                  <Stack gap={1}>
+                                <div class="border- max-h-40 overflow-y-auto rounded-lg border border-muted p-1.5">
+                                  <Stack gap={2}>
                                     {#each petsUploaderManager.pets as pet (pet.id)}
+                                      {@const petColor = petsUploaderManager.colorForPet(pet.id)}
                                       <button
                                         type="button"
-                                        class="w-full rounded-lg p-2 text-left hover:bg-primary/20"
+                                        class="w-full rounded-lg border-2 border-(--pet-color)/25 bg-(--pet-color)/25 p-2 text-left transition-colors hover:bg-(--pet-color)/50"
+                                        style="--pet-color: {petColor}"
                                         onclick={() => {
                                           petsUploaderManager.applyPet(pet);
                                           squareEditor?.assignActivePet(pet.id);
@@ -396,7 +420,10 @@
                                       >
                                         <Text class="truncate font-medium">{pet.name || 'Unnamed pet'}</Text>
                                         <Text size="tiny" color="secondary" class="truncate">
-                                          {pet.animal}, {pet.breed}, {formatAge(pet.birthMonth, pet.birthYear)}
+                                          {animalLabel(pet.animal)}, {pet.breed}, {formatAge(
+                                            pet.birthMonth,
+                                            pet.birthYear,
+                                          )}
                                         </Text>
                                       </button>
                                     {/each}
@@ -409,6 +436,8 @@
                                 class="w-full"
                                 onclick={() => {
                                   petDraft = {};
+                                  otherAnimal = '';
+                                  otherBreed = '';
                                   makePet = true;
                                 }}
                                 >New Pet
@@ -455,9 +484,8 @@
                 >
                   <IconButton
                     color="danger"
-                    class="absolute inset-x-0 bottom-1 z-2 mx-auto flex h-6 w-12 rounded-full opacity-0 transition-all group-hover:opacity-100"
-                    icon={mdiDelete}
-                    variant="ghost"
+                    class="absolute inset-x-0 bottom-1 z-2 mx-auto flex h-5 w-11 rounded-full opacity-0 transition-all group-hover:opacity-100"
+                    icon={mdiTrashCan}
                     aria-label="Delete Photo"
                     onclick={async () => {
                       const hasPet = asset.boxes.some((box) => box.petId);
@@ -505,10 +533,15 @@
               <Text class="truncate pb-2 text-left font-bold" size="large">Pets</Text>
               <Stack gap={2}>
                 {#each imagePets as pet (pet.id)}
-                  <div data-square-control class="rounded-lg border-4 p-2 hover:bg-primary/10">
+                  {@const petColor = petsUploaderManager.colorForPet(pet.id)}
+                  <div
+                    data-square-control
+                    class="rounded-lg border-4 p-2"
+                    style="border-color: {boxFill(petColor, 0.25)}; background-color: {boxFill(petColor, 0.2)}"
+                  >
                     <Text class="truncate text-left font-medium">{pet.name || 'Unnamed pet'}</Text>
                     <Text size="tiny" color="secondary" class="truncate"
-                      >{pet.animal}, {pet.breed}, {formatAge(pet.birthMonth, pet.birthYear)}</Text
+                      >{animalLabel(pet.animal)}, {pet.breed}, {formatAge(pet.birthMonth, pet.birthYear)}</Text
                     >
                     <div class="mt-2 flex items-center gap-1">
                       <IconButton
@@ -520,13 +553,17 @@
                         aria-label="Edit Pet"
                         onclick={() => {
                           editingPetId = pet.id;
+                          const knownAnimal = pet.animal in AssetTypeAnimalNames;
+                          const knownBreed = knownAnimal && AssetTypeBreedNames[pet.animal].includes(pet.breed);
                           petDraft = {
                             name: pet.name,
-                            animal: pet.animal as AssetTypeAnimal,
-                            breed: pet.breed,
+                            animal: knownAnimal ? pet.animal : 'Other',
+                            breed: knownBreed ? pet.breed : 'Other',
                             birthMonth: pet.birthMonth,
                             birthYear: pet.birthYear,
                           };
+                          otherAnimal = knownAnimal ? '' : pet.animal;
+                          otherBreed = knownBreed ? '' : pet.breed;
                           editPet = true;
                         }}
                       />
@@ -538,9 +575,11 @@
                         shape="round"
                         icon={mdiTrashCanOutline}
                         aria-label="Delete pet"
-                        onclick={() => {
-                          petsUploaderManager.deletePet(pet.id);
-                          squareEditor?.refresh();
+                        onclick={async () => {
+                          if (await modalManager.showDialog({ prompt: 'Delete this Pet?' })) {
+                            petsUploaderManager.deletePet(pet.id);
+                            squareEditor?.refresh();
+                          }
                         }}
                       />
                       <Badge size="small" color="primary">{petsUploaderManager.boxCountForPet(pet.id)}/10</Badge>

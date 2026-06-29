@@ -24,19 +24,7 @@ export class ExifDatasetMetadata extends BaseMetadata {
   captureType!: 'single' | 'burst' | 'portrait' | 'panorama' | 'spherical' | 'other';
 }
 export class PetDatasetMetadata extends BaseMetadata {
-  animal!:
-    | 'Cat'
-    | 'Chinchilla'
-    | 'Dog'
-    | 'Ferret'
-    | 'GuineaPig'
-    | 'Hamster'
-    | 'Hedgehog'
-    | 'Bird'
-    | 'Pig'
-    | 'Rabbit'
-    | 'Other';
-
+  animal!: string;
   breed!: string;
   birthMonth!: number;
   birthYear!: number;

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { zoomImageAction } from '$lib/components/zoom-image.svelte';
-  import type { squareBox } from '$lib/pets-uploader-manager.svelte';
+  import { boxFill, type squareBox } from '$lib/pets-uploader-manager.svelte';
   import { Canvas, type FabricObject, InteractiveFabricObject, Rect } from 'fabric';
   import { onMount, type Snippet } from 'svelte';
 
@@ -10,10 +10,15 @@
     boxes?: squareBox[];
     onChange?: (boxes: squareBox[]) => void;
     onActiveChange?: (active: boolean, petId?: string) => void;
+    colorForPet?: (petId: string) => string;
     follow?: Snippet<[squareBox]>;
   };
 
-  let { src, alt = '', boxes = [], onChange, onActiveChange, follow }: Props = $props();
+  let { src, alt = '', boxes = [], onChange, onActiveChange, colorForPet, follow }: Props = $props();
+
+  const unassignedColor = 'rgb(160,160,160)';
+  const boxFillAlpha = 0.25;
+  const boxStrokeAlpha = 1;
 
   const dragPadding = 16;
   let containerEl = $state<HTMLDivElement>();
@@ -70,7 +75,7 @@
     };
   };
 
-  const makeRect = (left: number, top: number, width: number, height: number) =>
+  const makeRect = (left: number, top: number, width: number, height: number, color = unassignedColor) =>
     new Rect({
       left,
       top,
@@ -80,8 +85,8 @@
       originY: 'top',
       scaleX: 1,
       scaleY: 1,
-      fill: 'rgba(66,80,175,0.25)',
-      stroke: 'rgb(66,80,175)',
+      fill: boxFill(color, boxFillAlpha),
+      stroke: boxFill(color, boxStrokeAlpha),
       strokeWidth: 2,
       strokeUniform: true,
       rx: 8,
@@ -176,7 +181,8 @@
     loadingBoxes = true;
     canvas.remove(...canvas.getObjects());
     for (const box of source) {
-      const rect = makeRect(box.left * cw, box.top * ch, box.width * cw, box.height * ch);
+      const color = box.petId && colorForPet ? colorForPet(box.petId) : unassignedColor;
+      const rect = makeRect(box.left * cw, box.top * ch, box.width * cw, box.height * ch, color);
       petIds.set(rect, box.petId);
       canvas.add(rect);
     }
@@ -361,6 +367,9 @@
       return;
     }
     petIds.set(active, petId);
+    const color = petId && colorForPet ? colorForPet(petId) : unassignedColor;
+    active.set({ stroke: boxFill(color, boxStrokeAlpha), fill: boxFill(color, boxFillAlpha) });
+    canvas?.requestRenderAll();
     onActiveChange?.(true, petId);
     positionFollow();
     emitChange();

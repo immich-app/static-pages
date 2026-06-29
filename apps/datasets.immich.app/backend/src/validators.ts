@@ -29,19 +29,8 @@ export class PetDatasetMetadataValidator extends PetDatasetMetadata {
   @IsUUID()
   assetId!: string;
 
-  @IsIn(['Cat', 'Other', 'Chinchilla', 'Dog', 'Ferret', 'GuineaPig', 'Hamster', 'Hedgehog', 'Bird', 'Pig', 'Rabbit'])
-  animal!:
-    | 'Cat'
-    | 'Other'
-    | 'Chinchilla'
-    | 'Dog'
-    | 'Ferret'
-    | 'GuineaPig'
-    | 'Hamster'
-    | 'Hedgehog'
-    | 'Bird'
-    | 'Pig'
-    | 'Rabbit';
+  @IsString()
+  animal!: string;
 
   @IsString()
   breed!: string;
