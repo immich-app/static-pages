@@ -9,7 +9,7 @@
         "description": "Run an Immich slideshow in a photo frame.",
         "href": "https://github.com/3rob3/ImmichFrame"
       },{
-        "title": "Immich Desktop MacOS",
+        "title": "Immich Desktop",
         "description": "MacOS app that surfaces your Immich library in the Finder sidebar and every file dialog. Photos appear as on-demand files with thumbnails.",
         "href": "https://kartax.github.io/immich-desktop-app-public/"
       },
