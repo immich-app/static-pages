@@ -227,8 +227,8 @@
             onclick={() => {
               const pet = petsUploaderManager.createPet({
                 name: petDraft.name ?? '',
-                birthMonth: petDraft.birthMonth ?? 0,
-                birthYear: petDraft.birthYear ?? 0,
+                birthMonth: petDraft.birthMonth,
+                birthYear: petDraft.birthYear,
                 animal: finalAnimal,
                 breed: finalBreed,
               });
@@ -259,8 +259,8 @@
               if (editingPetId) {
                 petsUploaderManager.editPet(editingPetId, {
                   name: petDraft.name ?? '',
-                  birthMonth: petDraft.birthMonth ?? 0,
-                  birthYear: petDraft.birthYear ?? 0,
+                  birthMonth: petDraft.birthMonth,
+                  birthYear: petDraft.birthYear,
                   animal: finalAnimal,
                   breed: finalBreed,
                 });
@@ -582,7 +582,7 @@
                           }
                         }}
                       />
-                      <Badge size="small" color="primary">{petsUploaderManager.boxCountForPet(pet.id)}/10</Badge>
+                      <Badge size="small" color="primary">{petsUploaderManager.imageCountForPet(pet.id)}/10</Badge>
                     </div>
                   </div>
                 {:else}
@@ -619,11 +619,11 @@
                 <div class="flex items-center gap-2">
                   <Icon
                     icon={petsUploaderManager.pets.length > 0 &&
-                    petsUploaderManager.pets.every((p) => petsUploaderManager.boxCountForPet(p.id) >= 10)
+                    petsUploaderManager.pets.every((p) => petsUploaderManager.imageCountForPet(p.id) >= 10)
                       ? mdiCheckBold
                       : mdiClose}
                   ></Icon>
-                  <Text size="tiny" color="secondary">At least 10 boxes per pet</Text>
+                  <Text size="tiny" color="secondary">At least 10 images per pet</Text>
                 </div>
                 <Button
                   color="primary"
@@ -634,7 +634,7 @@
                     petsUploaderManager.assets.length > 0 &&
                     petsUploaderManager.taggedAssetCount === petsUploaderManager.assets.length &&
                     petsUploaderManager.pets.length > 0 &&
-                    petsUploaderManager.pets.every((p) => petsUploaderManager.boxCountForPet(p.id) >= 10)
+                    petsUploaderManager.pets.every((p) => petsUploaderManager.imageCountForPet(p.id) >= 10)
                   )}
                   onclick={() => doUpload()}
                 >

@@ -1,6 +1,6 @@
-import { IsEmail, IsIn, IsInt, IsString, IsUUID, Max, Min } from 'class-validator';
+import { IsArray, IsEmail, IsIn, IsInt, IsNumber, IsOptional, IsString, IsUUID, Max, Min } from 'class-validator';
 import { AuthRequest } from '../../types/auth';
-import { Dataset, ExifDatasetMetadata, PetDatasetMetadata } from '../../types/metadata';
+import { Dataset, ExifDatasetMetadata, PetBox, PetDatasetMetadata } from '../../types/metadata';
 
 export class ExifDatasetMetadataValidator extends ExifDatasetMetadata {
   @IsString()
@@ -22,6 +22,41 @@ export class ExifDatasetMetadataValidator extends ExifDatasetMetadata {
   uploaderEmail!: string;
 }
 
+export class PetBoxValidator extends PetBox {
+  @IsNumber()
+  left!: number;
+
+  @IsNumber()
+  top!: number;
+
+  @IsNumber()
+  width!: number;
+
+  @IsNumber()
+  height!: number;
+
+  @IsString()
+  name!: string;
+
+  @IsString()
+  animal!: string;
+
+  @IsString()
+  breed!: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(12)
+  birthMonth?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1900)
+  @Max(new Date().getFullYear())
+  birthYear?: number;
+}
+
 export class PetDatasetMetadataValidator extends PetDatasetMetadata {
   @IsString()
   originalFilename!: string;
@@ -35,18 +70,23 @@ export class PetDatasetMetadataValidator extends PetDatasetMetadata {
   @IsString()
   breed!: string;
 
+  @IsOptional()
   @IsInt()
   @Min(1)
   @Max(12)
-  birthMonth!: number;
+  birthMonth?: number;
 
+  @IsOptional()
   @IsInt()
   @Min(1900)
   @Max(new Date().getFullYear())
-  birthYear!: number;
+  birthYear?: number;
 
   @IsString()
   name!: string;
+
+  @IsArray()
+  boxes!: PetBox[];
 
   @IsEmail()
   uploaderEmail!: string;

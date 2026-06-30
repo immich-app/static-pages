@@ -1,9 +1,9 @@
-import { ExifDatasetMetadata } from './metadata';
+import { ExifDatasetMetadata, PetDatasetMetadata } from './metadata';
 
 export interface UploadableAssets {
   assets: {
     data: File;
     name: string;
-    metadata: Partial<ExifDatasetMetadata>;
+    metadata: Partial<ExifDatasetMetadata> | Partial<PetDatasetMetadata>;
   }[];
 }

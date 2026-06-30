@@ -1,5 +1,5 @@
 import { toastManager } from '@immich/ui';
-import type { Pet, PetDatasetMetadata } from '../../types/metadata';
+import type { Pet, PetBox, PetDatasetMetadata } from '../../types/metadata';
 import type { UploadableAssets } from '../../types/upload-manager';
 
 export type AssetTypeAnimal = PetDatasetMetadata['animal'];
@@ -160,6 +160,7 @@ class PetsUploaderManager implements UploadableAssets {
       metadata: {
         originalFilename: asset.name,
         assetId: id,
+        boxes: [],
       },
       selected: false,
       boxes: [],
@@ -178,6 +179,9 @@ class PetsUploaderManager implements UploadableAssets {
       ] as (keyof PetAsset['metadata'])[];
 
       for (const key of metadataKeys) {
+        if (key === 'boxes') {
+          continue;
+        }
         const allSame = this.selection.every((a) => a.metadata[key] === this.selection[0].metadata[key]);
         if (key === 'birthMonth' || key === 'birthYear') {
           this.selectedMetadata[key] = allSame ? this.selection[0].metadata[key] : undefined;
@@ -256,7 +260,30 @@ class PetsUploaderManager implements UploadableAssets {
     const asset = this.assets.find((a) => a.metadata.assetId === assetId);
     if (asset) {
       asset.boxes = boxes;
+      this.syncBoxMetadata(asset);
     }
+  }
+
+  private syncBoxMetadata(asset: PetAsset) {
+    const boxes: PetBox[] = [];
+    for (const box of asset.boxes) {
+      const pet = this.getPet(box.petId);
+      if (!pet) {
+        continue;
+      }
+      boxes.push({
+        left: box.left,
+        top: box.top,
+        width: box.width,
+        height: box.height,
+        name: pet.name,
+        animal: pet.animal,
+        breed: pet.breed,
+        birthMonth: pet.birthMonth,
+        birthYear: pet.birthYear,
+      });
+    }
+    asset.metadata.boxes = boxes;
   }
 
   getPet(id?: string): Pet | undefined {
@@ -316,6 +343,7 @@ class PetsUploaderManager implements UploadableAssets {
       asset.metadata.breed = pet?.breed;
       asset.metadata.birthMonth = pet?.birthMonth;
       asset.metadata.birthYear = pet?.birthYear;
+      this.syncBoxMetadata(asset);
     }
     this.updateMetadataInputs();
     this.validateUploads();
@@ -326,12 +354,12 @@ class PetsUploaderManager implements UploadableAssets {
     return boxColors[Math.max(0, index) % boxColors.length];
   }
 
-  boxCountForPet(id: string): number {
-    return this.assets.reduce((count, asset) => count + asset.boxes.filter((box) => box.petId === id).length, 0);
+  imageCountForPet(id: string): number {
+    return this.assets.filter((asset) => asset.boxes.some((box) => box.petId === id)).length;
   }
 
   removeEmptyPets() {
-    this.pets = this.pets.filter((p) => this.boxCountForPet(p.id) > 0);
+    this.pets = this.pets.filter((p) => this.imageCountForPet(p.id) > 0);
   }
 
   clearLabels() {
@@ -378,7 +406,7 @@ class PetsUploaderManager implements UploadableAssets {
     }
 
     // check if any required metadata fields are empty
-    const requiredFields: (keyof PetAsset['metadata'])[] = ['animal', 'breed', 'birthMonth', 'birthYear', 'name'];
+    const requiredFields: (keyof PetAsset['metadata'])[] = ['animal', 'breed', 'name'];
     this.submitDisabled = this.assets.some((asset) => {
       return requiredFields.some((field) => {
         const value = asset.metadata[field];
