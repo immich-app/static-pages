@@ -15,6 +15,7 @@
   let { attributes, children, postScript }: Props = $props();
   const post = $derived(posts.find((blog) => blog.id === attributes.id)!);
   let { title, publishedAt, authors, description } = $derived(post);
+  const alt = $derived(post.coverAlt ?? 'Blog cover image');
 </script>
 
 <SiteMetadata site={blogMetadata} page={{ title, description }} />
@@ -43,19 +44,16 @@
   <BlogTypeBadge class="mt-2" size="small" type={post.type} />
 
   {#if post.coverUrl}
-    <figure class="my-6">
-      <img
-        src={post.coverUrl}
-        alt={post.coverAlt ?? 'Blog cover image'}
-        class="aspect-21/9 w-full rounded-lg border object-cover"
-      />
-      {#if post.coverAttribution}
-        <figcaption class="mt-2 text-center text-sm text-muted">
+    <Markdown.Image src={post.coverUrl} {alt}>
+      {#snippet caption()}
+        {#if post.coverAttribution}
           <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-          {@html post.coverAttribution}
-        </figcaption>
-      {/if}
-    </figure>
+          {@html post.coverAttribution} - {alt}
+        {:else}
+          {alt}
+        {/if}
+      {/snippet}
+    </Markdown.Image>
   {/if}
 
   <Markdown.LineBreak />
