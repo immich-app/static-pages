@@ -41,6 +41,7 @@
           <SiteFooterLink href={Constants.Pages.Roadmap} text="Roadmap" />
           <SiteFooterLink href={Constants.Pages.CursedKnowledge} text="Cursed Knowledge" />
           <SiteFooterLink href={Constants.Pages.PrivacyPolicy} text="Privacy Policy" />
+          <SiteFooterLink href={Constants.Pages.Faq} text="FAQ" />
         </Stack>
       </div>
 
