@@ -2,8 +2,8 @@
 opentofu = "1.12.3"
 terragrunt = "1.0.8"
 node = "24.18"
-pnpm = "11.6.0"
-wrangler = "4.100.0"
+pnpm = "11.9.0"
+wrangler = "4.105.0"
 
 [tasks.deploy]
 run = "wrangler pages deploy ${BUILD_DIR} --project-name=${PROJECT_NAME} --branch=${BRANCH_NAME}"
