@@ -7,6 +7,7 @@
     size = '1em',
     viewBox = '0 0 24 24',
     class: className = '',
+    indicator: indicatorColor,
     flipped = false,
     flopped = false,
     spin = false,
@@ -19,6 +20,14 @@
     description,
     ...restProps
   }: IconProps & HTMLAttributes<EventTarget> = $props();
+
+  const indicator = $derived.by(() => {
+    const [_, yStart, xEnd, yEnd] = viewBox.split(' ');
+    if (yStart && xEnd && yEnd) {
+      const radius = Math.min(Number(xEnd), Number(yEnd)) / 8;
+      return { x: Number(xEnd) - radius, y: Number(yStart) + radius, radius };
+    }
+  });
 </script>
 
 <svg
@@ -38,6 +47,9 @@
     <desc>{description}</desc>
   {/if}
   <path d={typeof icon === 'string' ? icon : icon.path} fill={color} />
+  {#if indicatorColor && indicator}
+    <circle cx={indicator.x} cy={indicator.y} r={indicator.radius} fill="var(--immich-ui-{indicatorColor}-500"></circle>
+  {/if}
 </svg>
 
 <style>

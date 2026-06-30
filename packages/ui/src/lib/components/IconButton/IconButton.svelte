@@ -7,6 +7,7 @@
     icon,
     flipped,
     flopped,
+    indicator,
     title,
     'aria-label': ariaLabel,
     color = 'primary',
@@ -17,5 +18,5 @@
 </script>
 
 <Button icon {color} {...buttonProps} title={buttonTitle} aria-label={ariaLabel}>
-  <Icon {icon} {flipped} {flopped} size="60%" aria-hidden />
+  <Icon {icon} {flipped} {flopped} {indicator} size="60%" aria-hidden />
 </Button>
