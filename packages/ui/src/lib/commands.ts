@@ -16,7 +16,7 @@ export const linkCommand = (item: LinkItem): ActionItem => ({
   title: item.title,
   description: item.description,
   onAction: () => navigateTo(item.href),
-  extraText: item.href,
+  text: item.href,
 });
 
 export const CORE_PAGE_COMMANDS = linkCommands([

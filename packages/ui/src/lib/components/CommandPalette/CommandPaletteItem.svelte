@@ -6,6 +6,7 @@
   import Kbd from '$lib/components/Kbd/Kbd.svelte';
   import Text from '$lib/components/Text/Text.svelte';
   import type { ActionItem, ActionItemTag } from '$lib/types.js';
+  import { highlightHtml } from '$lib/utilities/internal.js';
 
   type Props = {
     item: ActionItem;
@@ -15,10 +16,12 @@
 
   const { item, selected, onSelect }: Props = $props();
 
-  const shortcuts =
-    item.shortcuts === undefined ? [] : Array.isArray(item.shortcuts) ? item.shortcuts : [item.shortcuts];
+  const renderedShortcuts = $derived.by(() => {
+    const shortcuts =
+      item.shortcuts === undefined ? [] : Array.isArray(item.shortcuts) ? item.shortcuts : [item.shortcuts];
 
-  const renderedShortcuts = shortcuts.map((shortcut) => renderShortcut(shortcut));
+    return shortcuts.map((shortcut) => renderShortcut(shortcut));
+  });
 
   let ref = $state<HTMLElement | null>(null);
 
@@ -52,9 +55,16 @@
       {#if item.description}
         <Text
           size="small"
-          class="mt-0.5 line-clamp-4 w-full overflow-hidden text-ellipsis md:line-clamp-2"
-          color="muted">{item.description}</Text
+          class="mt-0.5 line-clamp-4 w-full overflow-hidden text-ellipsis md:line-clamp-2 [&_mark]:bg-transparent [&_mark]:font-semibold [&_mark]:text-primary"
+          color="muted"
         >
+          {#if item.highlights}
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+            <span>{@html highlightHtml(item.description, item.highlights)}</span>
+          {:else}
+            <span>{item.description}</span>
+          {/if}
+        </Text>
       {/if}
       {#if item.tags && item.tags.length > 0}
         <div class="mt-2">

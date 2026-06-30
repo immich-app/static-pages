@@ -30,7 +30,6 @@
   </ul>
 
   <Heading tag="h1" size="giant" class="mt-6">
-    {#if post.draft}[Draft]{/if}
     {post.title}
   </Heading>
 
