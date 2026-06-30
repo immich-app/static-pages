@@ -383,8 +383,8 @@ importers:
   apps/futo-backups-survey.immich.app:
     dependencies:
       '@immich/ui':
-        specifier: ^0.82.0
-        version: 0.82.0(@sveltejs/kit@2.68.0(@sveltejs/vite-plugin-svelte@7.1.2(svelte@5.56.4(@typescript-eslint/types@8.62.0))(vite@8.1.0(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.9.0)))(svelte@5.56.4(@typescript-eslint/types@8.62.0))(typescript@6.0.3)(vite@8.1.0(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.9.0)))(svelte@5.56.4(@typescript-eslint/types@8.62.0))(tailwindcss@4.3.1)
+        specifier: ^0.83.0
+        version: 0.83.0(@sveltejs/kit@2.68.0(@sveltejs/vite-plugin-svelte@7.1.2(svelte@5.56.4(@typescript-eslint/types@8.62.0))(vite@8.1.0(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.9.0)))(svelte@5.56.4(@typescript-eslint/types@8.62.0))(typescript@6.0.3)(vite@8.1.0(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.9.0)))(svelte@5.56.4(@typescript-eslint/types@8.62.0))(tailwindcss@4.3.1)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -1653,8 +1653,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@immich/ui@0.82.0':
-    resolution: {integrity: sha512-QWVRmJgZSs9OpLghQxgtzSLlJE7pjA9dRPF3D3pYfAVzj0wHUCK7jUaMz/hO4kJhF2O4J6FSJK8lJxaxydwuQQ==}
+  '@immich/ui@0.83.0':
+    resolution: {integrity: sha512-Xh3R3yhn8/Qyq8lGWIiVmturA+dHXtmW/h++AGb2UAwS/58qu7ssocO/HWIamaSpkgjPGotlWpPIpUJq1zh9FQ==}
     peerDependencies:
       '@sveltejs/kit': ^2.13.0
       svelte: ^5.0.0
@@ -4936,7 +4936,7 @@ snapshots:
   '@img/sharp-win32-x64@0.35.1':
     optional: true
 
-  '@immich/ui@0.82.0(@sveltejs/kit@2.68.0(@sveltejs/vite-plugin-svelte@7.1.2(svelte@5.56.4(@typescript-eslint/types@8.62.0))(vite@8.1.0(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.9.0)))(svelte@5.56.4(@typescript-eslint/types@8.62.0))(typescript@6.0.3)(vite@8.1.0(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.9.0)))(svelte@5.56.4(@typescript-eslint/types@8.62.0))(tailwindcss@4.3.1)':
+  '@immich/ui@0.83.0(@sveltejs/kit@2.68.0(@sveltejs/vite-plugin-svelte@7.1.2(svelte@5.56.4(@typescript-eslint/types@8.62.0))(vite@8.1.0(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.9.0)))(svelte@5.56.4(@typescript-eslint/types@8.62.0))(typescript@6.0.3)(vite@8.1.0(@types/node@24.13.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.9.0)))(svelte@5.56.4(@typescript-eslint/types@8.62.0))(tailwindcss@4.3.1)':
     dependencies:
       '@internationalized/date': 3.12.2
       '@mdi/js': 7.4.47
