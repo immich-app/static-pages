@@ -1,7 +1,6 @@
 import { goto } from '$app/navigation';
 import { asComponentHref } from '$lib/utilities.js';
 import {
-  asText,
   defaultProvider,
   linkCommands,
   MenuItemType,
@@ -431,7 +430,7 @@ const asCommand = (component: ComponentItem): ActionItem => {
     title: component.name,
     description: `View the ${component.name} component`,
     onAction: () => goto(href),
-    extraText: asText(href),
+    text: href,
   };
 };
 

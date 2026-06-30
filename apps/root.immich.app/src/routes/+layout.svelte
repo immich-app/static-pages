@@ -2,8 +2,9 @@
   import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/state';
   import PageContent from '$common/components/PageContent.svelte';
-  import { getBlogProvider, posts } from '$lib';
+  import { posts } from '$lib';
   import '$lib/app.css';
+  import { getSearchProvider } from '$lib/search';
   import {
     AnnouncementBanner,
     AppShell,
@@ -36,13 +37,15 @@
   import { siGithub } from 'simple-icons';
   import { onMount, type Snippet } from 'svelte';
   import { MediaQuery } from 'svelte/reactivity';
+  import type { LayoutData } from './$types';
 
   type Props = {
     children?: Snippet;
     center?: boolean;
+    data?: LayoutData;
   };
 
-  const { children }: Props = $props();
+  const { data, children }: Props = $props();
 
   let pathname = '';
   onMount(() => {
@@ -81,7 +84,7 @@
   const featuredPost = posts.find((post) => post.featured);
 </script>
 
-<CommandPaletteProvider providers={[getBlogProvider(), ...getSiteProviders()]} />
+<CommandPaletteProvider providers={[getSearchProvider(data?.docs ?? []), ...getSiteProviders()]} />
 
 <ScreencastOverlay />
 

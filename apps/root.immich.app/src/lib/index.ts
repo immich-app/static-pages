@@ -1,5 +1,3 @@
-import { goto } from '$app/navigation';
-import { defaultProvider, type ActionItem } from '@immich/ui';
 import fm from 'front-matter';
 import { DateTime } from 'luxon';
 
@@ -32,7 +30,6 @@ type Attributes = {
   id: string;
   title: string;
   description: string;
-  draft?: boolean;
   featured?: boolean;
   authors: string[];
   coverUrl?: string;
@@ -59,6 +56,7 @@ export type BlogPost = Attributes & {
   modifiedAt?: DateTime;
   url: string;
   type: BlogType;
+  markdown: string;
 };
 
 type PostFrontMatter = Attributes & {
@@ -82,7 +80,8 @@ const getFrontMatterExample = (missingAttributes: string[]) => {
   ].join('\n');
 };
 
-const asPost = (path: string, attributes: PostFrontMatter): BlogPost => {
+const asPost = (path: string, content: string): BlogPost => {
+  const attributes = fm<PostFrontMatter>(content).attributes;
   const parts = path.split('/');
   const filename = parts.at(-2)!;
   const folder = parts.at(-3)!;
@@ -104,6 +103,7 @@ const asPost = (path: string, attributes: PostFrontMatter): BlogPost => {
 
   return {
     id: attributes.id,
+    type,
     title: attributes.title,
     description: attributes.description,
     publishedAt: DateTime.fromJSDate(attributes.publishedAt, { zone: 'UTC' }) as DateTime<true>,
@@ -112,12 +112,11 @@ const asPost = (path: string, attributes: PostFrontMatter): BlogPost => {
       : undefined,
     authors: attributes.authors,
     url: `/blog/${filename}`,
-    draft: attributes.draft === true,
     featured: attributes.featured,
     coverUrl: attributes.coverUrl,
     coverAlt: attributes.coverAlt,
     coverAttribution: attributes.coverAttribution,
-    type,
+    markdown: content,
   };
 };
 
@@ -126,7 +125,7 @@ const getPosts = () => {
   const modules = import.meta.glob<{ default: string }>('../routes/blog/**/*.md', { query: '?raw', eager: true });
   const posts: BlogPost[] = [];
   for (const [path, { default: content }] of Object.entries(modules)) {
-    const post = asPost(path, fm<PostFrontMatter>(content).attributes);
+    const post = asPost(path, content);
 
     if (idMap.has(post.id)) {
       throw new Error(
@@ -147,15 +146,3 @@ const getPosts = () => {
 };
 
 export const posts: BlogPost[] = getPosts();
-
-export const getBlogProvider = () => {
-  const commands: ActionItem[] = posts.map((post) => ({
-    title: post.title,
-    description: `${post.publishedAt.toLocaleString(DateTime.DATE_MED)} — ${post.description}`,
-    extraText: post.url,
-    tags: [typeToLabel(post.type)],
-    onAction: () => goto(post.url),
-  }));
-
-  return defaultProvider({ name: 'Posts', types: ['blog', 'blogs', 'post', 'posts'], actions: commands });
-};

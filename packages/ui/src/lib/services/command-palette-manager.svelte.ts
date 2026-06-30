@@ -4,7 +4,8 @@ import { modalManager } from '$lib/services/modal-manager.svelte.js';
 import { isModalOpen } from '$lib/state/modal-state.svelte.js';
 import type { ActionItem, MaybePromise, TranslationProps } from '$lib/types.js';
 import { isEnabled } from '$lib/utilities/common.js';
-import { asArray, generateId, getSearchString } from '$lib/utilities/internal.js';
+import { asArray, generateId } from '$lib/utilities/internal.js';
+import Fuse, { type FuseResult, type FuseResultMatch, type IFuseOptions } from 'fuse.js';
 import { on } from 'svelte/events';
 
 export type CommandPaletteTranslations = TranslationProps<
@@ -23,14 +24,91 @@ export type ActionProvider = {
   onSearch: (query?: string) => MaybePromise<ActionItem[]>;
 };
 
-export type ActionDefaultProviderOptions = Omit<ActionProvider, 'onSearch'> & { actions: ActionItem[] };
+export type ActionDefaultProviderOptions = Omit<ActionProvider, 'onSearch'> & {
+  actions: ActionItem[];
+  options?: IFuseOptions<ActionItem>;
+};
 
-export const defaultProvider = ({ name, types, actions }: ActionDefaultProviderOptions) => ({
-  name,
-  types,
-  onSearch: (query?: string) =>
-    query ? actions.filter((action) => getSearchString(action).includes(query.toLowerCase())) : actions,
-});
+export const defaultProvider = ({ name, types, actions, options }: ActionDefaultProviderOptions) => {
+  const index = new Fuse(actions, {
+    keys: [
+      { name: 'title', weight: 3 },
+      { name: 'tags', weight: 2 },
+      { name: 'description', weight: 2 },
+      { name: 'text', weight: 1 },
+    ],
+    includeScore: true,
+    shouldSort: true,
+    includeMatches: true,
+    ignoreLocation: true,
+    minMatchCharLength: 3,
+    ...options,
+  });
+
+  return {
+    name,
+    types,
+    onSearch: (query?: string) => (query ? index.search(query).map((result) => fromResult(result)) : actions),
+  };
+};
+
+const fromResult = ({ item, matches }: FuseResult<ActionItem>) => {
+  const highlight = asHighlight(matches);
+
+  return {
+    ...item,
+    description: highlight.description || item.description,
+    highlights: highlight.items.length > 0 ? highlight.items : undefined,
+  };
+};
+
+const HIGHLIGHT_PADDING = 30;
+
+const DESCRIPTION_KEYS = new Set(['text', 'description']);
+
+const asHighlight = (matches?: readonly FuseResultMatch[]) => {
+  // eslint-disable-next-line svelte/prefer-svelte-reactivity
+  const highlights = new Set<string>();
+  const descriptions: string[] = [];
+
+  for (const match of matches ?? []) {
+    const { value } = match;
+    if (!value) {
+      continue;
+    }
+
+    const windows: Array<[number, number]> = [];
+    for (const [start, end] of match.indices) {
+      if (end - start < 3) {
+        continue;
+      }
+      highlights.add(value.slice(start, end + 1));
+      windows.push([Math.max(0, start - HIGHLIGHT_PADDING), Math.min(value.length, end + 1 + HIGHLIGHT_PADDING)]);
+    }
+
+    if (!DESCRIPTION_KEYS.has(match.key ?? '')) {
+      continue;
+    }
+
+    // merge window slices
+    const merged: Array<[number, number]> = [];
+    for (const [startIndex, endIndex] of windows.toSorted((a, b) => a[0] - b[0])) {
+      const last = merged.at(-1);
+      if (last && startIndex <= last[1]) {
+        last[1] = Math.max(last[1], endIndex);
+      } else {
+        merged.push([startIndex, endIndex]);
+      }
+    }
+
+    for (const [startIndex, endIndex] of merged) {
+      const description = value.slice(startIndex, endIndex);
+      descriptions.push(`${startIndex === 0 ? '' : '...'}${description}${endIndex < value.length ? '...' : ''}`);
+    }
+  }
+
+  return { description: descriptions.join(' '), items: [...highlights] };
+};
 
 const TYPE_REGEX = /type:("(?<quoted>[^"]+)"|(?<plain>\S+))/g;
 
@@ -84,7 +162,7 @@ class CommandPaletteManager {
     let type: string | undefined;
     if (query) {
       for (const matches of query.matchAll(TYPE_REGEX)) {
-        query = query.replaceAll(TYPE_REGEX, '');
+        query = query.replaceAll(TYPE_REGEX, '').trim();
         type = matches.groups?.quoted ?? matches.groups?.plain;
         break;
       }

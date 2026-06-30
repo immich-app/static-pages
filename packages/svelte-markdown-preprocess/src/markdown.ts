@@ -1,12 +1,13 @@
 /* eslint-disable unicorn/no-this-outside-of-class */
-import { MarkedExtension, Token, Tokens } from 'marked';
+import fmUntyped, { FrontMatterOptions, FrontMatterResult } from 'front-matter';
+import { Marked, MarkedExtension, Token, Tokens } from 'marked';
 import { emojify } from 'node-emoji';
 import { createAttributes, escapeHtml, escapeSvelteCode, getIdFromText } from './utility.js';
 
+const fm = fmUntyped as unknown as <T>(file: string, options?: FrontMatterOptions) => FrontMatterResult<T>;
+
 const ALERT_VARIANTS = ['note', 'tip', 'important', 'warning', 'caution', 'info', 'success', 'danger'] as const;
-
 const GFM_ALERT_REGEX = new RegExp(String.raw`^\[!(?<variant>${ALERT_VARIANTS.join('|')})\]\s*?\n*`, 'i');
-
 const ADMONITION_REGEX = new RegExp(
   String.raw`^:::(?<variant>${ALERT_VARIANTS.join('|')})(?:[ \t]+(?<title>[^\n]+?))?[ \t]*\n(?<body>[\s\S]*?)\n:::[ \t]*(?:\n|$)`,
 );
@@ -34,6 +35,8 @@ export const markedSvelte = (): MarkedExtension => ({
     if (token.type !== 'blockquote') {
       return;
     }
+
+    // parse github admonitions as alerts
     const blockquote = token as Tokens.Blockquote;
     const match = GFM_ALERT_REGEX.exec(blockquote.text);
     if (!match?.groups) {
@@ -202,7 +205,8 @@ export const markedSvelte = (): MarkedExtension => ({
       return `<Markdown.LineBreak />\n`;
     },
 
-    link({ href, title, text }) {
+    link({ href, title, tokens }) {
+      const text = this.parser.parseInline(tokens);
       return `<Markdown.Link${createAttributes({ href, title })}>${text}</Markdown.Link>`;
     },
 
@@ -211,3 +215,55 @@ export const markedSvelte = (): MarkedExtension => ({
     },
   },
 });
+
+/** Render markdown to plain text */
+export const markedText = (markdown: string): string => {
+  const md = new Marked().use(markedSvelte());
+  const { body } = fm<{ body: string }>(markdown);
+
+  return (
+    md
+      .lexer(body)
+      .map((token) => blockToText(token))
+      .join(' ')
+      // strip html/jsx tags, keeping their inner text
+      .replaceAll(/<[^>]*>/g, ' ')
+      .replaceAll(/\s+/g, ' ')
+      .trim()
+  );
+};
+
+const blockToText = (token: Token): string => {
+  switch (token.type) {
+    case 'html': {
+      // remove script blocks
+      return /^\s*<script[\s>]/i.test(token.text) ? '' : token.text;
+    }
+
+    case 'alert': {
+      return ((token as Tokens.Generic).tokens ?? []).map((child) => blockToText(child)).join(' ');
+    }
+    case 'heading':
+    case 'paragraph': {
+      return inlineToText(token.tokens ?? []);
+    }
+    default: {
+      return '';
+    }
+  }
+};
+
+const inlineToText = (tokens: Token[]): string =>
+  tokens
+    .map((token) => {
+      if ('tokens' in token && token.tokens) {
+        return inlineToText(token.tokens);
+      }
+
+      if ('text' in token) {
+        return emojify(token.text);
+      }
+
+      return '';
+    })
+    .join('');
