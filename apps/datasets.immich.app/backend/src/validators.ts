@@ -1,6 +1,6 @@
-import { IsEmail, IsIn, IsString, IsUUID } from 'class-validator';
+import { IsEmail, IsIn, IsInt, IsString, IsUUID, Max, Min } from 'class-validator';
 import { AuthRequest } from '../../types/auth';
-import { Dataset, ExifDatasetMetadata } from '../../types/metadata';
+import { Dataset, ExifDatasetMetadata, PetDatasetMetadata } from '../../types/metadata';
 
 export class ExifDatasetMetadataValidator extends ExifDatasetMetadata {
   @IsString()
@@ -22,8 +22,39 @@ export class ExifDatasetMetadataValidator extends ExifDatasetMetadata {
   uploaderEmail!: string;
 }
 
+export class PetDatasetMetadataValidator extends PetDatasetMetadata {
+  @IsString()
+  originalFilename!: string;
+
+  @IsUUID()
+  assetId!: string;
+
+  @IsString()
+  animal!: string;
+
+  @IsString()
+  breed!: string;
+
+  @IsInt()
+  @Min(1)
+  @Max(12)
+  birthMonth!: number;
+
+  @IsInt()
+  @Min(1900)
+  @Max(new Date().getFullYear())
+  birthYear!: number;
+
+  @IsString()
+  name!: string;
+
+  @IsEmail()
+  uploaderEmail!: string;
+}
+
 export const DatasetMetadataValidatorMap = {
   [Dataset.Exif]: ExifDatasetMetadataValidator,
+  [Dataset.Pets]: PetDatasetMetadataValidator,
 };
 
 // Get the correct metadata class type from the map
