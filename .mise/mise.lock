@@ -65,37 +65,37 @@ checksum = "sha256:34ddbab9eb07a72ea5cf36d98d97ce1931242cb89693cbf5dce06d65ba37d
 url = "https://github.com/opentofu/opentofu/releases/download/v1.12.3/tofu_1.12.3_windows_amd64.tar.gz"
 
 [[tools.pnpm]]
-version = "11.6.0"
+version = "11.9.0"
 backend = "aqua:pnpm/pnpm"
 
 [tools.pnpm."platforms.linux-arm64"]
-checksum = "sha256:2fec653ff6dadab340d1c3d2214688a7451cc471f39710839440b293ca7c53b0"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.6.0/pnpm-linux-arm64.tar.gz"
+checksum = "sha256:7981d0109fffdf8f15b838243240c8c9f9114dd4b7111d4227c1453522d75b61"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.9.0/pnpm-linux-arm64.tar.gz"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-arm64-musl"]
-checksum = "sha256:56a78c08cf22adf29e7dacb6f7f100139731693863d20fb94a7883463a62169e"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.6.0/pnpm-linux-arm64-musl.tar.gz"
+checksum = "sha256:3622d3010d6af601190e7b63994fb0fe297e805699145aec949f4879f2672fb5"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.9.0/pnpm-linux-arm64-musl.tar.gz"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-x64"]
-checksum = "sha256:74d64c1646385fb21691f32f0ab6aca1a9f5c829ba54d3cda3a24838a228e68c"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.6.0/pnpm-linux-x64.tar.gz"
+checksum = "sha256:8d987d82585453bcf260ea5d0bae346d298f1a5e71bcde8d99976521408ad895"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.9.0/pnpm-linux-x64.tar.gz"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-x64-musl"]
-checksum = "sha256:7a0c463a09d912fba6b7d9eca0a946bc228ea50f3015a05c09a29e7e85a932d7"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.6.0/pnpm-linux-x64-musl.tar.gz"
+checksum = "sha256:655fcf2609e3145cfd7c2f05113429523706d0a618f2957eaa6c3562f6a5998b"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.9.0/pnpm-linux-x64-musl.tar.gz"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.macos-arm64"]
-checksum = "sha256:87c901635a14481fb30566a3749041134ffd4317bc6fe866c345b69fdf9b6b85"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.6.0/pnpm-darwin-arm64.tar.gz"
+checksum = "sha256:ca6f98a8911ec975509464026205e2b54aed74cecd36c5ae9932e5997bd7de2a"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.9.0/pnpm-darwin-arm64.tar.gz"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.windows-x64"]
-checksum = "sha256:91c753435542b04859c689304fae0dd64eba6b40937cfa426a48485b712e4e9c"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.6.0/pnpm-win32-x64.zip"
+checksum = "sha256:82c130717a59f237c49e8eaa8a7ed75c1d8d351a5b6dedeee3196b8e1b597c6e"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.9.0/pnpm-win32-x64.zip"
 provenance = "github-attestations"
 
 [[tools.terragrunt]]
@@ -131,7 +131,7 @@ checksum = "sha256:e9754e0fe6ef7ed381015efdaa898f6ae6f1a7e3e640e69940886ced66ab6
 url = "https://github.com/gruntwork-io/terragrunt/releases/download/v1.0.8/terragrunt_windows_amd64.exe.tar.gz"
 
 [[tools.wrangler]]
-version = "4.100.0"
+version = "4.105.0"
 backend = "npm:wrangler"
 
 [tools.wrangler.options]

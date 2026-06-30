@@ -143,8 +143,7 @@
       )}
       bind:this={ref}
       bind:value
-      {...restProps}
-    ></textarea>
+      {...restProps}></textarea>
   </div>
 </div>
 
