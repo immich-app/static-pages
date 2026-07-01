@@ -4,7 +4,7 @@ import { OptimizeResult } from '../types.js';
 
 export class MediaRepository {
   async optimizeImage(buffer: Buffer): Promise<OptimizeResult> {
-    const output = await sharp(buffer).flatten({ background: '#ffffff' }).webp({ quality: WEBP_QUALITY }).toBuffer();
+    const output = await sharp(buffer).webp({ quality: WEBP_QUALITY }).toBuffer();
     return {
       buffer: output,
       extension: 'webp',
