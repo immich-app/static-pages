@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.84.0](https://github.com/immich-app/static-pages/compare/ui-v0.83.0...ui-v0.84.0) (2026-07-01)
+
+
+### Features
+
+* june recap ([#615](https://github.com/immich-app/static-pages/issues/615)) ([87a65a7](https://github.com/immich-app/static-pages/commit/87a65a70402de2a929c70d4ab835652b06924f41))
+
 ## [0.83.0](https://github.com/immich-app/static-pages/compare/ui-v0.82.0...ui-v0.83.0) (2026-06-25)
 
 
