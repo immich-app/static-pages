@@ -5,6 +5,8 @@
   import basicExample from './BasicExample.svelte?raw';
   import ColorExample from './ColorExample.svelte';
   import colorExample from './ColorExample.svelte?raw';
+  import IndicatorExample from './IndicatorExample.svelte';
+  import indicatorExample from './IndicatorExample.svelte?raw';
   import OtherExample from './OtherExample.svelte';
   import otherExample from './OtherExample.svelte?raw';
   import SizeExample from './SizeExample.svelte';
@@ -17,6 +19,7 @@
       { title: 'Basic', code: basicExample, component: BasicExample },
       { title: 'Sizes', code: sizeExample, component: SizeExample },
       { title: 'Colors', code: colorExample, component: ColorExample },
+      { title: 'Indicator', code: indicatorExample, component: IndicatorExample },
       { title: 'Other', code: otherExample, component: OtherExample },
     ]}
   />

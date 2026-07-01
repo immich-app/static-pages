@@ -76,6 +76,8 @@ export type IconProps = {
   description?: string;
   size?: string;
   color?: Color | 'currentColor' | string;
+  /** CSS color of a small indicator/notification dot in the top-right corner of the icon. */
+  indicator?: 'currentColor' | string;
   flipped?: boolean;
   flopped?: boolean;
   spin?: boolean;
