@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1](https://github.com/immich-app/static-pages/compare/kysely-adapter-cloudflare-v0.1.0...kysely-adapter-cloudflare-v0.1.1) (2026-07-01)
+
+
+### Bug Fixes
+
+* **deps:** update typescript-projects ([#523](https://github.com/immich-app/static-pages/issues/523)) ([d203861](https://github.com/immich-app/static-pages/commit/d203861feb6255a29591617e83b908380a9cf124))
+* publish ([#484](https://github.com/immich-app/static-pages/issues/484)) ([ae86d91](https://github.com/immich-app/static-pages/commit/ae86d91734eec38de16479df9a838feacfa7426d))
+
 ## 0.1.0 (2026-03-31)
 
 
