@@ -350,7 +350,7 @@ export const getOpenApiProviders = () => {
           title: endpoint.operationId,
           description: endpoint.description,
           onAction: () => goto(endpoint.href),
-          extraText: [endpoint.name],
+          text: endpoint.name,
         });
       }
     }
@@ -362,7 +362,7 @@ export const getOpenApiProviders = () => {
         title: model.name,
         description: model.description,
         onAction: () => goto(model.href),
-        extraText: model.title,
+        text: model.title,
       });
     }
   } catch {

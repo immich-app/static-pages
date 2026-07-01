@@ -379,9 +379,13 @@ export type ActionItemTag = {
 
 export type ActionItem = {
   title: string;
-  description?: string;
-  extraText?: string | string[];
+  /** renders as badges on the item */
   tags?: Array<string | ActionItemTag>;
+  description?: string;
+  /** searchable text in addition to title, tags, and description */
+  text?: string | string[];
+  /** text that should be highlighted as a match */
+  highlights?: string[];
   icon?: IconLike;
   iconClass?: string;
   color?: Color;

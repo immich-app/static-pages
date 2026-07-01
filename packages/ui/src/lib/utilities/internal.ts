@@ -1,5 +1,4 @@
-import type { ActionItem, Color, IconLike, MaybeArray, TextColor } from '$lib/types.js';
-import { asText } from '$lib/utilities/common.js';
+import type { Color, IconLike, MaybeArray, TextColor } from '$lib/types.js';
 import { twMerge } from 'tailwind-merge';
 
 export const cleanClass = (...classNames: unknown[]) => {
@@ -49,6 +48,28 @@ export const resolveIcon = ({
 
 export const asArray = <T>(items?: MaybeArray<T>) => (Array.isArray(items) ? items : items ? [items] : []);
 
-const normalize = <T = unknown>(items: T | T[] | undefined) => (items ? asArray(items) : []);
-export const getSearchString = ({ title, description, tags, extraText }: ActionItem) =>
-  asText(title, description, ...normalize(tags), ...normalize(extraText));
+export const escapeHtml = (text: string) => {
+  return text
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+};
+
+const escapeRegExp = (value: string) => value.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+
+export const highlightHtml = (text: string, highlights: string[]): string => {
+  const escaped = escapeHtml(text);
+  // Longest first so a shorter match that is a prefix of a longer one (e.g.
+  // "back" vs "backup") doesn't win the regex alternation and mark only part.
+  const terms = highlights
+    .filter(Boolean)
+    .toSorted((a, b) => b.length - a.length)
+    .map((term) => escapeRegExp(term));
+  if (terms.length === 0) {
+    return escaped;
+  }
+
+  return escaped.replaceAll(new RegExp(`(${terms.join('|')})`, 'gi'), '<mark>$1</mark>');
+};
