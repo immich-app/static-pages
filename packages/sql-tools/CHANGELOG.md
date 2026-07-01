@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.3](https://github.com/immich-app/static-pages/compare/sql-tools-v0.5.2...sql-tools-v0.5.3) (2026-07-01)
+
+
+### Bug Fixes
+
+* **deps:** update dependency commander to v15 ([#572](https://github.com/immich-app/static-pages/issues/572)) ([7025d2d](https://github.com/immich-app/static-pages/commit/7025d2d09d503cf9cf3e70dca84d77de4bcbe1b0))
+* **deps:** update typescript-projects ([#523](https://github.com/immich-app/static-pages/issues/523)) ([d203861](https://github.com/immich-app/static-pages/commit/d203861feb6255a29591617e83b908380a9cf124))
+* publish ([#484](https://github.com/immich-app/static-pages/issues/484)) ([ae86d91](https://github.com/immich-app/static-pages/commit/ae86d91734eec38de16479df9a838feacfa7426d))
+
 ## [0.5.2](https://github.com/immich-app/packages/compare/sql-tools-v0.5.1...sql-tools-v0.5.2) (2026-04-22)
 
 
