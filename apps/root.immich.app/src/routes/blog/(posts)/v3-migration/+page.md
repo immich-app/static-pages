@@ -9,7 +9,7 @@ title: Migrating to v3
 type: post
 ---
 
-The purpose of this document is enumerate all the breaking changes that were introduced as part of Immich v3 and provide migration steps when available.
+The purpose of this document is to enumerate all the breaking changes that were introduced as part of Immich v3 and provide migration steps when available. For users, there have only been a few environment variables removed. Under the hood we also changed and deleted various API endpoints which are documented below.
 
 :::tip
 Looking for the release notes? Read them [here](/blog/v3.0.0-release)
