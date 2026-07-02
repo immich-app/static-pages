@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { styleVariants } from '$lib/styles.js';
   import type { IconProps } from '$lib/types.js';
   import { cleanClass } from '$lib/utilities/internal.js';
   import type { HTMLAttributes } from 'svelte/elements';
+  import { tv } from 'tailwind-variants';
 
   const {
     size = '1em',
@@ -28,6 +30,12 @@
       return { x: Number(xEnd) - radius, y: Number(yStart) + radius, radius };
     }
   });
+
+  const indicatorStyles = tv({
+    variants: {
+      color: styleVariants.textColor,
+    },
+  });
 </script>
 
 <svg
@@ -48,7 +56,13 @@
   {/if}
   <path d={typeof icon === 'string' ? icon : icon.path} fill={color} />
   {#if indicatorColor && indicator}
-    <circle cx={indicator.x} cy={indicator.y} r={indicator.radius} fill="var(--immich-ui-{indicatorColor}-500"></circle>
+    <circle
+      cx={indicator.x}
+      cy={indicator.y}
+      r={indicator.radius}
+      fill="currentColor"
+      class={indicatorStyles({ color: indicatorColor })}
+    ></circle>
   {/if}
 </svg>
 
