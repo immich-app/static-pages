@@ -16,10 +16,7 @@
 
 <div>
   <a href={post.url} class="hover:text-primary">
-    <Heading color={post.draft ? 'muted' : undefined} size="large" class="font-medium">
-      {#if post.draft}[Draft]{/if}
-      {post.title}
-    </Heading>
+    <Heading size="large" class="font-medium">{post.title}</Heading>
   </a>
 
   <div class="mt-2 mb-4 flex gap-1">

@@ -328,50 +328,46 @@ export const getOpenApi = () => {
 };
 
 export const getOpenApiProviders = () => {
-  const endpointCommands: ActionItem[] = [];
-  const tagCommands: ActionItem[] = [];
-  const modelCommands: ActionItem[] = [];
+  const commands: ActionItem[] = [];
 
   try {
     const { tags, models } = getOpenApi();
 
     for (const tag of tags) {
-      tagCommands.push({
+      commands.push({
         icon: mdiTagMultiple,
         iconClass: 'text-pink-700 dark:text-pink-200',
         title: tag.name,
+        tags: ['Tag'],
         onAction: () => goto(tag.href),
       });
 
       for (const endpoint of tag.endpoints) {
-        endpointCommands.push({
+        commands.push({
           icon: mdiApi,
           iconClass: 'text-indigo-700 dark:text-indigo-200',
-          title: endpoint.operationId,
+          title: endpoint.name,
           description: endpoint.description,
+          tags: ['Endpoint', tag.name],
           onAction: () => goto(endpoint.href),
-          extraText: [endpoint.name],
         });
       }
     }
 
     for (const model of models) {
-      modelCommands.push({
+      commands.push({
         icon: mdiTag,
         iconClass: 'text-violet-700 dark:text-violet-200',
         title: model.name,
         description: model.description,
+        tags: ['Model'],
         onAction: () => goto(model.href),
-        extraText: model.title,
+        text: model.title,
       });
     }
   } catch {
     // noop
   }
 
-  return [
-    defaultProvider({ name: 'Endpoints', types: ['endpoint', 'endpoints'], actions: endpointCommands }),
-    defaultProvider({ name: 'Tags', types: ['tag', 'tags'], actions: tagCommands }),
-    defaultProvider({ name: 'Models', types: ['model', 'models'], actions: modelCommands }),
-  ];
+  return [defaultProvider({ name: 'Search', actions: commands, options: { threshold: 0.4 } })];
 };
