@@ -76,6 +76,7 @@ export type IconProps = {
   description?: string;
   size?: string;
   color?: Color | 'currentColor' | string;
+  indicator?: Color;
   flipped?: boolean;
   flopped?: boolean;
   spin?: boolean;
@@ -125,6 +126,7 @@ export type IconButtonProps = ButtonBase & {
   icon: IconLike;
   flipped?: boolean;
   flopped?: boolean;
+  indicator?: Color;
   'aria-label': string;
 } & ButtonOrAnchor;
 
