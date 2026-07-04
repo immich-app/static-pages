@@ -81,7 +81,7 @@ _Our team members’ unfiltered thoughts on the good, the bad, and the frustrati
 
 **Alex** — Handling the initial iCloud backup is still a PITA, but seeing the crash rate of Android tick down makes me happy. However, I am still not satisfied with the current upload situation. OCR is actually very cool for playing “I Spy” with your kids. I will finally get to work on the workflow feature, which I’ve always wanted for a long time.
 
-**Jason** — What is a vite preprocessor? Well, it turns out that you can transform code from one format to another using [vite plugins](https://vite.dev/guide/api-plugin.html#transforming-custom-file-types). This month I wrote my own, in order make it possible to write blog posts in markdown, but render them using our own custom Svelte components.
+**Jason** — What is a vite preprocessor? Well, it turns out that you can transform code from one format to another using [vite plugins](https://vite.dev/guide/api-plugin.html#transforming-custom-file-types). This month I wrote my own, in order to make it possible to write blog posts in markdown, but render them using our own custom Svelte components.
 
 **Zack** — In the run up to stable release, I thought I would be working on bug fixes and other coordination around the release. Alas no, after we decided to launch the [Immich Retro DVD](https://immich.store/products/immich-retro), it turns out worldwide fulfillment is still not a solved problem… so now I know far more than I ever wanted to about global fulfillment, tax laws, hooking all those systems together, and plenty more. At least it seems like people liked it 😅
 
