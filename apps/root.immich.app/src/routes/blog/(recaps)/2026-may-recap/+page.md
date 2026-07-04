@@ -97,7 +97,7 @@ Actually, I just checked my commits to the main repository and it's almost exclu
 
 This month, my primary focus was on the sharing rework. After running against a rather significant wall, we've decided on a new design for people sharing and so far this seems to be promising. I am hoping to start properly implementing the first pieces of the rework in the next month, and finally leave the proof of concept phase.
 
-In addition to continued work on sharing, I also worked on refactorings as well as cleaning up some deprecated APIs. Furthermore, I made <https://version.immich.cloud,> the Immich server, and Immich web work with prereleases (you know, a release candidate kind of thing like `v3.0.0-rc.0`). We're planning to publish release candidates for v3 and any future major version. Since we haven't done something like that before, many components didn't support this properly, thus needing adapting and testing.
+In addition to continued work on sharing, I also worked on refactorings as well as cleaning up some deprecated APIs. Furthermore, I made [version.immich.cloud](https://version.immich.cloud/version), the Immich server, and Immich web work with prereleases (you know, a release candidate kind of thing like `v3.0.0-rc.0`). We're planning to publish release candidates for v3 and any future major version. Since we haven't done something like that before, many components didn't support this properly, thus needing adapting and testing.
 
 Lastly, I helped reviewing and providing feedback on some of those other huge features, especially workflows :)
 
