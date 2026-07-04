@@ -31,7 +31,7 @@ See the full chart on [data.immich.app](https://data.immich.app/)
 
 ## 10,000th Commit
 
-It is kind of crazy to see the 10,000th commit in the Immich repository. I remember seeing nodejs go over 10,000 commits back in 2014 when I started my career and thinking "now _that_ is a serious project". It's so awesome to be able to work on Immich everyday, and be apart of such an awesome community. Here's to the next 10,000 commits!
+It is kind of crazy to see the 10,000th commit in the Immich repository. I remember seeing nodejs go over 10,000 commits back in 2014 when I started my career and thinking "now _that_ is a serious project". It's so awesome to be able to work on Immich everyday, and be a part of such an awesome community. Here's to the next 10,000 commits!
 
 ## Recent uploads
 
@@ -57,7 +57,7 @@ Since the last update we have also added the "Browse templates" button. Template
 
 ### Editor
 
-The workflow editor has also had a few changes, and this is what it looks like now. It has both a visual and JSON view. Each workflow has a trigger, and then a list of steps. A step is made up of an filter or action and any associated configuration. The interface supports reordering steps via drag-and-drop, which is pretty nice. Lastly, a workflow also supports copying and downloading, so that you can easily share them with other users. At some point we would love to build out some type or marketplace or registry where users can browse existing templates.
+The workflow editor has also had a few changes, and this is what it looks like now. It has both a visual and JSON view. Each workflow has a trigger, and then a list of steps. A step is made up of a filter or action and any associated configuration. The interface supports reordering steps via drag-and-drop, which is pretty nice. Lastly, a workflow also supports copying and downloading, so that you can easily share them with other users. At some point we would love to build out some type or marketplace or registry where users can browse existing templates.
 
 ![The workflow editor show an example workflow ](https://static.immich.cloud/blog/84a0ba7d-ed36-4044-a20b-b0d7018b1d47/ebfd6445da664e2a3d83b54ae77fe573.webp)
 
