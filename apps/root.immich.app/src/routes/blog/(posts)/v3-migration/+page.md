@@ -188,7 +188,7 @@ Search endpoints have been updated with the following changes:
 
 #### `PATCH /shared-links/:id` / `updateSharedLink`
 
-- The `changeExpiryTime` property of `SharedLinkEditDto` has been removed (instead send `expiresAt` with a `null` value) 
+- The `changeExpiryTime` property of `SharedLinkEditDto` has been removed (instead send `expiresAt` with a `null` value)
 
 #### `PUT /system-config` / `updateConfig`
 
