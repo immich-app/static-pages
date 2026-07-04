@@ -49,7 +49,7 @@ Here is what the webhook trigger action item looks like in the action picker on 
 
 ![Selected webhook action ](https://static.immich.cloud/blog/af8e01bf-2d44-4042-b3de-5d5c463b7b52/749e388f5abf07e69b08094afa6c158b.webp)
 
-Once the "Trigger Webhook" action has been selected, you are able to configure it with a destination url, the HTTP request method (POST vs PUT), and an optional header to send with the request. It is quite common for webhooks to require authentication, and the header configuration allows the user to send one with each request.
+Once the "Trigger Webhook" action has been selected, you are able to configure it with a destination URL, the HTTP request method (POST vs PUT), and an optional header to send with the request. It is quite common for webhooks to require authentication, and the header configuration allows the user to send one with each request.
 
 Here is an example configuration:
 
