@@ -42,7 +42,8 @@
       {
         "title": "View-Only Web Interface",
         "description": "Display Immich photos publicly while allowing for the ability to filter and search for images.",
-        "href": "https://github.com/JimmyeJones/Immich-View-Only-Web-Interface"
+        "href": "https://github.com/JimmyeJones/Immich-View-Only-Web-Interface",
+        "maintained": false
       },
       {
         "title": "Mimick",
@@ -94,7 +95,8 @@
       {
         "title": "Immich Stack",
         "description": "Auto-stack photos with identical filenames and differing extensions (i.e. JPG+RAW)",
-        "href": "https://github.com/sid3windr/immich-stack"
+        "href": "https://github.com/sid3windr/immich-stack",
+        "maintained": false
       },
       {
         "title": "API Album Sync",
@@ -114,22 +116,26 @@
       {
         "title": "Immich Downloader",
         "description": "Downloads a configurable number of random photos based on people or album ID.",
-        "href": "https://github.com/jon6fingrs/immich-dl"
+        "href": "https://github.com/jon6fingrs/immich-dl",
+        "maintained": false
       },
       {
         "title": "Immich Machine Learning Load Balancer",
         "description": "Speed up your machine learning by load balancing your requests to multiple computers",
-        "href": "https://github.com/apetersson/immich_ml_balancer"
+        "href": "https://github.com/apetersson/immich_ml_balancer",
+        "maintained": false
       },
       {
         "title": "Immich-Slideshow-Toolkit",
         "description": "Commandline tools for creating video slideshow Mp4s from Immich albums.",
-        "href": "https://github.com/knom/immich-slideshow-toolkit"
+        "href": "https://github.com/knom/immich-slideshow-toolkit",
+        "maintained": false
       },
       {
         "title": "TeleImmich",
         "description": "Sync exported Telegram backups to an Immich instance",
-        "href": "https://github.com/dev-mkm/TeleImmich"
+        "href": "https://github.com/dev-mkm/TeleImmich",
+        "maintained": false
       },
       {
         "title": "Immich Face Recognition Export Tool",
@@ -156,12 +162,14 @@
       {
         "title": "Immich Kodi",
         "description": "Unofficial Kodi plugin for Immich.",
-        "href": "https://github.com/vladd11/immich-kodi"
+        "href": "https://github.com/vladd11/immich-kodi",
+        "maintained": false
       },
       {
         "title": "Lightroom Publisher: mi.Immich.Publisher",
         "description": "Lightroom plugin to publish photos from Lightroom collections to Immich albums.",
-        "href": "https://github.com/midzelis/mi.Immich.Publisher"
+        "href": "https://github.com/midzelis/mi.Immich.Publisher",
+        "maintained": false
       },
       {
         "title": "Lightroom Immich Plugin: lrc-immich-plugin",
@@ -193,7 +201,8 @@
       {
         "title": "Telegram to Immich Bot",
         "description": "Telegram bot for uploading files directly to your Immich instance, preserving the metadata",
-        "href": "https://github.com/myanesp/telegram-immich-bot"
+        "href": "https://github.com/myanesp/telegram-immich-bot",
+        "maintained": false
       },
       {
         "title": "Immich timelaspe selfie",

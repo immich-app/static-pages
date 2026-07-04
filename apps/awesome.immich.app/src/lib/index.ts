@@ -18,6 +18,7 @@ export type Project = {
   title: string;
   description: string;
   href: string;
+  maintained?: boolean;
 };
 
 export const categories = items;
