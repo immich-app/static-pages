@@ -177,6 +177,8 @@ export type TableContext = {
   striped?: boolean;
 };
 
+export type IconOrSnippet = IconLike | Snippet<[disabled: boolean]>;
+
 type BaseInputProps<T> = {
   ref?: HTMLInputElement | null;
   class?: string;
@@ -184,8 +186,8 @@ type BaseInputProps<T> = {
   value?: T;
   shape?: Shape;
   inputSize?: HTMLInputAttributes['size'];
-  leadingIcon?: IconLike | Snippet;
-  trailingIcon?: IconLike | Snippet;
+  leadingIcon?: IconOrSnippet;
+  trailingIcon?: IconOrSnippet;
   trailingText?: string;
   containerRef?: HTMLElement | null;
 } & Omit<HTMLInputAttributes, 'size' | 'type' | 'value'>;
@@ -201,8 +203,8 @@ export type TimeInputProps = {
   value?: TimeValue;
   shape?: Shape;
   granularity?: 'hour' | 'minute' | 'second';
-  leadingIcon?: IconLike | Snippet;
-  trailingIcon?: IconLike | Snippet;
+  leadingIcon?: IconOrSnippet;
+  trailingIcon?: IconOrSnippet;
   containerRef?: HTMLElement | null;
   onChange?: (value?: TimeValue) => void;
   minValue?: TimeValue;

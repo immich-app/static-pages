@@ -25,8 +25,17 @@
     <Input placeholder="label" />
     <HelperText>Note: this is helper text</HelperText>
   </Field>
-  <Field label="Invalid" invalid>
+  <Field label="Invalid as attribute" invalid>
     <Input placeholder="label" />
     <HelperText color="danger">Must be valid</HelperText>
+  </Field>
+  <Field
+    label="Using browser validation"
+    description="Optionally style the helper text using the peer-[:has(:invalid)] selector."
+  >
+    <Input placeholder="42" type="number" />
+    <HelperText class="invisible text-danger peer-[:has(:invalid)]:visible dark:text-danger">
+      Must be a number.
+    </HelperText>
   </Field>
 </Stack>
