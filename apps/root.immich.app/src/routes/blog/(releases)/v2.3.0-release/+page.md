@@ -8,7 +8,7 @@ slug: v2.3.0-release
 title: Release v2.3.0
 ---
 
-_Loa loa loa, the stock is running low on_ [_Retro DVD _](https://immich.store/products/immich-retro)**\*📀\*\***! If you want to get one for yourself, you still can, but once this batch is gone, we won't be making any more, **EVER!** So get one while you can from* [*immich.store*](https://immich.store/)*!\*
+_Loa loa loa, the stock is running low on_ [_Retro DVD _](https://immich.store/products/immich-retro)**\*📀\*\***! If you want to get one for yourself, you still can, but once this batch is gone, we won't be making any more, **EVER!** So get one while you can from* [_immich.store_](https://immich.store/)*!\*
 
 ![](https://static.immich.cloud/blog/798e74f4-a2ef-40d9-915f-6452d4162723/bc2d474202aa75e83ad36a7dc13cd77f.webp)
 

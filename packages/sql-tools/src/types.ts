@@ -437,10 +437,7 @@ export type DatabaseTable = {
 };
 
 export type DatabaseConstraint =
-  | DatabasePrimaryKeyConstraint
-  | DatabaseForeignKeyConstraint
-  | DatabaseUniqueConstraint
-  | DatabaseCheckConstraint;
+  DatabasePrimaryKeyConstraint | DatabaseForeignKeyConstraint | DatabaseUniqueConstraint | DatabaseCheckConstraint;
 
 export type DatabaseColumn = {
   primary: boolean;
