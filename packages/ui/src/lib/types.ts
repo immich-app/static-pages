@@ -17,15 +17,7 @@ export type Color = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' |
 export type TextColor = Color | 'muted';
 export type TextVariant = 'italic';
 export type FontWeight =
-  | 'thin'
-  | 'extra-light'
-  | 'light'
-  | 'normal'
-  | 'medium'
-  | 'semi-bold'
-  | 'bold'
-  | 'extra-bold'
-  | 'black';
+  'thin' | 'extra-light' | 'light' | 'normal' | 'medium' | 'semi-bold' | 'bold' | 'extra-bold' | 'black';
 export type HeadingColor = TextColor;
 export type Size = 'tiny' | 'small' | 'medium' | 'large' | 'giant';
 export type ModalSize = Size | 'full';
@@ -405,7 +397,8 @@ export type BreadcrumbItem = {
   href?: string;
 } &
   // either icon or title must be provided
-  (| {
+  (
+    | {
         title: string;
         icon?: IconLike;
       }

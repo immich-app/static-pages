@@ -9,7 +9,7 @@ slug: v2.2.0-release
 title: Release v2.2.0
 ---
 
-_The month following our_ [_stable release _](/blog/v2.0.0-release)**_🎉_** _has flown by! We are blown away by the support from everyone around this milestone, especially for the_ [_Retro DVD _](https://immich.store/products/immich-retro)**\*📀\*\***! If you want to get one for yourself, you still can, but once this batch is gone, we won't be making any more, **EVER!** So get one while you can from* [*immich.store*](https://immich.store/)*!\*
+_The month following our_ [_stable release _](/blog/v2.0.0-release)**_🎉_** _has flown by! We are blown away by the support from everyone around this milestone, especially for the_ [_Retro DVD _](https://immich.store/products/immich-retro)**\*📀\*\***! If you want to get one for yourself, you still can, but once this batch is gone, we won't be making any more, **EVER!** So get one while you can from* [_immich.store_](https://immich.store/)*!\*
 
 ![](https://static.immich.cloud/blog/2c257fa0-5605-472c-a08b-7617de2dacb4/bc2d474202aa75e83ad36a7dc13cd77f.webp)
 
