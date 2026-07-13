@@ -37,12 +37,12 @@
   const onSelect = (items: SelectOption[]) => {
     toastManager.primary({
       title: `Theme change`,
-      description: `New value: ${items.map((item) => `${item.label}`).join(', ')}`,
+      description: `New value: ${items.map((item) => String(item.label)).join(', ')}`,
     });
   };
 </script>
 
-<Stack class="mb-8 max-w-[250px]" gap={8}>
+<Stack class="mb-8 max-w-62.5" gap={8}>
   <Field label="Framework">
     <MultiSelect options={frameworks} />
   </Field>

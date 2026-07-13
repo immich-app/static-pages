@@ -62,9 +62,7 @@ class ThemeManager {
       return;
     }
 
-    globalThis
-      .matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', () => this.#syncToDom(), { passive: true });
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => this.#syncToDom(), { passive: true });
   }
 
   toggle() {

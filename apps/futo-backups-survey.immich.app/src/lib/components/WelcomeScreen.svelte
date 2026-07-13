@@ -14,7 +14,7 @@
 <div class="flex min-h-screen flex-col items-center justify-center gap-6 p-6">
   <Logo variant="stacked" size="giant" />
 
-  <div class="flex max-w-[640px] flex-col gap-4 text-base">
+  <div class="flex max-w-160 flex-col gap-4 text-base">
     <h1 class="text-3xl font-bold">FUTO Backups</h1>
 
     <p class="text-gray-300">
@@ -38,6 +38,7 @@
 
   <Turnstile
     siteKey={PUBLIC_CF_TURNSTILE_SITE}
+    // eslint-disable-next-line unicorn/prefer-await
     on:callback={(e) => verifyTurnstile(e.detail.token).catch(() => {})}
     on:error={() => {}}
   />

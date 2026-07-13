@@ -7,7 +7,7 @@
 
   const onTick = () => {
     index += 1;
-    index = index % items.length;
+    index %= items.length;
   };
 
   const progress = $derived(items[index]);

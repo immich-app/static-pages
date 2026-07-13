@@ -57,7 +57,7 @@ export const compareColumns = () =>
             old: target,
             new: source,
             changes: {
-              default: String(source.default ?? 'NULL'),
+              default: source.default ?? 'NULL',
             },
           },
           reason: `default is different (${source.default ?? 'null'} vs ${target.default})`,

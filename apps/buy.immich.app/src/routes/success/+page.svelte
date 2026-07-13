@@ -36,7 +36,7 @@
         isLoading = false;
         if (data.instanceUrl && response.purchaseId) {
           const url = getRedirectUrl(response.purchaseId, data.instanceUrl);
-          setTimeout(() => (globalThis.location.href = url), 2000);
+          setTimeout(() => location.assign(url), 2000);
         }
         break;
       }

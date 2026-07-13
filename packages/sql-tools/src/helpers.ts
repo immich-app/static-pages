@@ -92,8 +92,8 @@ export const setIsEqual = (source: Set<unknown>, target: Set<unknown>) =>
   source.size === target.size && [...source].every((x) => target.has(x));
 
 export const haveEqualColumns = (sourceColumns?: string[], targetColumns?: string[]) => {
-  sourceColumns = sourceColumns ?? [];
-  targetColumns = targetColumns ?? [];
+  sourceColumns ??= [];
+  targetColumns ??= [];
 
   if (sourceColumns.length !== targetColumns.length) {
     return false;
@@ -125,7 +125,7 @@ export const compare = <T extends { name: string; synchronize: boolean }>(
   options: IgnoreOptions | undefined,
   comparer: Comparer<T>,
 ) => {
-  options = options || {};
+  options ||= {};
   const sourceMap = Object.fromEntries(sources.map((table) => [table.name, table]));
   const targetMap = Object.fromEntries(targets.map((table) => [table.name, table]));
   const items: SchemaDiff[] = [];
@@ -232,14 +232,10 @@ export const isDefaultEqual = (source: DatabaseColumn, target: DatabaseColumn) =
     return false;
   }
 
-  if (
+  return (
     withTypeCast(source.default, getColumnType(source)) === target.default ||
     withTypeCast(target.default, getColumnType(target)) === source.default
-  ) {
-    return true;
-  }
-
-  return false;
+  );
 };
 
 export const getColumnType = (column: DatabaseColumn) => {
@@ -294,12 +290,12 @@ export const asJsonString = (input: unknown, options: { outputTarget: OutputTarg
 const escape = (value: string) => {
   return value
     .replaceAll("'", "''")
-    .replaceAll(/[\\]/g, '\\\\')
-    .replaceAll(/[\b]/g, String.raw`\b`)
-    .replaceAll(/[\f]/g, String.raw`\f`)
-    .replaceAll(/[\n]/g, String.raw`\n`)
-    .replaceAll(/[\r]/g, String.raw`\r`)
-    .replaceAll(/[\t]/g, String.raw`\t`);
+    .replaceAll('\\', '\\\\')
+    .replaceAll('\b', String.raw`\b`)
+    .replaceAll('\f', String.raw`\f`)
+    .replaceAll('\n', String.raw`\n`)
+    .replaceAll('\r', String.raw`\r`)
+    .replaceAll('\t', String.raw`\t`);
 };
 
 export const asRenameKey = (values: Array<string | boolean | number | undefined>) =>
@@ -412,13 +408,11 @@ export const getSchemaItemChildrenIds = (
       }
 
       case 'FunctionDrop': {
-        return [
-          // drop after referenced triggers are dropped
-          ...items
-            .filter((item) => item.type === 'TriggerDrop')
-            .filter((item) => item.object.functionName === object.name)
-            .map((item) => triggerDrop(item.object)),
-        ];
+        // drop after referenced triggers are dropped
+        return items
+          .filter((item) => item.type === 'TriggerDrop')
+          .filter((item) => item.object.functionName === object.name)
+          .map((item) => triggerDrop(item.object));
       }
 
       case 'TableCreate': {
@@ -488,13 +482,11 @@ export const getSchemaItemChildrenIds = (
       }
 
       case 'EnumDrop': {
-        return [
-          // drop after tables with columns with this enum are dropped
-          ...items
-            .filter((item) => item.type === 'TableDrop')
-            .filter((item) => item.object.columns.some((column) => column.enumName === object.name))
-            .map((item) => tableDrop(item.object)),
-        ];
+        // drop after tables with columns with this enum are dropped
+        return items
+          .filter((item) => item.type === 'TableDrop')
+          .filter((item) => item.object.columns.some((column) => column.enumName === object.name))
+          .map((item) => tableDrop(item.object));
       }
 
       case 'ConstraintAdd': {

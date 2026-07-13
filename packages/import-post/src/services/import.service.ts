@@ -107,7 +107,7 @@ export class ImportService {
 
     let cover: Cover | undefined;
     for (const attachment of this.getAttachments(document)) {
-      const url = new URL(attachment.url, postUrl).toString();
+      const url = new URL(attachment.url, postUrl).href;
       const { buffer, contentType: originalContentType } = await this.outlineRepository.download(url);
       const attachmentId = this.outlineRepository.getAttachmentId(url);
 
@@ -163,13 +163,11 @@ export class ImportService {
       metadata.coverAlt = cover.alt;
     }
 
-    const staleKeys = [...existingKeys].filter((key) => !referencedKeys.has(key));
-    const uploadedKeys = [...referencedKeys].filter((key) => !existingKeys.has(key));
-    const unchanged = referencedKeys.size - uploadedKeys.length;
-    console.log(
-      `\nBucket stats (uploaded=${uploadedKeys.length}, unchanged=${unchanged}, deleted=${staleKeys.length})`,
-    );
-    await this.r2Repository.deleteKeys(staleKeys);
+    const staleKeys = existingKeys.difference(referencedKeys);
+    const uploadedKeys = referencedKeys.difference(existingKeys);
+    const unchanged = referencedKeys.size - uploadedKeys.size;
+    console.log(`\nBucket stats (uploaded=${uploadedKeys.size}, unchanged=${unchanged}, deleted=${staleKeys.size})`);
+    await this.r2Repository.deleteKeys([...staleKeys]);
 
     const outputFile = join(repoRoot, 'apps/root.immich.app/src/routes/blog', folder, '+page.md');
     this.systemRepository.write(outputFile, serializeYml(metadata, rendered));
@@ -239,10 +237,12 @@ export class ImportService {
     // Drop the wrapping paragraph if removing the node left it empty.
     if (parent.type === 'paragraph' && parent.children.length === 0) {
       visit(document, 'paragraph', (candidate, candidateIndex, candidateParent) => {
-        if (candidate === parent && candidateParent && typeof candidateIndex === 'number') {
-          candidateParent.children.splice(candidateIndex, 1);
-          return false;
+        if (!(candidate === parent && candidateParent && typeof candidateIndex === 'number')) {
+          return;
         }
+
+        candidateParent.children.splice(candidateIndex, 1);
+        return false;
       });
     }
   }

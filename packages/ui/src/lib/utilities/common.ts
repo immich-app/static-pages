@@ -20,11 +20,7 @@ export const asQueryString = (
         return false;
       }
 
-      if (skipEmptyStrings && value === '') {
-        return false;
-      }
-
-      return true;
+      return !(skipEmptyStrings && value === '');
     })
     .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
 
@@ -98,7 +94,7 @@ export const resolveUrl = (url: string, currentHostname?: string) => {
 
 export const isExternalLink = (href: string): boolean => {
   try {
-    const current = new URL(globalThis.location.href);
+    const current = new URL(location.href);
     const target = new URL(href, current);
 
     return target.origin !== current.origin;

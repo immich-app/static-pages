@@ -166,7 +166,6 @@ describe('flushBuffer', () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: expect.any(String),
-      credentials: 'same-origin',
     });
 
     const body = JSON.parse(mockFetch.mock.calls[0][1].body);
@@ -254,7 +253,7 @@ describe('flushBufferSync', () => {
 });
 
 describe('fetchResume', () => {
-  it('calls GET /api/resume with credentials: same-origin', async () => {
+  it('calls GET /api/resume', async () => {
     const mockResponse = { answers: {}, nextQuestionIndex: 0 };
     vi.stubGlobal(
       'fetch',
@@ -266,20 +265,17 @@ describe('fetchResume', () => {
 
     const result = await fetchResume();
 
-    expect(fetch).toHaveBeenCalledWith('/api/resume', { credentials: 'same-origin' });
+    expect(fetch).toHaveBeenCalledWith('/api/resume');
     expect(result).toEqual(mockResponse);
   });
 });
 
 describe('postComplete', () => {
-  it('calls POST /api/complete with credentials: same-origin', async () => {
+  it('calls POST /api/complete', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, status: 204 }));
 
     await postComplete();
 
-    expect(fetch).toHaveBeenCalledWith('/api/complete', {
-      method: 'POST',
-      credentials: 'same-origin',
-    });
+    expect(fetch).toHaveBeenCalledWith('/api/complete', { method: 'POST' });
   });
 });

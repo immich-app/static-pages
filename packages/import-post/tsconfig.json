@@ -10,6 +10,7 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "target": "ES2023",
+    "lib": ["ESNext"],
     "outDir": "./dist",
     "types": ["node"],
     "rootDir": "./src"

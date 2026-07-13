@@ -23,17 +23,13 @@ export type Project = {
 export const categories = items;
 
 export const getCategoryProviders = () => {
-  const providers: ActionProvider[] = [];
-
-  for (const category of categories) {
-    providers.push(
-      defaultProvider({
-        name: category.name,
-        types: category.types,
-        actions: linkCommands(category.projects),
-      }),
-    );
-  }
+  const providers: ActionProvider[] = Array.from(categories, (category) =>
+    defaultProvider({
+      name: category.name,
+      types: category.types,
+      actions: linkCommands(category.projects),
+    }),
+  );
 
   return providers;
 };

@@ -1,9 +1,14 @@
 import { Processor } from 'src/types';
 
 export const processTables: Processor = (ctx, items) => {
-  for (const {
-    item: { options, object },
-  } of items.filter((item) => item.type === 'table')) {
+  for (const item of items) {
+    if (item.type !== 'table') {
+      continue;
+    }
+
+    const {
+      item: { options, object },
+    } = item;
     const test = ctx.getTableByObject(object);
     if (test) {
       throw new Error(

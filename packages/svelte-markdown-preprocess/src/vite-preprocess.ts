@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prefer-await */
 import fm from 'front-matter';
 import { Marked } from 'marked';
 import type { PreprocessorGroup } from 'svelte/compiler';
@@ -132,6 +133,7 @@ export class SvelteMarkdownPreprocess {
   }
 
   createSvelteTemplate(file: FileWithLayout): string {
+    // eslint-disable-next-line unicorn/no-incorrect-template-string-interpolation
     return (file.layout ? [`<Layout {attributes}>`, file.markup, '</Layout>'] : [file.markup]).join('\n');
   }
 }

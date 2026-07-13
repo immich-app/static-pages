@@ -1,9 +1,14 @@
 import { Processor } from 'src/types';
 
 export const processTriggers: Processor = (ctx, items) => {
-  for (const {
-    item: { object, options },
-  } of items.filter((item) => item.type === 'trigger')) {
+  for (const item of items) {
+    if (item.type !== 'trigger') {
+      continue;
+    }
+
+    const {
+      item: { object, options },
+    } = item;
     const table = ctx.getTableByObject(object);
     if (!table) {
       return ctx.onMissingTable('@Trigger', object);

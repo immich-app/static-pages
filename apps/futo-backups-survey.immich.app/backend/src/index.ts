@@ -1,10 +1,11 @@
+/* eslint-disable unicorn/no-top-level-side-effects */
 import { AutoRouter, cors, IRequest } from 'itty-router';
 import { getRespondentId, setRespondentCookie, deleteRespondentCookie } from './cookie';
 import { questions } from './survey-definition';
 
 const { preflight, corsify } = cors();
 
-const router = AutoRouter<IRequest, [Env, ExecutionContext]>({
+const router = AutoRouter<IRequest, [Env]>({
   before: [preflight],
   finally: [corsify],
 });
@@ -158,7 +159,7 @@ router.get('/api/resume', async (request, env) => {
   for (const row of rows.results) {
     answers[row.question_id] = {
       value: row.answer,
-      ...(row.other_text ? { otherText: row.other_text } : {}),
+      ...(row.other_text && { otherText: row.other_text }),
     };
   }
 
@@ -168,12 +169,12 @@ router.get('/api/resume', async (request, env) => {
 
     if (q.conditional?.showIf.condition === 'skipped') {
       const depId = q.conditional.showIf.questionId;
-      if (answers[depId]) {
+      if (Object.hasOwn(answers, depId)) {
         continue;
       }
     }
 
-    if (!answers[q.id]) {
+    if (!Object.hasOwn(answers, q.id)) {
       nextQuestionIndex = i;
       break;
     }

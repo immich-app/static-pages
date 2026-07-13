@@ -23,7 +23,7 @@ export const getPaymentStatus = async (orderId: string) => {
 };
 
 export const getCallbackUrl = (licenseType: ImmichLicense, instanceUrl?: string): string => {
-  const successUrl = new URL('/success', globalThis.origin);
+  const successUrl = new URL('/success', origin);
 
   if (instanceUrl) {
     successUrl.searchParams.append('instanceUrl', instanceUrl);

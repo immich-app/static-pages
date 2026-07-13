@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-top-level-side-effects */
 import jwt from '@tsndr/cloudflare-worker-jwt';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';

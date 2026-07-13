@@ -92,7 +92,6 @@
     for (const item of items) {
       if (item && (isMenuItemType(item) || isEnabled(item))) {
         results.push(item);
-        continue;
       }
     }
 
