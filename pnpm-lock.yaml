@@ -366,7 +366,7 @@ importers:
     devDependencies:
       '@cloudflare/vitest-pool-workers':
         specifier: ^0.18.0
-        version: 0.18.2(@vitest/runner@4.1.9)(@vitest/snapshot@4.1.9)(vitest@4.1.9(@types/node@26.0.1)(vite@8.1.4(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.0)(yaml@2.9.0)))
+        version: 0.18.2(@cloudflare/workers-types@5.20260713.1)(@vitest/runner@4.1.9)(@vitest/snapshot@4.1.9)(vitest@4.1.9(@types/node@26.0.1)(vite@8.1.4(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.0)(yaml@2.9.0)))
       '@types/luxon':
         specifier: ^3.6.2
         version: 3.7.2
@@ -378,7 +378,7 @@ importers:
         version: 4.1.9(@types/node@26.0.1)(vite@8.1.4(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.0)(yaml@2.9.0))
       wrangler:
         specifier: ^4.75.0
-        version: 4.108.0
+        version: 4.108.0(@cloudflare/workers-types@5.20260713.1)
 
   apps/futo-backups-survey.immich.app:
     dependencies:
@@ -443,7 +443,7 @@ importers:
         version: 6.0.3
       wrangler:
         specifier: ^4.75.0
-        version: 4.108.0
+        version: 4.108.0(@cloudflare/workers-types@5.20260713.1)
 
   apps/get.immich.app:
     dependencies:
@@ -786,8 +786,8 @@ importers:
   packages/kysely-adapter-cloudflare:
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20260331.1
-        version: 4.20260702.1
+        specifier: ^5.0.0
+        version: 5.20260713.1
       kysely:
         specifier: ^0.29.0
         version: 0.29.2
@@ -1062,8 +1062,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@cloudflare/workers-types@4.20260702.1':
-    resolution: {integrity: sha512-mOhf5TUEB1m2vPrxtqoIGfz0fUC9xyxRDx5gWHy5s+OCo6dcV+g7wI1R7gYCMFohhqF/2y2xeKVwMwCJjfn/WA==}
+  '@cloudflare/workers-types@5.20260713.1':
+    resolution: {integrity: sha512-4YZE9YIzr3iP9eRUV4ekZozLLsYQFFKxmMJfAcsteCuzKJ7RJrLqcCxm1aMzTE9uFcy+D6A89WE+cjJadF2c9g==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -4431,7 +4431,7 @@ snapshots:
     optionalDependencies:
       workerd: 1.20260706.1
 
-  '@cloudflare/vitest-pool-workers@0.18.2(@vitest/runner@4.1.9)(@vitest/snapshot@4.1.9)(vitest@4.1.9(@types/node@26.0.1)(vite@8.1.4(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.0)(yaml@2.9.0)))':
+  '@cloudflare/vitest-pool-workers@0.18.2(@cloudflare/workers-types@5.20260713.1)(@vitest/runner@4.1.9)(@vitest/snapshot@4.1.9)(vitest@4.1.9(@types/node@26.0.1)(vite@8.1.4(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.0)(yaml@2.9.0)))':
     dependencies:
       '@vitest/runner': 4.1.9
       '@vitest/snapshot': 4.1.9
@@ -4439,7 +4439,7 @@ snapshots:
       esbuild: 0.28.1
       miniflare: 4.20260706.0
       vitest: 4.1.9(@types/node@26.0.1)(vite@8.1.4(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.0)(yaml@2.9.0))
-      wrangler: 4.108.0
+      wrangler: 4.108.0(@cloudflare/workers-types@5.20260713.1)
       zod: 3.25.76
     transitivePeerDependencies:
       - '@cloudflare/workers-types'
@@ -4461,7 +4461,7 @@ snapshots:
   '@cloudflare/workerd-windows-64@1.20260706.1':
     optional: true
 
-  '@cloudflare/workers-types@4.20260702.1': {}
+  '@cloudflare/workers-types@5.20260713.1': {}
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
@@ -7739,7 +7739,7 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20260706.1
       '@cloudflare/workerd-windows-64': 1.20260706.1
 
-  wrangler@4.108.0:
+  wrangler@4.108.0(@cloudflare/workers-types@5.20260713.1):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.5.0
       '@cloudflare/unenv-preset': 2.16.1(unenv@2.0.0-rc.24)(workerd@1.20260706.1)
@@ -7750,6 +7750,7 @@ snapshots:
       unenv: 2.0.0-rc.24
       workerd: 1.20260706.1
     optionalDependencies:
+      '@cloudflare/workers-types': 5.20260713.1
       fsevents: 2.3.3
     transitivePeerDependencies:
       - bufferutil
