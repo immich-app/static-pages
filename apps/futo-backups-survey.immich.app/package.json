@@ -18,7 +18,7 @@
     "@sveltejs/kit": "^2.43.2",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
     "@tailwindcss/vite": "^4.2.2",
-    "@types/node": "^24.13.2",
+    "@types/node": "^24.13.3",
     "dotenv": "^17.3.1",
     "globals": "^17.0.0",
     "svelte": "^5.39.5",
