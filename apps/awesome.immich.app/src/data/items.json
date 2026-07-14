@@ -212,7 +212,7 @@
       },
       {
         "title": "immich-quickstart",
-        "description": "One command that installs Gemini CLI on a fresh Linux VPS, briefs it with the official Docker Compose install method, and lets the AI agent run the install while you approve each step. Uses only the official compose files and never connects to the Postgres database directly.",
+        "description": "A single command that sets up Gemini CLI on a fresh VPS and lets it run the official Immich install for you. A manual path is included too.",
         "href": "https://github.com/nternet-company/immich-quickstart"
       }
     ]
@@ -300,8 +300,8 @@
         "href": "https://rockstor.com/docs/interface/docker-based-rock-ons/immich.html"
       },
       {
-        "title": "Self-host your photos on a rented VPS, with an AI assistant",
-        "description": "Beginner-friendly walkthrough in English and Dutch: rent a VPS, then either let a free terminal AI run the official install for you or follow the manual Docker Compose steps. Covers hardware sizing, first login, and backups.",
+        "title": "Self-host your photos on a rented VPS",
+        "description": "A beginner guide, in English and Dutch, to running Immich on a rented VPS, either with an AI assistant or by hand.",
         "href": "https://fotofoto.app/en/guides/self-host-your-photos-with-immich"
       }
     ]
