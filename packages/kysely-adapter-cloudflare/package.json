@@ -25,7 +25,7 @@
   "keywords": [],
   "author": "",
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260331.1",
+    "@cloudflare/workers-types": "^5.0.0",
     "kysely": "^0.29.0",
     "vitest": "^4.1.0"
   },
