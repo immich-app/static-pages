@@ -209,6 +209,11 @@
         "title": "Immich Power Tools",
         "description": "A unofficial Immich client to provide better tools to organize and manage your Immich account.",
         "href": "https://github.com/immich-power-tools/immich-power-tools"
+      },
+      {
+        "title": "immich-quickstart",
+        "description": "One command that installs Gemini CLI on a fresh Linux VPS, briefs it with the official Docker Compose install method, and lets the AI agent run the install while you approve each step. Uses only the official compose files and never connects to the Postgres database directly.",
+        "href": "https://github.com/nternet-company/immich-quickstart"
       }
     ]
   },
@@ -293,6 +298,11 @@
         "title": "How-To Install Immich on Rockstor NAS",
         "description": "Set up Immich with External Libraries on your Rockstor NAS server.",
         "href": "https://rockstor.com/docs/interface/docker-based-rock-ons/immich.html"
+      },
+      {
+        "title": "Self-host your photos on a rented VPS, with an AI assistant",
+        "description": "Beginner-friendly walkthrough in English and Dutch: rent a VPS, then either let a free terminal AI run the official install for you or follow the manual Docker Compose steps. Covers hardware sizing, first login, and backups.",
+        "href": "https://fotofoto.app/en/guides/self-host-your-photos-with-immich"
       }
     ]
   }
