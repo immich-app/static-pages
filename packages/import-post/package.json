@@ -33,7 +33,7 @@
     "@types/mdast": "^4.0.4",
     "@types/node": "^25.9.5",
     "tsx": "^4.20.0",
-    "typescript": "^6.0.0",
+    "typescript": "^7.0.0",
     "vitest": "^4.1.0"
   }
 }
