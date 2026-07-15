@@ -145,6 +145,11 @@
         "title": "lrimmich",
         "description": "Sync albums and metadata from a Lightroom Classic catalog to Immich when both share the same photo folder via an external library.",
         "href": "https://github.com/haavardnk/lrimmich"
+      },
+      {
+        "title": "Immich Custom Memories",
+        "description": "Create customized Memories in Immich.",
+        "href": "https://github.com/SinTan1729/immich-custom-memories"
       }
     ]
   },
