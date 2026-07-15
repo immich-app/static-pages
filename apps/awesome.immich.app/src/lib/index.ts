@@ -18,9 +18,18 @@ export type Project = {
   title: string;
   description: string;
   href: string;
+  maintained: boolean;
 };
 
-export const categories = items;
+export const categories = items.map((category) => ({
+  ...category,
+  projects: category.projects
+    .map((project) => ({
+      ...project,
+      maintained: project.maintained ?? true,
+    }))
+    .toSorted((a, b) => (a.maintained === b.maintained ? 0 : a.maintained ? -1 : 1)),
+}));
 
 export const getCategoryProviders = () => {
   const providers: ActionProvider[] = [];
