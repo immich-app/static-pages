@@ -6,7 +6,7 @@
   import { zIndex } from '$lib/constants.js';
   import { t } from '$lib/services/translation.svelte.js';
   import { getLocale } from '$lib/state/locale-state.svelte.js';
-  import { styleVariants } from '$lib/styles.js';
+  import { inputContainerStyles, inputSegmentStyles, inputStyles } from '$lib/styles.js';
   import type { Shape, Size } from '$lib/types.js';
   import { cleanClass } from '$lib/utilities/internal.js';
   import type { DateValue } from '@internationalized/date';
@@ -38,27 +38,8 @@
   const { readOnly, required, invalid, disabled, label, ...labelProps } = $derived(context());
   const size = $derived(initialSize ?? labelProps.size ?? 'small');
 
-  const containerStyles = tv({
-    base: cleanClass(styleVariants.inputContainerCommon, 'flex w-full items-center'),
-    variants: {
-      shape: styleVariants.shape,
-      roundedSize: styleVariants.inputRoundedSize,
-      invalid: {
-        true: 'border-danger/80 border',
-        false: '',
-      },
-    },
-  });
-
   const buttonStyles = tv({
     base: 'hover:bg-light-200 hover:dark:bg-light-300 flex h-10 w-10 items-center justify-center rounded-lg hover:cursor-pointer',
-  });
-
-  const segmentStyles = tv({
-    base: 'focus:bg-light-300 focus:text-light-900 data-focused:bg-light-300 data-focused:text-light-900 data-placeholder:text-light-400 dark:focus:bg-light-700 dark:focus:text-light-100 dark:data-focused:bg-light-300 dark:data-focused:text-light-900 rounded px-1 py-0.5 tabular-nums outline-none data-disabled:cursor-not-allowed',
-    variants: {
-      textSize: styleVariants.textSize,
-    },
   });
 </script>
 
@@ -88,16 +69,16 @@
     {/if}
 
     <DatePicker.Input
-      class={containerStyles({
+      class={inputContainerStyles({
         shape,
         roundedSize: shape === 'semi-round' ? size : undefined,
         invalid,
       })}
     >
       {#snippet children({ segments })}
-        <div class={cleanClass(styleVariants.inputCommon, 'w-full px-3 py-2 font-medium')}>
+        <div class={cleanClass(inputStyles({ textSize: size }), 'px-3 py-2 font-medium')}>
           {#each segments as { part, value }, i (`segment-${i}`)}
-            <DatePicker.Segment {part} class={segmentStyles({ textSize: size })}>
+            <DatePicker.Segment {part} class={inputSegmentStyles({ padding: 'wide' })}>
               {value}
             </DatePicker.Segment>
           {/each}
@@ -106,7 +87,7 @@
           {#snippet child({ props })}
             <IconButton
               {...props}
-              class="me-2 shrink-0 rounded-full"
+              class="me-1 shrink-0 rounded-full"
               variant="ghost"
               shape="round"
               color="secondary"

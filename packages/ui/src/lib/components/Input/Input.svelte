@@ -5,7 +5,7 @@
   import InputIcon from '$lib/internal/InputIcon.svelte';
   import { inputContainerStyles, inputStyles } from '$lib/styles.js';
   import type { InputProps } from '$lib/types.js';
-  import { cleanClass, generateId } from '$lib/utilities/internal.js';
+  import { cleanClass } from '$lib/utilities/internal.js';
   import { tv } from 'tailwind-variants';
 
   let {
@@ -36,13 +36,13 @@
     },
   });
 
-  const id = generateId();
+  const id = $props.id();
   const inputId = `input-${id}`;
   const labelId = `label-${id}`;
   const descriptionId = $derived(description ? `description-${id}` : undefined);
 </script>
 
-<div class="flex w-full flex-col gap-1">
+<div class="flex w-full flex-col gap-1 peer">
   {#if label}
     <Label id={labelId} for={inputId} {label} requiredIndicator={required === 'indicator'} {...labelProps} {size} />
   {/if}
@@ -55,15 +55,15 @@
     bind:this={containerRef}
     class={cleanClass(
       inputContainerStyles({
-        disabled,
         shape,
         roundedSize: shape === 'semi-round' ? size : undefined,
         invalid,
       }),
       className,
     )}
+    data-disabled={disabled ? true : undefined}
   >
-    <InputIcon icon={leadingIcon} {size} />
+    <InputIcon icon={leadingIcon} {size} {disabled} />
 
     <input
       id={inputId}

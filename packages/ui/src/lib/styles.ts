@@ -17,10 +17,14 @@ export const styleVariants = {
     muted: 'text-gray-600 dark:text-gray-400',
   },
 
+  inputSegmentCommon:
+    'focus:bg-light-300 focus:text-light-900 dark:focus:bg-light-700 dark:focus:text-light-100 rounded tabular-nums outline-none',
   inputCommon:
-    'disabled:bg-gray-300 disabled:text-dark dark:disabled:bg-gray-900 dark:disabled:text-gray-200 bg-transparent transition outline-none disabled:cursor-not-allowed',
+    'disabled:text-dark dark:disabled:text-gray-200 bg-transparent transition outline-none disabled:cursor-not-allowed',
   inputContainerCommon:
-    'bg-gray-100 ring-1 ring-gray-200 focus-within:ring-primary dark:focus-within:ring-primary transition outline-none focus-within:ring-1 disabled:cursor-not-allowed dark:bg-gray-800 dark:ring-neutral-900',
+    'bg-gray-100 ring-1 ring-gray-200 focus-within:ring-primary dark:focus-within:ring-primary transition outline-none data-disabled:cursor-not-allowed dark:bg-gray-800 dark:ring-neutral-700 data-disabled:bg-light-300 data-disabled:dark:bg-gray-900 has-user-invalid:focus-within:ring-danger has-user-invalid:dark:focus-within:ring-danger has-user-invalid:ring-danger-300 has-user-invalid:dark:ring-danger-300',
+  inputContainerBits:
+    'data-disabled:text-dark data-disabled:dark:text-gray-200 data-invalid:focus-within:ring-danger data-invalid:dark:focus-within:ring-danger data-invalid:ring-danger-300 data-invalid:dark:ring-danger-300',
 
   shape: {
     rectangle: 'rounded-none',
@@ -106,6 +110,16 @@ export const styleVariants = {
   },
 };
 
+export const inputSegmentStyles = tv({
+  base: styleVariants.inputSegmentCommon,
+  variants: {
+    padding: {
+      narrow: 'p-0.5',
+      wide: 'px-1 py-0.5',
+    },
+  },
+});
+
 export const inputStyles = tv({
   base: cleanClass(styleVariants.inputCommon, 'w-full flex-1 py-2.5'),
   variants: {
@@ -129,17 +143,12 @@ export const inputStyles = tv({
 });
 
 export const inputContainerStyles = tv({
-  base: cleanClass(styleVariants.inputContainerCommon, 'flex w-full items-center'),
+  base: cleanClass(styleVariants.inputContainerCommon, styleVariants.inputContainerBits, 'flex w-full items-center'),
   variants: {
     shape: styleVariants.shape,
     roundedSize: styleVariants.inputRoundedSize,
     invalid: {
-      true: 'focus-within:ring-danger dark:focus-within:ring-danger dark:ring-danger-300 ring-danger-300 ring-1',
-      false: '',
-    },
-    disabled: {
-      true: 'bg-light-300 dark:bg-gray-900',
-      false: '',
+      true: 'focus-within:ring-danger dark:focus-within:ring-danger dark:ring-danger-300 ring-danger-300',
     },
   },
 });

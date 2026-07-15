@@ -18,7 +18,7 @@
 </script>
 
 <Input bind:value {size} type={isVisible ? 'text' : 'password'} {color} {...props}>
-  {#snippet trailingIcon()}
+  {#snippet trailingIcon(disabled)}
     {#if value?.length > 0}
       <IconButton
         variant="ghost"
@@ -28,6 +28,7 @@
         class="me-1"
         icon={isVisible ? mdiEyeOffOutline : mdiEyeOutline}
         onclick={() => (isVisible = !isVisible)}
+        {disabled}
         title={labelValue}
         aria-label={labelValue}
       />

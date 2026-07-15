@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Field, IconButton, Stack, TimeInput } from '@immich/ui';
+  import { Code, Field, HelperText, IconButton, Stack, TimeInput } from '@immich/ui';
   import { Time } from '@internationalized/date';
   import { mdiClockOutline, mdiClose } from '@mdi/js';
   import type { TimeValue } from 'bits-ui';
@@ -18,7 +18,7 @@
   <Field label="Time">
     <TimeInput bind:value={value1} />
   </Field>
-  <Field label="Leading icon">
+  <Field label="Leading icon" disabled>
     <TimeInput leadingIcon={mdiClockOutline} />
   </Field>
   <Field label="Leading icon button">
@@ -51,5 +51,9 @@
         />
       {/snippet}
     </TimeInput>
+  </Field>
+  <Field label="Validation">
+    <TimeInput maxValue={new Time(0, 0)} />
+    <HelperText class="pt-2">With <Code>maxValue</Code> set to 00:00, all times are invalid.</HelperText>
   </Field>
 </Stack>

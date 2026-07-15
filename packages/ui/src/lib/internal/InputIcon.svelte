@@ -1,16 +1,16 @@
 <script lang="ts">
   import Icon from '$lib/components/Icon/Icon.svelte';
-  import type { IconLike, Size } from '$lib/types.js';
+  import type { IconOrSnippet, Size } from '$lib/types.js';
   import { isIconLike } from '$lib/utilities/internal.js';
-  import type { Snippet } from 'svelte';
   import { tv } from 'tailwind-variants';
 
   type Props = {
-    icon?: IconLike | Snippet;
+    icon?: IconOrSnippet;
     size?: Size;
+    disabled?: boolean;
   };
 
-  const { icon, size }: Props = $props();
+  const { icon, size, disabled }: Props = $props();
 
   const iconStyles = tv({
     base: 'flex shrink-0 items-center justify-center',
@@ -22,16 +22,19 @@
         large: 'w-12',
         giant: 'w-14',
       },
+      disabled: {
+        true: 'pointer-events-none',
+      },
     },
   });
 </script>
 
 {#if icon}
-  <div tabindex="-1" class={iconStyles({ size })}>
+  <div tabindex="-1" class={iconStyles({ size, disabled })}>
     {#if isIconLike(icon)}
       <Icon size="60%" {icon} />
     {:else}
-      {@render icon()}
+      {@render icon(!!disabled)}
     {/if}
   </div>
 {/if}
