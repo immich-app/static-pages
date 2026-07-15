@@ -146,6 +146,3 @@ url_api = "https://api.github.com/repos/gruntwork-io/terragrunt/releases/assets/
 [[tools.wrangler]]
 version = "4.110.0"
 backend = "npm:wrangler"
-
-[tools.wrangler.options]
-allow_builds = '["esbuild", "sharp", "workerd"]'
