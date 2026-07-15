@@ -329,7 +329,7 @@
       </ModalFooter>
     </Modal>
   {/if}
-  <section>
+  <section class="-mb-12">
     <!-- Columns -->
     <div class="my-4 grid grid-cols-1 gap-4 px-4 lg:grid-cols-[1fr_auto]">
       <Card color="secondary">
