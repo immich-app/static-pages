@@ -18,10 +18,16 @@ export type Project = {
   title: string;
   description: string;
   href: string;
-  maintained?: boolean;
+  maintained: boolean;
 };
 
-export const categories = items;
+export const categories = items.map(category => ({
+  ...category,
+  projects: category.projects.map(project => ({
+    ...project,
+    maintained: project.maintained ?? true,
+  }))
+}));
 
 export const getCategoryProviders = () => {
   const providers: ActionProvider[] = [];

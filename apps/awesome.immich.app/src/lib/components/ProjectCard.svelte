@@ -14,7 +14,7 @@
     <CardHeader>
       <div class="flex items-center gap-2">
         <Heading size="small" class="group-hover:underline">{project.title}</Heading>
-        {#if project.maintained === false}
+        {#if !project.maintained}
           <Badge size="small" color="warning">Unmaintained</Badge>
         {/if}
       </div>
