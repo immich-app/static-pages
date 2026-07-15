@@ -29,8 +29,12 @@ petsRouter.put('/upload', withJWTAuth, async (req, env) => {
 });
 
 petsRouter.put('/submit', withJWTAuth, async (req, env) => {
-  const submission = (await req.json()) as Submission;
-  const uploadId = req.extras?.authID;
-  await env.IMAGE_UPLOADS.put(`datasets/${Dataset.Pets}/${uploadId}/submission.json`, JSON.stringify(submission));
-  return Response.json({ success: true }, { status: 201 });
+  try {
+    const submission = (await req.json()) as Submission;
+    const uploadId = req.extras?.authID;
+    await env.IMAGE_UPLOADS.put(`datasets/${Dataset.Pets}/${uploadId}/submission.json`, JSON.stringify(submission));
+    return Response.json({ success: true }, { status: 201 });
+  } catch (error) {
+    return handleError(error instanceof Error ? error.message : 'Unknown error occurred');
+  }
 });

@@ -144,7 +144,9 @@ class PetsUploaderManager implements UploadableAssets {
     this.pets = JSON.parse(localStorage.getItem('pets') ?? '[]');
     globalThis.addEventListener('beforeunload', (event) => {
       localStorage.setItem('pets', JSON.stringify(this.pets));
-      event.preventDefault();
+      if (this.assets.length > 0) {
+        event.preventDefault();
+      }
     });
   }
 
