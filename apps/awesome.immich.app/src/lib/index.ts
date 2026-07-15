@@ -21,12 +21,14 @@ export type Project = {
   maintained: boolean;
 };
 
-export const categories = items.map(category => ({
+export const categories = items.map((category) => ({
   ...category,
-  projects: category.projects.map(project => ({
-    ...project,
-    maintained: project.maintained ?? true,
-  }))
+  projects: category.projects
+    .map((project) => ({
+      ...project,
+      maintained: project.maintained ?? true,
+    }))
+    .toSorted((a, b) => (a.maintained === b.maintained ? 0 : a.maintained ? -1 : 1)),
 }));
 
 export const getCategoryProviders = () => {
