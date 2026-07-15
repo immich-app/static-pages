@@ -141,6 +141,7 @@ Endpoints that return assets have been updated with the following changes:
 - The `deviceId` and `deviceAssetId` properties of `AssetResponseDto` have been removed.
 - The `duration` property now returns a `number` and can be `null` (represents milliseconds)
 - The `unassignedFaces` property has been removed (use `GET /faces` to retrieve asset face information)
+- The `people` property has been updated to not include `faces` anymore (use `GET /faces` to retrieve asset face information)
 - The `width` and `height` properties have been changed from `number` to `integer`
 
 #### EXIF responses / `ExifResponseDto`
