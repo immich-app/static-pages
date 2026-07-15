@@ -144,7 +144,7 @@ Being part of FUTO has given us a lot of support, especially in areas outside of
 
 ## Community concerns
 
-It's worth mentioning that in response to the original announcement, which was also posted in [Discord](http://discord.immich.app/), [Reddit](https://www.reddit.com/r/immich/comments/1chmywa/the_immich_core_team_goes_fulltime/), and [GitHub](https://github.com/immich-app/immich/discussions/9206), many of you wrote comments expressing additional concerns. Some of the common areas included doubts that:
+It's worth mentioning that in response to the original announcement, which was also posted in [Discord](https://discord.immich.app/), [Reddit](https://www.reddit.com/r/immich/comments/1chmywa/the_immich_core_team_goes_fulltime/), and [GitHub](https://github.com/immich-app/immich/discussions/9206), many of you wrote comments expressing additional concerns. Some of the common areas included doubts that:
 
 - The product would get worse
 - Immich would become a paid product

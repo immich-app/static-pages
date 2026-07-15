@@ -31,7 +31,7 @@ See the full chart on [data.immich.app](https://data.immich.app/)
 
 ## 10,000th Commit
 
-It is kind of crazy to see the 10,000th commit in the Immich repository. I remember seeing nodejs go over 10,000 commits back in 2014 when I started my career and thinking "now _that_ is a serious project". It's so awesome to be able to work on Immich everyday, and be apart of such an awesome community. Here's to the next 10,000 commits!
+It is kind of crazy to see the 10,000th commit in the Immich repository. I remember seeing nodejs go over 10,000 commits back in 2014 when I started my career and thinking "now _that_ is a serious project". It's so awesome to be able to work on Immich everyday, and be a part of such an awesome community. Here's to the next 10,000 commits!
 
 ## Recent uploads
 
@@ -57,7 +57,7 @@ Since the last update we have also added the "Browse templates" button. Template
 
 ### Editor
 
-The workflow editor has also had a few changes, and this is what it looks like now. It has both a visual and JSON view. Each workflow has a trigger, and then a list of steps. A step is made up of an filter or action and any associated configuration. The interface supports reordering steps via drag-and-drop, which is pretty nice. Lastly, a workflow also supports copying and downloading, so that you can easily share them with other users. At some point we would love to build out some type or marketplace or registry where users can browse existing templates.
+The workflow editor has also had a few changes, and this is what it looks like now. It has both a visual and JSON view. Each workflow has a trigger, and then a list of steps. A step is made up of a filter or action and any associated configuration. The interface supports reordering steps via drag-and-drop, which is pretty nice. Lastly, a workflow also supports copying and downloading, so that you can easily share them with other users. At some point we would love to build out some type or marketplace or registry where users can browse existing templates.
 
 ![The workflow editor show an example workflow ](https://static.immich.cloud/blog/84a0ba7d-ed36-4044-a20b-b0d7018b1d47/ebfd6445da664e2a3d83b54ae77fe573.webp)
 
@@ -97,7 +97,7 @@ Actually, I just checked my commits to the main repository and it's almost exclu
 
 This month, my primary focus was on the sharing rework. After running against a rather significant wall, we've decided on a new design for people sharing and so far this seems to be promising. I am hoping to start properly implementing the first pieces of the rework in the next month, and finally leave the proof of concept phase.
 
-In addition to continued work on sharing, I also worked on refactorings as well as cleaning up some deprecated APIs. Furthermore, I made <https://version.immich.cloud,> the Immich server, and Immich web work with prereleases (you know, a release candidate kind of thing like `v3.0.0-rc.0`). We're planning to publish release candidates for v3 and any future major version. Since we haven't done something like that before, many components didn't support this properly, thus needing adapting and testing.
+In addition to continued work on sharing, I also worked on refactorings as well as cleaning up some deprecated APIs. Furthermore, I made [version.immich.cloud](https://version.immich.cloud/version), the Immich server, and Immich web work with prereleases (you know, a release candidate kind of thing like `v3.0.0-rc.0`). We're planning to publish release candidates for v3 and any future major version. Since we haven't done something like that before, many components didn't support this properly, thus needing adapting and testing.
 
 Lastly, I helped reviewing and providing feedback on some of those other huge features, especially workflows :)
 

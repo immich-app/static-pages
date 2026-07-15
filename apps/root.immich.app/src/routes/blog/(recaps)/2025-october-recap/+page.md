@@ -39,9 +39,9 @@ We are blown away by the support from everyone around this milestone, especially
 
 Including the stable release, we had 3 releases this month (excluding patch releases).
 
-- [v2.2.0](https://github.com/immich-app/immich/releases/tag/v2.2.0) &mdash; Activity view (mobile), video seeking (mobile), duplicate management improvements (web), and **OCR**
-- [v2.1.0](https://github.com/immich-app/immich/releases/tag/v2.1.0) &mdash; Improved slideshow shuffle (web), upload to stack (web), album notifications (web)
-- [v2.0.0](https://github.com/immich-app/immich/releases/tag/v2.0.0) &mdash; Stable release
+- [v2.2.0](https://github.com/immich-app/immich/releases/tag/v2.2.0) — Activity view (mobile), video seeking (mobile), duplicate management improvements (web), and **OCR**
+- [v2.1.0](https://github.com/immich-app/immich/releases/tag/v2.1.0) — Improved slideshow shuffle (web), upload to stack (web), album notifications (web)
+- [v2.0.0](https://github.com/immich-app/immich/releases/tag/v2.0.0) — Stable release
 
 ## Immich on Hacker News
 
@@ -75,15 +75,15 @@ This month, we reached **83,000** stars on our [GitHub repository](https://githu
 
 If you want to follow along with us, you can see these metrics and more on <https://data.immich.app/>!
 
-## Developer update &mdash; from the labyrinth
+## Developer update — from the labyrinth
 
 _Our team members’ unfiltered thoughts on the good, the bad, and the frustration about the current tasks they are working on._
 
-**Alex** &mdash; Handling the initial iCloud backup is still a PITA, but seeing the crash rate of Android tick down makes me happy. However, I am still not satisfied with the current upload situation. OCR is actually very cool for playing “I Spy” with your kids. I will finally get to work on the workflow feature, which I’ve always wanted for a long time.
+**Alex** — Handling the initial iCloud backup is still a PITA, but seeing the crash rate of Android tick down makes me happy. However, I am still not satisfied with the current upload situation. OCR is actually very cool for playing “I Spy” with your kids. I will finally get to work on the workflow feature, which I’ve always wanted for a long time.
 
-**Jason** &mdash; What is a vite preprocessor? Well, it turns out that you can transform code from one format to another using [vite plugins](https://vite.dev/guide/api-plugin.html#transforming-custom-file-types). This month I wrote my own, in order make it possible to write blog posts in markdown, but render them using our own custom Svelte components.
+**Jason** — What is a vite preprocessor? Well, it turns out that you can transform code from one format to another using [vite plugins](https://vite.dev/guide/api-plugin.html#transforming-custom-file-types). This month I wrote my own, in order to make it possible to write blog posts in markdown, but render them using our own custom Svelte components.
 
-**Zack** &mdash; In the run up to stable release, I thought I would be working on bug fixes and other coordination around the release. Alas no, after we decided to launch the [Immich Retro DVD](https://immich.store/products/immich-retro), it turns out worldwide fulfillment is still not a solved problem… so now I know far more than I ever wanted to about global fulfillment, tax laws, hooking all those systems together, and plenty more. At least it seems like people liked it 😅
+**Zack** — In the run up to stable release, I thought I would be working on bug fixes and other coordination around the release. Alas no, after we decided to launch the [Immich Retro DVD](https://immich.store/products/immich-retro), it turns out worldwide fulfillment is still not a solved problem… so now I know far more than I ever wanted to about global fulfillment, tax laws, hooking all those systems together, and plenty more. At least it seems like people liked it 😅
 
 ## Upcoming goals
 
