@@ -22,7 +22,7 @@
     onClose: () => void;
     onOpenAutoFocus?: (event: Event) => void;
     onReset?: (event: Event) => void;
-    onSubmit: (event: SubmitEvent) => void;
+    onSubmit: (event: SubmitEvent) => void | Promise<void>;
     children: Snippet<[{ formId: string }]>;
   };
 
@@ -43,12 +43,20 @@
     children,
   }: Props = $props();
 
-  const onsubmit = (event: SubmitEvent) => {
+  let loading = $state(false);
+
+  const onsubmit = async (event: SubmitEvent) => {
     if (preventDefault) {
       event.preventDefault();
     }
 
-    onSubmit(event);
+    loading = true;
+
+    try {
+      await onSubmit(event);
+    } finally {
+      loading = false;
+    }
   };
 
   const onreset = (event: Event) => {
@@ -70,10 +78,10 @@
   </ModalBody>
   <ModalFooter>
     <HStack fullWidth>
-      <Button shape="round" color={cancelColor} fullWidth onclick={() => onClose()}>
+      <Button shape="round" color={cancelColor} fullWidth onclick={() => onClose()} disabled={loading}>
         {cancelText}
       </Button>
-      <Button shape="round" type="submit" tabindex={1} color={submitColor} fullWidth {disabled} form={formId}>
+      <Button shape="round" type="submit" tabindex={1} color={submitColor} fullWidth {disabled} {loading} form={formId}>
         {submitText}
       </Button>
     </HStack>
