@@ -106,7 +106,7 @@
 
 <DragAndDropUpload onFiles={onDragAndDropUpload} />
 
-<div class="mb-4">
+<div class="mx-5 my-8">
   <Heading tag="h1" size="giant">EXIF Dataset</Heading>
   <Text color="muted">Contribute to the EXIF Dataset</Text>
 </div>
@@ -128,7 +128,7 @@
 {:else}
   <section>
     <!-- Columns -->
-    <div class="my-4 grid grid-cols-1 gap-4 md:grid-cols-[auto_minmax(400px,1fr)]">
+    <div class="mx-5 grid grid-cols-1 gap-4 md:grid-cols-[auto_minmax(400px,1fr)]">
       <Card color="secondary">
         <CardHeader>
           <div class="flex justify-between">

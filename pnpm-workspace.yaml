@@ -5,6 +5,10 @@ packages:
 
 dedupePeerDependents: true
 
+ignoredOptionalDependencies:
+  - canvas
+  - jsdom
+
 allowBuilds:
   '@tailwindcss/oxide': true
   cpu-features: false

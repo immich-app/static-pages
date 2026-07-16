@@ -9,6 +9,9 @@
       case 'exif': {
         return 'EXIF';
       }
+      case 'pets': {
+        return 'pets';
+      }
       default: {
         return 'Unknown';
       }

@@ -113,6 +113,14 @@
 
     await Promise.all(uploads);
 
+    if (failedIds.length === 0 && dataset.toSubmission) {
+      await fetch(PUBLIC_DATASET_API_ENDPOINT + '/' + datasetName + '/submit', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
+        body: JSON.stringify(dataset.toSubmission(email)),
+      });
+    }
+
     isUploading = false;
     onClose({ cancelled: false, failedIds });
   }
