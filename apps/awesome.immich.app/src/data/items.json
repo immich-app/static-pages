@@ -10,6 +10,11 @@
         "href": "https://github.com/3rob3/ImmichFrame"
       },
       {
+        "title": "Immich Desktop",
+        "description": "MacOS app that surfaces your Immich library in the Finder sidebar and every file dialog. Photos appear as on-demand files with thumbnails.",
+        "href": "https://kartax.github.io/immich-desktop-app/"
+      },
+      {
         "title": "Immich Kiosk",
         "description": "Highly configurable slideshows for displaying Immich assets on browsers and devices.",
         "href": "https://github.com/damongolding/immich-kiosk"
