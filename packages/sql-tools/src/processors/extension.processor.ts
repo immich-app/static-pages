@@ -5,9 +5,14 @@ export const processExtensions: Processor = (ctx, items) => {
     return;
   }
 
-  for (const {
-    item: { options },
-  } of items.filter((item) => item.type === 'extension')) {
+  for (const item of items) {
+    if (item.type !== 'extension') {
+      continue;
+    }
+
+    const {
+      item: { options },
+    } = item;
     ctx.extensions.push({
       name: options.name,
       synchronize: options.synchronize ?? true,

@@ -10,7 +10,7 @@ export class OutlineRepository {
   async getDocument(postUrl: string): Promise<OutlineDocument> {
     const parts = new URL(postUrl);
     const postId = parts.pathname.replace(/^\/doc\//, '').replace(/\/+$/, '');
-    const apiUrl = new URL('/api/documents.info', parts).toString();
+    const apiUrl = new URL('/api/documents.info', parts).href;
 
     const response = await fetch(apiUrl, {
       method: 'POST',

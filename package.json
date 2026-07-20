@@ -30,7 +30,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-better-tailwindcss": "^4.5.0",
     "eslint-plugin-svelte": "^3.12.5",
-    "eslint-plugin-unicorn": "^65.0.0",
+    "eslint-plugin-unicorn": "^70.0.0",
     "globals": "^17.3.0",
     "jiti": "^2.6.1",
     "prettier": "^3.6.2",

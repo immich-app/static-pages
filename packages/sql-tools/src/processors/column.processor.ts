@@ -3,10 +3,15 @@ import { fromColumnValue } from 'src/helpers';
 import { Processor } from 'src/types';
 
 export const processColumns: Processor = (ctx, items) => {
-  for (const {
-    type,
-    item: { object, propertyName, options },
-  } of items.filter((item) => item.type === 'column' || item.type === 'foreignKeyColumn')) {
+  for (const item of items) {
+    if (item.type !== 'column' && item.type !== 'foreignKeyColumn') {
+      continue;
+    }
+
+    const {
+      type,
+      item: { object, propertyName, options },
+    } = item;
     const table = ctx.getTableByObject(object.constructor);
     if (!table) {
       return ctx.onMissingTable(type === 'column' ? '@Column' : '@ForeignKeyColumn', object, propertyName);

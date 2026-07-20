@@ -1,9 +1,14 @@
 import { ConstraintType, Processor } from 'src/types';
 
 export const processCheckConstraints: Processor = (ctx, items) => {
-  for (const {
-    item: { object, options },
-  } of items.filter((item) => item.type === 'checkConstraint')) {
+  for (const item of items) {
+    if (item.type !== 'checkConstraint') {
+      continue;
+    }
+
+    const {
+      item: { object, options },
+    } = item;
     const table = ctx.getTableByObject(object);
     if (!table) {
       return ctx.onMissingTable('@Check', object);

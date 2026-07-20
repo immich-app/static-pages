@@ -7,7 +7,7 @@ export const mergeInstanceUrl = ({ pathname, searchParams }: URL, instanceUrl: s
 
   targetUrl.pathname += targetUrl.pathname.endsWith('/') ? pathname.slice(1) : pathname;
 
-  for (const [key, value] of searchParams.entries()) {
+  for (const [key, value] of searchParams) {
     targetUrl.searchParams.append(key, value);
   }
 

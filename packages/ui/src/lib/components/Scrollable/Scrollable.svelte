@@ -6,7 +6,6 @@
   type Props = {
     class?: string;
     children?: Snippet;
-    transition?: TransitionEvent;
     ref?: HTMLDivElement;
     resetOnNavigate?: boolean;
   };

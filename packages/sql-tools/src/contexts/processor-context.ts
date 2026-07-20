@@ -7,8 +7,8 @@ type TableMetadata = { options: TableOptions; object: Function; methodToColumn: 
 
 export class ProcessorContext extends BaseContext {
   constructor(public options: SchemaFromCodeOptions) {
-    options.createForeignKeyIndexes = options.createForeignKeyIndexes ?? true;
-    options.overrides = options.overrides ?? false;
+    options.createForeignKeyIndexes ??= true;
+    options.overrides ??= false;
     super(options);
   }
 

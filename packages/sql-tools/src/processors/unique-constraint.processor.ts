@@ -1,9 +1,14 @@
 import { ConstraintType, Processor } from 'src/types';
 
 export const processUniqueConstraints: Processor = (ctx, items) => {
-  for (const {
-    item: { object, options },
-  } of items.filter((item) => item.type === 'uniqueConstraint')) {
+  for (const item of items) {
+    if (item.type !== 'uniqueConstraint') {
+      continue;
+    }
+
+    const {
+      item: { object, options },
+    } = item;
     const table = ctx.getTableByObject(object);
     if (!table) {
       return ctx.onMissingTable('@Unique', object);
@@ -22,10 +27,15 @@ export const processUniqueConstraints: Processor = (ctx, items) => {
   }
 
   // column level constraints
-  for (const {
-    type,
-    item: { object, propertyName, options },
-  } of items.filter((item) => item.type === 'column' || item.type === 'foreignKeyColumn')) {
+  for (const item of items) {
+    if (item.type !== 'column' && item.type !== 'foreignKeyColumn') {
+      continue;
+    }
+
+    const {
+      type,
+      item: { object, propertyName, options },
+    } = item;
     const { table, column } = ctx.getColumnByObjectAndPropertyName(object, propertyName);
     if (!table) {
       return ctx.onMissingTable('@Column', object);

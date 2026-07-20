@@ -200,7 +200,7 @@ export const parseSpec = (spec: OpenAPIObject) => {
   }
 
   const addTag = (tag: { name: string; description?: string }) => {
-    if (!tagsMap[tag.name]) {
+    if (!Object.hasOwn(tagsMap, tag.name)) {
       tagsMap[tag.name] = {
         href: getTagHref(tag.name),
         name: tag.name,
@@ -217,7 +217,7 @@ export const parseSpec = (spec: OpenAPIObject) => {
 
   for (const item of Object.values(endpointsMap)) {
     for (const tag of item.tags) {
-      if (!tagsMap[tag]) {
+      if (!Object.hasOwn(tagsMap, tag)) {
         addTag({ name: tag });
       }
 

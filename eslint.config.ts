@@ -11,6 +11,7 @@ import { RulesConfig } from 'eslint';
 
 export default defineConfig([
   js.configs.recommended,
+  // TODO switch to recommendedTypeChecked
   ...tseslint.configs.recommended,
   ...svelte.configs['flat/recommended'],
   prettier,
@@ -29,11 +30,15 @@ export default defineConfig([
       parserOptions: {
         parser: tseslint.parser,
         extraFileExtensions: ['.svelte'],
-        // tsconfigRootDir: import.meta.dirname,
+        project: true,
+        tsconfigRootDir: import.meta.dirname,
       },
     },
+    files: ['**/src/**/*.ts', '**/src/**/*.svelte'],
+    ignores: ['**/*spec.ts'],
     rules: {
       'svelte/no-navigation-without-resolve': 'off',
+      '@typescript-eslint/require-array-sort-compare': 'error',
     },
   },
   ...readdirSync('apps').map((name) => ({
@@ -70,7 +75,17 @@ export default defineConfig([
       'unicorn/no-array-reverse': 'off', // toReversed() is not supported in Chrome 109 or Safari 15.4
       'unicorn/no-useless-undefined': 'off',
       'unicorn/prefer-spread': 'off',
-
+      'unicorn/name-replacements': 'off',
+      'unicorn/consistent-boolean-name': 'off',
+      'unicorn/consistent-class-member-order': 'off',
+      'unicorn/no-unreadable-for-of-expression': 'off',
+      'unicorn/no-top-level-assignment-in-function': 'off',
+      'unicorn/no-break-in-nested-loop': 'off',
+      // prefer the typescript-eslint type-aware version
+      'unicorn/require-array-sort-compare': 'off',
+      'unicorn/class-reference-in-static-methods': ['error', { preferThis: false, preferSuper: false }],
+      'unicorn/prefer-minimal-ternary': 'off',
+      'unicorn/no-declarations-before-early-exit': 'off',
       'prettier/prettier': 0,
       'object-shorthand': ['error', 'always'],
       '@typescript-eslint/no-unused-vars': [
@@ -92,6 +107,8 @@ export default defineConfig([
       'packages/**/build/',
       'packages/**/.svelte-kit/',
       'packages/**/dist/',
+      '**/svelte.config.js',
+      '**/postcss.config.js',
       'common/',
     ],
   },

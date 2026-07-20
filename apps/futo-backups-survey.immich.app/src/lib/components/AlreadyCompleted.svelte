@@ -2,8 +2,8 @@
   import { Button, Logo } from '@immich/ui';
 
   async function startOver() {
-    await fetch('/api/reset', { method: 'POST', credentials: 'same-origin' });
-    globalThis.location.reload();
+    await fetch('/api/reset', { method: 'POST' });
+    location.reload();
   }
 </script>
 

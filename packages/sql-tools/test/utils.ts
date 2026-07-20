@@ -23,7 +23,7 @@ export const importFixture = async (file: string) => {
 };
 
 const templateName = 'template';
-const withDatabase = (url: string, name: string) => url.replace(`/${templateName}`, `/${name}`);
+const withDatabase = (url: string, name: string) => url.replace(`/${templateName}`, () => `/${name}`);
 
 export const getKyselyDB = async <T = unknown>(suffix?: string) => {
   const testUrl = process.env.IMMICH_TEST_POSTGRES_URL;

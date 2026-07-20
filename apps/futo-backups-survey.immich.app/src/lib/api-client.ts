@@ -6,7 +6,6 @@ export async function verifyTurnstile(turnstileToken: string): Promise<void> {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ turnstileToken }),
-    credentials: 'same-origin',
   });
   if (!res.ok) {
     throw new Error('Challenge verification failed. Please try again.');
@@ -69,7 +68,6 @@ async function saveBatch(answers: PendingSave[]): Promise<boolean> {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ answers }),
-        credentials: 'same-origin',
       });
       if (res.ok) {
         return true;
@@ -103,7 +101,7 @@ export async function flushBuffer(): Promise<boolean> {
   }
   unflushedCount = 0;
 
-  const batch = [...answerBuffer.values()];
+  const batch = answerBuffer.values().toArray();
   answerBuffer.clear();
 
   const success = await saveBatch(batch);
@@ -133,7 +131,7 @@ export function flushBufferSync(): void {
   }
   unflushedCount = 0;
 
-  const batch = [...answerBuffer.values()];
+  const batch = answerBuffer.values().toArray();
   answerBuffer.clear();
 
   const blob = new Blob([JSON.stringify({ answers: batch })], { type: 'application/json' });
@@ -157,7 +155,7 @@ export async function fetchResume(): Promise<{
   isComplete?: boolean;
   isVerified?: boolean;
 }> {
-  const res = await fetch('/api/resume', { credentials: 'same-origin' });
+  const res = await fetch('/api/resume');
   if (!res.ok) {
     throw new Error(`Failed to load survey (${res.status})`);
   }
@@ -170,7 +168,6 @@ export async function fetchResume(): Promise<{
 export async function postComplete(): Promise<void> {
   const res = await fetch('/api/complete', {
     method: 'POST',
-    credentials: 'same-origin',
   });
   if (!res.ok) {
     throw new Error(`Failed to submit survey (${res.status})`);

@@ -41,7 +41,6 @@
 
   type Props = {
     children?: Snippet;
-    center?: boolean;
     data?: LayoutData;
   };
 

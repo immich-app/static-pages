@@ -8,10 +8,10 @@ export const transformTables: SqlTransformer = (ctx, { object, type }) => {
   switch (type) {
     case 'TableCreate': {
       const tableName = object.name;
-      const items: string[] = [];
-      for (const column of object.columns) {
-        items.push(`"${column.name}" ${getColumnType(column)}${getColumnModifiers(column)}`);
-      }
+      const items: string[] = Array.from(
+        object.columns,
+        (column) => `"${column.name}" ${getColumnType(column)}${getColumnModifiers(column)}`,
+      );
 
       for (const constraint of object.constraints) {
         if (constraint.type === ConstraintType.FOREIGN_KEY && constraint.deferred) {

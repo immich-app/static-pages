@@ -1,9 +1,14 @@
 import { Processor } from 'src/types';
 
 export const processIndexes: Processor = (ctx, items) => {
-  for (const {
-    item: { object, options },
-  } of items.filter((item) => item.type === 'index')) {
+  for (const item of items) {
+    if (item.type !== 'index') {
+      continue;
+    }
+
+    const {
+      item: { object, options },
+    } = item;
     const table = ctx.getTableByObject(object);
     if (!table) {
       return ctx.onMissingTable('@Check', object);
@@ -32,10 +37,15 @@ export const processIndexes: Processor = (ctx, items) => {
   }
 
   // column indexes
-  for (const {
-    type,
-    item: { object, propertyName, options },
-  } of items.filter((item) => item.type === 'column' || item.type === 'foreignKeyColumn')) {
+  for (const item of items) {
+    if (item.type !== 'column' && item.type !== 'foreignKeyColumn') {
+      continue;
+    }
+
+    const {
+      type,
+      item: { object, propertyName, options },
+    } = item;
     const { table, column } = ctx.getColumnByObjectAndPropertyName(object, propertyName);
     if (!table) {
       return ctx.onMissingTable('@Column', object);
@@ -69,7 +79,7 @@ export const processIndexes: Processor = (ctx, items) => {
       continue;
     }
 
-    const isOnlyPrimaryColumn = options.primary && table.columns.filter(({ primary }) => primary === true).length === 1;
+    const isOnlyPrimaryColumn = options.primary && table.columns.filter(({ primary }) => primary).length === 1;
     if (isOnlyPrimaryColumn) {
       // will have an index created by the primary key constraint
       continue;

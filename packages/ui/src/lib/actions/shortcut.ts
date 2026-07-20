@@ -73,7 +73,7 @@ export const matchesShortcut = (event: KeyboardEvent, shortcut: Shortcut) => {
   );
 };
 
-const isMacOS = globalThis.navigator && /Mac(intosh|Intel)/.test(globalThis.navigator.userAgent);
+const isMacOS = globalThis.navigator && /Mac(intosh|Intel)/.test(navigator.userAgent);
 
 type ShortcutItem = { key: string } | { icon: IconLike };
 

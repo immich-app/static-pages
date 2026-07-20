@@ -19,17 +19,19 @@ export const readComments: Reader = async (ctx, db) => {
     .execute();
 
   for (const comment of comments) {
-    if (comment.object_type === 'r') {
-      const table = ctx.getTableByName(comment.object_name);
-      if (!table) {
-        continue;
-      }
+    if (comment.object_type !== 'r') {
+      continue;
+    }
 
-      if (comment.column_name) {
-        const column = table.columns.find(({ name }) => name === comment.column_name);
-        if (column) {
-          column.comment = comment.value;
-        }
+    const table = ctx.getTableByName(comment.object_name);
+    if (!table) {
+      continue;
+    }
+
+    if (comment.column_name) {
+      const column = table.columns.find(({ name }) => name === comment.column_name);
+      if (column) {
+        column.comment = comment.value;
       }
     }
   }

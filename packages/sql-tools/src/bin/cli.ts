@@ -87,9 +87,11 @@ migrations
 
 program
   .parseAsync()
+  // eslint-disable-next-line unicorn/prefer-await
   .then(() => {
     process.exit(0);
   })
+  // eslint-disable-next-line unicorn/prefer-await
   .catch((error) => {
     console.error(error);
     console.log('Something went wrong');

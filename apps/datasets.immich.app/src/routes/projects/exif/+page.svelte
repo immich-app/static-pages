@@ -69,7 +69,7 @@
     }
 
     if (uploadResult.failedIds.length === 0) {
-      globalThis.location.href = `/thank-you?dataset=exif`;
+      location.assign(`/thank-you?dataset=exif`);
       return;
     }
 

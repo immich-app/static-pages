@@ -25,7 +25,7 @@ export const escapeSvelteCode = (text: string) => {
   let escaped = text;
 
   for (const char of ['{', '}', '`']) {
-    escaped = escaped.replaceAll(char, `\\${char}`);
+    escaped = escaped.replaceAll(char, () => `\\${char}`);
   }
 
   return escaped;
@@ -38,11 +38,7 @@ export const createAttributes = (attributes: Record<string, string | boolean | n
         return false;
       }
 
-      if (typeof value === 'string' && value === '') {
-        return false;
-      }
-
-      return true;
+      return !(typeof value === 'string' && value === '');
     })
     .map(([key, value]) => {
       if (typeof value === 'number') {
@@ -50,7 +46,8 @@ export const createAttributes = (attributes: Record<string, string | boolean | n
       }
 
       if (typeof value === 'boolean') {
-        return value ? `${key}` : `${key}={false}`;
+        // eslint-disable-next-line unicorn/no-incorrect-template-string-interpolation
+        return value ? key : `${key}={false}`;
       }
 
       return `${key}="${String(value).replaceAll('"', '&quot;')}"`;

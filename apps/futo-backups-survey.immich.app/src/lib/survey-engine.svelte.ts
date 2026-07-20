@@ -10,7 +10,7 @@ export function shouldShowQuestion(q: SurveyQuestion, answers: Record<string, Su
     return true;
   }
   if (q.conditional.showIf.condition === 'skipped') {
-    return !(q.conditional.showIf.questionId in answers);
+    return !Object.hasOwn(answers, q.conditional.showIf.questionId);
   }
   return true;
 }
@@ -88,7 +88,7 @@ export function createSurveyEngine(initialAnswers: Record<string, SurveyAnswer> 
   }
 
   function setAnswer(questionId: string, value: string, otherText?: string) {
-    answers[questionId] = { value, ...(otherText ? { otherText } : {}) };
+    answers[questionId] = { value, ...(otherText && { otherText }) };
   }
 
   function initialize(resumedAnswers: Record<string, SurveyAnswer>, resumeIndex: number) {

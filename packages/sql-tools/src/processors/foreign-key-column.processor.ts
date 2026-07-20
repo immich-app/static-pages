@@ -1,9 +1,14 @@
 import { ActionType, ConstraintType, Processor } from 'src/types';
 
 export const processForeignKeyColumns: Processor = (ctx, items) => {
-  for (const {
-    item: { object, propertyName, options, target },
-  } of items.filter((item) => item.type === 'foreignKeyColumn')) {
+  for (const item of items) {
+    if (item.type !== 'foreignKeyColumn') {
+      continue;
+    }
+
+    const {
+      item: { object, propertyName, options, target },
+    } = item;
     const { table, column } = ctx.getColumnByObjectAndPropertyName(object, propertyName);
     if (!table) {
       return ctx.onMissingTable('@ForeignKeyColumn', object);

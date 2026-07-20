@@ -10,7 +10,6 @@
     color?: TextColor;
     fontWeight?: FontWeight;
     variant?: NavbarVariant;
-    inline?: boolean;
     class?: string;
   };
 
