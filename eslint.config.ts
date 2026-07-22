@@ -81,6 +81,7 @@ export default defineConfig([
       'unicorn/no-unreadable-for-of-expression': 'off',
       'unicorn/no-top-level-assignment-in-function': 'off',
       'unicorn/no-break-in-nested-loop': 'off',
+      'unicorn/prefer-simple-condition-first': 'off',
       // prefer the typescript-eslint type-aware version
       'unicorn/require-array-sort-compare': 'off',
       'unicorn/class-reference-in-static-methods': ['error', { preferThis: false, preferSuper: false }],
