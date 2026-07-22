@@ -24,7 +24,7 @@
   }: IconProps & HTMLAttributes<EventTarget> = $props();
 
   const indicator = $derived.by(() => {
-    const [_, yStart, xEnd, yEnd] = viewBox.split(' ');
+    const [_, yStart, xEnd, yEnd] = viewBox.split(' ', 4);
     if (yStart && xEnd && yEnd) {
       const radius = Math.min(Number(xEnd), Number(yEnd)) / 8;
       return { x: Number(xEnd) - radius, y: Number(yStart) + radius, radius };
