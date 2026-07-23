@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.84.0](https://github.com/immich-app/static-pages/compare/ui-v0.83.0...ui-v0.84.0) (2026-07-23)
+
+
+### Features
+
+* june recap ([#615](https://github.com/immich-app/static-pages/issues/615)) ([fdf6895](https://github.com/immich-app/static-pages/commit/fdf68950127986a2a24b855987a56f3c0521ccce))
+* june recap ([#615](https://github.com/immich-app/static-pages/issues/615)) ([87a65a7](https://github.com/immich-app/static-pages/commit/87a65a70402de2a929c70d4ab835652b06924f41))
+* search ([#618](https://github.com/immich-app/static-pages/issues/618)) ([fdf6895](https://github.com/immich-app/static-pages/commit/fdf68950127986a2a24b855987a56f3c0521ccce))
+* **ui:** add indicator to Icon ([#612](https://github.com/immich-app/static-pages/issues/612)) ([b9f9cc6](https://github.com/immich-app/static-pages/commit/b9f9cc65f800c35806f8a8c0e9760e5385f079ac))
+* **ui:** add loading state support to FormModal ([#630](https://github.com/immich-app/static-pages/issues/630)) ([4760481](https://github.com/immich-app/static-pages/commit/476048181111dcf9999b98736705476eefe541ed))
+* **ui:** improve input styling consistency ([#634](https://github.com/immich-app/static-pages/issues/634)) ([55e925d](https://github.com/immich-app/static-pages/commit/55e925d180599c82d137617dce34cfe6367bd377))
+* v3 release ([#558](https://github.com/immich-app/static-pages/issues/558)) ([36480c7](https://github.com/immich-app/static-pages/commit/36480c7392d3cb20901c5b2eb36f46e0922edca9))
+
 ## [0.83.0](https://github.com/immich-app/static-pages/compare/ui-v0.82.0...ui-v0.83.0) (2026-06-25)
 
 
