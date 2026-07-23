@@ -10,8 +10,8 @@
   import type { Shape, Size } from '$lib/types.js';
   import { cleanClass } from '$lib/utilities/internal.js';
   import type { DateValue } from '@internationalized/date';
-  import { mdiCalendar, mdiChevronLeft, mdiChevronRight } from '@mdi/js';
-  import { DatePicker } from 'bits-ui';
+  import { mdiCalendar, mdiChevronLeft, mdiChevronRight, mdiChevronDown } from '@mdi/js';
+  import { DatePicker, Select } from 'bits-ui';
   import { tv } from 'tailwind-variants';
 
   type Props = {
@@ -41,6 +41,21 @@
   const buttonStyles = tv({
     base: 'hover:bg-light-200 hover:dark:bg-light-300 flex h-10 w-10 items-center justify-center rounded-lg hover:cursor-pointer',
   });
+
+  const segmentStyles = tv({
+    base: 'focus:bg-light-300 focus:text-light-900 data-focused:bg-light-300 data-focused:text-light-900 data-placeholder:text-light-400 dark:focus:bg-light-700 dark:focus:text-light-100 dark:data-focused:bg-light-300 dark:data-focused:text-light-900 rounded px-1 py-0.5 tabular-nums outline-none data-disabled:cursor-not-allowed',
+    variants: {
+      textSize: styleVariants.textSize,
+    },
+  });
+  const generateYearRange = () => {
+    const currentYear = new Date().getFullYear();
+    const years: number[] = [];
+    for (let y = currentYear+1; y >= 1950; y--) {
+      years.push(y);
+    }
+    return years;
+  };
 </script>
 
 <div class={cleanClass('flex w-full flex-col gap-1', className)}>
@@ -111,7 +126,64 @@
               <DatePicker.PrevButton class={buttonStyles()}>
                 <Icon icon={mdiChevronLeft} size="1.25rem" />
               </DatePicker.PrevButton>
-              <DatePicker.Heading class="text-sm font-semibold" />
+              {@const current = months[0].value}
+              <div class="flex items-center gap-1 text-sm font-semibold">
+                  <Select.Root
+                    type="single"
+                    value={current.month.toString()}
+                    onValueChange={(val) => {
+                      date = current.set({ month: Number(val) });
+                    }}
+                  >
+                    <Select.Trigger class="focus-visible:ring-2 flex items-center gap-1 bg-transparent border-none font-semibold cursor-pointer outline-none rounded-lg px-1 text-inherit hover:bg-light-200 dark:hover:bg-light-300">
+                      <span>{new Intl.DateTimeFormat(getLocale(), { month: 'long' }).format(new Date(2000, current.month - 1))}</span>
+                      <Icon icon={mdiChevronDown} size="1.25rem" />
+                    </Select.Trigger>
+
+                    <Select.Content class="bg-subtle border p-2 shadow-lg rounded-xl z-50">
+                      <Select.Group>
+                        {#each Array.from({ length: 12 }, (_, i) => i + 1) as month (month)}
+                          <Select.Item
+                            value={month.toString()}
+                            label={new Intl.DateTimeFormat(getLocale(), { month: 'long' }).format(new Date(2000, month - 1))}
+                            class="px-2 py-1 hover:bg-light-200 dark:hover:bg-light-300 cursor-pointer rounded-md data-highlighted:bg-light-300 outline-none text-sm font-medium"
+                          >
+                          </Select.Item>
+                        {/each}
+                      </Select.Group>
+                    </Select.Content>
+                  </Select.Root>
+                <Select.Root
+                  type="single"
+                  value={current.year.toString()}
+                  onValueChange={(val) => {
+                    date = current.set({ year: Number(val) });
+                  }}
+                >
+                  <Select.Trigger class="focus-visible:ring-2 flex items-center gap-1 bg-transparent border-none font-semibold cursor-pointer outline-none rounded-lg px-1 text-inherit hover:bg-light-200 dark:hover:bg-light-300">
+                    <span>{current.year}</span>
+                    <Icon icon={mdiChevronDown} size="1.25rem" />
+                  </Select.Trigger>
+
+                  <Select.Content class="bg-subtle border p-2 shadow-lg rounded-xl z-50">
+                    <Select.Viewport class="max-h-60 overflow-y-auto p-2">
+                      <Select.Group>
+                        {#each generateYearRange() as year (year)}
+                          <Select.Item
+                            value={year.toString()}
+                            label={year.toString()}
+                            class="px-2 py-1 hover:bg-light-200 dark:hover:bg-light-300 cursor-pointer rounded-md data-highlighted:bg-light-300 outline-none text-sm font-medium"
+                          >
+                            {year}
+                          </Select.Item>
+                        {/each}
+                      </Select.Group>
+                    </Select.Viewport>
+                  </Select.Content>
+                </Select.Root>
+
+              </div>
+
               <DatePicker.NextButton class={buttonStyles()}>
                 <Icon icon={mdiChevronRight} size="1.25rem" />
               </DatePicker.NextButton>
