@@ -31,7 +31,7 @@ export const compareConstraints = (): Comparer<DatabaseConstraint> => ({
       }
 
       case ConstraintType.CHECK: {
-        const expression = constraint.expression.replaceAll('(', '').replaceAll(')', '');
+        const expression = constraint.expression.replaceAll(/[()]/g, '');
         return asRenameKey([constraint.type, constraint.tableName, expression]);
       }
     }
@@ -107,7 +107,7 @@ const compareForeignKeyConstraint: CompareFunction<DatabaseForeignKeyConstraint>
 };
 
 const compareUniqueConstraint: CompareFunction<DatabaseUniqueConstraint> = (source, target) => {
-  let reason = '';
+  let reason: string | undefined;
 
   if (!haveEqualColumns(source.columnNames, target.columnNames)) {
     reason = `columns are different (${source.columnNames} vs ${target.columnNames})`;

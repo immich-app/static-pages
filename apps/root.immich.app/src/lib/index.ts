@@ -88,7 +88,7 @@ const asPost = (path: string, content: string): BlogPost => {
   const type = folder.slice(1, -2); // strip parens and trailing s
 
   const requiredAttributes = ['id', 'title', 'description', 'publishedAt', 'authors'];
-  const missingAttributes = requiredAttributes.filter((attribute) => !(attribute in attributes));
+  const missingAttributes = requiredAttributes.filter((attribute) => !Object.hasOwn(attributes, attribute));
   if (missingAttributes.length > 0) {
     throw new Error(
       `${filename} is missing ${missingAttributes.join(', ')}.\n${getFrontMatterExample(missingAttributes)}`,
@@ -136,7 +136,7 @@ const getPosts = () => {
     idMap.set(post.id, path);
 
     if (post.publishedAt < DateTime.now().minus({ years: 1 }) && post.title.endsWith(' recap')) {
-      post.title = post.title.replaceAll(' recap', ` ${post.publishedAt.year} recap`);
+      post.title = post.title.replaceAll(' recap', () => ` ${post.publishedAt.year} recap`);
     }
 
     posts.push(post);

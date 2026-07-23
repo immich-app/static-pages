@@ -202,7 +202,7 @@ class CommandPaletteManager {
     const actions = await Promise.all(this.#providers.map((provider) => Promise.resolve(provider.onSearch())));
 
     for (const action of actions.flat()) {
-      if (!asArray(action.shortcuts).some((shortcut) => matchesShortcut(event, shortcut))) {
+      if (asArray(action.shortcuts).every((shortcut) => !matchesShortcut(event, shortcut))) {
         continue;
       }
 
@@ -216,6 +216,7 @@ class CommandPaletteManager {
       }
 
       if (preventDefault) {
+        // eslint-disable-next-line unicorn/no-late-event-control
         event.preventDefault();
       }
 

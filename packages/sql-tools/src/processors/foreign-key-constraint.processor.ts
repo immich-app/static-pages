@@ -1,9 +1,14 @@
 import { ActionType, ConstraintType, Processor } from 'src/types';
 
 export const processForeignKeyConstraints: Processor = (ctx, items) => {
-  for (const {
-    item: { object, options },
-  } of items.filter((item) => item.type === 'foreignKeyConstraint')) {
+  for (const item of items) {
+    if (item.type !== 'foreignKeyConstraint') {
+      continue;
+    }
+
+    const {
+      item: { object, options },
+    } = item;
     const table = ctx.getTableByObject(object);
     if (!table) {
       return ctx.onMissingTable('@ForeignKeyConstraint', { name: 'referenceTable' });
@@ -16,14 +21,14 @@ export const processForeignKeyConstraints: Processor = (ctx, items) => {
     }
 
     for (const columnName of options.columns) {
-      if (!table.columns.some(({ name }) => name === columnName)) {
+      if (table.columns.every(({ name }) => name !== columnName)) {
         const metadata = ctx.getTableMetadata(table);
         return ctx.onMissingColumn('@ForeignKeyConstraint.columns', `${metadata.object.name}.${columnName}`);
       }
     }
 
     for (const columnName of options.referenceColumns || []) {
-      if (!referenceTable.columns.some(({ name }) => name === columnName)) {
+      if (referenceTable.columns.every(({ name }) => name !== columnName)) {
         const metadata = ctx.getTableMetadata(referenceTable);
         return ctx.onMissingColumn('@ForeignKeyConstraint.referenceColumns', `${metadata.object.name}.${columnName}`);
       }

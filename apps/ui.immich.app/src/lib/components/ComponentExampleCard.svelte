@@ -20,7 +20,8 @@
 
     if (theme === Theme.Light) {
       return 'bg-white dark:bg-white';
-    } else if (theme === Theme.Dark) {
+    }
+    if (theme === Theme.Dark) {
       return 'bg-black dark:bg-black';
     }
 
@@ -51,7 +52,7 @@
     {#if viewMode === 'preview'}
       <Component />
     {:else}
-      <HighlightSvelte code={code.trim().replaceAll(/\t/gm, '  ')} let:highlighted>
+      <HighlightSvelte code={code.trim().replaceAll('\t', '  ')} let:highlighted>
         <LineNumbers {highlighted} hideBorder wrapLines />
       </HighlightSvelte>
     {/if}

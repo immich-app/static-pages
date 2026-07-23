@@ -1,23 +1,13 @@
 <script lang="ts">
   import PageDescription from '$lib/components/PageDescription.svelte';
   import { locales, siteMetadata } from '$lib/constants';
-  import {
-    Container,
-    getLocale,
-    Heading,
-    Select,
-    setLocale,
-    SiteMetadata,
-    type BreadcrumbItem,
-    type ContainerSize,
-  } from '@immich/ui';
+  import { Container, getLocale, Heading, Select, setLocale, SiteMetadata, type ContainerSize } from '@immich/ui';
   import type { Snippet } from 'svelte';
 
   type Props = {
     attributes: { title: string; description: string };
     localeSensitive?: boolean;
     size?: ContainerSize;
-    breadcrumbs?: BreadcrumbItem[];
     children?: Snippet;
   };
 

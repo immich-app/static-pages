@@ -8,10 +8,9 @@
   const { providers }: Props = $props();
 
   $effect(() => {
-    const callbacks: Array<() => void> = [];
-    for (const provider of providers) {
-      callbacks.push(commandPaletteManager.addProvider(provider));
-    }
+    const callbacks: Array<() => void> = Array.from(providers, (provider) =>
+      commandPaletteManager.addProvider(provider),
+    );
 
     return () => {
       for (const callback of callbacks) {

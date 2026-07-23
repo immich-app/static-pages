@@ -73,6 +73,7 @@
       return;
     }
 
+    // eslint-disable-next-line unicorn/prefer-number-coercion
     const value = Number.parseFloat(raw);
     if (Number.isNaN(value)) {
       return;

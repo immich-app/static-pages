@@ -31,6 +31,7 @@ const main = async (): Promise<void> => {
   await service.run(postUrl);
 };
 
+// eslint-disable-next-line unicorn/prefer-await
 main().catch((error: unknown) => {
   console.error(error);
   process.exit(1);

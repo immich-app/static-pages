@@ -47,12 +47,12 @@ class ExifUploaderManager implements UploadableAssets {
   }
 
   async addAsset(asset: File) {
-    let tags: EXIFReader.Tags | null = null;
-
     if (asset.size > MAX_FILE_SIZE) {
       toastManager.danger(`File "${asset.name}" exceeds the ${MAX_FILE_SIZE / (1024 * 1024)}MB size limit.`);
       return;
     }
+
+    let tags: EXIFReader.Tags | null = null;
 
     try {
       tags = await EXIFReader.load(asset, { async: true });

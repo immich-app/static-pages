@@ -65,6 +65,7 @@ describe(svelteMarkdownPreprocess.name, () => {
       });
 
       expect(result).toMatchObject({ code: expect.stringContaining(`const attributes = {"title":"Test"}`) });
+      // eslint-disable-next-line unicorn/no-incorrect-template-string-interpolation
       expect(result).toMatchObject({ code: expect.stringContaining(`<Layout {attributes}>`) });
     });
   });

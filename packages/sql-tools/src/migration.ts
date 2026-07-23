@@ -88,9 +88,7 @@ export class Migrator {
     for (const result of results ?? []) {
       if (result.status === 'Success') {
         console.log(`Migration "${result.migrationName}" succeeded`);
-      }
-
-      if (result.status === 'Error') {
+      } else if (result.status === 'Error') {
         console.warn(`Migration "${result.migrationName}" failed`);
       }
     }
@@ -111,9 +109,7 @@ export class Migrator {
     for (const result of results ?? []) {
       if (result.status === 'Success') {
         console.log(`Reverted migration "${result.migrationName}"`);
-      }
-
-      if (result.status === 'Error') {
+      } else if (result.status === 'Error') {
         console.warn(`Failed to revert migration "${result.migrationName}"`);
       }
     }

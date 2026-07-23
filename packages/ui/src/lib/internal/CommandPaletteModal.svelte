@@ -64,6 +64,7 @@
     // eslint-disable-next-line unicorn/no-array-reduce
     commandPaletteManager.results.reduce(
       (groups, { provider: { name = 'unnamed' }, items }) => {
+        // eslint-disable-next-line unicorn/no-computed-property-existence-check
         if (!groups[name]) {
           groups[name] = [];
         }

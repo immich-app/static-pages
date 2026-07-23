@@ -31,6 +31,7 @@
 
   function onTurnstileCallback(token: string) {
     needsVerification = false;
+    // eslint-disable-next-line unicorn/prefer-await
     verifyTurnstile(token).catch(() => {});
   }
 

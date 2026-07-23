@@ -108,7 +108,7 @@ export const readColumns: Reader = async (ctx, db) => {
             enumName = enumName.slice(1);
           }
 
-          if (!enumMap[enumName]) {
+          if (!Object.hasOwn(enumMap, enumName)) {
             ctx.warnings.push(`Unable to find type for ${columnLabel} (ENUM)`);
             continue;
           }
@@ -124,7 +124,7 @@ export const readColumns: Reader = async (ctx, db) => {
 
       // enum types
       case 'USER-DEFINED': {
-        if (!enumMap[column.udt_name]) {
+        if (!Object.hasOwn(enumMap, column.udt_name)) {
           ctx.warnings.push(`Unable to find type for ${columnLabel} (ENUM)`);
           continue;
         }

@@ -205,7 +205,7 @@
     {
       icon: mdiDatabase,
       title: 'PostgreSQL parameters are cursed',
-      description: `PostgresSQL has a limit of ${Number(65_535).toLocaleString()} parameters, so bulk inserts can fail with large datasets.`,
+      description: `PostgresSQL has a limit of ${(65_535).toLocaleString()} parameters, so bulk inserts can fail with large datasets.`,
       link: asGithubLink(6034),
       date: new Date(2023, 11, 28),
     },
