@@ -239,7 +239,7 @@
       {
         "title": "SynoCommunity",
         "description": "Native Synology DSM package for Immich, installable via Package Center. Includes PostgreSQL, Redis, and ffmpeg dependencies managed automatically.",
-        "href": "/guides/synology"
+        "href": "https://docs.synocommunity.com/packages/immich/"
       }
     ]
   },
@@ -271,7 +271,7 @@
       {
         "title": "SynoCommunity Package Install",
         "description": "Step-by-step guide for installing Immich as a native Synology DSM package via SynoCommunity's Package Center. Covers prerequisites, PostgreSQL setup, the installation wizard, and upgrade notes.",
-        "href": "/guides/synology"
+        "href": "https://docs.synocommunity.com/packages/immich/"
       },
       {
         "title": "Immich Podman Quadlets Handbook",
