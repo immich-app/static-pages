@@ -72,43 +72,43 @@ url = "https://github.com/opentofu/opentofu/releases/download/v1.12.4/tofu_1.12.
 url_api = "https://api.github.com/repos/opentofu/opentofu/releases/assets/475646543"
 
 [[tools.pnpm]]
-version = "11.11.0"
+version = "11.15.0"
 backend = "aqua:pnpm/pnpm"
 
 [tools.pnpm."platforms.linux-arm64"]
-checksum = "sha256:4871093439f036b3082df6102255ac119f3b6f4f50c51c5711fc7c358b8b22d7"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.11.0/pnpm-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/471734816"
+checksum = "sha256:d0c62d5953a9ba168267d81d178edf0fcdd9ea947da7b3e21ff8f65a679dd4ba"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.15.0/pnpm-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/481462338"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-arm64-musl"]
-checksum = "sha256:f97316cee0deb3ae3fd64e8a09e1c8c88a76da33373a2b465bd6a4c3e85e0690"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.11.0/pnpm-linux-arm64-musl.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/471734819"
+checksum = "sha256:04efd75a46b7d79dda92dbddaed729c4b54cc50d2ca836cb0f24f1f591387916"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.15.0/pnpm-linux-arm64-musl.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/481462341"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-x64"]
-checksum = "sha256:df4699e897012ab14df2cc6eaa942910e830eb7fcaa420a2a1421a9461fd9108"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.11.0/pnpm-linux-x64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/471734818"
+checksum = "sha256:f9fb813541b04a9c63f0b87d4116794b24ecf6c61f1c0757f3f32b03bb3b55b3"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.15.0/pnpm-linux-x64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/481462340"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-x64-musl"]
-checksum = "sha256:aad186f8a8ae72d827d5efe63e99e801456715fb7f2798949405fa33f20260db"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.11.0/pnpm-linux-x64-musl.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/471734821"
+checksum = "sha256:1a8ad7bbf355dc37d516d443e3de0768920fc22a03761ac7ff02a790a55ffb2d"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.15.0/pnpm-linux-x64-musl.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/481462339"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.macos-arm64"]
-checksum = "sha256:ad46ad16c2376c2b78354ac488c1b166e076aa59bfcbcfd567d55957d755a690"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.11.0/pnpm-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/471734814"
+checksum = "sha256:662da4d7515b268c20fae097147a0ddcb91f9eba23b79c1c8d403e0d6fea1900"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.15.0/pnpm-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/481462336"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.windows-x64"]
-checksum = "sha256:13ad8a9b139c4c829fea33462cf04d061d72f0926b2b76a92ac03c9a36e405f9"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.11.0/pnpm-win32-x64.zip"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/471734820"
+checksum = "sha256:da333ad91f95ee97caf9bb66a5a100f328d42b72a39007d4f3f2639a2b4166e7"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.15.0/pnpm-win32-x64.zip"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/481465354"
 provenance = "github-attestations"
 
 [[tools.terragrunt]]
@@ -151,7 +151,7 @@ url = "https://github.com/gruntwork-io/terragrunt/releases/download/v1.1.1/terra
 url_api = "https://api.github.com/repos/gruntwork-io/terragrunt/releases/assets/476786421"
 
 [[tools.wrangler]]
-version = "4.110.0"
+version = "4.112.0"
 backend = "npm:wrangler"
 
 [tools.wrangler.options]
