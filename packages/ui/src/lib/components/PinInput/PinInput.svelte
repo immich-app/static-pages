@@ -73,7 +73,7 @@
     aria-labelledby={label && labelId}
     {disabled}
     aria-disabled={disabled}
-    class="group flex w-fit items-center gap-2"
+    class="group flex w-fit items-center gap-2 [direction:ltr]"
     maxlength={length}
     pattern={REGEXP_ONLY_DIGITS}
     type={password ? 'password' : 'text'}
