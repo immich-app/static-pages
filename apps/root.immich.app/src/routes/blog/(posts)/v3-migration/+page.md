@@ -18,7 +18,7 @@ Looking for the release notes? Read them [here](/blog/v3.0.0-release)
 
 ## Breaking changes
 
-This release includes a hefty list of breaking changes, most of which were previously deprecated. This post aims to document, explain, and guide users as they upgrade to `v3`. Found something missing? Let us know and we'll get it fixed.
+This release includes a hefty list of breaking changes, most of which were previously deprecated. This post aims to document, explain, and guide users as they upgrade to `v3`. Found something missing? Let us know and we’ll get it fixed.
 
 ### Mobile
 
@@ -48,7 +48,7 @@ Use the `MACHINE_LEARNING_PRELOAD__FACIAL_RECOGNITION__DETECTION` and `MACHINE_
 
 #### Hardware requirements
 
-A bump in numpy now requires x86 CPUs to be in the x86-64-v2 microarchitecture level or higher. This does _not_ mean AVX is required; virtually every mainstream x86 CPU since 2010 meets the x86-64-v2 baseline.
+x86 CPUs must now be in the x86-64-v2 microarchitecture level or higher due to a bump in numpy. This does _not_ mean AVX is required; virtually every mainstream x86 CPU since 2010 meets the x86-64-v2 baseline.
 
 ---
 
@@ -189,7 +189,7 @@ Search endpoints have been updated with the following changes:
 
 #### `PATCH /shared-links/:id` / `updateSharedLink`
 
-- The `changeExpiryTime` property of `SharedLinkEditDto` has been removed (instead send `expiresAt` with a `null` value)
+- The `changeExpiryTime` property of `SharedLinkEditDto` has been removed (instead send `expiresAt` with a `null` value) 
 
 #### `PUT /system-config` / `updateConfig`
 
