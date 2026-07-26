@@ -18,7 +18,7 @@ const normalizePath = (path: string) => path.trim().replace(/\/+$/, '');
 
 const isPort = (value: string) => {
   const port = Number(value);
-  return value.trim() !== '' && Number.isInteger(port) && port >= 1 && port <= 65_535;
+  return value.trim() !== '' && Number.isSafeInteger(port) && port >= 1 && port <= 65_535;
 };
 
 function collectMounts(config: ImmichConfig): Mount[] {

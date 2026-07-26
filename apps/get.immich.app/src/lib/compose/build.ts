@@ -10,10 +10,10 @@ const ROOTLESS_HARDENING: ComposeObject = {
   cap_drop: ['NET_RAW'],
 };
 
-const ROOTLESS_VOLUMES: Record<string, string[]> = {
-  'immich-machine-learning': ['./ml-model-cache:/cache', './ml-dotcache:/.cache', './ml-config:/.config'],
-  redis: ['./redis:/data'],
-};
+const ROOTLESS_VOLUMES = new Map<string, string[]>([
+  ['immich-machine-learning', ['./ml-model-cache:/cache', './ml-dotcache:/.cache', './ml-config:/.config']],
+  ['redis', ['./redis:/data']],
+]);
 
 enum NamedVolume {
   ModelCache = 'model-cache',
@@ -124,8 +124,9 @@ export function buildComposeSpec(config: ImmichConfig): ComposeObject {
   if (rootless) {
     for (const [name, service] of Object.entries(services)) {
       const hardened = deepmerge(service as ComposeObject, ROOTLESS_HARDENING);
-      if (ROOTLESS_VOLUMES[name]) {
-        hardened.volumes = ROOTLESS_VOLUMES[name];
+      const rootlessVolumes = ROOTLESS_VOLUMES.get(name);
+      if (rootlessVolumes) {
+        hardened.volumes = rootlessVolumes;
       }
       services[name] = hardened;
     }
@@ -133,7 +134,7 @@ export function buildComposeSpec(config: ImmichConfig): ComposeObject {
 
   const mountSources = new Set(
     Object.values(services).flatMap((service) =>
-      (((service as ComposeObject).volumes ?? []) as string[]).map((mount) => mount.split(':')[0]),
+      (((service as ComposeObject).volumes ?? []) as string[]).map((mount) => mount.split(':', 1)[0]),
     ),
   );
   const volumes = Object.fromEntries(

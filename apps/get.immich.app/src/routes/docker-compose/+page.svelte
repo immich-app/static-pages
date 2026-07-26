@@ -39,7 +39,7 @@
   let pinnedEdited = $state(false);
   let latestVersion = $state(DEFAULT_CONFIG.version);
 
-  const majorVersion = $derived(latestVersion.split('.')[0]);
+  const majorVersion = $derived(latestVersion.split('.', 1)[0]);
   const version = $derived(versionPinned ? pinnedVersion.trim() || latestVersion : majorVersion);
 
   const effectiveConfig = $derived.by(() => {
@@ -57,7 +57,7 @@
 
   onMount(async () => {
     if (!config.timezone) {
-      config.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone ?? '';
+      config.timezone = new Intl.DateTimeFormat().resolvedOptions().timeZone ?? '';
     }
 
     try {
@@ -229,7 +229,7 @@
                     location.
                   </Text>
                   {#each FOLDER_OVERRIDES as folder (folder.key)}
-                    <Field label={folder.label} invalid={!!errors[folder.key]}>
+                    <Field label={folder.label} invalid={Object.hasOwn(errors, folder.key)}>
                       <Input bind:value={config.storage.overrides[folder.key]} placeholder="Optional host path" />
                       {@render fieldError(errors[folder.key])}
                     </Field>
