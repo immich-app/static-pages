@@ -25,6 +25,7 @@ export enum ChildKey {
 
 export const zIndex = {
   CarouselImage: 'z-1',
+  CodeBlockCopyButton: 'z-10',
   AppShellSidebar: 'z-30',
   AppShellBar: 'z-35',
   ModalBackdrop: 'z-40',
