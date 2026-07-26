@@ -156,6 +156,11 @@
         "title": "Immich Custom Memories",
         "description": "Create customized Memories in Immich.",
         "href": "https://github.com/SinTan1729/immich-custom-memories"
+      },
+      {
+      "title": "Immich Screensaver",
+      "description": "Native Windows screensaver that shows photos from your Immich server, with a different photo on each monitor, album selection, configurable crossfades and a clock overlay.",
+      "href": "https://github.com/xchimx/ImmichScreensaver"
       }
     ]
   },
