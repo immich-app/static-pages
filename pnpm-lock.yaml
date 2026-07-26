@@ -409,12 +409,18 @@ importers:
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
+      deepmerge:
+        specifier: ^4.3.1
+        version: 4.3.1
       simple-icons:
         specifier: ^16.0.0
         version: 16.28.0
       svelte-highlight:
         specifier: 7.14.1
         version: 7.14.1
+      yaml:
+        specifier: ^2.9.0
+        version: 2.9.0
     devDependencies:
       '@sveltejs/adapter-static':
         specifier: ^3.0.9

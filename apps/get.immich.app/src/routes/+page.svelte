@@ -90,6 +90,7 @@
           </CardBody>
           <CardFooter class="flex flex-col gap-2">
             <Button fullWidth href="https://immich.app/docs/install/docker-compose">View Instructions</Button>
+            <Button fullWidth color="secondary" href="/docker-compose">Build a Compose File</Button>
           </CardFooter>
         </Card>
 
