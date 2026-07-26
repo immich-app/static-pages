@@ -16,7 +16,7 @@ describe('validate', () => {
 
   it('requires the upload location', () => {
     const config = structuredClone(DEFAULT_CONFIG);
-    config.storage.uploadLocation = '   ';
+    config.storage.uploadLocation = ' '.repeat(3);
     expect(validate(config).uploadLocation).toBeTruthy();
   });
 
@@ -41,7 +41,7 @@ describe('validate', () => {
 
   it('rejects a Windows path for the database bind mount, but not for a volume', () => {
     const config = structuredClone(DEFAULT_CONFIG);
-    config.database.mount = { type: 'bind', location: 'C:\\immich\\postgres' };
+    config.database.mount = { type: 'bind', location: String.raw`C:\immich\postgres` };
     expect(validate(config).databaseLocation).toContain('Windows');
 
     config.database.mount = { type: 'volume' };
