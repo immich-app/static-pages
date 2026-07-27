@@ -1,26 +1,6 @@
-export type ComposeObject = Record<string, unknown>;
+import type { Compose } from '@json-types/compose';
 
-export interface ComposeService {
-  container_name?: string;
-  image?: string;
-  restart?: string;
-  shm_size?: string;
-  user?: string;
-  ports?: string[];
-  volumes?: string[];
-  depends_on?: string[];
-  devices?: string[];
-  security_opt?: string[];
-  cap_drop?: string[];
-  group_add?: string[];
-  device_cgroup_rules?: string[];
-  environment?: Record<string, string>;
-  healthcheck?: { test?: string; disable?: boolean };
-  deploy?: {
-    resources?: {
-      reservations?: {
-        devices?: { driver: string; count: number; capabilities: string[] }[];
-      };
-    };
-  };
-}
+export type { Service as ComposeService } from '@json-types/compose';
+
+// The generated Volume type omits the null the compose schema allows for a default volume.
+export type ComposeFile = Omit<Compose, 'volumes'> & { volumes?: Record<string, null> };

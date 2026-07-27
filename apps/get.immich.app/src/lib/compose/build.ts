@@ -3,7 +3,7 @@ import { stringify } from 'yaml';
 import { ML_BACKENDS, TRANSCODE_BACKENDS } from './hwaccel';
 import { IMAGES } from './images';
 import { FOLDER_OVERRIDES, type ImmichConfig } from './config';
-import type { ComposeObject, ComposeService } from './spec';
+import type { ComposeFile, ComposeService } from './spec';
 
 const ROOTLESS_HARDENING: ComposeService = {
   user: '1000:1000',
@@ -21,7 +21,7 @@ enum NamedVolume {
   PostgresData = 'postgres-data',
 }
 
-const isPlainObject = (value: unknown): value is ComposeObject =>
+const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
 const isEmpty = (value: unknown) =>
@@ -29,12 +29,16 @@ const isEmpty = (value: unknown) =>
   (Array.isArray(value) && value.length === 0) ||
   (isPlainObject(value) && Object.keys(value).length === 0);
 
-const pruneEmpty = (object: ComposeObject): ComposeObject =>
+const pruneEmpty = <T extends object>(object: T): Partial<T> =>
   Object.fromEntries(
     Object.entries(object)
       .map(([key, value]) => [key, isPlainObject(value) ? pruneEmpty(value) : value])
       .filter(([, value]) => !isEmpty(value)),
-  );
+  ) as Partial<T>;
+
+type ServiceVolume = NonNullable<ComposeService['volumes']>[number];
+
+const mountSource = (mount: ServiceVolume) => (typeof mount === 'string' ? mount.split(':', 1)[0] : mount.source);
 
 const unlessDefault = (value: string, fallback: string) => (value === fallback ? '' : value);
 
@@ -56,7 +60,7 @@ const buildServerEnvironment = ({ timezone, database, redis }: ImmichConfig) => 
   return environment;
 };
 
-export const buildComposeSpec = (config: ImmichConfig, version: string): ComposeObject => {
+export const buildComposeSpec = (config: ImmichConfig, version: string): ComposeFile => {
   const { rootless } = config;
   const serverEnvironment = buildServerEnvironment(config);
 
@@ -136,7 +140,7 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
   }
 
   const mountSources = new Set(
-    Object.values(services).flatMap((service) => (service.volumes ?? []).map((mount) => mount.split(':', 1)[0])),
+    Object.values(services).flatMap((service) => (service.volumes ?? []).map((mount) => mountSource(mount))),
   );
   const volumes = Object.fromEntries(
     Object.values(NamedVolume)
@@ -144,7 +148,9 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
       .map((name) => [name, null]),
   );
 
-  return pruneEmpty({ name: 'immich', services, volumes });
+  const spec: ComposeFile = { name: 'immich', services, volumes };
+
+  return pruneEmpty(spec);
 };
 
 export const buildCompose = (config: ImmichConfig, version: string): string =>
