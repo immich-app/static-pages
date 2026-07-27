@@ -44,7 +44,7 @@
   const generateYearRange = () => {
     const currentYear = new Date().getFullYear();
     const years: number[] = [];
-    for (let y = currentYear+1; y >= 1950; y--) {
+    for (let y = currentYear + 1; y >= 1950; y--) {
       years.push(y);
     }
     return years;
@@ -121,32 +121,40 @@
               </DatePicker.PrevButton>
               {@const current = months[0].value}
               <div class="flex items-center gap-1 text-sm font-semibold">
-                  <Select.Root
-                    type="single"
-                    value={current.month.toString()}
-                    onValueChange={(val) => {
-                      date = current.set({ month: Number(val) });
-                    }}
+                <Select.Root
+                  type="single"
+                  value={current.month.toString()}
+                  onValueChange={(val) => {
+                    date = current.set({ month: Number(val) });
+                  }}
+                >
+                  <Select.Trigger
+                    class="focus-visible:ring-2 flex items-center gap-1 bg-transparent border-none font-semibold cursor-pointer outline-none rounded-lg px-1 text-inherit hover:bg-light-200 dark:hover:bg-light-300"
                   >
-                    <Select.Trigger class="focus-visible:ring-2 flex items-center gap-1 bg-transparent border-none font-semibold cursor-pointer outline-none rounded-lg px-1 text-inherit hover:bg-light-200 dark:hover:bg-light-300">
-                      <span>{new Intl.DateTimeFormat(getLocale(), { month: 'long' }).format(new Date(2000, current.month - 1))}</span>
-                      <Icon icon={mdiChevronDown} size="1.25rem" />
-                    </Select.Trigger>
+                    <span
+                      >{new Intl.DateTimeFormat(getLocale(), { month: 'long' }).format(
+                        new Date(2000, current.month - 1),
+                      )}</span
+                    >
+                    <Icon icon={mdiChevronDown} size="1.25rem" />
+                  </Select.Trigger>
 
-                    <Select.Content class="bg-subtle border p-2 shadow-lg rounded-xl z-50">
-                      <Select.Group>
-                        {#each Array.from({ length: 12 }, (_, i) => i + 1) as month (month)}
-                          <Select.Item
-                            value={month.toString()}
-                            label={new Intl.DateTimeFormat(getLocale(), { month: 'long' }).format(new Date(2000, month - 1))}
-                            class="px-2 py-1 hover:bg-light-200 dark:hover:bg-light-300 cursor-pointer rounded-md data-highlighted:bg-light-300 outline-none text-sm font-medium"
-                          >
-                            {new Intl.DateTimeFormat(getLocale(), { month: 'long' }).format(new Date(2000, month - 1))}
-                          </Select.Item>
-                        {/each}
-                      </Select.Group>
-                    </Select.Content>
-                  </Select.Root>
+                  <Select.Content class="bg-subtle border p-2 shadow-lg rounded-xl z-50">
+                    <Select.Group>
+                      {#each Array.from({ length: 12 }, (_, i) => i + 1) as month (month)}
+                        <Select.Item
+                          value={month.toString()}
+                          label={new Intl.DateTimeFormat(getLocale(), { month: 'long' }).format(
+                            new Date(2000, month - 1),
+                          )}
+                          class="px-2 py-1 hover:bg-light-200 dark:hover:bg-light-300 cursor-pointer rounded-md data-highlighted:bg-light-300 outline-none text-sm font-medium"
+                        >
+                          {new Intl.DateTimeFormat(getLocale(), { month: 'long' }).format(new Date(2000, month - 1))}
+                        </Select.Item>
+                      {/each}
+                    </Select.Group>
+                  </Select.Content>
+                </Select.Root>
                 <Select.Root
                   type="single"
                   value={current.year.toString()}
@@ -154,7 +162,9 @@
                     date = current.set({ year: Number(val) });
                   }}
                 >
-                  <Select.Trigger class="focus-visible:ring-2 flex items-center gap-1 bg-transparent border-none font-semibold cursor-pointer outline-none rounded-lg px-1 text-inherit hover:bg-light-200 dark:hover:bg-light-300">
+                  <Select.Trigger
+                    class="focus-visible:ring-2 flex items-center gap-1 bg-transparent border-none font-semibold cursor-pointer outline-none rounded-lg px-1 text-inherit hover:bg-light-200 dark:hover:bg-light-300"
+                  >
                     <span>{current.year}</span>
                     <Icon icon={mdiChevronDown} size="1.25rem" />
                   </Select.Trigger>
@@ -175,7 +185,6 @@
                     </Select.Viewport>
                   </Select.Content>
                 </Select.Root>
-
               </div>
 
               <DatePicker.NextButton class={buttonStyles()}>
