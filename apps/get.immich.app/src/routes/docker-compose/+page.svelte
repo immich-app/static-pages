@@ -356,7 +356,6 @@
       {#if versionFailed}
         <Text color="danger">Could not reach the Immich version service. Reload the page to try again.</Text>
       {:else if version}
-        <!-- TODO: The copy button the UI lib puts on is broken -->
         <CodeBlock
           code={compose}
           language={yamlLanguage}
