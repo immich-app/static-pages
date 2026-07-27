@@ -27,7 +27,7 @@ jobs:
       # Keep app_name in sync with the deploy matrix in build.yml.
       matrix:
         environment: ['dev', 'prod']
-        app_name: ['root', 'ui', 'api', 'awesome', 'my', 'get', 'buy', 'datasets', 'futo-backups-survey']
+        app_name: ['root', 'ui', 'api', 'awesome', 'my', 'get', 'buy', 'datasets']
     env:
       ENVIRONMENT: ${{ matrix.environment }}
       TF_VAR_app_name: ${{ matrix.app_name }}
