@@ -24,40 +24,42 @@ const isPlainObject = (value: unknown): value is ComposeObject =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
 const isEmpty = (value: unknown) =>
-  (Array.isArray(value) && value.length === 0) || (isPlainObject(value) && Object.keys(value).length === 0);
+  value === '' ||
+  (Array.isArray(value) && value.length === 0) ||
+  (isPlainObject(value) && Object.keys(value).length === 0);
 
-function pruneEmpty(object: ComposeObject): ComposeObject {
-  return Object.fromEntries(
+const pruneEmpty = (object: ComposeObject): ComposeObject =>
+  Object.fromEntries(
     Object.entries(object)
       .map(([key, value]) => [key, isPlainObject(value) ? pruneEmpty(value) : value])
       .filter(([, value]) => !isEmpty(value)),
   );
-}
 
-export function buildComposeSpec(config: ImmichConfig): ComposeObject {
-  const { rootless } = config;
+const unlessDefault = (value: string, fallback: string) => (value === fallback ? '' : value);
 
-  const serverEnvironment: Record<string, string> = {};
-  const setEnv = (key: string, value: string, fallback = '') => {
-    const trimmed = value.trim();
-    if (trimmed !== '' && trimmed !== fallback) {
-      serverEnvironment[key] = trimmed;
-    }
-  };
+const buildServerEnvironment = ({ timezone, database, redis }: ImmichConfig) => {
+  const environment: Record<string, string> = { TZ: timezone.trim() };
 
-  setEnv('TZ', config.timezone);
-  if (config.database.external) {
-    setEnv('DB_URL', config.database.externalUrl);
+  if (database.external) {
+    environment.DB_URL = database.externalUrl.trim();
   } else {
-    setEnv('DB_PASSWORD', config.database.password, 'postgres');
-  }
-  if (config.redis.external) {
-    setEnv('REDIS_HOSTNAME', config.redis.host);
-    setEnv('REDIS_PORT', config.redis.port, '6379');
-    setEnv('REDIS_PASSWORD', config.redis.password);
+    environment.DB_PASSWORD = unlessDefault(database.password.trim(), 'postgres');
   }
 
-  const backingServices: ComposeObject = {};
+  if (redis.external) {
+    environment.REDIS_HOSTNAME = redis.host.trim();
+    environment.REDIS_PORT = unlessDefault(redis.port.trim(), '6379');
+    environment.REDIS_PASSWORD = redis.password.trim();
+  }
+
+  return environment;
+};
+
+export const buildComposeSpec = (config: ImmichConfig, version: string): ComposeObject => {
+  const { rootless } = config;
+  const serverEnvironment = buildServerEnvironment(config);
+
+  const backingServices: Record<string, ComposeObject> = {};
 
   if (!config.redis.external) {
     backingServices.redis = {
@@ -94,11 +96,11 @@ export function buildComposeSpec(config: ImmichConfig): ComposeObject {
       )
     : [];
 
-  const services: ComposeObject = {
-    'immich-server': deepmerge(
+  const services: Record<string, ComposeObject> = {
+    'immich-server': deepmerge<ComposeObject>(
       {
         container_name: 'immich_server',
-        image: IMAGES.server(config.version),
+        image: IMAGES.server(version),
         volumes: [`${config.storage.uploadLocation}:/data`, ...overrideMounts, '/etc/localtime:/etc/localtime:ro'],
         environment: serverEnvironment,
         ports: [`${config.port.trim()}:2283`],
@@ -106,24 +108,24 @@ export function buildComposeSpec(config: ImmichConfig): ComposeObject {
         restart: 'always',
         healthcheck: { disable: false },
       },
-      TRANSCODE_BACKENDS[config.hwaccel.transcoding].fragment as ComposeObject,
+      TRANSCODE_BACKENDS[config.hwaccel.transcoding].fragment,
     ),
-    'immich-machine-learning': deepmerge(
+    'immich-machine-learning': deepmerge<ComposeObject>(
       {
         container_name: 'immich_machine_learning',
-        image: IMAGES.machineLearning(config.version + ML_BACKENDS[config.hwaccel.ml].tag),
+        image: IMAGES.machineLearning(version + ML_BACKENDS[config.hwaccel.ml].tag),
         volumes: [`${NamedVolume.ModelCache}:/cache`],
         restart: 'always',
         healthcheck: { disable: false },
       },
-      ML_BACKENDS[config.hwaccel.ml].fragment as ComposeObject,
+      ML_BACKENDS[config.hwaccel.ml].fragment,
     ),
     ...backingServices,
   };
 
   if (rootless) {
     for (const [name, service] of Object.entries(services)) {
-      const hardened = deepmerge(service as ComposeObject, ROOTLESS_HARDENING);
+      const hardened = deepmerge(service, ROOTLESS_HARDENING);
       const rootlessVolumes = ROOTLESS_VOLUMES.get(name);
       if (rootlessVolumes) {
         hardened.volumes = rootlessVolumes;
@@ -134,7 +136,7 @@ export function buildComposeSpec(config: ImmichConfig): ComposeObject {
 
   const mountSources = new Set(
     Object.values(services).flatMap((service) =>
-      (((service as ComposeObject).volumes ?? []) as string[]).map((mount) => mount.split(':', 1)[0]),
+      ((service.volumes ?? []) as string[]).map((mount) => mount.split(':', 1)[0]),
     ),
   );
   const volumes = Object.fromEntries(
@@ -144,8 +146,7 @@ export function buildComposeSpec(config: ImmichConfig): ComposeObject {
   );
 
   return pruneEmpty({ name: 'immich', services, volumes });
-}
+};
 
-export function buildCompose(config: ImmichConfig): string {
-  return stringify(buildComposeSpec(config), { lineWidth: 0, nullStr: '' });
-}
+export const buildCompose = (config: ImmichConfig, version: string): string =>
+  stringify(buildComposeSpec(config, version), { lineWidth: 0, nullStr: '' });

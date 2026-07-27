@@ -17,7 +17,6 @@ export interface StorageOverrides {
 }
 
 export interface ImmichConfig {
-  version: string;
   timezone: string;
   rootless: boolean;
   port: string;
@@ -54,13 +53,13 @@ const ADVANCED_RESETS: ((config: ImmichConfig) => void)[] = [
   (config) => (config.redis.external = DEFAULT_CONFIG.redis.external),
 ];
 
-export function withoutAdvanced(config: ImmichConfig): ImmichConfig {
+export const withoutAdvanced = (config: ImmichConfig): ImmichConfig => {
   const basic = structuredClone(config);
   for (const reset of ADVANCED_RESETS) {
     reset(basic);
   }
   return basic;
-}
+};
 
 export const FOLDER_OVERRIDES: { key: keyof StorageOverrides; label: string; subfolder: string }[] = [
   { key: 'thumbs', label: 'Thumbnails', subfolder: 'thumbs' },
@@ -70,7 +69,6 @@ export const FOLDER_OVERRIDES: { key: keyof StorageOverrides; label: string; sub
 ];
 
 export const DEFAULT_CONFIG: ImmichConfig = {
-  version: 'v3',
   timezone: '',
   rootless: false,
   port: '2283',

@@ -3,28 +3,30 @@ import { parse } from 'yaml';
 import { buildCompose } from './build';
 import { DEFAULT_CONFIG, StorageType, withoutAdvanced } from './types';
 
+const VERSION = 'v3';
+
 describe('buildCompose', () => {
   it('produces the four core services under name "immich"', () => {
-    const spec = parse(buildCompose(DEFAULT_CONFIG));
+    const spec = parse(buildCompose(DEFAULT_CONFIG, VERSION));
     expect(spec.name).toBe('immich');
     expect(Object.keys(spec.services)).toEqual(['immich-server', 'immich-machine-learning', 'redis', 'database']);
   });
 
   it('inlines the version into both immich image tags', () => {
-    const spec = parse(buildCompose({ ...DEFAULT_CONFIG, version: 'v3.0.3' }));
+    const spec = parse(buildCompose(DEFAULT_CONFIG, 'v3.0.3'));
     expect(spec.services['immich-server'].image).toBe('ghcr.io/immich-app/immich-server:v3.0.3');
     expect(spec.services['immich-machine-learning'].image).toBe('ghcr.io/immich-app/immich-machine-learning:v3.0.3');
   });
 
   it('inlines storage and database locations as bind mounts', () => {
-    const spec = parse(buildCompose(DEFAULT_CONFIG));
+    const spec = parse(buildCompose(DEFAULT_CONFIG, VERSION));
     expect(spec.services['immich-server'].volumes).toContain('./library:/data');
     expect(spec.services.database.volumes).toContain('./postgres:/var/lib/postgresql/data');
   });
 
   it('omits server environment on defaults and sets TZ only when provided', () => {
-    expect(parse(buildCompose(DEFAULT_CONFIG)).services['immich-server'].environment).toBeUndefined();
-    const withTz = parse(buildCompose({ ...DEFAULT_CONFIG, timezone: 'Europe/Amsterdam' }));
+    expect(parse(buildCompose(DEFAULT_CONFIG, VERSION)).services['immich-server'].environment).toBeUndefined();
+    const withTz = parse(buildCompose({ ...DEFAULT_CONFIG, timezone: 'Europe/Amsterdam' }, VERSION));
     expect(withTz.services['immich-server'].environment.TZ).toBe('Europe/Amsterdam');
   });
 
@@ -33,7 +35,7 @@ describe('buildCompose', () => {
     config.storage.customFolders = true;
     config.storage.overrides.thumbs = '/mnt/fast/thumbs';
     config.storage.overrides.backups = '/mnt/slow/backups';
-    const volumes = parse(buildCompose(config)).services['immich-server'].volumes;
+    const volumes = parse(buildCompose(config, VERSION)).services['immich-server'].volumes;
     expect(volumes).toEqual([
       './library:/data',
       '/mnt/fast/thumbs:/data/thumbs',
@@ -45,7 +47,7 @@ describe('buildCompose', () => {
   it('ignores overrides when the custom folders toggle is off', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.storage.overrides.thumbs = '/mnt/fast/thumbs';
-    const volumes = parse(buildCompose(config)).services['immich-server'].volumes;
+    const volumes = parse(buildCompose(config, VERSION)).services['immich-server'].volumes;
     expect(volumes).toEqual(['./library:/data', '/etc/localtime:/etc/localtime:ro']);
   });
 
@@ -53,34 +55,38 @@ describe('buildCompose', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.timezone = 'Europe/Amsterdam';
     config.hwaccel.transcoding = 'vaapi-wsl';
-    const server = parse(buildCompose(config)).services['immich-server'];
+    const server = parse(buildCompose(config, VERSION)).services['immich-server'];
     expect(server.devices).toEqual(['/dev/dri:/dev/dri', '/dev/dxg:/dev/dxg']);
-    expect(server.volumes).toContain('/usr/lib/wsl:/usr/lib/wsl');
     expect(server.environment).toEqual({ TZ: 'Europe/Amsterdam', LIBVA_DRIVER_NAME: 'd3d12' });
+    expect(server.volumes).toEqual([
+      `${DEFAULT_CONFIG.storage.uploadLocation}:/data`,
+      '/etc/localtime:/etc/localtime:ro',
+      '/usr/lib/wsl:/usr/lib/wsl',
+    ]);
   });
 
   it('inlines the ML backend and suffixes the ML image tag', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.hwaccel.ml = 'cuda';
-    const ml = parse(buildCompose({ ...config, version: 'v3.0.3' })).services['immich-machine-learning'];
+    const ml = parse(buildCompose(config, 'v3.0.3')).services['immich-machine-learning'];
     expect(ml.image).toBe('ghcr.io/immich-app/immich-machine-learning:v3.0.3-cuda');
     expect(ml.deploy.resources.reservations.devices[0].driver).toBe('nvidia');
   });
 
   it('adds no accel keys and no tag suffix on cpu (default)', () => {
-    const spec = parse(buildCompose(DEFAULT_CONFIG));
+    const spec = parse(buildCompose(DEFAULT_CONFIG, VERSION));
     expect(spec.services['immich-server'].devices).toBeUndefined();
     expect(spec.services['immich-machine-learning'].image).toBe('ghcr.io/immich-app/immich-machine-learning:v3');
   });
 
   it('mirrors a custom bundled DB password to POSTGRES_PASSWORD and DB_PASSWORD, only when non-default', () => {
-    const dflt = parse(buildCompose(DEFAULT_CONFIG));
+    const dflt = parse(buildCompose(DEFAULT_CONFIG, VERSION));
     expect(dflt.services.database.environment.POSTGRES_PASSWORD).toBe('postgres');
     expect(dflt.services['immich-server'].environment).toBeUndefined();
 
     const config = structuredClone(DEFAULT_CONFIG);
     config.database.password = 'hunter2';
-    const spec = parse(buildCompose(config));
+    const spec = parse(buildCompose(config, VERSION));
     expect(spec.services.database.environment.POSTGRES_PASSWORD).toBe('hunter2');
     expect(spec.services['immich-server'].environment.DB_PASSWORD).toBe('hunter2');
     expect(spec.services['immich-server'].environment.DB_URL).toBeUndefined();
@@ -89,7 +95,7 @@ describe('buildCompose', () => {
   it('uses a named postgres-data volume when the db mount is a volume', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.database.mount = { type: 'volume' };
-    const spec = parse(buildCompose(config));
+    const spec = parse(buildCompose(config, VERSION));
     expect(spec.services.database.volumes).toEqual(['postgres-data:/var/lib/postgresql/data']);
     expect(spec.volumes['postgres-data']).toBeNull();
   });
@@ -97,14 +103,14 @@ describe('buildCompose', () => {
   it('maps a custom host port onto container port 2283', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.port = '8080';
-    expect(parse(buildCompose(config)).services['immich-server'].ports).toEqual(['8080:2283']);
+    expect(parse(buildCompose(config, VERSION)).services['immich-server'].ports).toEqual(['8080:2283']);
   });
 
   it('states the database storage type explicitly', () => {
-    expect(parse(buildCompose(DEFAULT_CONFIG)).services.database.environment.DB_STORAGE_TYPE).toBe('SSD');
+    expect(parse(buildCompose(DEFAULT_CONFIG, VERSION)).services.database.environment.DB_STORAGE_TYPE).toBe('SSD');
     const config = structuredClone(DEFAULT_CONFIG);
     config.database.storageType = StorageType.HDD;
-    expect(parse(buildCompose(config)).services.database.environment.DB_STORAGE_TYPE).toBe('HDD');
+    expect(parse(buildCompose(config, VERSION)).services.database.environment.DB_STORAGE_TYPE).toBe('HDD');
   });
 
   it('produces the default output once advanced settings are stripped', () => {
@@ -117,32 +123,32 @@ describe('buildCompose', () => {
     config.redis.external = true;
     config.redis.host = 'redis.example.com';
 
-    expect(buildCompose(withoutAdvanced(config))).toBe(buildCompose(DEFAULT_CONFIG));
+    expect(buildCompose(withoutAdvanced(config), VERSION)).toBe(buildCompose(DEFAULT_CONFIG, VERSION));
   });
 
   it('keeps null and false values while pruning empty containers', () => {
-    const spec = parse(buildCompose(DEFAULT_CONFIG));
+    const spec = parse(buildCompose(DEFAULT_CONFIG, VERSION));
     expect(spec.volumes['model-cache']).toBeNull();
     expect(spec.services['immich-server'].healthcheck).toEqual({ disable: false });
   });
 
   it('declares a named volume only while a service still mounts it', () => {
-    expect(parse(buildCompose(DEFAULT_CONFIG)).volumes).toEqual({ 'model-cache': null });
+    expect(parse(buildCompose(DEFAULT_CONFIG, VERSION)).volumes).toEqual({ 'model-cache': null });
 
     const onVolume = structuredClone(DEFAULT_CONFIG);
     onVolume.database.mount = { type: 'volume' };
-    expect(parse(buildCompose(onVolume)).volumes).toEqual({ 'model-cache': null, 'postgres-data': null });
+    expect(parse(buildCompose(onVolume, VERSION)).volumes).toEqual({ 'model-cache': null, 'postgres-data': null });
 
     const external = structuredClone(DEFAULT_CONFIG);
     external.database.external = true;
     external.database.mount = { type: 'volume' };
-    expect(parse(buildCompose(external)).volumes).toEqual({ 'model-cache': null });
+    expect(parse(buildCompose(external, VERSION)).volumes).toEqual({ 'model-cache': null });
   });
 
   it('hardens every service and rewires cache/volumes in rootless mode', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.rootless = true;
-    const spec = parse(buildCompose(config));
+    const spec = parse(buildCompose(config, VERSION));
     for (const name of ['immich-server', 'immich-machine-learning', 'redis', 'database']) {
       expect(spec.services[name].user).toBe('1000:1000');
       expect(spec.services[name].security_opt).toEqual(['no-new-privileges:true']);
@@ -161,7 +167,7 @@ describe('buildCompose', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.database.external = true;
     config.database.externalUrl = 'postgresql://immich:pw@db.example.com:5432/immich';
-    const spec = parse(buildCompose(config));
+    const spec = parse(buildCompose(config, VERSION));
     expect(spec.services.database).toBeUndefined();
     expect(spec.services['immich-server'].environment.DB_URL).toBe('postgresql://immich:pw@db.example.com:5432/immich');
     expect(spec.services['immich-server'].depends_on).toEqual(['redis']);
@@ -173,8 +179,8 @@ describe('buildCompose', () => {
     config.redis.host = 'redis.example.com';
     config.redis.port = '6380';
     config.redis.password = 'secret';
-    const server = parse(buildCompose(config)).services['immich-server'];
-    expect(parse(buildCompose(config)).services.redis).toBeUndefined();
+    const server = parse(buildCompose(config, VERSION)).services['immich-server'];
+    expect(parse(buildCompose(config, VERSION)).services.redis).toBeUndefined();
     expect(server.environment).toMatchObject({
       REDIS_HOSTNAME: 'redis.example.com',
       REDIS_PORT: '6380',
@@ -188,7 +194,7 @@ describe('buildCompose', () => {
     config.database.external = true;
     config.redis.external = true;
     config.redis.host = 'redis.example.com';
-    const server = parse(buildCompose(config)).services['immich-server'];
+    const server = parse(buildCompose(config, VERSION)).services['immich-server'];
     expect(server.depends_on).toBeUndefined();
   });
 });

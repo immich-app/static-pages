@@ -21,7 +21,7 @@ const isPort = (value: string) => {
   return value.trim() !== '' && Number.isSafeInteger(port) && port >= 1 && port <= 65_535;
 };
 
-function collectMounts(config: ImmichConfig): Mount[] {
+const collectMounts = (config: ImmichConfig): Mount[] => {
   const mounts: Mount[] = [{ field: 'uploadLocation', path: config.storage.uploadLocation }];
 
   if (config.storage.customFolders) {
@@ -35,9 +35,9 @@ function collectMounts(config: ImmichConfig): Mount[] {
   }
 
   return mounts.map(({ field, path }) => ({ field, path: normalizePath(path) })).filter(({ path }) => path !== '');
-}
+};
 
-function checkOverlaps(mounts: Mount[], errors: ValidationErrors) {
+const checkOverlaps = (mounts: Mount[], errors: ValidationErrors) => {
   for (const [index, mount] of mounts.entries()) {
     for (const other of mounts.slice(index + 1)) {
       if (mount.path === other.path) {
@@ -49,9 +49,9 @@ function checkOverlaps(mounts: Mount[], errors: ValidationErrors) {
       }
     }
   }
-}
+};
 
-export function validate(config: ImmichConfig): ValidationErrors {
+export const validate = (config: ImmichConfig): ValidationErrors => {
   const errors: ValidationErrors = {};
 
   if (!isPort(config.port)) {
@@ -92,4 +92,4 @@ export function validate(config: ImmichConfig): ValidationErrors {
   checkOverlaps(collectMounts(config), errors);
 
   return errors;
-}
+};
