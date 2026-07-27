@@ -1,0 +1,213 @@
+import { z } from 'zod';
+import { ML_BACKENDS, TRANSCODE_BACKENDS, type MlAccel, type TranscodeAccel } from './hwaccel';
+
+const databaseMountSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('bind'), location: z.string() }),
+  z.object({ type: z.literal('volume') }),
+]);
+
+export enum StorageType {
+  SSD = 'SSD',
+  HDD = 'HDD',
+}
+
+const storageOverridesSchema = z.object({
+  thumbs: z.string(),
+  encodedVideo: z.string(),
+  profile: z.string(),
+  backups: z.string(),
+});
+
+type StorageOverrides = z.infer<typeof storageOverridesSchema>;
+
+const transcodeAccelSchema = z.custom<TranscodeAccel>(
+  (value) => typeof value === 'string' && Object.hasOwn(TRANSCODE_BACKENDS, value),
+);
+const mlAccelSchema = z.custom<MlAccel>((value) => typeof value === 'string' && Object.hasOwn(ML_BACKENDS, value));
+
+const PORT_MESSAGE = 'Enter a port between 1 and 65535.';
+
+const isPort = (value: string) => {
+  const port = Number(value);
+  return value.trim() !== '' && Number.isSafeInteger(port) && port >= 1 && port <= 65_535;
+};
+
+const required = (message: string) => z.string().refine((value) => value.trim() !== '', message);
+
+const immichConfigSchema = z.object({
+  timezone: z.string(),
+  rootless: z.boolean(),
+  port: z.string().refine(isPort, PORT_MESSAGE),
+  hwaccel: z.object({
+    transcoding: transcodeAccelSchema,
+    ml: mlAccelSchema,
+  }),
+  storage: z.object({
+    uploadLocation: required('Upload location is required.'),
+    customFolders: z.boolean(),
+    overrides: storageOverridesSchema,
+  }),
+  database: z.object({
+    mount: databaseMountSchema,
+    storageType: z.enum(StorageType),
+    username: z.string(),
+    password: z.string(),
+    databaseName: z.string(),
+    external: z.boolean(),
+    externalUrl: z.string(),
+  }),
+  redis: z.object({
+    external: z.boolean(),
+    host: z.string(),
+    port: z.string(),
+    password: z.string(),
+  }),
+});
+
+export type ImmichConfig = z.infer<typeof immichConfigSchema>;
+
+const ADVANCED_RESETS: ((config: ImmichConfig) => void)[] = [
+  (config) => (config.port = DEFAULT_CONFIG.port),
+  (config) => (config.storage.customFolders = DEFAULT_CONFIG.storage.customFolders),
+  (config) => (config.database.external = DEFAULT_CONFIG.database.external),
+  (config) => (config.redis.external = DEFAULT_CONFIG.redis.external),
+];
+
+export const withoutAdvanced = (config: ImmichConfig): ImmichConfig => {
+  const basic = structuredClone(config);
+  for (const reset of ADVANCED_RESETS) {
+    reset(basic);
+  }
+  return basic;
+};
+
+export const FOLDER_OVERRIDES: { key: keyof StorageOverrides; label: string; subfolder: string }[] = [
+  { key: 'thumbs', label: 'Thumbnails', subfolder: 'thumbs' },
+  { key: 'encodedVideo', label: 'Encoded video', subfolder: 'encoded-video' },
+  { key: 'profile', label: 'Profile', subfolder: 'profile' },
+  { key: 'backups', label: 'Backups', subfolder: 'backups' },
+];
+
+export const DEFAULT_CONFIG: ImmichConfig = {
+  timezone: '',
+  rootless: false,
+  port: '2283',
+  hwaccel: {
+    transcoding: 'cpu',
+    ml: 'cpu',
+  },
+  storage: {
+    uploadLocation: './library',
+    customFolders: false,
+    overrides: {
+      thumbs: '',
+      encodedVideo: '',
+      profile: '',
+      backups: '',
+    },
+  },
+  database: {
+    mount: { type: 'bind', location: './postgres' },
+    storageType: StorageType.SSD,
+    username: 'postgres',
+    password: 'postgres',
+    databaseName: 'immich',
+    external: false,
+    externalUrl: '',
+  },
+  redis: {
+    external: false,
+    host: '',
+    port: '',
+    password: '',
+  },
+};
+
+type ValidationErrors = Record<string, string>;
+
+const normalizePath = (path: string) => path.trim().replace(/\/+$/, '');
+
+type Mount = { path: string[]; location: string };
+
+const collectMounts = (config: ImmichConfig): Mount[] => {
+  const mounts: Mount[] = [{ path: ['storage', 'uploadLocation'], location: config.storage.uploadLocation }];
+
+  if (config.storage.customFolders) {
+    for (const { key } of FOLDER_OVERRIDES) {
+      mounts.push({ path: ['storage', 'overrides', key], location: config.storage.overrides[key] });
+    }
+  }
+
+  if (!config.database.external && config.database.mount.type === 'bind') {
+    mounts.push({ path: ['database', 'mount', 'location'], location: config.database.mount.location });
+  }
+
+  return mounts
+    .map(({ path, location }) => ({ path, location: normalizePath(location) }))
+    .filter(({ location }) => location !== '');
+};
+
+const validationSchema = immichConfigSchema.superRefine((config, ctx) => {
+  const fail = (path: string[], message: string) => ctx.addIssue({ code: 'custom', path, message });
+
+  if (config.database.external) {
+    if (!config.database.externalUrl.trim()) {
+      fail(['database', 'externalUrl'], 'A connection URL is required for external Postgres.');
+    }
+  } else {
+    if (config.database.mount.type === 'bind') {
+      const location = config.database.mount.location.trim();
+      if (!location) {
+        fail(['database', 'mount', 'location'], 'Database location is required.');
+      } else if (/^[a-zA-Z]:[\\/]/.test(location)) {
+        fail(
+          ['database', 'mount', 'location'],
+          "The database can't be on a Windows drive, use a named volume instead.",
+        );
+      }
+    }
+    if (!config.database.password.trim()) {
+      fail(['database', 'password'], 'A database password is required.');
+    }
+  }
+
+  if (config.redis.external) {
+    if (!config.redis.host.trim()) {
+      fail(['redis', 'host'], 'A host is required for external Redis.');
+    }
+    if (config.redis.port.trim() && !isPort(config.redis.port)) {
+      fail(['redis', 'port'], PORT_MESSAGE);
+    }
+  }
+
+  const mounts = collectMounts(config);
+  for (const [index, mount] of mounts.entries()) {
+    for (const other of mounts.slice(index + 1)) {
+      const overlaps =
+        mount.location.startsWith(`${other.location}/`) || other.location.startsWith(`${mount.location}/`);
+      const message =
+        mount.location === other.location
+          ? 'This path is already used by another mount.'
+          : overlaps
+            ? 'This path overlaps another mount.'
+            : undefined;
+      if (message) {
+        fail(mount.path, message);
+        fail(other.path, message);
+      }
+    }
+  }
+});
+
+export const validate = (config: ImmichConfig): ValidationErrors => {
+  const result = validationSchema.safeParse(config);
+  if (result.success) {
+    return {};
+  }
+
+  const errors: ValidationErrors = {};
+  for (const issue of result.error.issues) {
+    errors[issue.path.join('.')] = issue.message;
+  }
+  return errors;
+};

@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_CONFIG } from './types';
-import { validate } from './validate';
+import { DEFAULT_CONFIG, validate } from './config';
 
 describe('validate', () => {
   it('passes on the default config', () => {
@@ -17,7 +16,7 @@ describe('validate', () => {
   it('requires the upload location', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.storage.uploadLocation = ' '.repeat(3);
-    expect(validate(config).uploadLocation).toBeTruthy();
+    expect(validate(config)['storage.uploadLocation']).toBeTruthy();
   });
 
   it('requires the external URL when external Postgres is on, not the data location', () => {
@@ -25,68 +24,68 @@ describe('validate', () => {
     config.database.external = true;
     config.database.mount = { type: 'bind', location: '' };
     const errors = validate(config);
-    expect(errors.externalUrl).toBeTruthy();
-    expect(errors.databaseLocation).toBeUndefined();
+    expect(errors['database.externalUrl']).toBeTruthy();
+    expect(errors['database.mount.location']).toBeUndefined();
   });
 
   it('requires a bundled database password, but not when external', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.database.password = '';
-    expect(validate(config).databasePassword).toBeTruthy();
+    expect(validate(config)['database.password']).toBeTruthy();
 
     config.database.external = true;
     config.database.externalUrl = 'postgresql://u:p@h:5432/immich';
-    expect(validate(config).databasePassword).toBeUndefined();
+    expect(validate(config)['database.password']).toBeUndefined();
   });
 
   it('rejects a Windows path for the database bind mount, but not for a volume', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.database.mount = { type: 'bind', location: String.raw`C:\immich\postgres` };
-    expect(validate(config).databaseLocation).toContain('Windows');
+    expect(validate(config)['database.mount.location']).toContain('Windows');
 
     config.database.mount = { type: 'volume' };
-    expect(validate(config).databaseLocation).toBeUndefined();
+    expect(validate(config)['database.mount.location']).toBeUndefined();
   });
 
   it('requires the redis host only when external Redis is on', () => {
-    expect(validate(DEFAULT_CONFIG).redisHost).toBeUndefined();
+    expect(validate(DEFAULT_CONFIG)['redis.host']).toBeUndefined();
     const config = structuredClone(DEFAULT_CONFIG);
     config.redis.external = true;
-    expect(validate(config).redisHost).toBeTruthy();
+    expect(validate(config)['redis.host']).toBeTruthy();
   });
 
   it('flags the database sharing or nesting under a media path', () => {
     const same = structuredClone(DEFAULT_CONFIG);
     same.storage.uploadLocation = '/mnt/data';
     same.database.mount = { type: 'bind', location: '/mnt/data' };
-    expect(validate(same).uploadLocation).toBeTruthy();
-    expect(validate(same).databaseLocation).toBeTruthy();
+    expect(validate(same)['storage.uploadLocation']).toBeTruthy();
+    expect(validate(same)['database.mount.location']).toBeTruthy();
 
     const nested = structuredClone(DEFAULT_CONFIG);
     nested.storage.uploadLocation = '/mnt/data';
     nested.database.mount = { type: 'bind', location: '/mnt/data/postgres' };
-    expect(validate(nested).databaseLocation).toContain('overlaps');
+    expect(validate(nested)['database.mount.location']).toContain('overlaps');
 
     const volume = structuredClone(DEFAULT_CONFIG);
     volume.storage.uploadLocation = '/mnt/data';
     volume.database.mount = { type: 'volume' };
-    expect(validate(volume).uploadLocation).toBeUndefined();
+    expect(validate(volume)['storage.uploadLocation']).toBeUndefined();
   });
 
   it('ignores trailing slashes when comparing paths', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.storage.uploadLocation = '/mnt/data/';
     config.database.mount = { type: 'bind', location: '/mnt/data' };
-    expect(validate(config).databaseLocation).toBeTruthy();
+    expect(validate(config)['database.mount.location']).toBeTruthy();
   });
 
   it('rejects an out-of-range external redis port but allows blank', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.redis.external = true;
     config.redis.host = 'redis.example.com';
-    expect(validate(config).redisPort).toBeUndefined();
+    expect(validate(config)['redis.port']).toBeUndefined();
     config.redis.port = '99999';
-    expect(validate(config).redisPort).toBeTruthy();
+    expect(validate(config)['redis.port']).toBeTruthy();
   });
 
   it('flags server mounts that point at the same host path', () => {
@@ -95,8 +94,8 @@ describe('validate', () => {
     config.storage.customFolders = true;
     config.storage.overrides.thumbs = '/mnt/data';
     const errors = validate(config);
-    expect(errors.uploadLocation).toBeTruthy();
-    expect(errors.thumbs).toBeTruthy();
-    expect(errors.profile).toBeUndefined();
+    expect(errors['storage.uploadLocation']).toBeTruthy();
+    expect(errors['storage.overrides.thumbs']).toBeTruthy();
+    expect(errors['storage.overrides.profile']).toBeUndefined();
   });
 });

@@ -1,4 +1,4 @@
-import type { ComposeObject } from './types';
+import type { ComposeService } from './spec';
 
 export const TRANSCODE_BACKENDS = {
   cpu: { label: 'None (CPU)', fragment: {} },
@@ -43,7 +43,7 @@ export const TRANSCODE_BACKENDS = {
       environment: { LIBVA_DRIVER_NAME: 'd3d12' },
     },
   },
-} satisfies Record<string, { label: string; fragment: ComposeObject }>;
+} satisfies Record<string, { label: string; fragment: ComposeService }>;
 
 export type TranscodeAccel = keyof typeof TRANSCODE_BACKENDS;
 
@@ -100,7 +100,7 @@ export const ML_BACKENDS = {
     tag: '-rknn',
     fragment: { security_opt: ['systempaths=unconfined', 'apparmor=unconfined'], devices: ['/dev/dri:/dev/dri'] },
   },
-} satisfies Record<string, { label: string; tag: string; fragment: ComposeObject }>;
+} satisfies Record<string, { label: string; tag: string; fragment: ComposeService }>;
 
 export type MlAccel = keyof typeof ML_BACKENDS;
 
