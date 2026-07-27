@@ -46,7 +46,7 @@ jobs:
           client-id: ${{ secrets.PUSH_O_MATIC_APP_CLIENT_ID }}
           private-key: ${{ secrets.PUSH_O_MATIC_APP_KEY }}
           permission-contents: read
-          permission-issues: write
+          permission-pull-requests: write
 
       - name: Setup Mise
         uses: immich-app/devtools/actions/use-mise@3bca63ca3c15020293b36b51737a3ee2c773340b # use-mise-action-v3.1.0
