@@ -70,6 +70,10 @@ locals {
 resource "cloudflare_worker" "sessions" {
   account_id = var.cloudflare_account_id
   name       = "survey-sessions${local.resource_suffix}"
+
+  observability = {
+    enabled = true
+  }
 }
 
 resource "cloudflare_worker_version" "sessions" {
@@ -85,9 +89,16 @@ resource "cloudflare_worker_version" "sessions" {
     content_type = "application/javascript+module"
   }]
 
+  # Provision SurveyDO as a SQLite-backed Durable Object. A SQLite class must be
+  # declared via new_sqlite_classes on its FIRST migration — it cannot be
+  # converted from a classic DO later. Terraform owns these workers (prod and
+  # every per-PR `survey-sessions-*-pr-N` stage), and a fresh worker has no
+  # migration tag, so this must be the initial migration (no old_tag) rather
+  # than the previous `old_tag = new_tag = "v2"` with no classes, which declared
+  # no storage and was rejected on any freshly provisioned worker.
   migrations = {
-    old_tag = "v2"
-    new_tag = "v2"
+    new_tag            = "v1"
+    new_sqlite_classes = ["SurveyDO"]
   }
 }
 

@@ -11,11 +11,8 @@
   }
 
   let { question, answer, onAnswer }: Props = $props();
-  let numberValue = $state('');
-
-  $effect.pre(() => {
-    numberValue = answer?.value ?? '';
-  });
+  // Writable derived: mirrors the saved answer, but local edits hold until it changes.
+  let numberValue = $derived(answer?.value ?? '');
 
   const min = $derived(question.config?.min);
   const max = $derived(question.config?.max);
@@ -24,8 +21,11 @@
     [min !== undefined ? `Min: ${min}` : '', max !== undefined ? `Max: ${max}` : ''].filter(Boolean).join(', '),
   );
 
+  // `bind:value` on a type="number" input yields a number, but answers are
+  // strings end to end (validateAnswer/server call value.trim()). Coerce here so
+  // a number never leaks into the answer pipeline.
   const { handleInput } = useDebouncedAnswer(
-    () => numberValue,
+    () => String(numberValue ?? ''),
     (v) => onAnswer(v),
   );
 </script>

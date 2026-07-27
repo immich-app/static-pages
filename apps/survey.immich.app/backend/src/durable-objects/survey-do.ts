@@ -11,7 +11,7 @@
 import { DurableObject } from 'cloudflare:workers';
 import { Kysely } from 'kysely';
 import { CloudflareDODialect } from './do-sqlite-dialect';
-import { ensureSchema } from './schema';
+import { ensureSchema, recreateSchemaAfterWipe } from './schema';
 import { SurveyCache } from './cache';
 import { createSurveyService, createRespondentService } from '../services/factory';
 import type { SurveyService, UpdateSurveyInput } from '../services/survey.service';
@@ -347,10 +347,14 @@ export class SurveyDO extends DurableObject {
         /* ignore */
       }
     }
-    // Destroy all DO state (SQLite + KV + alarms). The DO is reclaimed; any
-    // subsequent request to this ID creates a fresh, uninitialized instance,
-    // and `cache.survey` there throws ServiceError('Survey not found', 404).
+    // Destroy all DO state (SQLite + KV + alarms). deleteAll() also drops the
+    // SQLite tables, so recreate the empty schema immediately: this same live
+    // instance (not a fresh one) handles the next request, and a query against
+    // a missing table would throw a raw SQL error → 500 instead of the
+    // intended 404. With an empty-but-valid schema, `cache.survey` finds no
+    // row and throws ServiceError('Survey not found', 404).
     await this.ctx.storage.deleteAll();
+    recreateSchemaAfterWipe(this.ctx.storage.sql);
     this.cache.invalidateSurvey();
     this.cache.invalidateResults();
     return new Response(null, { status: 204 });

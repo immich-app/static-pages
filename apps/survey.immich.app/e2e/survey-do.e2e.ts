@@ -5,8 +5,8 @@
  * paths, including section/question CRUD, reordering, respondent flow, and results.
  */
 
-import { test, expect, type Page } from '@playwright/test';
-import { apiPost, apiPut, apiGet, apiDelete, API, ensureAuth, getAuthHeaders, parseCookie } from './helpers';
+import { test, expect } from '@playwright/test';
+import { apiPost, apiPut, apiGet, apiDelete, API, ensureAuth, parseCookie } from './helpers';
 
 let cookie: string;
 
@@ -257,8 +257,6 @@ test.describe('WebSocket protocol', () => {
   });
 
   test('WebSocket connects and receives counts', async ({ page }) => {
-    const wsMessages: string[] = [];
-
     // Intercept WebSocket messages
     await page.addInitScript(() => {
       const origWS = window.WebSocket;
@@ -622,13 +620,9 @@ test.describe('Respondent reset', () => {
 
 test.describe('WebSocket typed operations', () => {
   const slug = `do-ws-ops-${Date.now()}`;
-  let surveyId: string;
-  let sectionId: string;
 
   test.beforeAll(async () => {
-    const result = await createSurvey(slug);
-    surveyId = result.surveyId;
-    sectionId = result.sectionId;
+    await createSurvey(slug);
   });
 
   test('WS get-survey returns survey with sections and questions', async ({ page }) => {

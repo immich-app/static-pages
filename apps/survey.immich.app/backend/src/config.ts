@@ -44,9 +44,17 @@ export function configFromEnv(env: Env): AppConfig {
 
 // Load config from Node.js process.env
 export function configFromProcessEnv(): AppConfig {
+  const passwordSecret = process.env.PASSWORD_SECRET ?? '';
+  const sessionSecret = process.env.SESSION_SECRET ?? '';
+  // Fail fast instead of booting "healthy" with empty secrets — signing and
+  // verifying session/password tokens against an empty key silently breaks all
+  // auth (and would 500 at token-mint time).
+  if (!passwordSecret || !sessionSecret) {
+    throw new Error('PASSWORD_SECRET and SESSION_SECRET must both be set to non-empty values.');
+  }
   return {
-    passwordSecret: process.env.PASSWORD_SECRET ?? '',
-    sessionSecret: process.env.SESSION_SECRET ?? '',
+    passwordSecret,
+    sessionSecret,
     oidc: {
       issuer: process.env.OIDC_ISSUER ?? '',
       clientId: process.env.OIDC_CLIENT_ID ?? '',

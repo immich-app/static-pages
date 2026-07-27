@@ -99,9 +99,16 @@ export interface CreateQuestionInput {
   other_prompt?: string;
   max_length?: number;
   placeholder?: string;
-  conditional?: { showIf: { questionId: string; condition: string } };
+  conditional?: { showIf: { questionId: string; condition: string; value?: string; values?: string[] } };
   config?: Record<string, unknown>;
 }
+
+/**
+ * Maximum number of answers accepted in a single submit-answers batch. Shared
+ * so the client chunks its flush to match exactly what the server enforces
+ * (respondent.service / ws-handler reject any larger batch with a 400).
+ */
+export const BATCH_ANSWER_LIMIT = 20;
 
 export interface UpdateQuestionInput {
   section_id?: string;
@@ -114,7 +121,7 @@ export interface UpdateQuestionInput {
   other_prompt?: string;
   max_length?: number;
   placeholder?: string;
-  conditional?: { showIf: { questionId: string; condition: string } } | null;
+  conditional?: { showIf: { questionId: string; condition: string; value?: string; values?: string[] } } | null;
   config?: Record<string, unknown> | null;
 }
 

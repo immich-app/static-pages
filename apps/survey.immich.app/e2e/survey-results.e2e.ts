@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { apiPost, apiPut, apiGet, API, ensureAuth, getAuthHeaders, parseCookie } from './helpers';
+import { apiPost, apiPut, API, ensureAuth, getAuthHeaders, parseCookie } from './helpers';
 
 interface SetupResult {
   surveyId: string;

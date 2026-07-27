@@ -10,7 +10,6 @@
   import DropoffChart from '$lib/components/results/DropoffChart.svelte';
   import CompletionTimeChart from '$lib/components/results/CompletionTimeChart.svelte';
   import QuestionTimingChart from '$lib/components/results/QuestionTimingChart.svelte';
-  import FilterBar from '$lib/components/results/FilterBar.svelte';
   import ResponseViewer from '$lib/components/results/ResponseViewer.svelte';
   import TextSearch from '$lib/components/results/TextSearch.svelte';
   import PdfExportButton from '$lib/components/results/PdfExportButton.svelte';
@@ -162,16 +161,6 @@
             <DropoffChart data={loader.dropoffData} />
           </div>
         {/if}
-
-        <!-- Filter bar -->
-        <div class="mb-4">
-          <FilterBar
-            questions={loader.questions}
-            filterQuestionId={loader.filterQuestionId}
-            filterValue={loader.filterValue}
-            onFilterChange={loader.handleFilterChange}
-          />
-        </div>
 
         <!-- Per-question results -->
         <div class="space-y-4">

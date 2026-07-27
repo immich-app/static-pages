@@ -51,8 +51,6 @@ export function createResultsLoader(surveyId: string) {
   let error = $state<string | null>(null);
   let activeTab = $state<'overview' | 'responses' | 'search'>('overview');
   let granularity = $state<Granularity>('day');
-  let filterQuestionId = $state('');
-  let filterValue = $state('');
   let exporting = $state(false);
 
   let pollInterval: ReturnType<typeof setInterval> | undefined;
@@ -117,11 +115,6 @@ export function createResultsLoader(surveyId: string) {
   function handleGranularityChange(g: Granularity) {
     granularity = g;
     refreshTimeline();
-  }
-
-  function handleFilterChange(qId: string, val: string) {
-    filterQuestionId = qId;
-    filterValue = val;
   }
 
   async function handleExport(format: 'csv' | 'json') {
@@ -270,18 +263,11 @@ export function createResultsLoader(surveyId: string) {
     get granularity() {
       return granularity;
     },
-    get filterQuestionId() {
-      return filterQuestionId;
-    },
-    get filterValue() {
-      return filterValue;
-    },
     get exporting() {
       return exporting;
     },
     getQuestionResult,
     handleGranularityChange,
-    handleFilterChange,
     handleExport,
   };
 }

@@ -99,7 +99,14 @@ export function createSurveyEngine(
 
   const currentQuestion = $derived(surveyQuestions[currentIndex] as SurveyQuestion | undefined);
   const totalVisible = $derived(getVisibleQuestionCount(surveyQuestions, answers));
-  const progress = $derived(totalVisible > 0 ? (Object.keys(answers).length / totalVisible) * 100 : 0);
+  // Count only answers to questions that are still visible. A question hidden by
+  // skip logic after its controlling answer changed keeps its stored answer, so
+  // counting all answers (Object.keys(answers).length) against the visible total
+  // could push progress past 100%.
+  const answeredVisible = $derived(
+    surveyQuestions.filter((q) => q.id in answers && shouldShowQuestion(q, answers)).length,
+  );
+  const progress = $derived(totalVisible > 0 ? Math.min(100, (answeredVisible / totalVisible) * 100) : 0);
   const isLastQuestion = $derived(
     findNextVisibleIndex(currentIndex, surveyQuestions, answers) >= surveyQuestions.length,
   );

@@ -12,11 +12,8 @@
   }
 
   let { question, answer, onAnswer }: Props = $props();
-  let otherText = $state('');
-
-  $effect.pre(() => {
-    otherText = answer?.otherText ?? '';
-  });
+  // Writable derived: mirrors the saved "other" text, but local edits hold until it changes.
+  let otherText = $derived(answer?.otherText ?? '');
 
   const selectedValues = $derived<SvelteSet<string>>(new SvelteSet(answer?.value ? answer.value.split(',') : []));
 

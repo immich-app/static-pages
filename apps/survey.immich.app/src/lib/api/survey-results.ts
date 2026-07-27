@@ -9,7 +9,30 @@ import type {
   SearchResult,
   LiveCounts,
 } from '../types';
-import { getWsClientById } from './survey-ws';
+import { getWsClientById, type SurveyWsClient } from './survey-ws';
+
+/**
+ * Prefer a WebSocket command op when a live socket is attached, but fall back to
+ * the HTTP endpoint when there is no socket OR the op is rejected. The fallback
+ * matters in self-hosted Node mode, where the WS is presence-only and rejects
+ * command ops — without it these calls would surface an error (or, before the
+ * presence server learned to reject, hang for 30s) instead of loading via HTTP.
+ */
+async function wsOrHttp<T>(
+  surveyId: string,
+  send: (ws: SurveyWsClient) => Promise<unknown>,
+  http: () => Promise<T>,
+): Promise<T> {
+  const ws = getWsClientById(surveyId);
+  if (ws?.connected) {
+    try {
+      return (await send(ws)) as T;
+    } catch {
+      // Fall through to HTTP.
+    }
+  }
+  return http();
+}
 
 export async function getSurveyResults(id: string): Promise<{
   respondentCounts: { total: number; completed: number };
@@ -18,52 +41,46 @@ export async function getSurveyResults(id: string): Promise<{
     answers: Array<{ value: string; otherText: string | null; count: number }>;
   }>;
 }> {
-  const ws = getWsClientById(id);
-  if (ws?.connected) {
-    return ws.request('get-results', {}) as Promise<{
-      respondentCounts: { total: number; completed: number };
-      results: Array<{
-        questionId: string;
-        answers: Array<{ value: string; otherText: string | null; count: number }>;
-      }>;
-    }>;
-  }
-  return request(`/api/surveys/${id}/results`);
+  return wsOrHttp(
+    id,
+    (ws) => ws.request('get-results', {}),
+    () => request(`/api/surveys/${id}/results`),
+  );
 }
 
 export async function getSurveyTimeline(
   id: string,
   granularity: 'minute' | 'hour' | 'day' = 'day',
 ): Promise<TimelineDataPoint[]> {
-  const ws = getWsClientById(id);
-  if (ws?.connected) {
-    return ws.request('get-timeline', { granularity }) as Promise<TimelineDataPoint[]>;
-  }
-  return request(`/api/surveys/${id}/results/timeline?granularity=${granularity}`);
+  return wsOrHttp(
+    id,
+    (ws) => ws.request('get-timeline', { granularity }),
+    () => request(`/api/surveys/${id}/results/timeline?granularity=${granularity}`),
+  );
 }
 
 export async function getSurveyDropoff(id: string): Promise<DropoffDataPoint[]> {
-  const ws = getWsClientById(id);
-  if (ws?.connected) {
-    return ws.request('get-dropoff', {}) as Promise<DropoffDataPoint[]>;
-  }
-  return request(`/api/surveys/${id}/results/dropoff`);
+  return wsOrHttp(
+    id,
+    (ws) => ws.request('get-dropoff', {}),
+    () => request(`/api/surveys/${id}/results/dropoff`),
+  );
 }
 
 export async function getSurveyCompletionTimes(id: string): Promise<CompletionTimesPayload> {
-  const ws = getWsClientById(id);
-  if (ws?.connected) {
-    return ws.request('get-completion-times', {}) as Promise<CompletionTimesPayload>;
-  }
-  return request(`/api/surveys/${id}/results/completion-times`);
+  return wsOrHttp(
+    id,
+    (ws) => ws.request('get-completion-times', {}),
+    () => request(`/api/surveys/${id}/results/completion-times`),
+  );
 }
 
 export async function getSurveyQuestionTimings(id: string): Promise<QuestionTimingEntry[]> {
-  const ws = getWsClientById(id);
-  if (ws?.connected) {
-    return ws.request('get-question-timings', {}) as Promise<QuestionTimingEntry[]>;
-  }
-  return request(`/api/surveys/${id}/results/question-timings`);
+  return wsOrHttp(
+    id,
+    (ws) => ws.request('get-question-timings', {}),
+    () => request(`/api/surveys/${id}/results/question-timings`),
+  );
 }
 
 export async function listRespondents(
@@ -71,22 +88,19 @@ export async function listRespondents(
   offset = 0,
   limit = 20,
 ): Promise<{ respondents: RespondentSummary[]; total: number }> {
-  const ws = getWsClientById(id);
-  if (ws?.connected) {
-    return ws.request('list-respondents', { offset, limit }) as Promise<{
-      respondents: RespondentSummary[];
-      total: number;
-    }>;
-  }
-  return request(`/api/surveys/${id}/results/respondents?offset=${offset}&limit=${limit}`);
+  return wsOrHttp(
+    id,
+    (ws) => ws.request('list-respondents', { offset, limit }),
+    () => request(`/api/surveys/${id}/results/respondents?offset=${offset}&limit=${limit}`),
+  );
 }
 
 export async function getRespondent(surveyId: string, respondentId: string): Promise<RespondentDetail> {
-  const ws = getWsClientById(surveyId);
-  if (ws?.connected) {
-    return ws.request('get-respondent', { respondentId }) as Promise<RespondentDetail>;
-  }
-  return request(`/api/surveys/${surveyId}/results/respondents/${respondentId}`);
+  return wsOrHttp(
+    surveyId,
+    (ws) => ws.request('get-respondent', { respondentId }),
+    () => request(`/api/surveys/${surveyId}/results/respondents/${respondentId}`),
+  );
 }
 
 export async function searchAnswers(
@@ -95,20 +109,23 @@ export async function searchAnswers(
   questionId?: string,
   pagination?: { offset?: number; limit?: number },
 ): Promise<{ results: SearchResult[]; total: number; offset: number; limit: number }> {
-  const ws = getWsClientById(id);
-  if (ws?.connected) {
-    return ws.request('search-answers', {
-      query,
-      questionId,
-      offset: pagination?.offset,
-      limit: pagination?.limit,
-    }) as Promise<{ results: SearchResult[]; total: number; offset: number; limit: number }>;
-  }
-  const params = new URLSearchParams({ q: query });
-  if (questionId) params.set('questionId', questionId);
-  if (pagination?.offset) params.set('offset', String(pagination.offset));
-  if (pagination?.limit) params.set('limit', String(pagination.limit));
-  return request(`/api/surveys/${id}/results/search?${params}`);
+  return wsOrHttp(
+    id,
+    (ws) =>
+      ws.request('search-answers', {
+        query,
+        questionId,
+        offset: pagination?.offset,
+        limit: pagination?.limit,
+      }),
+    () => {
+      const params = new URLSearchParams({ q: query });
+      if (questionId) params.set('questionId', questionId);
+      if (pagination?.offset) params.set('offset', String(pagination.offset));
+      if (pagination?.limit) params.set('limit', String(pagination.limit));
+      return request(`/api/surveys/${id}/results/search?${params}`);
+    },
+  );
 }
 
 type LiveResults = {
@@ -125,7 +142,11 @@ const liveResultsEtags = new Map<string, string>();
 export async function getLiveResults(id: string): Promise<LiveResults | null> {
   const ws = getWsClientById(id);
   if (ws?.connected) {
-    return ws.request('get-live-results', {}) as Promise<LiveResults>;
+    try {
+      return (await ws.request('get-live-results', {})) as LiveResults;
+    } catch {
+      // Fall through to HTTP (self-hosted presence-only WS).
+    }
   }
 
   const headers: Record<string, string> = {};
@@ -163,8 +184,12 @@ export async function getLiveResults(id: string): Promise<LiveResults | null> {
 export async function deleteRespondent(surveyId: string, respondentId: string): Promise<void> {
   const ws = getWsClientById(surveyId);
   if (ws?.connected) {
-    await ws.request('delete-respondent', { respondentId });
-    return;
+    try {
+      await ws.request('delete-respondent', { respondentId });
+      return;
+    } catch {
+      // Fall through to HTTP (self-hosted presence-only WS).
+    }
   }
   await request(`/api/surveys/${surveyId}/results/respondents/${respondentId}`, {
     method: 'DELETE',

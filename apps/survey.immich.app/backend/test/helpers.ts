@@ -1,5 +1,10 @@
 const API = process.env.API_URL || 'http://localhost:8787';
-const ADMIN_PASSWORD = 'integration-test-password';
+// Admin setup is one-time per server. In CI the integration suite and the
+// Playwright e2e suite run sequentially against the SAME wrangler dev
+// instance, so whichever runs first performs setup and the other must be able
+// to log in with the same password. Keep this default in sync with the e2e
+// helper (e2e/helpers.ts TEST_PASSWORD); override both via TEST_PASSWORD.
+const ADMIN_PASSWORD = process.env.TEST_PASSWORD || 'e2e-test-password-12345';
 
 let adminCookie: string | null = null;
 
@@ -95,7 +100,7 @@ export async function createPublishedSurvey(options?: {
     { text: 'Your name', type: 'text' },
     { text: 'Rate us', type: 'nps' },
   ]) {
-    const qRes = await authedRequest(`/api/sections/${section.id}/questions`, {
+    const qRes = await authedRequest(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
       method: 'POST',
       body: JSON.stringify(q),
     });

@@ -56,7 +56,7 @@ export interface CreateQuestionInput {
   other_prompt?: string;
   max_length?: number;
   placeholder?: string;
-  conditional?: { showIf: { questionId: string; condition: string } };
+  conditional?: { showIf: { questionId: string; condition: string; value?: string; values?: string[] } };
   config?: Record<string, unknown>;
 }
 
@@ -71,7 +71,7 @@ export interface UpdateQuestionInput {
   other_prompt?: string;
   max_length?: number;
   placeholder?: string;
-  conditional?: { showIf: { questionId: string; condition: string } } | null;
+  conditional?: { showIf: { questionId: string; condition: string; value?: string; values?: string[] } } | null;
   config?: Record<string, unknown> | null;
 }
 
@@ -317,6 +317,11 @@ export class SurveyService {
   }
 
   async deleteSection(id: string): Promise<void> {
+    // The Durable Object SQLite schema declares no foreign keys, so there is no
+    // ON DELETE CASCADE — deleting only the section row would orphan its
+    // questions (they'd linger with a dangling section_id). Remove the child
+    // questions explicitly first.
+    await this.questions.deleteBySectionId(id);
     await this.sections.delete(id);
   }
 

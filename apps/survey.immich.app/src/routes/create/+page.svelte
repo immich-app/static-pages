@@ -56,13 +56,30 @@
     showBuilder = true;
   }
 
-  async function handleSaveSurvey(updates: Partial<Survey>) {
+  async function handleSaveSurvey(updates: Partial<Survey> & { password?: string | null }) {
     saving = true;
     try {
       if (!survey.id) {
         const created = await createSurvey({
           title: updates.title || 'Untitled Survey',
           description: updates.description ?? undefined,
+        });
+
+        // The create endpoint only accepts title/description. Persist the rest
+        // of the survey-level settings the builder collected (welcome/thank-you
+        // copy, scheduling, response cap, randomization, slug, password) with a
+        // follow-up update — otherwise they are silently dropped on first save.
+        await updateSurvey(created.id, {
+          slug: updates.slug ?? undefined,
+          welcome_title: updates.welcomeTitle ?? undefined,
+          welcome_description: updates.welcomeDescription ?? undefined,
+          thank_you_title: updates.thankYouTitle ?? undefined,
+          thank_you_description: updates.thankYouDescription ?? undefined,
+          closes_at: updates.closesAt ?? undefined,
+          max_responses: updates.maxResponses ?? undefined,
+          randomize_questions: updates.randomizeQuestions ?? undefined,
+          randomize_options: updates.randomizeOptions ?? undefined,
+          password: updates.password ?? undefined,
         });
 
         // Save initial sections and questions (from templates or user-added)

@@ -11,13 +11,12 @@
       },
     ],
   },
+  // SurveyDO is the only Durable Object class and is SQLite-backed from the
+  // start. Kept in sync with the Terraform migration (worker.tf) and
+  // wrangler-dev.jsonc. The earlier v1 "SurveySession" class never existed.
   "migrations": [
     {
       "tag": "v1",
-      "new_classes": ["SurveySession"],
-    },
-    {
-      "tag": "v2",
       "new_sqlite_classes": ["SurveyDO"],
     },
   ],

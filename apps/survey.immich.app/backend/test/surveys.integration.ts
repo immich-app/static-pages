@@ -21,8 +21,8 @@ describe('Survey CRUD', () => {
   it('lists surveys', async () => {
     const res = await authedRequest('/api/surveys');
     expect(res.status).toBe(200);
-    const data = (await res.json()) as Array<{ id: string }>;
-    expect(data.length).toBeGreaterThan(0);
+    const data = (await res.json()) as { surveys: Array<{ id: string }>; total: number };
+    expect(data.surveys.length).toBeGreaterThan(0);
   });
 
   it('gets survey by ID', async () => {
@@ -155,7 +155,7 @@ describe('Sections and Questions', () => {
     expect(sectionRes.status).toBe(201);
     const section = (await sectionRes.json()) as { id: string };
 
-    const questionRes = await authedRequest(`/api/sections/${section.id}/questions`, {
+    const questionRes = await authedRequest(`/api/surveys/${surveyId}/sections/${section.id}/questions`, {
       method: 'POST',
       body: JSON.stringify({
         text: 'Q1',

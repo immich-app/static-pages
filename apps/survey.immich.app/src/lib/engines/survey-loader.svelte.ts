@@ -1,4 +1,5 @@
 import { onMount, setContext } from 'svelte';
+import { SvelteSet } from 'svelte/reactivity';
 import type { Survey, SurveySection, SurveyQuestion } from '../types';
 import { getPublishedSurvey, authenticateSurvey } from '../api/surveys';
 import { createSurveyWsClient, type SurveyWsClient } from '../api/survey-ws';
@@ -38,7 +39,7 @@ export function createSurveyLoader(slug: string) {
    * brief overlap between one component's onDestroy and the next's onMount)
    * — each unregister removes only the hook it registered.
    */
-  const preFlushHooks = new Set<() => void>();
+  const preFlushHooks = new SvelteSet<() => void>();
 
   function registerPreFlush(hook: () => void) {
     preFlushHooks.add(hook);
@@ -48,9 +49,19 @@ export function createSurveyLoader(slug: string) {
     preFlushHooks.delete(hook);
   }
 
+  /**
+   * Synchronously flush every pending debounce into the engine/buffer. Used by
+   * QuestionCard before it validates on Next/Enter, so validation reads the
+   * value the respondent just typed rather than the pre-debounce (often empty)
+   * committed answer.
+   */
+  function flushPending() {
+    for (const hook of preFlushHooks) hook();
+  }
+
   // Expose the pre-flush registry via Svelte context so debounced question
   // components can register without prop drilling through SurveyShell/QuestionCard.
-  setContext('survey-pre-flush', { registerPreFlush, unregisterPreFlush });
+  setContext('survey-pre-flush', { registerPreFlush, unregisterPreFlush, flushPending });
 
   $effect(() => {
     const q = engine?.currentQuestion;
@@ -137,15 +148,25 @@ export function createSurveyLoader(slug: string) {
     const resume = await client.fetchResume();
     if (resume.isComplete) {
       alreadyCompleted = true;
-    } else if (resume.answers && resume.nextQuestionIndex !== undefined && resume.nextQuestionIndex > 0) {
-      // Cap the resume index to the last valid question. If the respondent
-      // answered every question but never hit Submit (tab crash, browser
-      // close), nextQuestionIndex can be past the end of the array. We
-      // land them on the LAST question so they can review their answer and
-      // click Submit — auto-completing would skip any unsaved free-text
-      // edits they were working on.
-      const safeIndex = Math.min(resume.nextQuestionIndex, questions.length - 1);
-      engine.initialize(resume.answers, safeIndex);
+    } else if (resume.answers && Object.keys(resume.answers).length > 0) {
+      // Resume on the last question the respondent actually answered, matched
+      // by question ID in the CLIENT's final (section-grouped, possibly
+      // randomized) order. The server's nextQuestionIndex is a positional index
+      // over its own flat sort_order, which interleaves sections and ignores
+      // client-side randomization — applying it positionally lands on the wrong
+      // question. Landing on the last answered question lets the respondent
+      // review it and continue; auto-advancing could skip an in-progress
+      // free-text edit that wasn't flushed before the tab closed.
+      const answered = resume.answers;
+      let lastAnsweredIdx = -1;
+      for (let i = 0; i < questions.length; i++) {
+        if (questions[i].id in answered) lastAnsweredIdx = i;
+      }
+      if (lastAnsweredIdx >= 0) {
+        engine.initialize(resume.answers, lastAnsweredIdx);
+      } else {
+        showWelcome = true;
+      }
     } else {
       showWelcome = true;
     }
@@ -165,6 +186,13 @@ export function createSurveyLoader(slug: string) {
   async function handleComplete() {
     if (!client) return;
     try {
+      // Flush any pending debounce timer from the active text/email/number/
+      // textarea component into the buffer BEFORE snapshotting it. Submit is
+      // invoked synchronously from handleNext, before Svelte tears the active
+      // component down, so its onDestroy flush hasn't run yet — without this
+      // an answer typed within the 300ms debounce window is lost. Mirrors the
+      // beforeunload path.
+      for (const hook of preFlushHooks) hook();
       const flushed = await client.flushBuffer();
       if (!flushed) {
         error = 'Failed to save your answers. Please try again.';

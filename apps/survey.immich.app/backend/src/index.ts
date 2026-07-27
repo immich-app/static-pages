@@ -258,6 +258,11 @@ function matchDORoute(method: string, pathname: string): { surveyId?: string; sl
     // Tags live in D1, not in the DO — let itty-router handle them
     const subPath = surveyMatch[2] || '';
     if (subPath === '/tags') return null;
+    // `/init` is an INTERNAL DO endpoint the worker calls directly via
+    // stub.fetch (see initDO). It unconditionally wipes and re-seeds all
+    // survey data, so it must never be reachable from the public HTTP surface.
+    // Refuse to forward it — itty-router has no such route, so it 404s.
+    if (subPath === '/init') return null;
     return { surveyId: id };
   }
 
@@ -328,7 +333,6 @@ export default {
       return response;
     }
 
-    const db = createD1Database(env.DB);
     const config = configFromEnv(env);
 
     // Resolve survey ID
@@ -408,6 +412,33 @@ export default {
       return stub.fetch(new Request(request.url, { method: request.method, headers: wsHeaders }));
     }
 
+    // Enforce global slug uniqueness for a top-level survey update here in the
+    // worker, before the DO applies it. Each survey lives in its own DO, so the
+    // DO's own updateSurvey can only see its single survey and can never detect
+    // a sibling already using the slug. The catalog sync that would trip D1's
+    // UNIQUE(slug) constraint runs in waitUntil, where its failure is invisible
+    // to the client — the update would falsely appear to succeed. We buffer the
+    // body so it can still be forwarded after the check.
+    let forwardBody: BodyInit | null = request.body;
+    const surveyPutSubPath = pathname.match(SURVEY_ID_PATTERN)?.[2] ?? '';
+    if (method === 'PUT' && doMatch.surveyId && (surveyPutSubPath === '' || surveyPutSubPath === '/')) {
+      const raw = await request.text();
+      forwardBody = raw;
+      try {
+        const parsed = JSON.parse(raw) as { slug?: unknown };
+        if (typeof parsed.slug === 'string' && parsed.slug.trim() !== '') {
+          const conflict = await env.DB.prepare('SELECT id FROM surveys WHERE slug = ? AND id != ?')
+            .bind(parsed.slug, surveyId)
+            .first<{ id: string }>();
+          if (conflict) {
+            return Response.json({ error: 'Slug is already in use' }, { status: 409 });
+          }
+        }
+      } catch {
+        // Non-JSON / unparseable body — let the DO's own validation reject it.
+      }
+    }
+
     // Build headers for the DO request. Strip any client-supplied internal
     // headers up front — the worker is the only thing allowed to set them.
     const doHeaders = new Headers(request.headers);
@@ -432,7 +463,7 @@ export default {
     const doRequest = new Request(request.url, {
       method: request.method,
       headers: doHeaders,
-      body: request.body,
+      body: forwardBody,
     });
     const doResponse = await stub.fetch(doRequest);
 
@@ -515,12 +546,19 @@ export default {
       }
     }
 
-    // Apply security headers and CORS
+    // Apply security headers and CORS. These DO-routed responses carry
+    // credentialed data (admin session cookie, respondent/spw_ cookies), so we
+    // must NOT reflect an arbitrary Origin together with
+    // Access-Control-Allow-Credentials: true (CWE-942) — that would let any
+    // origin, including a sibling *.immich.app (same-site under SameSite=Lax),
+    // read the response cross-origin. Only echo credentialed CORS for the app's
+    // own origin (same-origin, or the configured OIDC redirect origin).
     securityHeaders(response);
-    const origin = request.headers.get('Origin');
-    if (origin) {
-      response.headers.set('Access-Control-Allow-Origin', origin);
+    const corsOrigin = allowedCredentialedOrigin(request, config);
+    if (corsOrigin) {
+      response.headers.set('Access-Control-Allow-Origin', corsOrigin);
       response.headers.set('Access-Control-Allow-Credentials', 'true');
+      response.headers.set('Vary', 'Origin');
     }
 
     return response;
@@ -529,6 +567,31 @@ export default {
 
 function checkRole(role: UserRole, minRole: UserRole): boolean {
   return (ROLE_HIERARCHY[role] ?? 0) >= (ROLE_HIERARCHY[minRole] ?? 0);
+}
+
+/**
+ * Return the request Origin only if it is safe to echo with
+ * Access-Control-Allow-Credentials: true — i.e. it is the app's own origin.
+ * Accepts same-origin requests and the configured OIDC redirect origin (which
+ * is where the SPA is served, and in dev covers the Vite proxy on :5173).
+ * Any other origin returns null so no credentialed CORS headers are emitted.
+ */
+function allowedCredentialedOrigin(request: Request, config: import('./config').AppConfig): string | null {
+  const origin = request.headers.get('Origin');
+  if (!origin) return null;
+  try {
+    if (origin === new URL(request.url).origin) return origin;
+  } catch {
+    // Unparseable request URL — fall through to the configured origin check.
+  }
+  if (config.oidc.redirectUri) {
+    try {
+      if (origin === new URL(config.oidc.redirectUri).origin) return origin;
+    } catch {
+      // Malformed redirect URI — treat as no configured origin.
+    }
+  }
+  return null;
 }
 
 /** Determine the minimum role required for a DO admin route */

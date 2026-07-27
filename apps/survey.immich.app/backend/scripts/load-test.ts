@@ -264,12 +264,6 @@ async function timedFetch(
   }
 }
 
-function parseCookieValue(headers: Headers, name: string): string | undefined {
-  const setCookie = headers.get('set-cookie') ?? '';
-  const match = setCookie.match(new RegExp(`${name}=([^;]+)`));
-  return match?.[1];
-}
-
 // ============================================================
 // Auth + survey setup
 // ============================================================
@@ -461,7 +455,9 @@ function generateAnswer(q: Question): { questionId: string; value: string; other
   if (q.options) {
     try {
       options = JSON.parse(q.options);
-    } catch {}
+    } catch {
+      // Malformed options JSON — fall back to the empty default.
+    }
   }
 
   switch (q.type) {
@@ -498,7 +494,9 @@ function generateAnswer(q: Question): { questionId: string; value: string; other
           const cfg = JSON.parse(q.config);
           if (cfg.min != null) min = cfg.min;
           if (cfg.max != null) max = cfg.max;
-        } catch {}
+        } catch {
+          // Malformed config JSON — keep the default min/max.
+        }
       }
       return { ...base, value: String(min + Math.floor(Math.random() * (max - min + 1))) };
     }
@@ -508,7 +506,9 @@ function generateAnswer(q: Question): { questionId: string; value: string; other
         try {
           const cfg = JSON.parse(q.config);
           if (cfg.scaleMax) scaleMax = cfg.scaleMax;
-        } catch {}
+        } catch {
+          // Malformed config JSON — keep the default scaleMax.
+        }
       }
       return { ...base, value: String(1 + Math.floor(Math.random() * scaleMax)) };
     }

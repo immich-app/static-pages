@@ -86,8 +86,7 @@ const initializedInstances = new WeakSet<SqlStorage>();
  */
 const MIGRATIONS: string[] = ['ALTER TABLE answers ADD COLUMN answer_ms INTEGER'];
 
-export function ensureSchema(sql: SqlStorage): void {
-  if (initializedInstances.has(sql)) return;
+function applySchema(sql: SqlStorage): void {
   sql.exec(SCHEMA);
   for (const stmt of MIGRATIONS) {
     try {
@@ -103,5 +102,22 @@ export function ensureSchema(sql: SqlStorage): void {
       }
     }
   }
+}
+
+export function ensureSchema(sql: SqlStorage): void {
+  if (initializedInstances.has(sql)) return;
+  applySchema(sql);
   initializedInstances.add(sql);
+}
+
+/**
+ * Recreate the empty schema after `storage.deleteAll()` has dropped every
+ * table. The per-instance `ensureSchema` guard short-circuits on the same
+ * live SqlStorage object, so without this an in-memory DO instance that
+ * handled a delete would have no tables and 500 (rather than 404) on the
+ * next query. The CREATE TABLE IF NOT EXISTS statements make this safe to
+ * run unconditionally.
+ */
+export function recreateSchemaAfterWipe(sql: SqlStorage): void {
+  applySchema(sql);
 }

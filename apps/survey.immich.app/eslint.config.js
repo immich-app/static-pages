@@ -43,13 +43,6 @@ export default [
     },
   },
   {
-    ignores: [
-      'build/',
-      '.svelte-kit/',
-      'dist/',
-      'backend/dist/',
-      'backend/.wrangler/',
-      'backend/.svelte-kit/',
-    ],
+    ignores: ['build/', '.svelte-kit/', 'dist/', 'backend/dist/', 'backend/.wrangler/', 'backend/.svelte-kit/'],
   },
 ];

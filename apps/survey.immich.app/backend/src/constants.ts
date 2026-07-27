@@ -13,7 +13,9 @@ export const VALID_QUESTION_TYPES = [
 
 export const SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{1,48}[a-z0-9]$/;
 
-export const BATCH_ANSWER_LIMIT = 20;
+// Single source of truth lives in the shared protocol module so the client
+// chunks its answer flushes to exactly the size the server accepts.
+export { BATCH_ANSWER_LIMIT } from '../../shared/ws-protocol';
 
 export const ACTIVE_RESPONDENT_WINDOW_MS = 5 * 60 * 1000;
 

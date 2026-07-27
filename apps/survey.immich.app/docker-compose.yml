@@ -5,8 +5,10 @@ services:
       - '${PORT:-3000}:3000'
     environment:
       - DATABASE_URL=${DATABASE_URL:-/data/survey.db}
-      - SESSION_SECRET=${SESSION_SECRET}
-      - PASSWORD_SECRET=${PASSWORD_SECRET}
+      # Required — fail fast at `docker compose up` if unset rather than booting
+      # with empty secrets (which mint/verify invalid session & password tokens).
+      - SESSION_SECRET=${SESSION_SECRET:?SESSION_SECRET is required}
+      - PASSWORD_SECRET=${PASSWORD_SECRET:?PASSWORD_SECRET is required}
       - COOKIE_SECURE=${COOKIE_SECURE:-false}
       # OIDC (optional)
       - OIDC_ISSUER=${OIDC_ISSUER:-}
@@ -19,13 +21,16 @@ services:
     volumes:
       - survey-data:/data
     restart: unless-stopped
-    # /api/auth/me returns 200 when healthy (authenticated or not). Treat
-    # any 2xx as a pass; non-2xx is a genuine failure (e.g. migrations
-    # still running, DB unreachable, SESSION_SECRET missing).
+    # /api/auth/me returns 200 when healthy (authenticated or not). The runtime
+    # image (node:20-slim) ships neither wget nor curl, so probe with Node's
+    # built-in fetch and exit non-zero on any non-2xx (migrations still running,
+    # DB unreachable, missing secrets).
     healthcheck:
       test:
-        - CMD-SHELL
-        - "wget -qO /dev/null --server-response http://localhost:3000/api/auth/me 2>&1 | awk '/HTTP/{print $$2}' | grep -qE '^2' || exit 1"
+        - CMD
+        - node
+        - '-e'
+        - "fetch('http://localhost:3000/api/auth/me').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
       interval: 30s
       timeout: 5s
       retries: 3

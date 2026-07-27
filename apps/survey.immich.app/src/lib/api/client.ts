@@ -1,5 +1,6 @@
 import type { SurveyAnswer } from '../types';
 import type { SurveyWsClient } from './survey-ws';
+import { BATCH_ANSWER_LIMIT } from '$shared/ws-protocol';
 
 interface PendingSave {
   questionId: string;
@@ -127,16 +128,26 @@ export function createApiClient(slug: string) {
       inactivityTimer = null;
     }
 
-    const batch = [...answerBuffer.values()];
+    const all = [...answerBuffer.values()];
     answerBuffer.clear();
 
-    const success = await saveBatch(batch);
+    // Chunk to the server's per-batch cap — a single submit-answers request
+    // with more than BATCH_ANSWER_LIMIT answers is rejected wholesale (400),
+    // which would otherwise drop every buffered answer once the buffer grew
+    // past the limit (e.g. while retrying under a flaky connection).
+    const failed: PendingSave[] = [];
+    for (let i = 0; i < all.length; i += BATCH_ANSWER_LIMIT) {
+      const chunk = all.slice(i, i + BATCH_ANSWER_LIMIT);
+      const ok = await saveBatch(chunk);
+      if (!ok) failed.push(...chunk);
+    }
+    const success = failed.length === 0;
     if (success) {
       unflushedCount = 0;
       consecutiveFailures = 0;
       onSaveSuccessCallback?.();
     } else {
-      for (const item of batch) {
+      for (const item of failed) {
         if (!answerBuffer.has(item.questionId)) {
           answerBuffer.set(item.questionId, item);
         }
@@ -165,11 +176,16 @@ export function createApiClient(slug: string) {
     }
     unflushedCount = 0;
 
-    const batch = [...answerBuffer.values()];
+    const all = [...answerBuffer.values()];
     answerBuffer.clear();
 
-    const blob = new Blob([JSON.stringify({ answers: batch })], { type: 'application/json' });
-    navigator.sendBeacon(`${base}/answers/batch`, blob);
+    // Same per-batch cap as flushBuffer — send one beacon per chunk so a large
+    // pending buffer isn't rejected as a single oversized request on unload.
+    for (let i = 0; i < all.length; i += BATCH_ANSWER_LIMIT) {
+      const chunk = all.slice(i, i + BATCH_ANSWER_LIMIT);
+      const blob = new Blob([JSON.stringify({ answers: chunk })], { type: 'application/json' });
+      navigator.sendBeacon(`${base}/answers/batch`, blob);
+    }
   }
 
   async function fetchResume(): Promise<{

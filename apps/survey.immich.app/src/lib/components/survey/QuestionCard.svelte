@@ -11,9 +11,11 @@
   import NumberQuestion from './NumberQuestion.svelte';
   import DropdownQuestion from './DropdownQuestion.svelte';
   import LikertQuestion from './LikertQuestion.svelte';
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy, getContext, tick } from 'svelte';
   import { announce } from '$lib/stores/announcer.svelte';
   import { validateAnswer } from '$shared/answer-validation';
+
+  const preFlush = getContext<{ flushPending?: () => void } | undefined>('survey-pre-flush');
 
   interface Props {
     question: SurveyQuestion;
@@ -49,8 +51,14 @@
     validationError = null;
   }
 
-  function handleNext() {
+  async function handleNext() {
     if (!question) return;
+    // Commit any pending debounced text input (Enter/Next can fire within the
+    // 300ms debounce window) and let the flushed value propagate to the `answer`
+    // prop before validating — otherwise we'd validate the stale pre-debounce
+    // value and wrongly block a just-typed valid answer.
+    preFlush?.flushPending?.();
+    await tick();
     const error = validateAnswer(question, answer?.value ?? '', answer?.otherText);
     if (error) {
       validationError = error;

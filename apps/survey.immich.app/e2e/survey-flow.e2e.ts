@@ -544,49 +544,40 @@ test.describe('Survey with skip logic across question types', () => {
 // ──────────────────────────────────────────────────────────────────────────────
 test.describe('Enter key advances on single-line inputs', () => {
   let slug: string;
-  let questionIds: { text: string; email: string; number: string; textarea: string; rating: string };
 
   test.beforeAll(async () => {
     const survey = await apiPost('/api/surveys', { title: 'Enter Key Test' });
     const section = await apiPost(`/api/surveys/${survey.id}/sections`, { title: 'Inputs' });
 
-    const qText = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
+    await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
       text: 'Your name',
       type: 'text',
       required: true,
       placeholder: 'Your name',
     });
-    const qEmail = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
+    await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
       text: 'Your email',
       type: 'email',
       required: true,
       placeholder: 'you@example.com',
     });
-    const qNumber = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
+    await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
       text: 'Your age',
       type: 'number',
       required: true,
     });
-    const qTextarea = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
+    await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
       text: 'Any comments',
       type: 'textarea',
       required: false,
       placeholder: 'Tell us more',
     });
-    const qRating = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
+    await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
       text: 'Rate us',
       type: 'rating',
       required: true,
       config: { scaleMax: 5 },
     });
-
-    questionIds = {
-      text: qText.id,
-      email: qEmail.id,
-      number: qNumber.id,
-      textarea: qTextarea.id,
-      rating: qRating.id,
-    };
 
     slug = `enter-key-${Date.now()}`;
     await apiPut(`/api/surveys/${survey.id}`, { slug });

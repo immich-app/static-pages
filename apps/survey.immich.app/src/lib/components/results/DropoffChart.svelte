@@ -68,7 +68,10 @@
                 {row.respondentsReached} / {startingCohort}
                 <span class="ml-1 text-gray-600">({pct}%)</span>
                 {#if skipped > 0}
-                  <span class="ml-1 text-gray-500" title="Reached this question but skipped it (conditional or optional)">
+                  <span
+                    class="ml-1 text-gray-500"
+                    title="Reached this question but skipped it (conditional or optional)"
+                  >
                     · {skipped} skipped
                   </span>
                 {/if}

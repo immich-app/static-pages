@@ -449,8 +449,7 @@ export class RespondentService {
     return dropoffData.map((d, i) => {
       const reached = d.reached_count;
       const previousReached = i === 0 ? totalRespondents : dropoffData[i - 1].reached_count;
-      const dropoffRate =
-        previousReached > 0 ? Math.round(((previousReached - reached) / previousReached) * 100) : 0;
+      const dropoffRate = previousReached > 0 ? Math.round(((previousReached - reached) / previousReached) * 100) : 0;
       return {
         questionId: d.question_id,
         questionText: d.question_text,

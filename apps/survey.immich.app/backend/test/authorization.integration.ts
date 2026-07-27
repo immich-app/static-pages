@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeAll } from 'vitest';
-import { request, authedRequest, getAdminCookie, createCookieForRole, createPublishedSurvey } from './helpers';
+import { request, createCookieForRole } from './helpers';
 
 describe('Authorization - unauthenticated requests', () => {
   it('rejects unauthenticated GET /api/surveys with 401', async () => {

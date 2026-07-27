@@ -143,6 +143,10 @@ export class QuestionRepository {
     await this.db.deleteFrom('survey_questions').where('id', '=', id).execute();
   }
 
+  async deleteBySectionId(sectionId: string): Promise<void> {
+    await this.db.deleteFrom('survey_questions').where('section_id', '=', sectionId).execute();
+  }
+
   async reorder(items: Array<{ id: string; sort_order: number }>): Promise<void> {
     await this.db.transaction().execute(async (trx) => {
       for (const item of items) {

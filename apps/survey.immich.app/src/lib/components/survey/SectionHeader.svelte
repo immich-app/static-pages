@@ -12,15 +12,7 @@
     canGoBack?: boolean;
   }
 
-  let {
-    section,
-    sectionIndex,
-    totalSections,
-    questionCount,
-    onContinue,
-    onBack,
-    canGoBack = false,
-  }: Props = $props();
+  let { section, sectionIndex, totalSections, questionCount, onContinue, onBack, canGoBack = false }: Props = $props();
 </script>
 
 <div class="flex flex-1 flex-col items-center justify-center gap-4 p-6">
@@ -32,7 +24,7 @@
         Section {sectionIndex + 1} of {totalSections}
       </span>
       <div class="flex items-center gap-1.5" aria-hidden="true">
-        {#each { length: totalSections } as _, i (i)}
+        {#each { length: totalSections }, i (i)}
           <span
             class="h-1.5 w-6 rounded-full {i <= sectionIndex ? 'bg-immich-primary' : 'bg-gray-300 dark:bg-gray-700'}"
           ></span>

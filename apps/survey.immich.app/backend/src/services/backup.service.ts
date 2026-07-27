@@ -1,13 +1,11 @@
 import type { Kysely } from 'kysely';
 import type { Database } from '../db';
 
-// Tables that must always be present in a backup
+// Tables that must always be present in a backup. The full per-table import
+// order (including the optional survey_sections/survey_questions/respondents/
+// answers tables, empty in Workers/DO mode) is spelled out in `tables` inside
+// importAll; only the always-required set is validated up front here.
 const REQUIRED_TABLES = ['surveys', 'tags', 'survey_tags', 'audit_log', 'admin_credentials'] as const;
-
-// Tables that are optional — present in Node.js single-DB mode but empty in Workers/DO mode
-const OPTIONAL_TABLES = ['survey_sections', 'survey_questions', 'respondents', 'answers'] as const;
-
-const ALL_TABLES = [...REQUIRED_TABLES, ...OPTIONAL_TABLES] as const;
 
 /**
  * Expected columns per table. Restore rejects any row that's missing a

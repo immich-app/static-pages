@@ -129,6 +129,18 @@ export function registerSurveyRoutes(router: AppRouter) {
     return Response.json(section, { status: 201 });
   });
 
+  // Register the literal `/sections/reorder` route BEFORE the `/sections/:id`
+  // routes: itty-router matches in registration order, so `:id` would
+  // otherwise capture "reorder" and route a reorder request into updateSection.
+  router.put('/api/surveys/:id/sections/reorder', async (request: AuthenticatedRequest) => {
+    requireRole(request.user, 'editor');
+    const ctx = getContext(request);
+    const service = createSurveyService(ctx.db);
+    const body = (await request.json()) as { items: Array<{ id: string; sort_order: number }> };
+    await service.reorderSections(request.params.id, body.items);
+    return new Response(null, { status: 204 });
+  });
+
   router.put('/api/surveys/:surveyId/sections/:id', async (request: AuthenticatedRequest) => {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
@@ -143,15 +155,6 @@ export function registerSurveyRoutes(router: AppRouter) {
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
     await service.deleteSection(request.params.id);
-    return new Response(null, { status: 204 });
-  });
-
-  router.put('/api/surveys/:id/sections/reorder', async (request: AuthenticatedRequest) => {
-    requireRole(request.user, 'editor');
-    const ctx = getContext(request);
-    const service = createSurveyService(ctx.db);
-    const body = (await request.json()) as { items: Array<{ id: string; sort_order: number }> };
-    await service.reorderSections(request.params.id, body.items);
     return new Response(null, { status: 204 });
   });
 

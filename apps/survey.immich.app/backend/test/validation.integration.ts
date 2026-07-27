@@ -42,7 +42,7 @@ describe('Survey publish validation', () => {
     });
     const section = (await sectionRes.json()) as { id: string };
 
-    await authedRequest(`/api/sections/${section.id}/questions`, {
+    await authedRequest(`/api/surveys/${id}/sections/${section.id}/questions`, {
       method: 'POST',
       body: JSON.stringify({ text: 'Q1', type: 'text' }),
     });
@@ -90,6 +90,7 @@ describe('Survey publish validation', () => {
 });
 
 describe('Question creation validation', () => {
+  let surveyId: string;
   let sectionId: string;
 
   beforeAll(async () => {
@@ -100,6 +101,7 @@ describe('Question creation validation', () => {
       body: JSON.stringify({ title: 'Question Validation Survey' }),
     });
     const { id } = (await surveyRes.json()) as { id: string };
+    surveyId = id;
 
     const sectionRes = await authedRequest(`/api/surveys/${id}/sections`, {
       method: 'POST',
@@ -110,7 +112,7 @@ describe('Question creation validation', () => {
   });
 
   it('rejects empty question text', async () => {
-    const res = await authedRequest(`/api/sections/${sectionId}/questions`, {
+    const res = await authedRequest(`/api/surveys/${surveyId}/sections/${sectionId}/questions`, {
       method: 'POST',
       body: JSON.stringify({ text: '', type: 'text' }),
     });
@@ -118,7 +120,7 @@ describe('Question creation validation', () => {
   });
 
   it('rejects whitespace-only question text', async () => {
-    const res = await authedRequest(`/api/sections/${sectionId}/questions`, {
+    const res = await authedRequest(`/api/surveys/${surveyId}/sections/${sectionId}/questions`, {
       method: 'POST',
       body: JSON.stringify({ text: '   ', type: 'text' }),
     });

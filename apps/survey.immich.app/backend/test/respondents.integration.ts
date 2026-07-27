@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeAll } from 'vitest';
-import { request, authedRequest, getAdminCookie, createPublishedSurvey } from './helpers';
+import { request, getAdminCookie, createPublishedSurvey } from './helpers';
 
 describe('Respondent Flow', () => {
   let slug: string;

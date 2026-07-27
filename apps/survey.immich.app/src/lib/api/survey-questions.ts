@@ -17,6 +17,7 @@ export async function createQuestion(
     max_length?: number;
     placeholder?: string;
     config?: Record<string, unknown>;
+    conditional?: SurveyQuestion['conditional'];
   },
 ): Promise<SurveyQuestion> {
   const ws = getWsClientById(surveyId);
@@ -46,6 +47,7 @@ export async function updateQuestion(
     max_length?: number;
     placeholder?: string;
     config?: Record<string, unknown> | null;
+    conditional?: SurveyQuestion['conditional'] | null;
   },
 ): Promise<SurveyQuestion> {
   const ws = getWsClientById(surveyId);

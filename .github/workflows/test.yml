@@ -65,6 +65,15 @@ jobs:
             echo "has_backend=false" >> $GITHUB_ENV
           fi
 
+      # Generic backend unit tests for every app that has a backend EXCEPT
+      # survey, which runs its own integration + e2e suite below (against a
+      # live wrangler/Vite). Without this, backends like datasets — previously
+      # covered by the old shared "Test backend" step — would never run in CI.
+      - name: Backend tests
+        if: ${{ env.has_backend == 'true' && matrix.app_name != 'survey' && !cancelled() }}
+        working-directory: 'apps/${{ matrix.app_name }}.immich.app/backend'
+        run: pnpm test
+
       - name: Install Playwright browsers
         if: ${{ matrix.app_name == 'survey' && !cancelled() }}
         run: pnpm exec playwright install --with-deps chromium
@@ -72,18 +81,18 @@ jobs:
       - name: Start wrangler and Vite
         if: ${{ matrix.app_name == 'survey' && !cancelled() }}
         # Track PIDs so the teardown step can kill them reliably instead of
-        # leaking background processes into later steps. The `curl` probe
-        # against /api/auth/me checks for 401 Unauthorized (the server's
-        # actual healthy-but-unauthenticated response) — plain `curl -sf`
-        # would treat 401 as success too, so any run where wrangler never
-        # came up would race ahead and E2E tests would fail confusingly.
+        # leaking background processes into later steps. The `curl` probe waits
+        # for /api/auth/me to return 200 — the endpoint always answers 200 once
+        # wrangler is up (with {authenticated:false} when unauthenticated), so
+        # matching on the status code confirms readiness without depending on
+        # any particular auth state.
         run: |
           (cd backend && npx wrangler d1 migrations apply survey --local --config wrangler-dev.jsonc)
           (cd backend && npx wrangler dev --config wrangler-dev.jsonc --port 8787) &
           echo "WRANGLER_PID=$!" >> $GITHUB_ENV
           pnpm dev &
           echo "VITE_PID=$!" >> $GITHUB_ENV
-          timeout 60 bash -c 'until [ "$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8787/api/auth/me)" = "401" ]; do sleep 1; done'
+          timeout 60 bash -c 'until [ "$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8787/api/auth/me)" = "200" ]; do sleep 1; done'
           timeout 60 bash -c 'until curl -sf http://localhost:5173 >/dev/null 2>&1; do sleep 1; done'
 
       - name: Backend integration tests

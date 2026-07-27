@@ -8,6 +8,15 @@
 
 const LIKERT_VALUES = ['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree'];
 
+/**
+ * Absolute hard cap on any answer value (and other-text), independent of a
+ * question's configured maxLength. Without this, a text/textarea question with
+ * no maxLength accepts an arbitrarily large value, which the server would then
+ * persist into DO SQLite — a memory/storage-exhaustion vector. Generous enough
+ * for any legitimate long-form answer.
+ */
+export const MAX_ANSWER_LENGTH = 20_000;
+
 export interface QuestionSpec {
   type: string;
   required: boolean;
@@ -44,6 +53,17 @@ function wordCount(text: string): number {
 }
 
 export function validateAnswer(question: QuestionSpec, value: string, otherText?: string): string | null {
+  // Coerce defensively: a non-string value (e.g. a JSON number from a
+  // hand-crafted request, or a number-typed input binding) would otherwise
+  // throw on value.trim() below and surface as a 500 on the server.
+  if (typeof value !== 'string') value = value == null ? '' : String(value);
+
+  // Absolute length ceiling, enforced before any per-type logic so it applies
+  // even to types/configs that would otherwise accept unbounded input.
+  if (value.length > MAX_ANSWER_LENGTH || (otherText !== undefined && otherText.length > MAX_ANSWER_LENGTH)) {
+    return `Answer must be at most ${MAX_ANSWER_LENGTH} characters`;
+  }
+
   const trimmed = value.trim();
   const cfg = question.config ?? {};
 

@@ -11,13 +11,10 @@
   }
 
   let { question, answer, onAnswer }: Props = $props();
-  let textValue = $state('');
+  // Writable derived: mirrors the saved answer, but local edits hold until it changes.
+  let textValue = $derived(answer?.value ?? '');
 
   const maxLength = $derived(question.maxLength ?? 5000);
-
-  $effect.pre(() => {
-    textValue = answer?.value ?? '';
-  });
 
   $effect(() => {
     if (textValue.length > maxLength) {

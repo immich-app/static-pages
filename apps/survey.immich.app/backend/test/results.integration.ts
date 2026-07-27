@@ -83,9 +83,9 @@ describe('Results API', () => {
   it('searches text answers', async () => {
     const res = await authedRequest(`/api/surveys/${surveyId}/results/search?q=Test`);
     expect(res.status).toBe(200);
-    const data = (await res.json()) as Array<{ answer: string }>;
-    expect(data.length).toBeGreaterThan(0);
-    expect(data[0].answer).toContain('Test');
+    const data = (await res.json()) as { results: Array<{ answer: string }>; total: number };
+    expect(data.results.length).toBeGreaterThan(0);
+    expect(data.results[0].answer).toContain('Test');
   });
 
   it('deletes a respondent', async () => {
