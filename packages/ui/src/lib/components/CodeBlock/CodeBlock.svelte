@@ -1,6 +1,7 @@
 <script lang="ts">
   import Card from '$lib/components/Card/Card.svelte';
   import IconButton from '$lib/components/IconButton/IconButton.svelte';
+  import { zIndex } from '$lib/constants.js';
   import { themeManager } from '$lib/services/theme-manager.svelte.js';
   import { t } from '$lib/services/translation.svelte.js';
   import { Theme, type TranslationProps } from '$lib/types.js';
@@ -52,7 +53,7 @@
 <Card class="relative">
   <div class="text-sm">
     {#if canCopy}
-      <span class="absolute top-2 right-2 cursor-pointer">
+      <span class="absolute top-2 right-2 {zIndex.CodeBlockCopyButton} cursor-pointer">
         <IconButton
           icon={copied ? mdiCheckCircle : mdiContentCopy}
           size="small"
