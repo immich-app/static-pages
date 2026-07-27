@@ -2,9 +2,10 @@ import deepmerge from 'deepmerge';
 import { stringify } from 'yaml';
 import { ML_BACKENDS, TRANSCODE_BACKENDS } from './hwaccel';
 import { IMAGES } from './images';
-import { FOLDER_OVERRIDES, type ComposeObject, type ComposeService, type ImmichConfig } from './types';
+import { FOLDER_OVERRIDES, type ImmichConfig } from './config';
+import type { ComposeObject, ComposeService } from './spec';
 
-const ROOTLESS_HARDENING: ComposeObject = {
+const ROOTLESS_HARDENING: ComposeService = {
   user: '1000:1000',
   security_opt: ['no-new-privileges:true'],
   cap_drop: ['NET_RAW'],

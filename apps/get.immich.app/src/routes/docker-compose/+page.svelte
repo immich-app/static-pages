@@ -2,8 +2,7 @@
   import FullPageLayout from '$common/components/FullPageLayout.svelte';
   import { buildCompose } from '$lib/compose/build';
   import { ML_ACCELS, TRANSCODE_ACCELS } from '$lib/compose/hwaccel';
-  import { DEFAULT_CONFIG, FOLDER_OVERRIDES, StorageType, withoutAdvanced } from '$lib/compose/types';
-  import { validate } from '$lib/compose/validate';
+  import { DEFAULT_CONFIG, FOLDER_OVERRIDES, StorageType, validate, withoutAdvanced } from '$lib/compose/config';
   import {
     Button,
     Card,
@@ -212,9 +211,9 @@
                 </Field>
               {/if}
 
-              <Field label="Upload Location" invalid={!!errors.uploadLocation}>
+              <Field label="Upload Location" invalid={!!errors['storage.uploadLocation']}>
                 <Input bind:value={config.storage.uploadLocation} placeholder={DEFAULT_CONFIG.storage.uploadLocation} />
-                {@render fieldError(errors.uploadLocation)}
+                {@render fieldError(errors['storage.uploadLocation'])}
               </Field>
 
               {#if advanced}
@@ -227,9 +226,10 @@
                     location.
                   </Text>
                   {#each FOLDER_OVERRIDES as folder (folder.key)}
-                    <Field label={folder.label} invalid={Object.hasOwn(errors, folder.key)}>
+                    {@const error = errors[`storage.overrides.${folder.key}`]}
+                    <Field label={folder.label} invalid={!!error}>
                       <Input bind:value={config.storage.overrides[folder.key]} placeholder="Optional host path" />
-                      {@render fieldError(errors[folder.key])}
+                      {@render fieldError(error)}
                     </Field>
                   {/each}
                 {/if}
@@ -271,12 +271,12 @@
                     >standalone Postgres guide</Link
                   >.
                 </Text>
-                <Field label="Connection URL" invalid={!!errors.externalUrl}>
+                <Field label="Connection URL" invalid={!!errors['database.externalUrl']}>
                   <Input
                     bind:value={config.database.externalUrl}
                     placeholder="postgresql://user:password@host:5432/immich"
                   />
-                  {@render fieldError(errors.externalUrl)}
+                  {@render fieldError(errors['database.externalUrl'])}
                 </Field>
               {:else}
                 <Field label="Use a named volume">
@@ -290,9 +290,9 @@
                   />
                 </Field>
                 {#if config.database.mount.type === 'bind'}
-                  <Field label="Database Location" invalid={!!errors.databaseLocation}>
+                  <Field label="Database Location" invalid={!!errors['database.mount.location']}>
                     <Input bind:value={config.database.mount.location} placeholder={defaultDatabaseLocation} />
-                    {@render fieldError(errors.databaseLocation)}
+                    {@render fieldError(errors['database.mount.location'])}
                   </Field>
                 {:else}
                   <Text size="small" color="muted">
@@ -302,7 +302,7 @@
                 <Field label="Database storage type">
                   <Select bind:value={config.database.storageType} options={Object.values(StorageType)} />
                 </Field>
-                <Field label="Database Password" invalid={!!errors.databasePassword}>
+                <Field label="Database Password" invalid={!!errors['database.password']}>
                   <div class="flex items-end gap-2">
                     <div class="grow">
                       <Input bind:value={config.database.password} />
@@ -315,7 +315,7 @@
                       color="secondary"
                     />
                   </div>
-                  {@render fieldError(errors.databasePassword)}
+                  {@render fieldError(errors['database.password'])}
                 </Field>
               {/if}
             </Stack>
@@ -333,13 +333,13 @@
                   <Switch bind:checked={config.redis.external} class="flex justify-between gap-4" />
                 </Field>
                 {#if config.redis.external}
-                  <Field label="Host" invalid={!!errors.redisHost}>
+                  <Field label="Host" invalid={!!errors['redis.host']}>
                     <Input bind:value={config.redis.host} placeholder="redis.example.com" />
-                    {@render fieldError(errors.redisHost)}
+                    {@render fieldError(errors['redis.host'])}
                   </Field>
-                  <Field label="Port" invalid={!!errors.redisPort}>
+                  <Field label="Port" invalid={!!errors['redis.port']}>
                     <Input bind:value={config.redis.port} placeholder="6379" />
-                    {@render fieldError(errors.redisPort)}
+                    {@render fieldError(errors['redis.port'])}
                   </Field>
                   <Field label="Password">
                     <Input bind:value={config.redis.password} placeholder="Optional" />

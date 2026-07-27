@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { parse } from 'yaml';
 import { buildCompose } from './build';
-import { DEFAULT_CONFIG, StorageType, withoutAdvanced } from './types';
+import { DEFAULT_CONFIG, StorageType, withoutAdvanced } from './config';
 
 const VERSION = 'v3';
 
