@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.85.0](https://github.com/immich-app/static-pages/compare/ui-v0.84.1...ui-v0.85.0) (2026-07-27)
+
+
+### Features
+
+* add year and month dropdowns for DatePicker ([#650](https://github.com/immich-app/static-pages/issues/650)) ([95db4b6](https://github.com/immich-app/static-pages/commit/95db4b6cb4db8c9f570d19996a74018fbd7aa399))
+
+
+### Bug Fixes
+
+* linting ([#666](https://github.com/immich-app/static-pages/issues/666)) ([47810fa](https://github.com/immich-app/static-pages/commit/47810fa82656ea52bfb23744385986604ee455d7))
+
 ## [0.84.1](https://github.com/immich-app/static-pages/compare/ui-v0.84.0...ui-v0.84.1) (2026-07-27)
 
 
