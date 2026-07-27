@@ -19,6 +19,7 @@
     Input,
     Label,
     Link,
+    LoadingSpinner,
     Select,
     Stack,
     Switch,
@@ -35,25 +36,22 @@
 
   let advanced = $state(false);
   let versionPinned = $state(false);
-  let pinnedVersion = $state(DEFAULT_CONFIG.version);
-  let pinnedEdited = $state(false);
-  let latestVersion = $state(DEFAULT_CONFIG.version);
+  let pinnedVersion = $state('');
+  let latestVersion = $state('');
+  let versionFailed = $state(false);
 
   const majorVersion = $derived(latestVersion.split('.', 1)[0]);
   const version = $derived(versionPinned ? pinnedVersion.trim() || latestVersion : majorVersion);
 
   const effectiveConfig = $derived.by(() => {
-    const base = { ...$state.snapshot(config), version };
+    const base = $state.snapshot(config);
     return advanced ? base : withoutAdvanced(base);
   });
-  const compose = $derived(buildCompose(effectiveConfig));
+  const compose = $derived(buildCompose(effectiveConfig, version));
   const errors = $derived(validate(effectiveConfig));
   const hasErrors = $derived(Object.keys(errors).length > 0);
 
-  const timezones = (() => {
-    const intl = Intl as { supportedValuesOf?: (key: string) => string[] };
-    return intl.supportedValuesOf ? intl.supportedValuesOf('timeZone') : [];
-  })();
+  const timezones = Intl.supportedValuesOf('timeZone');
 
   onMount(async () => {
     if (!config.timezone) {
@@ -62,32 +60,27 @@
 
     try {
       const response = await fetch('https://version.immich.cloud/version');
-      if (response.ok) {
-        const data = await response.json();
-        if (data.version) {
-          latestVersion = data.version;
-          if (!pinnedEdited) {
-            pinnedVersion = data.version;
-          }
-        }
+      const { version: fetched } = response.ok ? await response.json() : {};
+      if (!fetched) {
+        versionFailed = true;
+        return;
       }
+
+      if (!pinnedVersion) {
+        pinnedVersion = fetched;
+      }
+      latestVersion = fetched;
     } catch {
-      // Fall back to the default version tag.
+      versionFailed = true;
     }
   });
 
   const generatePassword = () => {
-    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const limit = 256 - (256 % alphabet.length);
-    let password = '';
-    while (password.length < 24) {
-      for (const byte of crypto.getRandomValues(new Uint8Array(24))) {
-        if (byte < limit && password.length < 24) {
-          password += alphabet[byte % alphabet.length];
-        }
-      }
-    }
-    config.database.password = password;
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+    config.database.password = Array.from(
+      crypto.getRandomValues(new Uint8Array(24)),
+      (byte) => alphabet[byte % alphabet.length],
+    ).join('');
   };
 
   const handleDownload = () => {
@@ -122,7 +115,7 @@
         <Text size="small" color="muted">Advanced</Text>
         <Switch bind:checked={advanced} aria-label="Show advanced options" />
       </div>
-      <Button shape="round" onclick={handleDownload} disabled={hasErrors}>
+      <Button shape="round" onclick={handleDownload} disabled={hasErrors || !version}>
         <Icon icon={mdiDownload} size="1.5rem" />
         <span>Download</span>
       </Button>
@@ -164,10 +157,15 @@
                   {#if versionPinned}
                     <Input
                       bind:value={pinnedVersion}
-                      oninput={() => (pinnedEdited = true)}
                       placeholder={latestVersion}
                       aria-label="Pinned Immich version tag"
                     />
+                  {/if}
+                  {#if !version}
+                    <Text size="small" color="muted">
+                      {versionFailed ? 'Version unavailable.' : 'Checking for the latest release...'}
+                    </Text>
+                  {:else if versionPinned}
                     <Text size="small" color="muted">
                       Locked to <Code>{version}</Code>, updated manually.
                     </Text>
@@ -355,9 +353,21 @@
     </form>
 
     <div class="self-start 2xl:sticky 2xl:top-6">
-      <!-- TODO: The copy button the UI lib puts on is broken -->
-      <!-- Also we should disable the copy button when validation is failing -->
-      <CodeBlock code={compose} language={yamlLanguage} lineNumbers lightTheme={vs2015} darkTheme={vs2015} />
+      {#if versionFailed}
+        <Text color="danger">Could not reach the Immich version service. Reload the page to try again.</Text>
+      {:else if version}
+        <!-- TODO: The copy button the UI lib puts on is broken -->
+        <CodeBlock
+          code={compose}
+          language={yamlLanguage}
+          lineNumbers
+          copy={!hasErrors}
+          lightTheme={vs2015}
+          darkTheme={vs2015}
+        />
+      {:else}
+        <LoadingSpinner />
+      {/if}
     </div>
   </div>
 </FullPageLayout>
