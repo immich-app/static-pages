@@ -235,6 +235,11 @@
         "title": "Immich Distribution",
         "description": "Snap package for easy install and zero-care auto updates of Immich. Self-hosted photo management.",
         "href": "https://immich-distribution.nsg.cc"
+      },
+      {
+        "title": "SynoCommunity",
+        "description": "Native Synology DSM package for Immich, installable via Package Center. Includes PostgreSQL, Redis, and ffmpeg dependencies managed automatically.",
+        "href": "https://docs.synocommunity.com/packages/immich/"
       }
     ]
   },
@@ -262,6 +267,11 @@
         "title": "Sync folders with albums",
         "description": "synchronize folders in imported library with albums having the folders name.",
         "href": "https://github.com/immich-app/immich/discussions/3382"
+      },
+      {
+        "title": "SynoCommunity Package Install",
+        "description": "Step-by-step guide for installing Immich as a native Synology DSM package via SynoCommunity's Package Center. Covers prerequisites, PostgreSQL setup, the installation wizard, and upgrade notes.",
+        "href": "https://docs.synocommunity.com/packages/immich/"
       },
       {
         "title": "Immich Podman Quadlets Handbook",
