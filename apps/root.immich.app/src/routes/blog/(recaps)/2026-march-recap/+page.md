@@ -19,7 +19,7 @@ March was a great month for the team. Most of us were able to fly out to Austin,
 
 ## FUTO backups survey
 
-FUTO started building an encrypted backup service this year and they plan to integrate it directly into Immich. They are currently running a [survey](https://futo-backups-survey.immich.app/) to gather information about setups, library sizes, hardware & network capabilities, etc. Please fill out the survey if you haven't already. Also, if you are interested in joining the closed beta later this year there is a place to leave your email address.
+FUTO started building an encrypted backup service this year and they plan to integrate it directly into Immich. ~~They are currently running a [survey](https://futo-backups-survey.immich.app/) to gather information about setups, library sizes, hardware & network capabilities, etc. Please fill out the survey if you haven't already. Also, if you are interested in joining the closed beta later this year there is a place to leave your email address.~~
 
 ## Don't Be Evil
 
