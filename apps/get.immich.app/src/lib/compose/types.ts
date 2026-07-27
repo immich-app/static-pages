@@ -2,6 +2,8 @@ import type { MlAccel, TranscodeAccel } from './hwaccel';
 
 export type ComposeObject = Record<string, unknown>;
 
+export type ComposeService = ComposeObject & { volumes?: string[] };
+
 export type DatabaseMount = { type: 'bind'; location: string } | { type: 'volume' };
 
 export enum StorageType {

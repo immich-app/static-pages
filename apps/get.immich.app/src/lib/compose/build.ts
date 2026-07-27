@@ -2,7 +2,7 @@ import deepmerge from 'deepmerge';
 import { stringify } from 'yaml';
 import { ML_BACKENDS, TRANSCODE_BACKENDS } from './hwaccel';
 import { IMAGES } from './images';
-import { FOLDER_OVERRIDES, type ComposeObject, type ImmichConfig } from './types';
+import { FOLDER_OVERRIDES, type ComposeObject, type ComposeService, type ImmichConfig } from './types';
 
 const ROOTLESS_HARDENING: ComposeObject = {
   user: '1000:1000',
@@ -59,7 +59,7 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
   const { rootless } = config;
   const serverEnvironment = buildServerEnvironment(config);
 
-  const backingServices: Record<string, ComposeObject> = {};
+  const backingServices: Record<string, ComposeService> = {};
 
   if (!config.redis.external) {
     backingServices.redis = {
@@ -96,8 +96,8 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
       )
     : [];
 
-  const services: Record<string, ComposeObject> = {
-    'immich-server': deepmerge<ComposeObject>(
+  const services: Record<string, ComposeService> = {
+    'immich-server': deepmerge<ComposeService>(
       {
         container_name: 'immich_server',
         image: IMAGES.server(version),
@@ -110,7 +110,7 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
       },
       TRANSCODE_BACKENDS[config.hwaccel.transcoding].fragment,
     ),
-    'immich-machine-learning': deepmerge<ComposeObject>(
+    'immich-machine-learning': deepmerge<ComposeService>(
       {
         container_name: 'immich_machine_learning',
         image: IMAGES.machineLearning(version + ML_BACKENDS[config.hwaccel.ml].tag),
@@ -135,9 +135,7 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
   }
 
   const mountSources = new Set(
-    Object.values(services).flatMap((service) =>
-      ((service.volumes ?? []) as string[]).map((mount) => mount.split(':', 1)[0]),
-    ),
+    Object.values(services).flatMap((service) => (service.volumes ?? []).map((mount) => mount.split(':', 1)[0])),
   );
   const volumes = Object.fromEntries(
     Object.values(NamedVolume)
