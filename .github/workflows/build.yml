@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -33,7 +33,7 @@ jobs:
           permission-contents: read
 
       - name: Setup Mise
-        uses: immich-app/devtools/actions/use-mise@3bca63ca3c15020293b36b51737a3ee2c773340b # use-mise-action-v3.1.0
+        uses: immich-app/devtools/actions/use-mise@4d97fb30d9edd3ff0d735f411f607a35204eea79 # use-mise-action-v3.2.0
         with:
           github_token: ${{ steps.token.outputs.token }}
 
@@ -86,7 +86,7 @@ jobs:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ github.ref == 'refs/heads/main' && secrets.OP_TF_PROD_ENV || secrets.OP_TF_DEV_ENV }}
 
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with: { persist-credentials: false }
 
       - id: token
@@ -97,7 +97,7 @@ jobs:
           permission-contents: read
 
       - name: Setup Mise
-        uses: immich-app/devtools/actions/use-mise@3bca63ca3c15020293b36b51737a3ee2c773340b # use-mise-action-v3.1.0
+        uses: immich-app/devtools/actions/use-mise@4d97fb30d9edd3ff0d735f411f607a35204eea79 # use-mise-action-v3.2.0
         with:
           github_token: ${{ steps.token.outputs.token }}
 
@@ -117,7 +117,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install 1Password CLI
-        uses: 1password/install-cli-action@a5215d3a7f75c1629216c465ea9ab3ab399c4b71 # v4.0.0
+        uses: 1password/install-cli-action@1a3160d5e9de1ae0803eaa08a88746f5ae3daa50 # v4.1.0
 
       - name: Download builds
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
