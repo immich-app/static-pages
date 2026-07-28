@@ -1,14 +1,5 @@
 export type QuestionType =
-  | 'radio'
-  | 'checkbox'
-  | 'text'
-  | 'textarea'
-  | 'email'
-  | 'rating'
-  | 'nps'
-  | 'number'
-  | 'dropdown'
-  | 'likert';
+  'radio' | 'checkbox' | 'text' | 'textarea' | 'email' | 'rating' | 'nps' | 'number' | 'dropdown' | 'likert';
 
 export interface QuestionOption {
   label: string;
