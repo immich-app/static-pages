@@ -1,26 +1,51 @@
 locals {
-  oidc_bindings = concat(
-    var.oidc_client_secret != "" ? [{
-      name = "OIDC_CLIENT_SECRET"
-      type = "secret_text"
-      text = var.oidc_client_secret
-    }] : [],
-    var.oidc_issuer != "" ? [{
+  # OIDC is enabled only when it can actually work end to end:
+  #
+  #  - Credentials must be present. These bindings used to be gated
+  #    independently, so a half-populated config produced a worker that
+  #    advertised `oidcEnabled: true` and then built an authorize URL with an
+  #    empty redirect_uri — a login button that always fails. All-or-nothing
+  #    instead.
+  #  - Production only. Zitadel matches redirect URIs exactly and has no
+  #    wildcards, but every PR stage gets its own hostname
+  #    (survey.pr-<n>.dev.immich.app), which cannot be pre-registered. Preview
+  #    stages therefore keep password auth (plus the setup token) as before.
+  oidc_configured = var.oidc_issuer != "" && var.oidc_client_id != "" && var.oidc_client_secret != ""
+  oidc_enabled    = local.oidc_configured && var.env == "prod" && var.stage == ""
+
+  # Derived rather than supplied: the callback must live on whichever hostname
+  # this stage actually serves, and the app calls /api/auth/login same-origin.
+  oidc_redirect_uri = "https://${module.domain.fqdn}/api/auth/callback"
+
+  oidc_bindings = local.oidc_enabled ? [
+    {
       name = "OIDC_ISSUER"
       type = "plain_text"
       text = var.oidc_issuer
-    }] : [],
-    var.oidc_client_id != "" ? [{
+    },
+    {
       name = "OIDC_CLIENT_ID"
       type = "plain_text"
       text = var.oidc_client_id
-    }] : [],
-    var.oidc_redirect_uri != "" ? [{
+    },
+    {
+      name = "OIDC_CLIENT_SECRET"
+      type = "secret_text"
+      text = var.oidc_client_secret
+    },
+    {
       name = "OIDC_REDIRECT_URI"
       type = "plain_text"
-      text = var.oidc_redirect_uri
-    }] : [],
-  )
+      text = local.oidc_redirect_uri
+    },
+    # Only disable password auth where OIDC actually works, or a stage would be
+    # left with no way to sign in at all.
+    {
+      name = "DISABLE_PASSWORD_AUTH"
+      type = "plain_text"
+      text = "true"
+    },
+  ] : []
 
   api_bindings = concat(
     [

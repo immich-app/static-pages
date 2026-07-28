@@ -26,16 +26,10 @@ variable "oidc_client_secret" {
   default     = ""
 }
 
-variable "oidc_redirect_uri" {
-  description = "OIDC callback URL (e.g., https://survey.immich.app/api/auth/callback)"
-  type        = string
-  default     = ""
-}
-
 variable "oidc_role_claim" {
-  description = "JWT claim path containing user roles"
+  description = "Claim containing the user's role. Zitadel flattens project roles into a top-level `role` claim (a single string); it never emits `groups`."
   type        = string
-  default     = "groups"
+  default     = "role"
 }
 
 variable "oidc_role_map_admin" {

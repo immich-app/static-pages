@@ -172,7 +172,9 @@ export function registerAuthRoutes(router: AppRouter) {
     const ctx = getContext(request);
     const authService = new AuthService(ctx.config, ctx.db);
     const tokens = await authService.exchangeCode(code);
-    const user = await authService.validateIdToken(tokens.id_token, stateData.nonce);
+    // The access token lets validateIdToken enrich the verified ID-token claims
+    // from the userinfo endpoint, which is where some IdPs put role/email/name.
+    const user = await authService.validateIdToken(tokens.id_token, stateData.nonce, tokens.access_token);
     const sessionToken = await authService.createSessionToken(user);
     const secure = ctx.config.cookieSecure ? 'Secure; ' : '';
 

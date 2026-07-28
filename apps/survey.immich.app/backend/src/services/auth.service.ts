@@ -17,6 +17,7 @@ interface OidcConfig {
   token_endpoint: string;
   jwks_uri: string;
   issuer: string;
+  userinfo_endpoint?: string;
 }
 
 let cachedOidcConfig: { data: OidcConfig; fetchedAt: number } | null = null;
@@ -141,7 +142,31 @@ export class AuthService {
     return res.json() as Promise<{ id_token: string; access_token: string }>;
   }
 
-  async validateIdToken(idToken: string, nonce: string): Promise<UserInfo> {
+  /**
+   * Fetch the userinfo endpoint with the access token from the code exchange.
+   *
+   * Some IdPs (Zitadel among them) only assert role/email/name into the ID
+   * token when an per-application flag is enabled, but always return them from
+   * userinfo — which is the path the other OIDC consumers in this estate use.
+   * Returns null on any failure so login falls back to the ID token's claims
+   * rather than breaking; that fallback is fail-closed, since a missing role
+   * claim resolves to the lowest role.
+   */
+  private async fetchUserInfo(accessToken: string): Promise<Record<string, unknown> | null> {
+    try {
+      const config = await this.getOidcConfig();
+      if (!config.userinfo_endpoint) return null;
+      const res = await fetch(config.userinfo_endpoint, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!res.ok) return null;
+      return (await res.json()) as Record<string, unknown>;
+    } catch {
+      return null;
+    }
+  }
+
+  async validateIdToken(idToken: string, nonce: string, accessToken?: string): Promise<UserInfo> {
     // Decode JWT parts
     const parts = idToken.split('.');
     if (parts.length !== 3) throw new ServiceError('Invalid ID token format', 400);
@@ -199,13 +224,26 @@ export class AuthService {
 
     if (!signatureValid) throw new ServiceError('Invalid token signature', 400);
 
+    // Overlay userinfo claims on top of the (now verified) ID token claims.
+    // The ID token remains the trust anchor — it is signature-, issuer-,
+    // audience-, nonce- and expiry-checked above — and the overlay is only
+    // accepted when userinfo describes the SAME subject, so a token for a
+    // different user can't inject claims.
+    let claims: Record<string, unknown> = payload;
+    if (accessToken) {
+      const userinfo = await this.fetchUserInfo(accessToken);
+      if (userinfo && userinfo.sub === payload.sub) {
+        claims = { ...payload, ...userinfo };
+      }
+    }
+
     // Extract role from configurable claim
-    const role = this.extractRole(payload);
+    const role = this.extractRole(claims);
 
     return {
       sub: payload.sub as string,
-      email: (payload.email as string) ?? '',
-      name: (payload.name as string) ?? (payload.preferred_username as string) ?? '',
+      email: (claims.email as string) ?? '',
+      name: (claims.name as string) ?? (claims.preferred_username as string) ?? '',
       role,
     };
   }
