@@ -1,51 +1,84 @@
 name: Docs destroy
 on:
+  # zizmor: ignore[dangerous-triggers]
+  # pull_request_target is deliberate: it runs the base branch's teardown logic
+  # (not the closing PR's, which may be stale) and never checks out or executes
+  # untrusted PR code, so it is safe here.
   pull_request_target:
     types: [closed]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to tear down (stage pr-<number>)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
 
 env:
-  tofu_version: '1.10.2'
-  tg_version: '0.83.0'
+  MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}/.mise/config.toml
 
 jobs:
-  deploy:
+  destroy:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      # Keep app_name in sync with the deploy matrix in build.yml.
       matrix:
         environment: ['dev', 'prod']
-        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets']
+        app_name: ['root', 'ui', 'api', 'awesome', 'my', 'get', 'buy', 'datasets']
+    env:
+      ENVIRONMENT: ${{ matrix.environment }}
+      TF_VAR_app_name: ${{ matrix.app_name }}
+      TF_VAR_stage: pr-${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.number }}
+      TF_VAR_dist_dir: ${{ github.workspace }}/apps/${{ matrix.app_name }}.immich.app/backend/dist
+      TF_VAR_migrations_dir: ${{ github.workspace }}/apps/${{ matrix.app_name }}.immich.app/backend/migrations
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ matrix.environment == 'prod' && secrets.OP_TF_PROD_ENV || secrets.OP_TF_DEV_ENV }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with: { persist-credentials: false }
+
+      - id: token
+        uses: immich-app/devtools/actions/create-workflow-token@1af396ae134e4bc3b63d947e672bc68bf4ff9dc5 # create-workflow-token-action-v3.0.0
+        with:
+          client-id: ${{ secrets.PUSH_O_MATIC_APP_CLIENT_ID }}
+          private-key: ${{ secrets.PUSH_O_MATIC_APP_KEY }}
+          permission-contents: read
+          permission-pull-requests: write
+
+      - name: Setup Mise
+        uses: immich-app/devtools/actions/use-mise@3bca63ca3c15020293b36b51737a3ee2c773340b # use-mise-action-v3.1.0
+        with:
+          github_token: ${{ steps.token.outputs.token }}
 
       - name: Install 1Password CLI
-        uses: 1password/install-cli-action@8d006a0d0a4fd505af7f7ce589e7f768385ff5e4 # v3.0.0
+        uses: 1password/install-cli-action@a5215d3a7f75c1629216c465ea9ab3ab399c4b71 # v4.0.0
 
-      - name: Install Terragrunt
-        uses: eLco/setup-terragrunt@2c5116f8979bb261072ef57c97ac026cd9c27434 # v1.0.3
-        with:
-          terragrunt_version: ${{ env.tg_version }}
-
-      - name: 'Install OpenTofu'
-        uses: opentofu/setup-opentofu@fc711fa910b93cba0f3fbecaafc9f42fd0c411cb # v2.0.0
-        with:
-          tofu_version: ${{ env.tofu_version }}
-          tofu_wrapper: false
-
+      # Mirror the deploy step in build.yml: only operate on the modules that
+      # belong to this app. The shared Cloudflare Pages project (pages-project)
+      # is intentionally left in place so it survives across PRs.
       - name: Destroy All
         working-directory: ${{ github.workspace }}/deployment
         env:
-          ENVIRONMENT: ${{ matrix.environment }}
-          TF_VAR_app_name: ${{ matrix.app_name }}
-          TF_VAR_dist_dir: ${{ github.workspace }}/dist
-          TF_VAR_stage: pr-${{ github.event.number }}
-          OP_SERVICE_ACCOUNT_TOKEN: ${{ matrix.environment == 'prod' && secrets.OP_TF_PROD_ENV || secrets.OP_TF_DEV_ENV }}
-        run: op run --env-file=".env" -- terragrunt run --all destroy --non-interactive --queue-exclude-dir '**/pages-project' -- -refresh=false -lock-timeout=5m
+          APP_NAME: ${{ matrix.app_name }}
+        run: |
+          QUEUE_ARGS=(--queue-include-dir='modules/cloudflare/static-pages')
+          if [ -d "modules/cloudflare/workers/${APP_NAME}" ]; then
+            QUEUE_ARGS+=(--queue-include-dir="modules/cloudflare/workers/${APP_NAME}")
+          fi
+
+          op run --env-file='.env' -- terragrunt run --all destroy \
+            --non-interactive \
+            --parallelism 1 \
+            "${QUEUE_ARGS[@]}" \
+            -- -refresh=false -lock-timeout=5m
 
       - name: Comment
-        uses: actions-cool/maintain-one-comment@4b2dbf086015f892dcb5e8c1106f5fccd6c1476b # v3.2.0
+        if: ${{ github.event_name == 'pull_request_target' }}
+        uses: immich-app/devtools/actions/sticky-comment@0135acd12ad9f3369b94a2aa3c0ae8c835a4e926 # sticky-comment-action-v1.0.0
         with:
-          number: ${{ github.event.number }}
+          id: preview-urls
+          token: ${{ steps.token.outputs.token }}
           delete: true
-          body-include: '<!-- Docs PR URL -->'

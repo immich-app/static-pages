@@ -1,0 +1,14 @@
+<script lang="ts">
+  import Lorem from '$lib/components/Lorem.svelte';
+  import { Modal, ModalBody } from '@immich/ui';
+
+  type Props = { onClose: () => void };
+
+  const { onClose }: Props = $props();
+</script>
+
+<Modal title="Modal Title" {onClose}>
+  <ModalBody>
+    <Lorem count={5} />
+  </ModalBody>
+</Modal>

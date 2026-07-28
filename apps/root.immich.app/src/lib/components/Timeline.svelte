@@ -28,13 +28,13 @@
       </div>
 
       <div
-        class="-z-1 flex h-full w-[12px] -translate-x-[25px] flex-col items-center overflow-hidden"
+        class="-z-1 flex h-full w-[12px] translate-x-[-25px] flex-col items-center overflow-hidden"
         class:justify-end={isFirst}
       >
         <div
           class:rounded-t-full={isFirst}
           class:rounded-b-full={isLast}
-          class="bg-subtle w-full {isFirst || isLast ? 'h-1/2' : 'h-full'}"
+          class="w-full bg-subtle {isFirst || isLast ? 'h-1/2' : 'h-full'}"
         ></div>
       </div>
 

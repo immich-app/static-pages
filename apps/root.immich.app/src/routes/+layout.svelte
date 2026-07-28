@@ -2,8 +2,9 @@
   import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/state';
   import PageContent from '$common/components/PageContent.svelte';
-  import { getBlogProvider } from '$lib';
+  import { posts } from '$lib';
   import '$lib/app.css';
+  import { getSearchProvider } from '$lib/search';
   import {
     AnnouncementBanner,
     AppShell,
@@ -33,17 +34,17 @@
     mdiScriptTextOutline,
     mdiShoppingOutline,
   } from '@mdi/js';
-  import { DateTime } from 'luxon';
   import { siGithub } from 'simple-icons';
   import { onMount, type Snippet } from 'svelte';
   import { MediaQuery } from 'svelte/reactivity';
+  import type { LayoutData } from './$types';
 
   type Props = {
     children?: Snippet;
-    center?: boolean;
+    data?: LayoutData;
   };
 
-  const { children }: Props = $props();
+  const { data, children }: Props = $props();
 
   let pathname = '';
   onMount(() => {
@@ -78,9 +79,11 @@
   };
 
   commandPaletteManager.enable();
+
+  const featuredPost = posts.find((post) => post.featured);
 </script>
 
-<CommandPaletteProvider providers={[getBlogProvider(), ...getSiteProviders()]} />
+<CommandPaletteProvider providers={[getSearchProvider(data?.docs ?? []), ...getSiteProviders()]} />
 
 <ScreencastOverlay />
 
@@ -88,13 +91,13 @@
   <AppShell>
     <AppShellHeader>
       <div class="w-full">
-        {#if !page.url.pathname.startsWith('/blog')}
-          <AnnouncementBanner until={DateTime.fromObject({ year: 2026, month: 2, day: 7 })}>
+        {#if !page.url.pathname.startsWith('/blog') && featuredPost}
+          <AnnouncementBanner until={featuredPost.publishedAt.plus({ week: 1 })}>
             {#snippet content()}
-              <div class="flex justify-center">
-                <Text color="secondary" size="small">
-                  Read our <Link href="/blog/2026-january-recap">January recap</Link> &dash; roadmap changes, developer updates,
-                  and more!
+              <div class="flex items-center justify-center gap-1">
+                Read our latest post:
+                <Text color="primary">
+                  <Link href={featuredPost.url}>{featuredPost.title}</Link>
                 </Text>
               </div>
             {/snippet}

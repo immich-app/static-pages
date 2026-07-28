@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-top-level-side-effects */
 import { AutoRouter, cors, IRequest } from 'itty-router';
 import { exifRouter } from './datasets/exif';
 import { authRouter } from './auth';

@@ -66,9 +66,9 @@
     <div class="relative -z-10">
       <img src={themeManager.value === 'dark' ? screenshotDark : screenshotLight} alt="Immich application" />
 
-      <div class="absolute -top-[55%] left-0 -z-10 h-[200%] w-full overflow-visible">
-        <Logo size="giant" class="z-10 mb-2 h-full w-full antialiased opacity-20 blur-3xl" />
-        <div class="bg-immich-bg/90 absolute top-0 left-0 h-full w-full backdrop-blur-xl dark:bg-transparent"></div>
+      <div class="absolute top-[-55%] left-0 -z-10 h-[200%] w-full overflow-visible">
+        <Logo size="giant" class="z-10 mb-2 size-full antialiased opacity-20 blur-3xl" />
+        <div class="bg-immich-bg/90 absolute top-0 left-0 size-full backdrop-blur-xl dark:bg-transparent"></div>
       </div>
     </div>
 

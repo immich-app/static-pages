@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 
 dotenv.config({ path: '../../.env' });
 
-const staticFiles = ['/favicon.ico', '/img/social-preview.png'];
+const staticFiles = new Set(['/favicon.ico', '/img/social-preview.png']);
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -15,11 +15,12 @@ const config = {
     alias: {
       $common: '../../common',
       '$common/*': '../../common/*',
-      '@immich/ui': resolve('./node_modules/@immich/ui/dist'),
+      '@immich/ui': resolve('../../packages/ui/dist'),
+      '@mdi/js': resolve('./node_modules/@mdi/js'),
     },
     prerender: {
       handleHttpError: ({ path, message }) => {
-        if (staticFiles.includes(path)) {
+        if (staticFiles.has(path)) {
           return;
         }
 

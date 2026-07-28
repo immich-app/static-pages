@@ -10,9 +10,9 @@
   let { children, class: className }: Props = $props();
 </script>
 
-<div  class="flex flex-col h-full mx-auto">
+<div class="mx-auto flex h-full flex-col">
   <div class="grow {className ? className : ''}">
-    <div class="w-full h-full p-4 md:p-6 lg:p-8">
+    <div class="h-full w-full p-4 md:p-6 lg:p-8">
       {@render children?.()}
     </div>
   </div>

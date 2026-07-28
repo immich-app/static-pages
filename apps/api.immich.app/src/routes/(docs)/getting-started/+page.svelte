@@ -26,14 +26,14 @@
     </Text>
   </section>
 
-  <Alert color="warning" title="Warning">
+  <Alert color="warning" title="Warning" shape="rectangle">
     <Text
       >API keys are like passwords, which can give access to your account. It is important to keep them safe, and only
       share them with applications you trust.</Text
     >
   </Alert>
 
-  <Alert color="success" title="Tip" icon={mdiLightbulbOnOutline}>
+  <Alert color="success" title="Tip" icon={mdiLightbulbOnOutline} shape="rectangle">
     <Text>Use the live response feature to view real data from the Immich API</Text>
   </Alert>
 

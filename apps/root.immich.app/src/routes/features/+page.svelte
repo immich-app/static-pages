@@ -272,7 +272,7 @@
             <CardTitle>{feature.title}</CardTitle>
             <CardDescription>{feature.description}</CardDescription>
           </CardHeader>
-          <CardBody class="text-primary flex items-center justify-center align-middle">
+          <CardBody class="flex items-center justify-center align-middle text-primary">
             <Icon icon={feature.icon} size="3rem" class="m-5" />
           </CardBody>
         </Card>

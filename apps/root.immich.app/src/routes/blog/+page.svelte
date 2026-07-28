@@ -1,54 +1,56 @@
 <script lang="ts">
-  import { blogMetadata, posts } from '$lib';
-  import { Button, Heading, Markdown, SiteMetadata, Stack, Text } from '@immich/ui';
-  import { mdiChevronRight } from '@mdi/js';
-  import { DateTime } from 'luxon';
+  import { browser } from '$app/environment';
+  import { page } from '$app/state';
+  import { blogMetadata, BlogType, isBlogType, posts, typeToLabel } from '$lib';
+  import BlogPostCard from '$lib/components/BlogPostCard.svelte';
+  import { Routes } from '$lib/route';
+  import { Badge, Heading, SiteMetadata, Stack, Text } from '@immich/ui';
+
+  const fromParam = <T extends string>(name: string, isValid: (value: string) => value is T) => {
+    if (!browser) {
+      return;
+    }
+
+    const params = page.url.searchParams;
+    if (!params.has(name)) {
+      return;
+    }
+
+    const value = params.get(name);
+
+    if (!value || !isValid(value)) {
+      return;
+    }
+
+    return value as T;
+  };
+
+  let selected = $derived(fromParam<BlogType>('type', isBlogType));
 </script>
 
 <SiteMetadata site={blogMetadata} />
 
 <Heading size="title" tag="h1" fontWeight="bold" class="mb-1">Blog</Heading>
-<Text color="muted" class="mt-4 mb-8">{blogMetadata.description}</Text>
+<Text color="muted" class="mt-4">{blogMetadata.description}</Text>
 
-<Stack gap={6}>
-  {#each posts as post, i (post.url)}
-    {@const { publishedAt, authors, description } = post}
+<div class="flex flex-wrap gap-1">
+  <a href={Routes.blog()}>
+    <Badge class="mt-2" color={selected ? 'secondary' : 'primary'}>All</Badge>
+  </a>
+  {#each Object.values(BlogType) as type (type)}
+    <a href={Routes.blog({ type })}>
+      <Badge class="mt-2" color={selected === type ? 'primary' : 'secondary'}>{typeToLabel(type)}</Badge>
+    </a>
+  {/each}
+</div>
+
+<hr class="my-4" />
+
+<Stack gap={6} class="mt-8">
+  {#each posts.filter((post) => !selected || selected === post.type) as post, i (post.url)}
     {#if i !== 0}
       <hr class="my-2 border" />
     {/if}
-    <div>
-      <a href={post.url} class="hover:text-primary">
-        <Heading color={post.draft ? 'muted' : undefined} size="large" class="font-medium">
-          {#if post.draft}[Draft]{/if}
-          {post.title}
-        </Heading>
-      </a>
-
-      <div class="mt-2 mb-4 flex gap-1">
-        <Text color="muted" size="small" variant="italic">{publishedAt.toLocaleString(DateTime.DATE_FULL)}</Text>
-        <Text color="muted" size="small">— {authors.join(', ')}</Text>
-      </div>
-
-      {#if post.coverUrl}
-        <img src={post.coverUrl} alt={post.coverAlt} class="overflow-hidden rounded-lg" />
-      {/if}
-
-      <div class="mt-4">
-        <Markdown.Paragraph><em>{description}</em></Markdown.Paragraph>
-      </div>
-
-      <div class="mt-4 flex items-center justify-end">
-        <Button
-          trailingIcon={mdiChevronRight}
-          shape="semi-round"
-          variant="filled"
-          size="small"
-          color="primary"
-          href={post.url}
-        >
-          Read
-        </Button>
-      </div>
-    </div>
+    <BlogPostCard {post} type={selected} />
   {/each}
 </Stack>

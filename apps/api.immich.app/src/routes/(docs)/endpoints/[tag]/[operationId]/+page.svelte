@@ -126,11 +126,11 @@
         </span>
       </Text>
     </div>
-    <hr class="border-subtle mt-4 border" />
+    <hr class="mt-4 border border-subtle" />
   </section>
 
   {#if endpoint.deprecated}
-    <Alert color="danger" title="Deprecated" icon={mdiAlertCircle}>
+    <Alert color="danger" title="Deprecated" icon={mdiAlertCircle} shape="rectangle">
       <span class="inline">
         This endpoint has been deprecated. {#if replacementEndpoint}
           Please use <Link href={replacementEndpoint.href}>{replacementEndpoint.operationId}</Link> instead.

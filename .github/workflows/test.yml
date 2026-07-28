@@ -9,83 +9,126 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}/.mise/config.toml
+
 jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        app_name: ['root', 'api', 'awesome', 'my', 'get', 'buy', 'datasets', 'survey']
-
-    defaults:
-      run:
-        working-directory: apps/${{ matrix.app_name }}.immich.app
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
-
-      - name: Setup Node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+      - id: token
+        uses: immich-app/devtools/actions/create-workflow-token@1af396ae134e4bc3b63d947e672bc68bf4ff9dc5 # create-workflow-token-action-v3.0.0
         with:
-          node-version-file: './.nvmrc'
-          cache: 'pnpm'
-          cache-dependency-path: '**/pnpm-lock.yaml'
+          client-id: ${{ secrets.PUSH_O_MATIC_APP_CLIENT_ID }}
+          private-key: ${{ secrets.PUSH_O_MATIC_APP_KEY }}
+          permission-contents: read
 
-      - name: Install
-        run: pnpm install
+      - name: Setup Mise
+        uses: immich-app/devtools/actions/use-mise@3bca63ca3c15020293b36b51737a3ee2c773340b # use-mise-action-v3.1.0
+        with:
+          github_token: ${{ steps.token.outputs.token }}
 
-      - name: Lint
-        run: pnpm lint
-        if: ${{ !cancelled() }}
+      - name: Get pnpm store directory
+        id: pnpm-store
+        run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
 
-      - name: Format
-        run: pnpm format
+      - name: Cache pnpm store
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.pnpm-store.outputs.path }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Run install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build:packages
+
+      - name: Run sync
+        run: pnpm sync
         if: ${{ !cancelled() }}
 
       - name: Type check
         run: pnpm check
         if: ${{ !cancelled() }}
 
-      - name: Test
+      - name: Run linter
+        run: pnpm lint
+        if: ${{ !cancelled() }}
+
+      - name: Run formatter
+        run: pnpm format
+        if: ${{ !cancelled() }}
+
+      - name: Run unit tests
         run: pnpm test
         if: ${{ !cancelled() }}
 
-      - name: Check for app backend
-        id: check-backend
-        run: |
-          if [ -d "backend" ]; then
-            echo "has_backend=true" >> $GITHUB_ENV
-          else
-            echo "has_backend=false" >> $GITHUB_ENV
-          fi
+      - name: Run medium tests
+        run: pnpm test:medium
+        if: ${{ !cancelled() }}
 
-      # Generic backend unit tests for every app that has a backend EXCEPT
-      # survey, which runs its own integration + e2e suite below (against a
-      # live wrangler/Vite). Without this, backends like datasets — previously
-      # covered by the old shared "Test backend" step — would never run in CI.
-      - name: Backend tests
-        if: ${{ env.has_backend == 'true' && matrix.app_name != 'survey' && !cancelled() }}
-        working-directory: 'apps/${{ matrix.app_name }}.immich.app/backend'
-        run: pnpm test
+  # The survey app needs a live wrangler + Vite to run its backend integration
+  # and Playwright e2e suites, which the monorepo `test` job (pure `pnpm -r`)
+  # can't provide. Keep it as a dedicated job. Its frontend unit tests still run
+  # via `pnpm -r test` above; the backend has no plain `test` script so it is
+  # skipped there and exercised here through `test:integration`.
+  survey-e2e:
+    name: Test (survey e2e)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/survey.immich.app
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - id: token
+        uses: immich-app/devtools/actions/create-workflow-token@1af396ae134e4bc3b63d947e672bc68bf4ff9dc5 # create-workflow-token-action-v3.0.0
+        with:
+          client-id: ${{ secrets.PUSH_O_MATIC_APP_CLIENT_ID }}
+          private-key: ${{ secrets.PUSH_O_MATIC_APP_KEY }}
+          permission-contents: read
+
+      - name: Setup Mise
+        uses: immich-app/devtools/actions/use-mise@3bca63ca3c15020293b36b51737a3ee2c773340b # use-mise-action-v3.1.0
+        with:
+          github_token: ${{ steps.token.outputs.token }}
+
+      - name: Get pnpm store directory
+        id: pnpm-store
+        run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm store
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.pnpm-store.outputs.path }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Run install
+        run: pnpm install --frozen-lockfile
 
       - name: Install Playwright browsers
-        if: ${{ matrix.app_name == 'survey' && !cancelled() }}
         run: pnpm exec playwright install --with-deps chromium
+        if: ${{ !cancelled() }}
 
       - name: Start wrangler and Vite
-        if: ${{ matrix.app_name == 'survey' && !cancelled() }}
-        # Track PIDs so the teardown step can kill them reliably instead of
-        # leaking background processes into later steps. The `curl` probe waits
-        # for /api/auth/me to return 200 — the endpoint always answers 200 once
-        # wrangler is up (with {authenticated:false} when unauthenticated), so
-        # matching on the status code confirms readiness without depending on
-        # any particular auth state.
+        # Boot both servers in the background and wait for readiness. /api/auth/me
+        # answers 200 once wrangler is up (with {authenticated:false}); match on
+        # that so we don't race ahead of a still-starting server.
+        if: ${{ !cancelled() }}
         run: |
           (cd backend && npx wrangler d1 migrations apply survey --local --config wrangler-dev.jsonc)
           (cd backend && npx wrangler dev --config wrangler-dev.jsonc --port 8787) &
@@ -96,23 +139,23 @@ jobs:
           timeout 60 bash -c 'until curl -sf http://localhost:5173 >/dev/null 2>&1; do sleep 1; done'
 
       - name: Backend integration tests
-        if: ${{ env.has_backend == 'true' && matrix.app_name == 'survey' && !cancelled() }}
-        working-directory: 'apps/${{ matrix.app_name }}.immich.app/backend'
+        if: ${{ !cancelled() }}
+        working-directory: apps/survey.immich.app/backend
         run: pnpm test:integration
 
       - name: E2E tests
-        if: ${{ matrix.app_name == 'survey' && !cancelled() }}
+        if: ${{ !cancelled() }}
         run: pnpm exec playwright test
 
       - name: Stop dev servers
-        if: ${{ matrix.app_name == 'survey' && always() }}
+        if: ${{ always() }}
         run: |
           if [ -n "${WRANGLER_PID:-}" ]; then kill "$WRANGLER_PID" 2>/dev/null || true; fi
           if [ -n "${VITE_PID:-}" ]; then kill "$VITE_PID" 2>/dev/null || true; fi
 
       - name: Upload Playwright report
-        if: ${{ matrix.app_name == 'survey' && failure() }}
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: playwright-report
           path: apps/survey.immich.app/test-results/

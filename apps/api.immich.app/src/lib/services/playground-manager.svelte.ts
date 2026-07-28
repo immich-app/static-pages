@@ -91,7 +91,7 @@ class PlaygroundManager {
     }
 
     if (!apiUrl.endsWith('/api')) {
-      apiUrl = apiUrl + '/api';
+      apiUrl += '/api';
     }
 
     return apiUrl;

@@ -1,0 +1,17 @@
+<script lang="ts">
+  import ExampleCard from '$lib/components/ComponentExampleCard.svelte';
+  import type { ExampleItem } from '$lib/constants.js';
+  import { Stack } from '@immich/ui';
+
+  type Props = {
+    examples: ExampleItem[];
+  };
+
+  const { examples }: Props = $props();
+</script>
+
+<Stack gap={4} class="mt-4">
+  {#each examples as { title, code, component, theme } (title)}
+    <ExampleCard {title} {code} {component} {theme} />
+  {/each}
+</Stack>

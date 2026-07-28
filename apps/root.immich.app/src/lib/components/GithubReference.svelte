@@ -11,11 +11,7 @@
 
   const getLink = (org: string, repo: string, number: number) => {
     const href = `https://github.com/${org}/${repo}/issues/${number}`;
-    let text = `#${number}`;
-
-    if (repo !== 'immich') {
-      text = `${repo}#${number}`;
-    }
+    let text = repo === 'immich' ? `#${number}` : `${repo}#${number}`;
 
     if (org !== 'immich-app') {
       text = `${org}/${repo}#${number}`;

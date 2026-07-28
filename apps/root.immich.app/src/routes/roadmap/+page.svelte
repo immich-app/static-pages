@@ -70,6 +70,7 @@
     mdiPanVertical,
     mdiPartyPopper,
     mdiPencil,
+    mdiPlayCircleOutline,
     mdiRaw,
     mdiRocketLaunch,
     mdiRotate360,
@@ -94,6 +95,7 @@
     mdiUploadMultipleOutline,
     mdiVectorCombine,
     mdiVideo,
+    mdiVideoSwitchOutline,
     mdiWeb,
   } from '@mdi/js';
 
@@ -204,6 +206,31 @@
     };
   };
 
+  type CommitItem = {
+    commit: { value: string; date: Date };
+    number: number;
+    title?: string;
+    description?: string;
+  };
+
+  const commitItem = (item: CommitItem) => {
+    const { value: commit, date } = item.commit;
+    const value = item.number.toLocaleString();
+    const title = item.title ?? `${value} Commits`;
+    const description = item.description ?? `${value} Commits on GitHub`;
+
+    return {
+      icon: mdiPartyPopper,
+      title,
+      description,
+      link: {
+        href: `https://github.com/immich-app/immich/commit/${commit}`,
+        text: commit.slice(0, 8),
+      },
+      getDateLabel: withLanguage(date),
+    };
+  };
+
   const starMilestone = (count: number, date: Date) => ({
     icon: mdiStar,
     iconClass: 'text-warning',
@@ -253,6 +280,21 @@
       title: 'iCloud import',
       description: 'Build a better way to import large iCloud libraries',
     },
+    {
+      icon: mdiVideoSwitchOutline,
+      title: 'Real-time transcoding',
+      description: 'Serve videos with on-the-fly transcoding',
+    },
+    {
+      icon: mdiPlayCircleOutline,
+      title: 'HTTP Live Streaming (HLS)',
+      description: 'Serve videos with automatic quality switching',
+    },
+    {
+      icon: mdiMapOutline,
+      title: 'Reverse geocoding v2',
+      description: 'New system with house number accuracy and points of interest',
+    },
   ].map((item) => ({
     ...item,
     done: false,
@@ -261,6 +303,14 @@
   }));
 
   const milestones: TimelineItem[] = [
+    commitItem({
+      number: 10_000,
+      commit: {
+        value: 'fb0a54d548ffa1baa39bdbffba5758101538aa78',
+        date: new Date(2026, 4, 11),
+      },
+    }),
+    starMilestone(100_000, new Date(2026, 4, 8)),
     releaseItem({
       icon: mdiSecurity,
       title: 'Content Security Policy',
@@ -342,7 +392,7 @@
       description: 'Rework background backups to be more reliable',
       release: 'v1.141.1',
     }),
-    starMilestone(70000, new Date(2025, 6, 9)),
+    starMilestone(70_000, new Date(2025, 6, 9)),
     releaseItem({
       icon: mdiTableKey,
       title: 'Fine grained access controls',
@@ -367,7 +417,7 @@
       description: 'Browse your photos and videos in their folder structure inside the mobile app',
       release: 'v1.130.0',
     }),
-    starMilestone(60000, new Date(2025, 2, 4)),
+    starMilestone(60_000, new Date(2025, 2, 4)),
     releaseItem({
       icon: mdiTagFaces,
       title: 'Manual face tagging',
@@ -393,7 +443,7 @@
       description: 'Database dumps are now integrated into the Immich server',
       release: 'v1.120.0',
     }),
-    starMilestone(50000, new Date(2024, 10, 1)),
+    starMilestone(50_000, new Date(2024, 10, 1)),
     releaseItem({
       icon: mdiFaceRecognition,
       title: 'Metadata Face Import',
@@ -442,7 +492,7 @@
       description: 'Dedicated tile server for Immich',
       release: 'v1.111.0',
     }),
-    starMilestone(40000, new Date(2024, 6, 21)),
+    starMilestone(40_000, new Date(2024, 6, 21)),
     releaseItem({
       icon: mdiShare,
       title: 'Deploy my.immich.app',
@@ -510,7 +560,7 @@
       description: 'Assets on the web now have permanent URLs',
       release: 'v1.103.0',
     }),
-    starMilestone(30000, new Date(2024, 2, 20)),
+    starMilestone(30_000, new Date(2024, 2, 20)),
     releaseItem({
       icon: mdiChartBoxMultipleOutline,
       title: 'OpenTelemetry metrics',
@@ -584,7 +634,7 @@
       description: 'Comment a photo or a video in a shared album',
       release: 'v1.84.0',
     }),
-    starMilestone(20000, new Date(2023, 9, 28)),
+    starMilestone(20_000, new Date(2023, 9, 28)),
     releaseItem({
       icon: mdiCameraBurst,
       title: 'Stack assets',
@@ -753,7 +803,7 @@
       description: 'Manage logged-in devices and revoke access from User Settings.',
       release: 'v1.55.0',
     }),
-    starMilestone(10000, new Date(2023, 3, 18)),
+    starMilestone(10_000, new Date(2023, 3, 18)),
     releaseItem({
       icon: mdiText,
       title: 'Asset descriptions',
@@ -916,12 +966,15 @@
       description: 'Play videos in the web and on mobile.',
       release: 'v1.2.0',
     }),
-    {
-      icon: mdiPartyPopper,
+    commitItem({
+      number: 1,
       title: 'First commit',
       description: 'First commit on GitHub, Immich is born.',
-      getDateLabel: withLanguage(new Date(2022, 1, 3)),
-    },
+      commit: {
+        date: new Date(2022, 1, 3),
+        value: 'af2efbdbbddc27cd06142f22253ccbbbbeec1f55',
+      },
+    }),
   ];
 
   const pageMetadata = {

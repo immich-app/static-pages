@@ -19,7 +19,7 @@ const config = {
     alias: {
       $common: '../../common',
       '$common/*': '../../common/*',
-      '@immich/ui': resolve('./node_modules/@immich/ui/dist'),
+      '@immich/ui': resolve('../../packages/ui/dist'),
       '@mdi/js': resolve('./node_modules/@mdi/js'),
     },
   },

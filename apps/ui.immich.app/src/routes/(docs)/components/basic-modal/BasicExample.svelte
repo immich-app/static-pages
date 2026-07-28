@@ -1,0 +1,35 @@
+<script lang="ts">
+  import Lorem from '$lib/components/Lorem.svelte';
+  import { BasicModal, Button, Field, Input, Select, Stack, type Color, type SelectOption } from '@immich/ui';
+
+  const colors: SelectOption<Color>[] = [
+    { label: 'Primary', value: 'primary' },
+    { label: 'Secondary', value: 'secondary' },
+  ];
+
+  let closeText = $state('Close');
+  let closeColor = $state<Color>('primary');
+  let isOpen = $state(false);
+
+  const onClose = () => (isOpen = false);
+</script>
+
+<Stack class="max-w-64">
+  <Field label="Close text">
+    <Input bind:value={closeText} />
+  </Field>
+
+  <Field label="Close color">
+    <Select bind:value={closeColor} options={colors} />
+  </Field>
+
+  <div>
+    <Button onclick={() => (isOpen = true)}>Open</Button>
+  </div>
+</Stack>
+
+{#if isOpen}
+  <BasicModal title="Basic Modal" {closeText} {closeColor} {onClose}>
+    <Lorem />
+  </BasicModal>
+{/if}

@@ -16,7 +16,7 @@
     <Header />
   </AppShellHeader>
 
-  <PageContent class="max-w-(--breakpoint-lg) w-full mx-auto">
+  <PageContent class="mx-auto w-full max-w-(--breakpoint-lg)">
     {@render children?.()}
   </PageContent>
 </AppShell>

@@ -53,7 +53,7 @@
 
 <div class="hidden lg:block">
   <Card color="secondary">
-    <div class="bg-subtle text-dark mb-2 grid grid-cols-12 border-b px-4 py-2 font-bold">
+    <div class="mb-2 grid grid-cols-12 border-b bg-subtle px-4 py-2 font-bold text-dark">
       <div class="col-span-3">Property</div>
       <div class="col-span-3">Type</div>
       <div class="col-span-2">Status</div>

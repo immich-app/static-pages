@@ -6,21 +6,19 @@ describe('URL utils', () => {
     it('should merge hosts', () => {
       const currentUrl = new URL('https://my.immich.app/foo');
 
-      expect(mergeInstanceUrl(currentUrl, 'https://demo.immich.app').toString()).toEqual('https://demo.immich.app/foo');
+      expect(mergeInstanceUrl(currentUrl, 'https://demo.immich.app').href).toEqual('https://demo.immich.app/foo');
     });
 
     it('should merge hosts with trailing slash in instance URL', () => {
       const currentUrl = new URL('https://my.immich.app/foo');
 
-      expect(mergeInstanceUrl(currentUrl, 'https://demo.immich.app/').toString()).toEqual(
-        'https://demo.immich.app/foo',
-      );
+      expect(mergeInstanceUrl(currentUrl, 'https://demo.immich.app/').href).toEqual('https://demo.immich.app/foo');
     });
 
     it('should merge hosts with paths', () => {
       const currentUrl = new URL('https://my.immich.app/bar');
 
-      expect(mergeInstanceUrl(currentUrl, 'https://demo.immich.app/foo').toString()).toEqual(
+      expect(mergeInstanceUrl(currentUrl, 'https://demo.immich.app/foo').href).toEqual(
         'https://demo.immich.app/foo/bar',
       );
     });
@@ -28,7 +26,7 @@ describe('URL utils', () => {
     it('should merge hosts with search params', () => {
       const currentUrl = new URL('https://my.immich.app?bar=2');
 
-      expect(mergeInstanceUrl(currentUrl, 'https://demo.immich.app?foo=1').toString()).toEqual(
+      expect(mergeInstanceUrl(currentUrl, 'https://demo.immich.app?foo=1').href).toEqual(
         'https://demo.immich.app/?foo=1&bar=2',
       );
     });
@@ -36,7 +34,7 @@ describe('URL utils', () => {
     it('should merge hosts with search params and paths', () => {
       const currentUrl = new URL('https://my.immich.app/baz?bar=2');
 
-      expect(mergeInstanceUrl(currentUrl, 'https://demo.immich.app/foobar?foo=1').toString()).toEqual(
+      expect(mergeInstanceUrl(currentUrl, 'https://demo.immich.app/foobar?foo=1').href).toEqual(
         'https://demo.immich.app/foobar/baz?foo=1&bar=2',
       );
     });

@@ -1,0 +1,40 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schemaFromDatabase > table-create.sql 1`] = `
+{
+  "databaseName": "postgres",
+  "enums": [],
+  "extensions": [],
+  "functions": [],
+  "overrides": [],
+  "parameters": [],
+  "schemaName": "public",
+  "tables": [
+    {
+      "columns": [
+        {
+          "default": "0",
+          "isArray": false,
+          "length": undefined,
+          "name": "column1",
+          "nullable": false,
+          "numericPrecision": 32,
+          "numericScale": 0,
+          "primary": false,
+          "synchronize": true,
+          "tableName": "table1",
+          "type": "integer",
+        },
+      ],
+      "constraints": [],
+      "indexes": [],
+      "name": "table1",
+      "synchronize": true,
+      "triggers": [],
+    },
+  ],
+  "warnings": [
+    "[Overrides] Error reading override table: PostgresError: relation "migration_overrides" does not exist",
+  ],
+}
+`;

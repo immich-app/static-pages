@@ -77,7 +77,7 @@ const isParameterObject =
   (param: unknown): param is ParameterObject =>
     (param as ParameterObject).in === type;
 
-const asSlug = (tag: string) => tag.toLowerCase().replace(/\s/g, '-');
+const asSlug = (tag: string) => tag.toLowerCase().replaceAll(/\s/g, '-');
 const getModelHref = (model: string) => `${ApiPage.Models}/${model}` as Pathname;
 const getTagHref = (tag: string) => `${ApiPage.Endpoints}/${asSlug(tag)}` as Pathname;
 
@@ -127,7 +127,7 @@ export const parseSpec = (spec: OpenAPIObject) => {
       }
 
       const { description: descriptionRaw, operationId, security, summary, tags } = item;
-      const description = descriptionRaw?.replaceAll(/`/g, "'");
+      const description = descriptionRaw?.replaceAll('`', "'");
 
       if (!operationId) {
         console.log('Skipping route without an operationId', { route });
@@ -200,7 +200,7 @@ export const parseSpec = (spec: OpenAPIObject) => {
   }
 
   const addTag = (tag: { name: string; description?: string }) => {
-    if (!tagsMap[tag.name]) {
+    if (!Object.hasOwn(tagsMap, tag.name)) {
       tagsMap[tag.name] = {
         href: getTagHref(tag.name),
         name: tag.name,
@@ -217,7 +217,7 @@ export const parseSpec = (spec: OpenAPIObject) => {
 
   for (const item of Object.values(endpointsMap)) {
     for (const tag of item.tags) {
-      if (!tagsMap[tag]) {
+      if (!Object.hasOwn(tagsMap, tag)) {
         addTag({ name: tag });
       }
 
@@ -328,50 +328,46 @@ export const getOpenApi = () => {
 };
 
 export const getOpenApiProviders = () => {
-  const endpointCommands: ActionItem[] = [];
-  const tagCommands: ActionItem[] = [];
-  const modelCommands: ActionItem[] = [];
+  const commands: ActionItem[] = [];
 
   try {
     const { tags, models } = getOpenApi();
 
     for (const tag of tags) {
-      tagCommands.push({
+      commands.push({
         icon: mdiTagMultiple,
         iconClass: 'text-pink-700 dark:text-pink-200',
         title: tag.name,
+        tags: ['Tag'],
         onAction: () => goto(tag.href),
       });
 
       for (const endpoint of tag.endpoints) {
-        endpointCommands.push({
+        commands.push({
           icon: mdiApi,
           iconClass: 'text-indigo-700 dark:text-indigo-200',
-          title: endpoint.operationId,
+          title: endpoint.name,
           description: endpoint.description,
+          tags: ['Endpoint', tag.name],
           onAction: () => goto(endpoint.href),
-          extraText: [endpoint.name],
         });
       }
     }
 
     for (const model of models) {
-      modelCommands.push({
+      commands.push({
         icon: mdiTag,
         iconClass: 'text-violet-700 dark:text-violet-200',
         title: model.name,
         description: model.description,
+        tags: ['Model'],
         onAction: () => goto(model.href),
-        extraText: model.title,
+        text: model.title,
       });
     }
   } catch {
     // noop
   }
 
-  return [
-    defaultProvider({ name: 'Endpoints', types: ['endpoint', 'endpoints'], actions: endpointCommands }),
-    defaultProvider({ name: 'Tags', types: ['tag', 'tags'], actions: tagCommands }),
-    defaultProvider({ name: 'Models', types: ['model', 'models'], actions: modelCommands }),
-  ];
+  return [defaultProvider({ name: 'Search', actions: commands, options: { threshold: 0.4 } })];
 };

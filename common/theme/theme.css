@@ -1,17 +1,9 @@
 @custom-variant dark (&:where(.dark, .dark *):not(.light));
 
-@theme {
-  --font-immich-title: Snowburst One, cursive;
-  --font-immich-mono: Overpass Mono, monospace;
-}
-
 @layer base {
   :root {
     /* light */
     --immich-primary: 66 80 175;
-
-    /* dark */
-    --immich-dark-primary: 172 203 250;
   }
 }
 
@@ -27,7 +19,7 @@
   @apply text-gray-600 dark:text-gray-400;
 }
 
-.border-muted{
+.border-muted {
   @apply border-gray-600 dark:border-gray-400;
 }
 

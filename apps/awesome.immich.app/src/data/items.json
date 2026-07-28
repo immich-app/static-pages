@@ -10,6 +10,11 @@
         "href": "https://github.com/3rob3/ImmichFrame"
       },
       {
+        "title": "Immich Desktop",
+        "description": "MacOS app that surfaces your Immich library in the Finder sidebar and every file dialog. Photos appear as on-demand files with thumbnails.",
+        "href": "https://kartax.github.io/immich-desktop-app/"
+      },
+      {
         "title": "Immich Kiosk",
         "description": "Highly configurable slideshows for displaying Immich assets on browsers and devices.",
         "href": "https://github.com/damongolding/immich-kiosk"
@@ -25,6 +30,11 @@
         "href": "https://github.com/giejay/Immich-Android-TV"
       },
       {
+        "title": "Immich Gallery",
+        "description": "Unofficial Apple TV Client for your Apple TV.",
+        "href": "https://github.com/mensadilabs/Immich-Gallery"
+      },
+      {
         "title": "Immich Apple TV",
         "description": "Unofficial Immich Apple TV app.",
         "href": "https://github.com/adriankraemer/Immich-Viewer"
@@ -37,12 +47,33 @@
       {
         "title": "View-Only Web Interface",
         "description": "Display Immich photos publicly while allowing for the ability to filter and search for images.",
-        "href": "https://github.com/JimmyeJones/Immich-View-Only-Web-Interface"
+        "href": "https://github.com/JimmyeJones/Immich-View-Only-Web-Interface",
+        "maintained": false
       },
       {
         "title": "Mimick",
         "description": "Unofficial GTK4 Immich client for Linux with persistent background sync.",
         "href": "https://github.com/nicx17/mimick"
+      },
+      {
+        "title": "Harbour-Immich",
+        "description": "Unofficial Immich Sailfish OS application.",
+        "href": "https://github.com/mezmerize/harbour-immich"
+      },
+      {
+        "title": "Immich Companion",
+        "description": "Browser extension that adds right-click save to Immich, CLIP-powered search from the toolbar, optional new tab photo memories, and inline search results that show your photos alongside Google/DuckDuckGo results.",
+        "href": "https://github.com/bjoernch/immich-companion"
+      },
+      {
+        "title": "Picture Frame",
+        "description": "Self-hosted digital photo frame for the Raspberry Pi that syncs an Immich album, with smooth crossfades even on a Pi Zero, motion-aware screen power, and Home Assistant control over MQTT.",
+        "href": "https://github.com/MateEke/picture-frame"
+      },
+      {
+        "title": "Immich Screensaver",
+        "description": "Native Windows screensaver that shows photos from your Immich server, with a different photo on each monitor, album selection, configurable crossfades and a clock overlay.",
+        "href": "https://github.com/xchimx/ImmichScreensaver"
       }
     ]
   },
@@ -74,7 +105,8 @@
       {
         "title": "Immich Stack",
         "description": "Auto-stack photos with identical filenames and differing extensions (i.e. JPG+RAW)",
-        "href": "https://github.com/sid3windr/immich-stack"
+        "href": "https://github.com/sid3windr/immich-stack",
+        "maintained": false
       },
       {
         "title": "API Album Sync",
@@ -94,22 +126,46 @@
       {
         "title": "Immich Downloader",
         "description": "Downloads a configurable number of random photos based on people or album ID.",
-        "href": "https://github.com/jon6fingrs/immich-dl"
+        "href": "https://github.com/jon6fingrs/immich-dl",
+        "maintained": false
       },
       {
         "title": "Immich Machine Learning Load Balancer",
         "description": "Speed up your machine learning by load balancing your requests to multiple computers",
-        "href": "https://github.com/apetersson/immich_ml_balancer"
+        "href": "https://github.com/apetersson/immich_ml_balancer",
+        "maintained": false
       },
       {
         "title": "Immich-Slideshow-Toolkit",
         "description": "Commandline tools for creating video slideshow Mp4s from Immich albums.",
-        "href": "https://github.com/knom/immich-slideshow-toolkit"
+        "href": "https://github.com/knom/immich-slideshow-toolkit",
+        "maintained": false
       },
       {
         "title": "TeleImmich",
         "description": "Sync exported Telegram backups to an Immich instance",
-        "href": "https://github.com/dev-mkm/TeleImmich"
+        "href": "https://github.com/dev-mkm/TeleImmich",
+        "maintained": false
+      },
+      {
+        "title": "Immich Face Recognition Export Tool",
+        "description": "A Python tool to export face recognition data from Immich photo management system to DigiKam-compatible XMP format files.",
+        "href": "https://github.com/yuhuan417/immich-scripts"
+      },
+      {
+        "title": "immichpy",
+        "description": "The stable, typed Python API layer for Immich automation and integrations.",
+        "href": "https://github.com/timonrieger/immichpy"
+      },
+      {
+        "title": "lrimmich",
+        "description": "Sync albums and metadata from a Lightroom Classic catalog to Immich when both share the same photo folder via an external library.",
+        "href": "https://github.com/haavardnk/lrimmich"
+      },
+      {
+        "title": "Immich Custom Memories",
+        "description": "Create customized Memories in Immich.",
+        "href": "https://github.com/SinTan1729/immich-custom-memories"
       }
     ]
   },
@@ -121,12 +177,14 @@
       {
         "title": "Immich Kodi",
         "description": "Unofficial Kodi plugin for Immich.",
-        "href": "https://github.com/vladd11/immich-kodi"
+        "href": "https://github.com/vladd11/immich-kodi",
+        "maintained": false
       },
       {
         "title": "Lightroom Publisher: mi.Immich.Publisher",
         "description": "Lightroom plugin to publish photos from Lightroom collections to Immich albums.",
-        "href": "https://github.com/midzelis/mi.Immich.Publisher"
+        "href": "https://github.com/midzelis/mi.Immich.Publisher",
+        "maintained": false
       },
       {
         "title": "Lightroom Immich Plugin: lrc-immich-plugin",
@@ -158,12 +216,23 @@
       {
         "title": "Telegram to Immich Bot",
         "description": "Telegram bot for uploading files directly to your Immich instance, preserving the metadata",
-        "href": "https://github.com/myanesp/telegram-immich-bot"
+        "href": "https://github.com/myanesp/telegram-immich-bot",
+        "maintained": false
       },
       {
         "title": "Immich timelaspe selfie",
         "description": "This tool creates selfie timelapse videos using Immich.",
         "href": "https://github.com/ArnaudCrl/immich-automated-selfie-timelapse"
+      },
+      {
+        "title": "Immich ReverseGeo",
+        "description": "Improve, correct, and get more precise reverse geocoding using Overture and GADM. Integrated geocoding",
+        "href": "https://immich-reversegeo.github.io"
+      },
+      {
+        "title": "Immich Power Tools",
+        "description": "A unofficial Immich client to provide better tools to organize and manage your Immich account.",
+        "href": "https://github.com/immich-power-tools/immich-power-tools"
       }
     ]
   },
@@ -176,6 +245,11 @@
         "title": "Immich Distribution",
         "description": "Snap package for easy install and zero-care auto updates of Immich. Self-hosted photo management.",
         "href": "https://immich-distribution.nsg.cc"
+      },
+      {
+        "title": "SynoCommunity",
+        "description": "Native Synology DSM package for Immich, installable via Package Center. Includes PostgreSQL, Redis, and ffmpeg dependencies managed automatically.",
+        "href": "https://docs.synocommunity.com/packages/immich/"
       }
     ]
   },
@@ -203,6 +277,11 @@
         "title": "Sync folders with albums",
         "description": "synchronize folders in imported library with albums having the folders name.",
         "href": "https://github.com/immich-app/immich/discussions/3382"
+      },
+      {
+        "title": "SynoCommunity Package Install",
+        "description": "Step-by-step guide for installing Immich as a native Synology DSM package via SynoCommunity's Package Center. Covers prerequisites, PostgreSQL setup, the installation wizard, and upgrade notes.",
+        "href": "https://docs.synocommunity.com/packages/immich/"
       },
       {
         "title": "Immich Podman Quadlets Handbook",
