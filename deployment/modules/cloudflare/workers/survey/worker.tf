@@ -89,16 +89,17 @@ resource "cloudflare_worker_version" "sessions" {
     content_type = "application/javascript+module"
   }]
 
-  # Provision SurveyDO as a SQLite-backed Durable Object. A SQLite class must be
-  # declared via new_sqlite_classes on its FIRST migration — it cannot be
-  # converted from a classic DO later. Terraform owns these workers (prod and
-  # every per-PR `survey-sessions-*-pr-N` stage), and a fresh worker has no
-  # migration tag, so this must be the initial migration (no old_tag) rather
-  # than the previous `old_tag = new_tag = "v2"` with no classes, which declared
-  # no storage and was rejected on any freshly provisioned worker.
+  # SurveyDO is provisioned as a SQLite-backed class through the wrangler
+  # migration chain (wrangler-do.jsonc: v1 new_classes SurveySession -> v2
+  # new_sqlite_classes SurveyDO), which leaves these workers at tag "v2". This
+  # is therefore a no-op migration that just asserts the current tag; the
+  # precondition old_tag == new_tag == "v2" matches the deployed worker.
+  # (Do NOT set new_tag = "v1" / new_sqlite_classes here: the worker already
+  # exists at v2, so Cloudflare rejects it with a 412 migration-tag precondition
+  # error.)
   migrations = {
-    new_tag            = "v1"
-    new_sqlite_classes = ["SurveyDO"]
+    old_tag = "v2"
+    new_tag = "v2"
   }
 }
 
