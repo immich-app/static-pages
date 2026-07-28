@@ -101,11 +101,6 @@ async function main() {
         return;
       }
 
-      // Viewer sockets stream live respondent/viewer counts for a survey, which
-      // is admin-dashboard data — authenticate them exactly like the Workers
-      // path does (index.ts gates type=viewer|editor on a valid session with at
-      // least the viewer role). Without this the self-hosted server accepted
-      // any anonymous viewer socket for an arbitrary slug.
       if (type === 'viewer') {
         const cookieHeader = req.headers.cookie ?? '';
         const token = getCookie({ headers: { get: () => cookieHeader } }, SESSION_COOKIE_NAME);

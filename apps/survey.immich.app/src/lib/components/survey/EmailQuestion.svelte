@@ -11,7 +11,6 @@
   }
 
   let { question, answer, onAnswer }: Props = $props();
-  // Writable derived: mirrors the saved answer, but local edits hold until it changes.
   let email = $derived(answer?.value ?? '');
 
   const { handleInput } = useDebouncedAnswer(

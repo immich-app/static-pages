@@ -20,8 +20,6 @@ export function registerAuthRoutes(router: AppRouter) {
       return Response.json({
         authenticated: false,
         needsSetup: true,
-        // Tells the setup UI to collect the deploy-time token. Only a boolean —
-        // never the token itself.
         needsSetupToken: !!ctx.config.setupToken,
         passwordEnabled,
         oidcEnabled,
@@ -49,14 +47,6 @@ export function registerAuthRoutes(router: AppRouter) {
       throw new ServiceError('Password authentication is disabled', 400);
     }
 
-    // This endpoint is unauthenticated by necessity — it is how the very first
-    // admin is created — and on success it immediately mints an admin session.
-    // On an internet-routed deployment that makes the instance claimable by
-    // whoever reaches it first, and /api/auth/me advertises `needsSetup` to
-    // anonymous callers. Where an ADMIN_SETUP_TOKEN is provisioned (see the
-    // Terraform module), require it. Deployments without one — self-hosted,
-    // where the operator controls when the instance is reachable — are
-    // unaffected.
     if (ctx.config.setupToken) {
       const provided = request.headers.get('X-Setup-Token') ?? '';
       if (!constantTimeEqual(provided, ctx.config.setupToken)) {
@@ -172,8 +162,6 @@ export function registerAuthRoutes(router: AppRouter) {
     const ctx = getContext(request);
     const authService = new AuthService(ctx.config, ctx.db);
     const tokens = await authService.exchangeCode(code);
-    // The access token lets validateIdToken enrich the verified ID-token claims
-    // from the userinfo endpoint, which is where some IdPs put role/email/name.
     const user = await authService.validateIdToken(tokens.id_token, stateData.nonce, tokens.access_token);
     const sessionToken = await authService.createSessionToken(user);
     const secure = ctx.config.cookieSecure ? 'Secure; ' : '';

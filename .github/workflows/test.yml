@@ -76,11 +76,6 @@ jobs:
         run: pnpm test:medium
         if: ${{ !cancelled() }}
 
-  # The survey app needs a live wrangler + Vite to run its backend integration
-  # and Playwright e2e suites, which the monorepo `test` job (pure `pnpm -r`)
-  # can't provide. Keep it as a dedicated job. Its frontend unit tests still run
-  # via `pnpm -r test` above; the backend has no plain `test` script so it is
-  # skipped there and exercised here through `test:integration`.
   survey-e2e:
     name: Test (survey e2e)
     runs-on: ubuntu-latest

@@ -19,10 +19,6 @@ function getRoom(slug: string): SurveyRoom {
   return room;
 }
 
-// Match the wire shape the client's WS handler understands: a push event
-// ({ type: 'push', event: 'counts', data }). The DO broadcaster emits this same
-// shape in Workers mode; a bare { type: 'counts', ... } would be silently
-// dropped by the client, so self-hosted live counts would never update.
 function countsMessage(room: SurveyRoom): string {
   return JSON.stringify({
     type: 'push',
@@ -67,12 +63,6 @@ export function handlePresenceUpgrade(ws: WebSocket, slug: string, type: 'viewer
   // Debounced broadcast to other viewers
   scheduleBroadcast(room);
 
-  // This Node presence server only tracks presence — it does NOT implement the
-  // WsOperations request/response protocol (that lives in the Durable Object in
-  // Workers mode). Answer any command request with an error so the client fails
-  // over to HTTP immediately instead of blocking on its 30s request timeout
-  // (which otherwise stalls every respondent's survey load and all viewer data
-  // fetches on self-hosted deployments).
   ws.on('message', (raw) => {
     let msg: { type?: string; requestId?: string } | undefined;
     try {

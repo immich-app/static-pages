@@ -9,7 +9,6 @@ interface AuthState {
   authenticated: boolean;
   user?: AuthUser;
   needsSetup?: boolean;
-  /** Server requires an X-Setup-Token header to claim the admin account. */
   needsSetupToken?: boolean;
   oidcEnabled?: boolean;
   passwordEnabled?: boolean;
@@ -30,8 +29,6 @@ export async function setup(password: string, setupToken?: string): Promise<void
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      // Required by internet-routed deployments that provision an
-      // ADMIN_SETUP_TOKEN, so a stranger can't claim the instance.
       ...(setupToken ? { 'X-Setup-Token': setupToken } : {}),
     },
     body: JSON.stringify({ password }),

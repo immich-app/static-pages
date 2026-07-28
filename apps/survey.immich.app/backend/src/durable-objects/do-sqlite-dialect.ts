@@ -81,9 +81,6 @@ class CloudflareDOConnection implements DatabaseConnection {
     });
   }
 
-  // Not a generator: DO SQLite has no streaming cursor, so this always throws
-  // rather than yielding. Declared with the AsyncIterableIterator return type
-  // to satisfy Kysely's DatabaseConnection interface.
   streamQuery<R>(): AsyncIterableIterator<QueryResult<R>> {
     throw new Error('DO SQLite driver does not support streaming');
   }

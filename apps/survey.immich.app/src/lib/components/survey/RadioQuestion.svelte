@@ -11,7 +11,6 @@
   }
 
   let { question, answer, onAnswer }: Props = $props();
-  // Writable derived: mirrors the saved "other" text, but local edits hold until it changes.
   let otherText = $derived(answer?.otherText ?? '');
 
   const visibleOptions = $derived((question.options ?? []).filter((o) => !question.hasOther || o.value !== 'Other'));

@@ -50,9 +50,6 @@ export function surveyFromApi(apiSurvey: Record<string, unknown>): Survey {
     maxResponses: (apiSurvey.max_responses as number) ?? null,
     randomizeQuestions: !!(apiSurvey.randomize_questions as number),
     randomizeOptions: !!(apiSurvey.randomize_options as number),
-    // The API reports `has_password` and no longer sends the hash itself (see
-    // backend utils/sanitize.ts). `password_hash` remains as a fallback for the
-    // one response that is still unsanitized (survey creation, always null).
     hasPassword: !!(apiSurvey.has_password ?? apiSurvey.password_hash),
     requiresPassword: !!(apiSurvey.requiresPassword as boolean),
     archivedAt: (apiSurvey.archived_at as string) ?? null,

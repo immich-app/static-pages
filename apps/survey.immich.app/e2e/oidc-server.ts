@@ -86,11 +86,6 @@ const configuration: Configuration = {
   features: {
     devInteractions: { enabled: false },
   },
-  // Spec-conformant: the id_token carries only `sub`, so email/name/groups are
-  // available solely from the userinfo endpoint. This mirrors the real IdP
-  // (Zitadel only asserts those into the id_token behind a per-app flag, but
-  // always serves them from userinfo), so these tests exercise the same code
-  // path production uses rather than a shortcut the real provider won't take.
   conformIdTokenClaims: true,
   pkce: {
     required: () => false,

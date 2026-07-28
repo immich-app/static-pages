@@ -158,8 +158,6 @@ async function handleOp(
   switch (op) {
     // ---- Survey (WS-only, admin operations use full service) ----
     case 'get-survey': {
-      // Strip the survey password hash: 'get-survey' is a viewer-role op and
-      // viewers must not receive credential material.
       const detail = await surveyService.getSurvey(cache.survey.id);
       return { ...detail, survey: toClientSurvey(detail.survey) };
     }

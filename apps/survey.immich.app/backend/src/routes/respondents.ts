@@ -55,9 +55,6 @@ export function registerRespondentRoutes(router: AppRouter) {
           questions: [],
           requiresPassword: true,
         });
-        // Password-gated: never cacheable. See the note on the authed branch —
-        // and caching this stub privately would also make the post-/auth
-        // refetch serve a stale `requiresPassword: true`, wedging the gate.
         response.headers.set('Cache-Control', 'private, no-store');
         return response;
       }
@@ -65,12 +62,6 @@ export function registerRespondentRoutes(router: AppRouter) {
 
     const { password_hash: _password_hash, ...safeSurvey } = result.survey;
     const response = Response.json({ ...result, survey: safeSurvey });
-    // Only an ungated survey may be shared-cached. For a password-protected one
-    // this body varies on the `spw_` cookie, and `s-maxage`/
-    // `stale-while-revalidate` are shared-cache-only directives — emitting them
-    // here would tell a caching proxy it may serve one respondent's authorized
-    // copy (every question and section) to anonymous visitors for an hour
-    // (CWE-525). There is no `Vary: Cookie` on this path to prevent that.
     response.headers.set(
       'Cache-Control',
       result.survey.password_hash

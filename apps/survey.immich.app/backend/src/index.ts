@@ -258,10 +258,6 @@ function matchDORoute(method: string, pathname: string): { surveyId?: string; sl
     // Tags live in D1, not in the DO — let itty-router handle them
     const subPath = surveyMatch[2] || '';
     if (subPath === '/tags') return null;
-    // `/init` is an INTERNAL DO endpoint the worker calls directly via
-    // stub.fetch (see initDO). It unconditionally wipes and re-seeds all
-    // survey data, so it must never be reachable from the public HTTP surface.
-    // Refuse to forward it — itty-router has no such route, so it 404s.
     if (subPath === '/init') return null;
     return { surveyId: id };
   }
@@ -401,11 +397,9 @@ export default {
         if (respondentId) wsHeaders.set('X-Respondent-Id', respondentId);
 
         // Always verify the spw_ cookie (independent of whether we know the
-        // survey requires a password — the DO gates on its own current
-        // password_hash). The worker can check the token's signature and expiry
-        // but not which password it was minted against, so it also forwards the
-        // verified fingerprint; the DO compares that against its authoritative
-        // password_hash, which is what makes a password change revoke old tokens.
+        // survey requires a password — the DO will gate based on its own
+        // current password_hash). Forwarding "user holds a valid token for
+        // this survey" lets the DO trust the result without re-verifying.
         const token = getCookie(request, `spw_${doMatch.slug}`);
         const pw = token
           ? await verifySurveyPasswordTokenSignature(token, surveyId, config.passwordSecret)
@@ -456,10 +450,9 @@ export default {
       const respondentId = getRespondentId(request, slug);
       if (respondentId) doHeaders.set('X-Respondent-Id', respondentId);
 
-      // X-Authenticated reports that the spw_ cookie carries a valid, unexpired
-      // signature. The DO decides whether a password is required from its own
-      // up-to-date survey.password_hash, and compares X-Survey-Pw-Fp against it
-      // so a token minted under a previous password is rejected.
+      // X-Authenticated reports the true validity of the spw_ cookie. The DO
+      // decides whether a password is required based on its own up-to-date
+      // survey.password_hash and rejects unauthenticated requests when needed.
       const token = getCookie(request, `spw_${slug}`);
       const pw = token
         ? await verifySurveyPasswordTokenSignature(token, surveyId, config.passwordSecret)
@@ -578,13 +571,6 @@ function checkRole(role: UserRole, minRole: UserRole): boolean {
   return (ROLE_HIERARCHY[role] ?? 0) >= (ROLE_HIERARCHY[minRole] ?? 0);
 }
 
-/**
- * Return the request Origin only if it is safe to echo with
- * Access-Control-Allow-Credentials: true — i.e. it is the app's own origin.
- * Accepts same-origin requests and the configured OIDC redirect origin (which
- * is where the SPA is served, and in dev covers the Vite proxy on :5173).
- * Any other origin returns null so no credentialed CORS headers are emitted.
- */
 function allowedCredentialedOrigin(request: Request, config: import('./config').AppConfig): string | null {
   const origin = request.headers.get('Origin');
   if (!origin) return null;

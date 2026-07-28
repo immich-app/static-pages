@@ -11,8 +11,6 @@
   let error = $state<string | null>(null);
   let submitting = $state(false);
 
-  // Hosted deployments provision a setup token so a passer-by can't claim the
-  // instance; self-hosted ones don't set it and never see this field.
   const auth = getAuth();
   const requiresToken = $derived(auth.needsSetupToken);
 

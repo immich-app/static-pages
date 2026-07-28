@@ -16,12 +16,6 @@ export interface AppConfig {
   };
   disablePasswordAuth: boolean;
   cookieSecure: boolean;
-  /**
-   * When non-empty, POST /api/auth/setup additionally requires a matching
-   * X-Setup-Token header. Set on internet-routed deployments so a stranger
-   * cannot claim the admin account of a freshly provisioned instance; left
-   * empty for self-hosted setups, where the operator controls exposure.
-   */
   setupToken: string;
 }
 

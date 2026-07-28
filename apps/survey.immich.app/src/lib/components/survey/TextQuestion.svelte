@@ -11,8 +11,6 @@
   }
 
   let { question, answer, onAnswer }: Props = $props();
-  // Writable derived: mirrors the saved answer, but local edits (bind:value)
-  // hold until the answer prop changes.
   let textValue = $derived(answer?.value ?? '');
 
   const { handleInput } = useDebouncedAnswer(

@@ -35,11 +35,6 @@ export function registerSurveyRoutes(router: AppRouter) {
     const service = createSurveyService(ctx.db);
     const body = (await request.json()) as CreateSurveyInput;
     const survey = await service.createSurvey(body);
-    // NOTE: deliberately NOT sanitized. The API worker consumes this response
-    // body to seed the survey's Durable Object (see initDO), which binds
-    // `password_hash` into an INSERT — dropping the key would bind `undefined`
-    // and fail. A freshly created survey always has `password_hash: null`, so
-    // there is no credential material to leak here.
     return Response.json(survey, { status: 201 });
   });
 
@@ -135,9 +130,6 @@ export function registerSurveyRoutes(router: AppRouter) {
     return Response.json(section, { status: 201 });
   });
 
-  // Register the literal `/sections/reorder` route BEFORE the `/sections/:id`
-  // routes: itty-router matches in registration order, so `:id` would
-  // otherwise capture "reorder" and route a reorder request into updateSection.
   router.put('/api/surveys/:id/sections/reorder', async (request: AuthenticatedRequest) => {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);

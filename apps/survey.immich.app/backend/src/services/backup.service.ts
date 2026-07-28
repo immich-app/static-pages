@@ -1,10 +1,7 @@
 import type { Kysely } from 'kysely';
 import type { Database } from '../db';
 
-// Tables that must always be present in a backup. The full per-table import
-// order (including the optional survey_sections/survey_questions/respondents/
-// answers tables, empty in Workers/DO mode) is spelled out in `tables` inside
-// importAll; only the always-required set is validated up front here.
+// Tables that must always be present in a backup
 const REQUIRED_TABLES = ['surveys', 'tags', 'survey_tags', 'audit_log', 'admin_credentials'] as const;
 
 /**

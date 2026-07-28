@@ -55,21 +55,6 @@ export async function verifyToken(data: string, token: string, secret: string): 
   return constantTimeEqual(expected, token);
 }
 
-/**
- * Change-detection fingerprint of a survey's password hash.
- *
- * Survey-password tokens embed this so that rotating (or clearing) a survey
- * password invalidates every token minted against the old one — otherwise the
- * admin's only revocation lever is a no-op. It is NOT a secret and NOT a
- * security primitive on its own: the value always travels inside an
- * HMAC-signed token, so it cannot be tampered with, and it is derived from an
- * already-salted PBKDF2 digest, so it discloses nothing useful about the
- * password. Its only job is to differ when the password differs.
- *
- * Deliberately synchronous (two independently seeded FNV-1a passes, ~64 bits of
- * change detection) so the Durable Object's WebSocket-upgrade gate — which is
- * on the hot path and non-async — can compare it without awaiting a digest.
- */
 export function passwordFingerprint(passwordHash: string | null | undefined): string {
   if (!passwordHash) return 'none';
   let h1 = 0x811c9dc5;

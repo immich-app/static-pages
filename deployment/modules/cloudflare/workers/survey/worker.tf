@@ -1,20 +1,7 @@
 locals {
-  # OIDC is enabled only when it can actually work end to end:
-  #
-  #  - Credentials must be present. These bindings used to be gated
-  #    independently, so a half-populated config produced a worker that
-  #    advertised `oidcEnabled: true` and then built an authorize URL with an
-  #    empty redirect_uri — a login button that always fails. All-or-nothing
-  #    instead.
-  #  - Production only. Zitadel matches redirect URIs exactly and has no
-  #    wildcards, but every PR stage gets its own hostname
-  #    (survey.pr-<n>.dev.immich.app), which cannot be pre-registered. Preview
-  #    stages therefore keep password auth (plus the setup token) as before.
   oidc_configured = var.oidc_issuer != "" && var.oidc_client_id != "" && var.oidc_client_secret != ""
   oidc_enabled    = local.oidc_configured && var.env == "prod" && var.stage == ""
 
-  # Derived rather than supplied: the callback must live on whichever hostname
-  # this stage actually serves, and the app calls /api/auth/login same-origin.
   oidc_redirect_uri = "https://${module.domain.fqdn}/api/auth/callback"
 
   oidc_bindings = local.oidc_enabled ? [
@@ -38,8 +25,6 @@ locals {
       type = "plain_text"
       text = local.oidc_redirect_uri
     },
-    # Only disable password auth where OIDC actually works, or a stage would be
-    # left with no way to sign in at all.
     {
       name = "DISABLE_PASSWORD_AUTH"
       type = "plain_text"
@@ -119,14 +104,6 @@ resource "cloudflare_worker_version" "sessions" {
     content_type = "application/javascript+module"
   }]
 
-  # SurveyDO is provisioned as a SQLite-backed class through the wrangler
-  # migration chain (wrangler-do.jsonc: v1 new_classes SurveySession -> v2
-  # new_sqlite_classes SurveyDO), which leaves these workers at tag "v2". This
-  # is therefore a no-op migration that just asserts the current tag; the
-  # precondition old_tag == new_tag == "v2" matches the deployed worker.
-  # (Do NOT set new_tag = "v1" / new_sqlite_classes here: the worker already
-  # exists at v2, so Cloudflare rejects it with a 412 migration-tag precondition
-  # error.)
   migrations = {
     old_tag = "v2"
     new_tag = "v2"

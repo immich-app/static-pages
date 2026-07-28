@@ -625,19 +625,6 @@ export class SurveyDO extends DurableObject {
     return pathname;
   }
 
-  /**
-   * Does this request clear the survey's password gate?
-   *
-   * The API worker has already verified the `spw_` token's signature and expiry
-   * (`X-Authenticated`) and forwarded the fingerprint of the password it was
-   * minted against (`X-Survey-Pw-Fp`). Both are internal headers, stripped from
-   * inbound client requests by the worker, so they cannot be spoofed.
-   *
-   * This DO holds the authoritative, always-current `password_hash`, so it is
-   * the only component that can tell whether a token predates a password
-   * change — comparing the fingerprint here is what makes rotating a survey
-   * password actually revoke tokens issued under the old one.
-   */
   private passwordGateAllows(request: Request): boolean {
     const survey = this.cache.survey;
     if (!survey.password_hash) return true;
