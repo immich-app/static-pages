@@ -122,7 +122,8 @@
           bind:value={jsonText}
           rows="10"
           class="w-full rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 font-mono text-sm text-gray-200 placeholder-gray-500 focus:border-blue-500 focus:outline-none"
-          placeholder={'{"version": 1, "title": "My Survey", "sections": [...]}'}></textarea>
+          placeholder={'{"version": 1, "title": "My Survey", "sections": [...]}'}
+        ></textarea>
       </div>
 
       {#if parseError}

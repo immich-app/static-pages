@@ -9,6 +9,9 @@ import { configFromProcessEnv, type AppContext } from './config';
 import { detectDbType, type Database, type DbConfig } from './db';
 import { runMigrations } from './migrator';
 import { handlePresenceUpgrade } from './services/in-memory-presence';
+import { verifySessionToken } from './utils/session';
+import { getCookie } from './cookie';
+import { SESSION_COOKIE_NAME, ROLE_HIERARCHY } from './constants';
 
 async function createDatabase(dbConfig: DbConfig): Promise<Kysely<Database>> {
   if (dbConfig.type === 'sqlite') {
@@ -83,23 +86,41 @@ async function main() {
   const wss = new WebSocketServer({ noServer: true });
 
   (server as import('node:http').Server).on('upgrade', (req, socket, head) => {
-    const url = new URL(req.url ?? '', `http://localhost:${port}`);
-    const wsMatch = url.pathname.match(/^\/api\/s\/([^/]+)\/ws$/);
-    if (!wsMatch) {
-      socket.destroy();
-      return;
-    }
+    void (async () => {
+      const url = new URL(req.url ?? '', `http://localhost:${port}`);
+      const wsMatch = url.pathname.match(/^\/api\/s\/([^/]+)\/ws$/);
+      if (!wsMatch) {
+        socket.destroy();
+        return;
+      }
 
-    const slug = wsMatch[1];
-    const type = url.searchParams.get('type');
-    if (type !== 'viewer' && type !== 'respondent') {
-      socket.destroy();
-      return;
-    }
+      const slug = wsMatch[1];
+      const type = url.searchParams.get('type');
+      if (type !== 'viewer' && type !== 'respondent') {
+        socket.destroy();
+        return;
+      }
 
-    wss.handleUpgrade(req, socket, head, (ws) => {
-      handlePresenceUpgrade(ws as any, slug, type);
-    });
+      // Viewer sockets stream live respondent/viewer counts for a survey, which
+      // is admin-dashboard data — authenticate them exactly like the Workers
+      // path does (index.ts gates type=viewer|editor on a valid session with at
+      // least the viewer role). Without this the self-hosted server accepted
+      // any anonymous viewer socket for an arbitrary slug.
+      if (type === 'viewer') {
+        const cookieHeader = req.headers.cookie ?? '';
+        const token = getCookie({ headers: { get: () => cookieHeader } }, SESSION_COOKIE_NAME);
+        const user = token ? await verifySessionToken(token, config.sessionSecret) : null;
+        if (!user || (ROLE_HIERARCHY[user.role] ?? 0) < ROLE_HIERARCHY.viewer) {
+          socket.write('HTTP/1.1 401 Unauthorized\r\nConnection: close\r\n\r\n');
+          socket.destroy();
+          return;
+        }
+      }
+
+      wss.handleUpgrade(req, socket, head, (ws) => {
+        handlePresenceUpgrade(ws as any, slug, type);
+      });
+    })();
   });
 }
 

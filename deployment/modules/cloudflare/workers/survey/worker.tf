@@ -46,6 +46,11 @@ locals {
         text = random_password.password_secret.result
       },
       {
+        name = "ADMIN_SETUP_TOKEN"
+        type = "secret_text"
+        text = random_password.admin_setup_token.result
+      },
+      {
         name = "OIDC_ROLE_CLAIM"
         type = "plain_text"
         text = var.oidc_role_claim

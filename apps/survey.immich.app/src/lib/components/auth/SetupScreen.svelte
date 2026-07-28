@@ -3,12 +3,18 @@
   import { Icon } from '@immich/ui';
   import { mdiShieldLock } from '@mdi/js';
   import { setup } from '$lib/api/auth';
-  import { refreshAuth } from '$lib/stores/auth.svelte';
+  import { getAuth, refreshAuth } from '$lib/stores/auth.svelte';
 
   let password = $state('');
   let confirmPassword = $state('');
+  let setupToken = $state('');
   let error = $state<string | null>(null);
   let submitting = $state(false);
+
+  // Hosted deployments provision a setup token so a passer-by can't claim the
+  // instance; self-hosted ones don't set it and never see this field.
+  const auth = getAuth();
+  const requiresToken = $derived(auth.needsSetupToken);
 
   async function handleSubmit(e: Event) {
     e.preventDefault();
@@ -22,10 +28,14 @@
       error = 'Passwords do not match';
       return;
     }
+    if (requiresToken && !setupToken.trim()) {
+      error = 'A setup token is required to claim this instance';
+      return;
+    }
 
     submitting = true;
     try {
-      await setup(password);
+      await setup(password, requiresToken ? setupToken.trim() : undefined);
       await refreshAuth();
     } catch (err) {
       error = err instanceof Error ? err.message : 'Setup failed';
@@ -45,6 +55,24 @@
     </div>
 
     <form onsubmit={handleSubmit} class="space-y-4" aria-label="Create admin account">
+      {#if requiresToken}
+        <div>
+          <label for="setup-token" class="mb-1.5 block text-xs font-medium tracking-wider text-gray-500 uppercase">
+            Setup token
+          </label>
+          <Input
+            id="setup-token"
+            type="password"
+            bind:value={setupToken}
+            placeholder="Deploy-time setup token"
+            disabled={submitting}
+          />
+          <p class="mt-1 text-xs text-gray-500">
+            Required on hosted deployments. Retrieve it with <code>terragrunt output -raw admin_setup_token</code>.
+          </p>
+        </div>
+      {/if}
+
       <div>
         <label class="mb-1.5 block text-xs font-medium tracking-wider text-gray-500 uppercase">Password</label>
         <Input type="password" bind:value={password} placeholder="At least 8 characters" disabled={submitting} />
@@ -58,7 +86,11 @@
         <p class="text-sm text-red-400">{error}</p>
       {/if}
 
-      <Button color="primary" type="submit" disabled={submitting || !password || !confirmPassword}>
+      <Button
+        color="primary"
+        type="submit"
+        disabled={submitting || !password || !confirmPassword || (requiresToken && !setupToken.trim())}
+      >
         {submitting ? 'Setting up...' : 'Create Admin Account'}
       </Button>
     </form>

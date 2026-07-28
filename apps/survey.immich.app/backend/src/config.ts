@@ -16,6 +16,13 @@ export interface AppConfig {
   };
   disablePasswordAuth: boolean;
   cookieSecure: boolean;
+  /**
+   * When non-empty, POST /api/auth/setup additionally requires a matching
+   * X-Setup-Token header. Set on internet-routed deployments so a stranger
+   * cannot claim the admin account of a freshly provisioned instance; left
+   * empty for self-hosted setups, where the operator controls exposure.
+   */
+  setupToken: string;
 }
 
 export interface AppContext {
@@ -38,6 +45,7 @@ export function configFromEnv(env: Env): AppConfig {
       roleMapEditor: env.OIDC_ROLE_MAP_EDITOR ?? 'survey-editor',
     },
     disablePasswordAuth: env.DISABLE_PASSWORD_AUTH === 'true',
+    setupToken: env.ADMIN_SETUP_TOKEN ?? '',
     cookieSecure: true, // Always true on Workers (HTTPS)
   };
 }
@@ -65,6 +73,7 @@ export function configFromProcessEnv(): AppConfig {
       roleMapEditor: process.env.OIDC_ROLE_MAP_EDITOR ?? 'survey-editor',
     },
     disablePasswordAuth: process.env.DISABLE_PASSWORD_AUTH === 'true',
+    setupToken: process.env.ADMIN_SETUP_TOKEN ?? '',
     cookieSecure: process.env.COOKIE_SECURE !== 'false',
   };
 }

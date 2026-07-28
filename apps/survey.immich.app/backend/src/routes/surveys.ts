@@ -2,6 +2,7 @@ import { createSurveyService } from '../services/factory';
 import { requireRole, type AuthenticatedRequest } from '../middleware/auth';
 import { getContext } from '../config';
 import { MAX_PAGINATION_LIMIT } from '../constants';
+import { toClientSurvey } from '../utils/sanitize';
 import type { AppRouter } from '../types';
 import type {
   CreateSurveyInput,
@@ -25,7 +26,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     const limit = Math.min(MAX_PAGINATION_LIMIT, Math.max(1, Number(url.searchParams.get('limit')) || 20));
 
     const result = await service.listSurveysPaginated({ includeArchived, search, offset, limit });
-    return Response.json(result);
+    return Response.json({ ...result, surveys: result.surveys.map(toClientSurvey) });
   });
 
   router.post('/api/surveys', async (request: AuthenticatedRequest) => {
@@ -34,6 +35,11 @@ export function registerSurveyRoutes(router: AppRouter) {
     const service = createSurveyService(ctx.db);
     const body = (await request.json()) as CreateSurveyInput;
     const survey = await service.createSurvey(body);
+    // NOTE: deliberately NOT sanitized. The API worker consumes this response
+    // body to seed the survey's Durable Object (see initDO), which binds
+    // `password_hash` into an INSERT — dropping the key would bind `undefined`
+    // and fail. A freshly created survey always has `password_hash: null`, so
+    // there is no credential material to leak here.
     return Response.json(survey, { status: 201 });
   });
 
@@ -42,7 +48,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
     const result = await service.getSurvey(request.params.id);
-    return Response.json(result);
+    return Response.json({ ...result, survey: toClientSurvey(result.survey) });
   });
 
   router.put('/api/surveys/:id', async (request: AuthenticatedRequest) => {
@@ -51,7 +57,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     const service = createSurveyService(ctx.db);
     const body = (await request.json()) as UpdateSurveyInput;
     const survey = await service.updateSurvey(request.params.id, body);
-    return Response.json(survey);
+    return Response.json(toClientSurvey(survey));
   });
 
   router.delete('/api/surveys/:id', async (request: AuthenticatedRequest) => {
@@ -67,7 +73,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
     const survey = await service.publishSurvey(request.params.id);
-    return Response.json(survey);
+    return Response.json(toClientSurvey(survey));
   });
 
   router.put('/api/surveys/:id/unpublish', async (request: AuthenticatedRequest) => {
@@ -75,7 +81,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
     const survey = await service.unpublishSurvey(request.params.id);
-    return Response.json(survey);
+    return Response.json(toClientSurvey(survey));
   });
 
   router.post('/api/surveys/:id/duplicate', async (request: AuthenticatedRequest) => {
@@ -91,7 +97,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
     const survey = await service.archiveSurvey(request.params.id);
-    return Response.json(survey);
+    return Response.json(toClientSurvey(survey));
   });
 
   router.put('/api/surveys/:id/unarchive', async (request: AuthenticatedRequest) => {
@@ -99,7 +105,7 @@ export function registerSurveyRoutes(router: AppRouter) {
     const ctx = getContext(request);
     const service = createSurveyService(ctx.db);
     const survey = await service.unarchiveSurvey(request.params.id);
-    return Response.json(survey);
+    return Response.json(toClientSurvey(survey));
   });
 
   router.get('/api/surveys/:id/definition', async (request: AuthenticatedRequest) => {

@@ -2,6 +2,7 @@ import { AuthService } from '../services/auth.service';
 import { ServiceError } from '../services/errors';
 import { SESSION_COOKIE_NAME, AUTH_STATE_COOKIE_NAME, SESSION_MAX_AGE } from '../constants';
 import { getCookie } from '../cookie';
+import { constantTimeEqual } from '../utils/crypto';
 import { getContext } from '../config';
 import type { AppRouter } from '../types';
 
@@ -16,7 +17,15 @@ export function registerAuthRoutes(router: AppRouter) {
     const oidcEnabled = authService.isOidcConfigured();
 
     if (!setupComplete && passwordEnabled) {
-      return Response.json({ authenticated: false, needsSetup: true, passwordEnabled, oidcEnabled });
+      return Response.json({
+        authenticated: false,
+        needsSetup: true,
+        // Tells the setup UI to collect the deploy-time token. Only a boolean —
+        // never the token itself.
+        needsSetupToken: !!ctx.config.setupToken,
+        passwordEnabled,
+        oidcEnabled,
+      });
     }
 
     const sessionToken = getCookie(request, SESSION_COOKIE_NAME);
@@ -38,6 +47,21 @@ export function registerAuthRoutes(router: AppRouter) {
     const authService = new AuthService(ctx.config, ctx.db);
     if (!authService.isPasswordAuthEnabled()) {
       throw new ServiceError('Password authentication is disabled', 400);
+    }
+
+    // This endpoint is unauthenticated by necessity — it is how the very first
+    // admin is created — and on success it immediately mints an admin session.
+    // On an internet-routed deployment that makes the instance claimable by
+    // whoever reaches it first, and /api/auth/me advertises `needsSetup` to
+    // anonymous callers. Where an ADMIN_SETUP_TOKEN is provisioned (see the
+    // Terraform module), require it. Deployments without one — self-hosted,
+    // where the operator controls when the instance is reachable — are
+    // unaffected.
+    if (ctx.config.setupToken) {
+      const provided = request.headers.get('X-Setup-Token') ?? '';
+      if (!constantTimeEqual(provided, ctx.config.setupToken)) {
+        throw new ServiceError('A valid setup token is required to claim this instance', 403);
+      }
     }
 
     const body = (await request.json()) as { password?: string };

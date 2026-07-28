@@ -1,6 +1,6 @@
 import { PBKDF2_ITERATIONS } from '../constants';
 
-function constantTimeEqual(a: string, b: string): boolean {
+export function constantTimeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
   let result = 0;
   for (let i = 0; i < a.length; i++) {
@@ -53,4 +53,31 @@ export async function signToken(data: string, secret: string): Promise<string> {
 export async function verifyToken(data: string, token: string, secret: string): Promise<boolean> {
   const expected = await signToken(data, secret);
   return constantTimeEqual(expected, token);
+}
+
+/**
+ * Change-detection fingerprint of a survey's password hash.
+ *
+ * Survey-password tokens embed this so that rotating (or clearing) a survey
+ * password invalidates every token minted against the old one — otherwise the
+ * admin's only revocation lever is a no-op. It is NOT a secret and NOT a
+ * security primitive on its own: the value always travels inside an
+ * HMAC-signed token, so it cannot be tampered with, and it is derived from an
+ * already-salted PBKDF2 digest, so it discloses nothing useful about the
+ * password. Its only job is to differ when the password differs.
+ *
+ * Deliberately synchronous (two independently seeded FNV-1a passes, ~64 bits of
+ * change detection) so the Durable Object's WebSocket-upgrade gate — which is
+ * on the hot path and non-async — can compare it without awaiting a digest.
+ */
+export function passwordFingerprint(passwordHash: string | null | undefined): string {
+  if (!passwordHash) return 'none';
+  let h1 = 0x811c9dc5;
+  let h2 = 0x01000193;
+  for (let i = 0; i < passwordHash.length; i++) {
+    const c = passwordHash.charCodeAt(i);
+    h1 = Math.imul(h1 ^ c, 0x01000193) >>> 0;
+    h2 = Math.imul(h2 ^ c, 0x85ebca6b) >>> 0;
+  }
+  return h1.toString(36) + h2.toString(36);
 }

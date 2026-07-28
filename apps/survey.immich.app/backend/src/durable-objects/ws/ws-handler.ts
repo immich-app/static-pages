@@ -8,6 +8,7 @@ import type { SurveyService } from '../../services/survey.service';
 import type { RespondentService } from '../../services/respondent.service';
 import type { SurveyCache } from '../cache';
 import { ServiceError } from '../../services/errors';
+import { toClientSurvey } from '../../utils/sanitize';
 import { ROLE_HIERARCHY, BATCH_ANSWER_LIMIT, clampAnswerMs } from '../../constants';
 import { validateAnswer, type QuestionSpec } from '../../../../shared/answer-validation';
 import { execute, type CommandContext } from '../do-commands';
@@ -156,8 +157,12 @@ async function handleOp(
 
   switch (op) {
     // ---- Survey (WS-only, admin operations use full service) ----
-    case 'get-survey':
-      return surveyService.getSurvey(cache.survey.id);
+    case 'get-survey': {
+      // Strip the survey password hash: 'get-survey' is a viewer-role op and
+      // viewers must not receive credential material.
+      const detail = await surveyService.getSurvey(cache.survey.id);
+      return { ...detail, survey: toClientSurvey(detail.survey) };
+    }
 
     // ---- Results (WS uses cache for hot-path performance) ----
     case 'get-results':

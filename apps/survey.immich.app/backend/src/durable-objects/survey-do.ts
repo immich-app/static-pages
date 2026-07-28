@@ -26,6 +26,8 @@ import {
   SLOW_TICKS_PER_CYCLE,
 } from './ws/ws-broadcaster';
 import { execute, type CommandContext } from './do-commands';
+import { toClientSurvey } from '../utils/sanitize';
+import { fingerprintMatchesPassword } from '../utils/survey-password-token';
 import type { Database, SurveyRow, SectionRow, QuestionRow } from '../db';
 import { SURVEY_ID_PATTERN, PUBLIC_PATTERN } from '../routing';
 
@@ -102,7 +104,7 @@ export class SurveyDO extends DurableObject {
       // Password gate (authoritative — uses this DO's own cache which is
       // properly invalidated on update; the worker only forwards a verified
       // X-Authenticated header)
-      if (survey.password_hash && request.headers.get('X-Authenticated') !== 'true') {
+      if (!this.passwordGateAllows(request)) {
         return new Response('Authentication required', { status: 403 });
       }
 
@@ -326,7 +328,7 @@ export class SurveyDO extends DurableObject {
 
   private handleGetSurvey(): Response {
     return Response.json({
-      survey: this.cache.survey,
+      survey: toClientSurvey(this.cache.survey),
       sections: this.cache.sections,
       questions: this.cache.questions,
     });
@@ -336,7 +338,7 @@ export class SurveyDO extends DurableObject {
     const input = (await request.json()) as UpdateSurveyInput;
     const result = await this.surveyService.updateSurvey(this.cache.survey.id, input, this.cache.survey);
     this.cache.invalidateSurvey();
-    return Response.json(result, { headers: this.catalogSyncHeaders() });
+    return Response.json(toClientSurvey(result), { headers: this.catalogSyncHeaders() });
   }
 
   private async handleDeleteSurvey(): Promise<Response> {
@@ -364,25 +366,25 @@ export class SurveyDO extends DurableObject {
     const details = { survey: this.cache.survey, sections: this.cache.sections, questions: this.cache.questions };
     const result = await this.surveyService.publishSurvey(this.cache.survey.id, details);
     this.cache.invalidateSurvey();
-    return Response.json(result, { headers: this.catalogSyncHeaders() });
+    return Response.json(toClientSurvey(result), { headers: this.catalogSyncHeaders() });
   }
 
   private async handleUnpublish(): Promise<Response> {
     const result = await this.surveyService.unpublishSurvey(this.cache.survey.id, this.cache.survey);
     this.cache.invalidateSurvey();
-    return Response.json(result, { headers: this.catalogSyncHeaders() });
+    return Response.json(toClientSurvey(result), { headers: this.catalogSyncHeaders() });
   }
 
   private async handleArchive(): Promise<Response> {
     const result = await this.surveyService.archiveSurvey(this.cache.survey.id, this.cache.survey);
     this.cache.invalidateSurvey();
-    return Response.json(result, { headers: this.catalogSyncHeaders() });
+    return Response.json(toClientSurvey(result), { headers: this.catalogSyncHeaders() });
   }
 
   private async handleUnarchive(): Promise<Response> {
     const result = await this.surveyService.unarchiveSurvey(this.cache.survey.id, this.cache.survey);
     this.cache.invalidateSurvey();
-    return Response.json(result, { headers: this.catalogSyncHeaders() });
+    return Response.json(toClientSurvey(result), { headers: this.catalogSyncHeaders() });
   }
 
   private handleDuplicate(): Response {
@@ -443,8 +445,8 @@ export class SurveyDO extends DurableObject {
     if (survey.status !== 'published') {
       return Response.json({ error: 'Survey not found' }, { status: 404 });
     }
-    const isAuthenticated = request.headers.get('X-Authenticated') === 'true';
-    if (survey.password_hash && !isAuthenticated) {
+    const isAuthenticated = this.passwordGateAllows(request);
+    if (!isAuthenticated) {
       return Response.json({
         survey: {
           id: survey.id,
@@ -469,7 +471,7 @@ export class SurveyDO extends DurableObject {
     if (survey.status !== 'published') {
       return Response.json({ error: 'Survey not found' }, { status: 404 });
     }
-    if (survey.password_hash && request.headers.get('X-Authenticated') !== 'true') {
+    if (!this.passwordGateAllows(request)) {
       return Response.json({ error: 'Authentication required' }, { status: 403 });
     }
     const respondentId = request.headers.get('X-Respondent-Id') || undefined;
@@ -495,7 +497,7 @@ export class SurveyDO extends DurableObject {
 
   private async handleSubmitAnswers(request: Request): Promise<Response> {
     const survey = this.cache.survey;
-    if (survey.password_hash && request.headers.get('X-Authenticated') !== 'true') {
+    if (!this.passwordGateAllows(request)) {
       return Response.json({ error: 'Authentication required' }, { status: 403 });
     }
     const respondentId = request.headers.get('X-Respondent-Id');
@@ -509,7 +511,7 @@ export class SurveyDO extends DurableObject {
 
   private async handleComplete(request: Request): Promise<Response> {
     const survey = this.cache.survey;
-    if (survey.password_hash && request.headers.get('X-Authenticated') !== 'true') {
+    if (!this.passwordGateAllows(request)) {
       return Response.json({ error: 'Authentication required' }, { status: 403 });
     }
     const respondentId = request.headers.get('X-Respondent-Id');
@@ -621,6 +623,26 @@ export class SurveyDO extends DurableObject {
     const publicMatch = pathname.match(PUBLIC_PATTERN);
     if (publicMatch) return '/public' + (publicMatch[2] || '');
     return pathname;
+  }
+
+  /**
+   * Does this request clear the survey's password gate?
+   *
+   * The API worker has already verified the `spw_` token's signature and expiry
+   * (`X-Authenticated`) and forwarded the fingerprint of the password it was
+   * minted against (`X-Survey-Pw-Fp`). Both are internal headers, stripped from
+   * inbound client requests by the worker, so they cannot be spoofed.
+   *
+   * This DO holds the authoritative, always-current `password_hash`, so it is
+   * the only component that can tell whether a token predates a password
+   * change — comparing the fingerprint here is what makes rotating a survey
+   * password actually revoke tokens issued under the old one.
+   */
+  private passwordGateAllows(request: Request): boolean {
+    const survey = this.cache.survey;
+    if (!survey.password_hash) return true;
+    if (request.headers.get('X-Authenticated') !== 'true') return false;
+    return fingerprintMatchesPassword(request.headers.get('X-Survey-Pw-Fp'), survey.password_hash);
   }
 
   private catalogSyncHeaders(): HeadersInit {

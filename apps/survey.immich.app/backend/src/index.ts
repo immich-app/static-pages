@@ -11,7 +11,7 @@ import { authMiddleware } from './middleware/auth';
 import { configFromEnv, type AppContext } from './config';
 import { createD1Database } from './db';
 import { getCookie, getRespondentId, setRespondentCookie } from './cookie';
-import { verifyToken } from './utils/crypto';
+import { verifySurveyPasswordTokenSignature } from './utils/survey-password-token';
 import { verifySessionToken } from './utils/session';
 import { ROLE_HIERARCHY, type UserRole } from './constants';
 import { SURVEY_ID_PATTERN, PUBLIC_PATTERN } from './routing';
@@ -129,7 +129,7 @@ const slugCache = new Map<string, CachedSlugEntry>();
  * every inbound request before forwarding, then the worker explicitly sets
  * the ones it has verified.
  */
-const INTERNAL_HEADERS = ['X-WS-Role', 'X-Respondent-Id', 'X-Authenticated'];
+const INTERNAL_HEADERS = ['X-WS-Role', 'X-Respondent-Id', 'X-Authenticated', 'X-Survey-Pw-Fp'];
 
 function stripInternalHeaders(headers: Headers): void {
   for (const h of INTERNAL_HEADERS) headers.delete(h);
@@ -401,12 +401,17 @@ export default {
         if (respondentId) wsHeaders.set('X-Respondent-Id', respondentId);
 
         // Always verify the spw_ cookie (independent of whether we know the
-        // survey requires a password — the DO will gate based on its own
-        // current password_hash). Forwarding "user holds a valid token for
-        // this survey" lets the DO trust the result without re-verifying.
+        // survey requires a password — the DO gates on its own current
+        // password_hash). The worker can check the token's signature and expiry
+        // but not which password it was minted against, so it also forwards the
+        // verified fingerprint; the DO compares that against its authoritative
+        // password_hash, which is what makes a password change revoke old tokens.
         const token = getCookie(request, `spw_${doMatch.slug}`);
-        const isAuthenticated = token ? await verifyToken(surveyId, token, config.passwordSecret) : false;
-        wsHeaders.set('X-Authenticated', isAuthenticated ? 'true' : 'false');
+        const pw = token
+          ? await verifySurveyPasswordTokenSignature(token, surveyId, config.passwordSecret)
+          : { valid: false as const };
+        wsHeaders.set('X-Authenticated', pw.valid ? 'true' : 'false');
+        if (pw.valid && pw.fingerprint) wsHeaders.set('X-Survey-Pw-Fp', pw.fingerprint);
       }
 
       return stub.fetch(new Request(request.url, { method: request.method, headers: wsHeaders }));
@@ -451,12 +456,16 @@ export default {
       const respondentId = getRespondentId(request, slug);
       if (respondentId) doHeaders.set('X-Respondent-Id', respondentId);
 
-      // X-Authenticated reports the true validity of the spw_ cookie. The DO
-      // decides whether a password is required based on its own up-to-date
-      // survey.password_hash and rejects unauthenticated requests when needed.
+      // X-Authenticated reports that the spw_ cookie carries a valid, unexpired
+      // signature. The DO decides whether a password is required from its own
+      // up-to-date survey.password_hash, and compares X-Survey-Pw-Fp against it
+      // so a token minted under a previous password is rejected.
       const token = getCookie(request, `spw_${slug}`);
-      const isAuthenticated = token ? await verifyToken(surveyId, token, config.passwordSecret) : false;
-      doHeaders.set('X-Authenticated', isAuthenticated ? 'true' : 'false');
+      const pw = token
+        ? await verifySurveyPasswordTokenSignature(token, surveyId, config.passwordSecret)
+        : { valid: false as const };
+      doHeaders.set('X-Authenticated', pw.valid ? 'true' : 'false');
+      if (pw.valid && pw.fingerprint) doHeaders.set('X-Survey-Pw-Fp', pw.fingerprint);
     }
 
     // Forward to DO

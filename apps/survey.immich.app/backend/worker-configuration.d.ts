@@ -11,4 +11,6 @@ interface Env {
   OIDC_ROLE_MAP_EDITOR: string;
   SESSION_SECRET: string;
   DISABLE_PASSWORD_AUTH?: string;
+  /** When set, POST /api/auth/setup requires a matching X-Setup-Token header. */
+  ADMIN_SETUP_TOKEN?: string;
 }

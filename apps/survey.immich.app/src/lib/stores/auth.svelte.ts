@@ -13,6 +13,7 @@ let user = $state<AuthUser | null>(null);
 let loading = $state(true);
 let checked = $state(false);
 let needsSetup = $state(false);
+let needsSetupToken = $state(false);
 let oidcEnabled = $state(false);
 let passwordEnabled = $state(true);
 
@@ -23,6 +24,7 @@ export async function initAuth(): Promise<void> {
     const result = await getMe();
     if (result.needsSetup) {
       needsSetup = true;
+      needsSetupToken = result.needsSetupToken ?? false;
     } else if (result.authenticated && result.user) {
       user = result.user;
     }
@@ -55,6 +57,9 @@ export function getAuth() {
     },
     get needsSetup() {
       return needsSetup;
+    },
+    get needsSetupToken() {
+      return needsSetupToken;
     },
     get oidcEnabled() {
       return oidcEnabled;

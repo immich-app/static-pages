@@ -13,6 +13,14 @@ function b64urlToBytes(s: string): Uint8Array {
 
 export async function verifySessionToken(token: string, sessionSecret: string): Promise<UserInfo | null> {
   try {
+    // Fail CLOSED when no secret is configured. WebCrypto happily derives an
+    // HMAC key from an empty string, so without this a deployment missing its
+    // SESSION_SECRET binding would accept any session cookie an attacker signed
+    // with the empty key — i.e. self-minted admin sessions. Minting already
+    // refuses an empty secret (AuthService.createSessionToken); verification
+    // must refuse it too, or the failure mode is "open" instead of "no login".
+    if (!sessionSecret) return null;
+
     const parts = token.split('.');
     if (parts.length !== 3) return null;
 

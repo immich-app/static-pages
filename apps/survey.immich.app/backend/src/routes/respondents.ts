@@ -1,7 +1,8 @@
 import { createRespondentService, createSurveyService } from '../services/factory';
 import { ServiceError } from '../services/errors';
 import { getCookie, getRespondentId, setRespondentCookie, deleteRespondentCookie } from '../cookie';
-import { verifyPassword, signToken, verifyToken } from '../utils/crypto';
+import { verifyPassword } from '../utils/crypto';
+import { mintSurveyPasswordToken, verifySurveyPasswordToken } from '../utils/survey-password-token';
 import { PASSWORD_SESSION_MAX_AGE } from '../constants';
 import { getContext, type AppContext } from '../config';
 import type { SurveyRow } from '../repositories/survey.repository';
@@ -16,7 +17,7 @@ async function validatePasswordSession(
   if (!survey.password_hash) return;
 
   const token = getCookie(request, `spw_${slug}`);
-  if (!token || !(await verifyToken(survey.id, token, ctx.config.passwordSecret))) {
+  if (!token || !(await verifySurveyPasswordToken(token, survey.id, survey.password_hash, ctx.config.passwordSecret))) {
     throw new ServiceError('Authentication required', 403);
   }
 }
@@ -30,7 +31,14 @@ export function registerRespondentRoutes(router: AppRouter) {
 
     if (result.survey.password_hash) {
       const token = getCookie(request, `spw_${slug}`);
-      const isAuthed = token ? await verifyToken(result.survey.id, token, ctx.config.passwordSecret) : false;
+      const isAuthed = token
+        ? await verifySurveyPasswordToken(
+            token,
+            result.survey.id,
+            result.survey.password_hash,
+            ctx.config.passwordSecret,
+          )
+        : false;
 
       if (!isAuthed) {
         const response = Response.json({
@@ -47,14 +55,28 @@ export function registerRespondentRoutes(router: AppRouter) {
           questions: [],
           requiresPassword: true,
         });
-        response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400');
+        // Password-gated: never cacheable. See the note on the authed branch —
+        // and caching this stub privately would also make the post-/auth
+        // refetch serve a stale `requiresPassword: true`, wedging the gate.
+        response.headers.set('Cache-Control', 'private, no-store');
         return response;
       }
     }
 
     const { password_hash: _password_hash, ...safeSurvey } = result.survey;
     const response = Response.json({ ...result, survey: safeSurvey });
-    response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400');
+    // Only an ungated survey may be shared-cached. For a password-protected one
+    // this body varies on the `spw_` cookie, and `s-maxage`/
+    // `stale-while-revalidate` are shared-cache-only directives — emitting them
+    // here would tell a caching proxy it may serve one respondent's authorized
+    // copy (every question and section) to anonymous visitors for an hour
+    // (CWE-525). There is no `Vary: Cookie` on this path to prevent that.
+    response.headers.set(
+      'Cache-Control',
+      result.survey.password_hash
+        ? 'private, no-store'
+        : 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400',
+    );
     return response;
   });
 
@@ -80,7 +102,7 @@ export function registerRespondentRoutes(router: AppRouter) {
       throw new ServiceError('Invalid password', 403);
     }
 
-    const token = await signToken(survey.id, ctx.config.passwordSecret);
+    const token = await mintSurveyPasswordToken(survey.id, survey.password_hash, ctx.config.passwordSecret);
     const secure = ctx.config.cookieSecure ? 'Secure; ' : '';
     const headers = new Headers();
     headers.set(
