@@ -1,4 +1,4 @@
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 90; // 90 days
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 90;
 
 export function getCookie(
   request: { headers: { get(name: string): string | null } },

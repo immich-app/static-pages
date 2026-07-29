@@ -3,7 +3,6 @@ import { request, getAdminCookie, ADMIN_PASSWORD } from './helpers';
 
 describe('Authentication', () => {
   it('POST /api/auth/password-login succeeds with correct password', async () => {
-    // Ensure admin is set up first
     await getAdminCookie();
     const res = await request('/api/auth/password-login', {
       method: 'POST',

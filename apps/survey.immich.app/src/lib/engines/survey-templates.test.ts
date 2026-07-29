@@ -74,8 +74,6 @@ describe('surveyTemplates', () => {
   });
 
   it('templateQuestion references use valid template IDs', () => {
-    // Verify that the question templates referenced by survey templates exist
-    // by checking that all question types/configs match known templates
     const templateIds = new Set(questionTemplates.map((t) => t.id));
     // The templateQuestion function would throw if a template ID is invalid,
     // so if surveyTemplates loaded without error, all references are valid

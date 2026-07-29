@@ -13,24 +13,14 @@ interface PendingSave {
 const BACKOFF_DELAYS = [1000, 2000, 4000];
 const INACTIVITY_MS = 10_000;
 const FLUSH_THRESHOLD = 4;
-/** How many consecutive flush failures before we surface the toast. */
 const FAILURES_BEFORE_TOAST = 2;
-/** How long to wait for a transient WS reconnect before declaring failure. */
 const WS_RECONNECT_WAIT_MS = 2000;
 
 /**
- * Client transport mode.
- *
- *   - 'ws': WebSocket command ops are supported (Cloudflare Workers + DO). Data
- *     ops (submit-answers, complete, resume) go exclusively over the WS.
- *     HTTP is only used for the sendBeacon fallback on page unload.
- *
- *   - 'http': WebSocket command ops aren't available (Node.js self-hosted mode).
- *     Data ops go over HTTP with cookie auth.
- *
- * Mode is committed on the first resume — once chosen, it doesn't switch.
- * This avoids per-request HTTP fallbacks that would trigger cookie auth on
- * every submission and reduce server capacity.
+ * Transport for data ops (submit-answers, complete, resume): 'ws' on Cloudflare
+ * Workers + DO, 'http' with cookie auth in Node.js self-hosted mode. Committed
+ * on the first resume and never switched — a per-request HTTP fallback would
+ * re-run cookie auth on every submission and cut server capacity.
  */
 type Mode = 'ws' | 'http' | 'unknown';
 
@@ -60,10 +50,8 @@ export function createApiClient(slug: string) {
   }
 
   function bufferAnswer(data: PendingSave): void {
-    // Only count genuinely NEW questions toward the flush threshold.
-    // Repeated updates to the same question (e.g. every keystroke in a
-    // text field) replace the buffer entry but don't advance the counter
-    // — otherwise typing "Hello" would flush after 4 characters.
+    // Only NEW questions advance the counter — otherwise every keystroke in a
+    // text field would count and typing "Hello" would flush after 4 characters.
     const isNew = !answerBuffer.has(data.questionId);
     answerBuffer.set(data.questionId, data);
     if (isNew) unflushedCount++;
@@ -76,11 +64,8 @@ export function createApiClient(slug: string) {
 
   async function saveBatch(answers: PendingSave[]): Promise<boolean> {
     if (mode === 'ws') {
-      // WS-only — if the socket is down, re-buffer and retry on next flush.
-      // No HTTP fallback: it would trigger per-request cookie auth and hurt
-      // server capacity.
-      // Briefly wait for the auto-reconnect to complete before giving up,
-      // so a transient drop doesn't surface as a save failure.
+      // No HTTP fallback here (see Mode) — wait briefly for the auto-reconnect
+      // instead, so a transient drop doesn't surface as a save failure.
       if (!wsClient?.connected) {
         const deadline = Date.now() + WS_RECONNECT_WAIT_MS;
         while (!wsClient?.connected && Date.now() < deadline) {
@@ -95,7 +80,6 @@ export function createApiClient(slug: string) {
         return false;
       }
     }
-    // http mode (Node.js self-hosted): HTTP with retry
     return saveBatchHttp(answers);
   }
 
@@ -131,10 +115,8 @@ export function createApiClient(slug: string) {
     const all = [...answerBuffer.values()];
     answerBuffer.clear();
 
-    // Chunk to the server's per-batch cap — a single submit-answers request
-    // with more than BATCH_ANSWER_LIMIT answers is rejected wholesale (400),
-    // which would otherwise drop every buffered answer once the buffer grew
-    // past the limit (e.g. while retrying under a flaky connection).
+    // Chunk to the server's cap: an oversized submit-answers request is
+    // rejected wholesale (400), dropping every buffered answer at once.
     const failed: PendingSave[] = [];
     for (let i = 0; i < all.length; i += BATCH_ANSWER_LIMIT) {
       const chunk = all.slice(i, i + BATCH_ANSWER_LIMIT);
@@ -153,10 +135,8 @@ export function createApiClient(slug: string) {
         }
       }
       consecutiveFailures++;
-      // Don't alarm the respondent on transient blips — buffered answers
-      // will retry on the next flush trigger (threshold, inactivity, or
-      // unload via sendBeacon). Surface a toast only after the failures
-      // have persisted, so the message is meaningful when it does appear.
+      // Stay silent on transient blips — buffered answers retry on the next
+      // flush trigger; only a persistent failure is worth alarming the user.
       if (consecutiveFailures >= FAILURES_BEFORE_TOAST) {
         onSaveErrorCallback?.('Failed to save answers. Your responses will be retried automatically.');
       }
@@ -193,9 +173,6 @@ export function createApiClient(slug: string) {
     nextQuestionIndex?: number;
     isComplete?: boolean;
   }> {
-    // Probe the transport. Try WS first if a client is attached; if it works,
-    // commit to 'ws' mode for the rest of the session. Otherwise fall back to
-    // HTTP and commit to 'http' mode. Subsequent calls don't re-probe.
     if (wsClient) {
       // Wait briefly for WS to finish connecting (auto-reconnect may still be in progress)
       for (let i = 0; i < 20 && !wsClient.connected; i++) {
@@ -216,7 +193,6 @@ export function createApiClient(slug: string) {
       }
     }
 
-    // HTTP path (no WS client, or WS resume failed)
     mode = 'http';
     const res = await fetch(`${base}/resume`, { credentials: 'same-origin' });
     if (!res.ok) {
@@ -233,7 +209,6 @@ export function createApiClient(slug: string) {
       await wsClient.request('complete', {});
       return;
     }
-    // http mode
     const res = await fetch(`${base}/complete`, {
       method: 'POST',
       credentials: 'same-origin',

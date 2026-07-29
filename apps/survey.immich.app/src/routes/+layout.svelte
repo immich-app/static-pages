@@ -19,7 +19,6 @@
   let { children }: Props = $props();
   const auth = getAuth();
 
-  // Public routes that don't require auth
   const isPublicRoute = $derived(page.url.pathname.startsWith('/s/') || page.url.pathname.startsWith('/embed/'));
 
   onMount(() => {
@@ -31,7 +30,6 @@
 
 <TooltipProvider>
   {#if isPublicRoute}
-    <!-- Public survey-taking routes — no auth needed -->
     {@render children?.()}
   {:else if auth.loading}
     <div class="flex min-h-screen items-center justify-center">

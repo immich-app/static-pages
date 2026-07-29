@@ -60,7 +60,6 @@
       if (selectedDetail?.id === respondentId) {
         selectedDetail = null;
       }
-      // Reload if we deleted the last item on this page
       if (respondents.length === 0 && offset > 0) {
         offset = Math.max(0, offset - limit);
       }
@@ -146,7 +145,6 @@
       </table>
     </div>
 
-    <!-- Pagination -->
     {#if totalPages > 1}
       <div class="flex items-center justify-between">
         <span class="text-xs text-gray-500">{total} total responses</span>

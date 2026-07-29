@@ -10,7 +10,6 @@ services:
       - SESSION_SECRET=${SESSION_SECRET:?SESSION_SECRET is required}
       - PASSWORD_SECRET=${PASSWORD_SECRET:?PASSWORD_SECRET is required}
       - COOKIE_SECURE=${COOKIE_SECURE:-false}
-      # OIDC (optional)
       - OIDC_ISSUER=${OIDC_ISSUER:-}
       - OIDC_CLIENT_ID=${OIDC_CLIENT_ID:-}
       - OIDC_CLIENT_SECRET=${OIDC_CLIENT_SECRET:-}
@@ -21,10 +20,8 @@ services:
     volumes:
       - survey-data:/data
     restart: unless-stopped
-    # /api/auth/me returns 200 when healthy (authenticated or not). The runtime
-    # image (node:20-slim) ships neither wget nor curl, so probe with Node's
-    # built-in fetch and exit non-zero on any non-2xx (migrations still running,
-    # DB unreachable, missing secrets).
+    # node:20-slim ships neither wget nor curl, so probe /api/auth/me (200 when
+    # healthy, authenticated or not) with Node's built-in fetch.
     healthcheck:
       test:
         - CMD

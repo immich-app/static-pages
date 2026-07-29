@@ -13,11 +13,9 @@ resource "null_resource" "d1_migrations" {
   }
 
   provisioner "local-exec" {
-    # Apply each migration via the D1 REST endpoint. Fail the apply on real
-    # errors — we treat "table already exists" / "duplicate column" errors
-    # from re-running an already-applied migration as benign, but anything
-    # else (auth failure, syntax error, rate-limit) must exit non-zero so
-    # the failure is visible in the workflow instead of being masked.
+    # Re-running an already-applied migration is benign ("already exists" /
+    # "duplicate column"); every other error must exit non-zero so the failure is
+    # visible in the workflow instead of being masked.
     command = <<-EOT
       set -eo pipefail
       for f in $(ls ${var.migrations_dir}/*.sql | sort); do

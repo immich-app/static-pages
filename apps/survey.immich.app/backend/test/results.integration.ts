@@ -13,7 +13,6 @@ describe('Results API', () => {
     slug = survey.slug;
     questionIds = survey.questionIds;
 
-    // Create a completed respondent
     const resumeRes = await request(`/api/s/${slug}/resume`);
     const ridCookie = resumeRes.headers.get('set-cookie')?.split(';')[0] ?? '';
 
@@ -97,7 +96,6 @@ describe('Results API', () => {
     });
     expect(res.status).toBe(204);
 
-    // Verify deleted
     const afterRes = await authedRequest(`/api/surveys/${surveyId}/results/respondents`);
     const after = (await afterRes.json()) as { total: number };
     expect(after.total).toBe(0);

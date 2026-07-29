@@ -23,10 +23,8 @@ export class RespondentRepository {
   }
 
   /**
-   * Mark a respondent complete, but only if they aren't already complete.
-   * Returns true on the actual 0→1 transition so callers can keep counters
-   * and tallies in sync; returns false when the call was a no-op (duplicate
-   * complete from a flaky client retry, or malicious replay).
+   * Returns true only on the actual 0→1 transition, so callers can gate
+   * counter/tally updates against duplicate completes (client retry or replay).
    */
   async markComplete(id: string): Promise<boolean> {
     const now = new Date().toISOString();
@@ -97,11 +95,6 @@ export class RespondentRepository {
     }));
   }
 
-  /**
-   * Returns per-question answer durations (ms) grouped by question. Only
-   * includes non-null answer_ms values. Used for the per-question timing
-   * analytics — caller aggregates medians/means in JS.
-   */
   async getAnswerDurationsByQuestion(
     surveyId: string,
   ): Promise<Array<{ question_id: string; question_text: string; question_sort: number; answer_ms: number }>> {
@@ -209,10 +202,8 @@ export class AnswerRepository {
   ): Promise<void> {
     if (answers.length === 0) return;
 
-    // Single multi-row INSERT ... ON CONFLICT — one round-trip regardless of
-    // batch size. The WS path in ws-handler submits the same way; keeping the
-    // HTTP fallback equally fast matters because self-hosted respondents also
-    // submit whole-page batches that would otherwise do N round-trips.
+    // Hand-written multi-row INSERT ... ON CONFLICT: one round-trip regardless
+    // of batch size, where a per-answer upsert would cost N round-trips.
     const values = sql.join(
       answers.map(
         (a) =>
@@ -274,14 +265,10 @@ export class AnswerRepository {
       reached_count: number;
     }>
   > {
-    // For a true funnel, "reached" must be the count of respondents who
-    // submitted an answer to ANY question at this position or later — that's
-    // the only definition that produces a strictly non-increasing series.
-    // Conditional skip-logic and optional questions mean per-question
-    // answer counts are not monotonic: Q4 can have more answers than Q3 if
-    // Q3 was conditional. The correlated subquery computes that tail
-    // distinct-count from the SQL side; runs once per minute via the DO
-    // analytics broadcast.
+    // "reached" must be the distinct respondents who answered ANY question at
+    // this position or later: conditional and optional questions make raw
+    // per-question counts non-monotonic (Q4 can beat Q3), so only this tail
+    // distinct-count yields a non-increasing funnel.
     const results = await sql<{
       question_id: string;
       question_text: string;

@@ -71,7 +71,6 @@
   let showPreview = $state(false);
   let embedCopied = $state(false);
 
-  // Undo/redo
   interface Snapshot {
     title: string;
     description: string;
@@ -167,7 +166,6 @@
     clearTimeout(snapshotTimer);
   });
 
-  // Track changes for undo snapshots
   $effect(() => {
     // Access reactive values to trigger effect
     void localTitle;
@@ -314,7 +312,6 @@
   }
 </script>
 
-<!-- Toast notifications -->
 {#if error}
   <div
     class="toast-in fixed top-4 left-1/2 z-50 w-full max-w-md -translate-x-1/2 rounded-lg border border-red-500/20 bg-red-950/90 px-4 py-3 text-sm shadow-xl backdrop-blur-sm"
@@ -338,7 +335,6 @@
   </div>
 {/if}
 
-<!-- Sticky header -->
 <div class="bg-light/80 sticky top-0 z-20 border-b border-gray-200 backdrop-blur-md dark:border-gray-800">
   <div class="mx-auto flex max-w-3xl items-center justify-between px-6 py-3">
     <div class="flex items-center gap-3">
@@ -448,7 +444,6 @@
     {/if}
   {/if}
 
-  <!-- Survey Details -->
   <div class="animate-in space-y-5 rounded-xl border border-gray-200 p-6 dark:border-gray-700/80">
     <h2 class="text-base font-semibold tracking-tight">Survey Details</h2>
 
@@ -565,7 +560,6 @@
     {/if}
   </div>
 
-  <!-- Sections & Questions -->
   <div class="animate-in animate-in-delay-1 space-y-4">
     <h2 class="text-base font-semibold tracking-tight">Sections & Questions</h2>
 
@@ -599,7 +593,6 @@
     </button>
   </div>
 
-  <!-- Validation warnings -->
   {#if validationErrors.length > 0}
     <div class="animate-in rounded-xl border border-yellow-500/20 bg-yellow-500/5 px-5 py-4 text-sm">
       <div class="flex items-center gap-2 text-yellow-400">

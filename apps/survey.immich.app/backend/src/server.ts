@@ -42,7 +42,6 @@ async function main() {
     url: process.env.DATABASE_URL ?? join(process.cwd(), 'data', 'survey.db'),
   });
 
-  // Run migrations
   const migrationsDir = join(__dirname, '..', 'migrations');
   try {
     await runMigrations(db, migrationsDir);
@@ -52,25 +51,21 @@ async function main() {
 
   const ctx: AppContext = { db, config };
 
-  // Import the router builder (the refactored index.ts exports a function that creates the router)
   const { createRouter } = await import('./index');
   const router = createRouter(ctx);
 
   const app = new Hono();
 
-  // Serve static frontend if STATIC_DIR is set
   const staticDir = process.env.STATIC_DIR;
   if (staticDir) {
     app.use('/*', serveStatic({ root: staticDir }));
   }
 
-  // Delegate API requests to itty-router
   app.all('/api/*', async (c) => {
     const response = await router.fetch(c.req.raw);
     return new Response(response.body, response);
   });
 
-  // SPA fallback
   if (staticDir) {
     app.get('*', serveStatic({ root: staticDir, path: 'index.html' }));
   }
@@ -82,7 +77,6 @@ async function main() {
   const server = serve({ fetch: app.fetch, port });
   console.log(`Server ready at http://localhost:${port}`);
 
-  // WebSocket server for live presence tracking
   const wss = new WebSocketServer({ noServer: true });
 
   (server as import('node:http').Server).on('upgrade', (req, socket, head) => {

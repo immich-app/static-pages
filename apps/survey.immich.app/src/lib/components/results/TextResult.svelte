@@ -6,7 +6,6 @@
   interface Props {
     question: SurveyQuestion;
     answers: AnswerData[];
-    /** Called when the user wants to browse all individual responses. */
     onViewAllResponses?: () => void;
   }
 
@@ -25,10 +24,7 @@
     count: number;
   }
 
-  /**
-   * Unique responses with their combined counts. Used to build the sample so
-   * the summary never shows the same answer twice in a row.
-   */
+  /** Deduped so the sample below never shows the same answer twice. */
   const uniqueResponses = $derived.by<SampleEntry[]>(() => {
     const counts: Record<string, number> = {};
     const order: string[] = [];
@@ -86,7 +82,6 @@
   <StatStrip {stats} />
 
   {#if ngrams.length > 0}
-    <!-- Common phrases (bigrams/trigrams) -->
     <div>
       <div class="mb-2 text-[10px] font-medium tracking-wider text-gray-500 uppercase">Common phrases</div>
       <div class="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
@@ -103,7 +98,6 @@
     </div>
   {/if}
 
-  <!-- Curated sample of responses. The full list lives in the Responses tab. -->
   {#if sample.length > 0}
     <div>
       <div class="mb-2 flex items-center justify-between gap-2">

@@ -20,10 +20,6 @@ test.beforeEach(async ({ context }) => {
   await context.addCookies([{ name, value, url: BASE }]);
 });
 
-// ============================================================
-// Helper: create a complete survey via API
-// ============================================================
-
 async function createSurvey(slug: string) {
   const survey = await apiPost('/api/surveys', { title: `DO Test ${slug}` });
   const sec = await apiPost(`/api/surveys/${survey.id}/sections`, { title: 'Section 1' });
@@ -45,10 +41,6 @@ async function createSurvey(slug: string) {
   await apiPut(`/api/surveys/${survey.id}/publish`);
   return { surveyId: survey.id, sectionId: sec.id, q1Id: q1.id, q2Id: q2.id, slug };
 }
-
-// ============================================================
-// Section/Question CRUD via HTTP (self-hosted fallback)
-// ============================================================
 
 test.describe('Section and question CRUD', () => {
   let surveyId: string;
@@ -149,10 +141,6 @@ test.describe('Section and question CRUD', () => {
   });
 });
 
-// ============================================================
-// Full respondent flow via HTTP (answers, complete, results)
-// ============================================================
-
 test.describe('Respondent flow', () => {
   const slug = `do-respondent-${Date.now()}`;
   let surveyId: string;
@@ -173,28 +161,21 @@ test.describe('Respondent flow', () => {
     await page.goto(`/s/${slug}`);
     await expect(page.locator('h1')).toContainText('DO Test');
 
-    // Get Started
     await page.click('button:has-text("Get Started")');
-    // Section intro — Continue
     await page.click('button:has-text("Continue")');
 
-    // Q1 — text input
     await page.locator('input').first().fill('E2E Respondent');
     await page.click('button:has-text("Next")');
 
-    // Q2 — radio
     await page.getByText('Blue', { exact: true }).click();
     await page.click('button:has-text("Submit")');
 
-    // Thank you screen
     await expect(page.locator('h1')).toContainText('Thank you', { timeout: 10000 });
 
-    // No JS errors
     expect(errors).toEqual([]);
   });
 
   test('results show the respondent data', async () => {
-    // Create a respondent via API to ensure data exists
     const resumeRes = await fetch(`${API}/api/s/${slug}/resume`);
     const ridCookie = resumeRes.headers.get('set-cookie')?.split(';')[0];
     expect(ridCookie).toBeTruthy();
@@ -221,17 +202,13 @@ test.describe('Respondent flow', () => {
   });
 
   test('a client-supplied X-Respondent-Id header is ignored (creates a new respondent)', async () => {
-    // Start a real session so we have a known-valid respondent ID
     const resumeRes = await fetch(`${API}/api/s/${slug}/resume`);
     const ridCookie = resumeRes.headers.get('set-cookie')?.split(';')[0];
     expect(ridCookie).toBeTruthy();
     const legitId = ridCookie!.split('=')[1];
 
-    // Now make a fresh request with NO cookie but a forged X-Respondent-Id
-    // matching the legit respondent. The API worker must strip the header
-    // before forwarding to the DO, so the DO should allocate a brand-new
-    // respondent (evidenced by returning a fresh Set-Cookie with a different
-    // UUID).
+    // The API worker must strip client-supplied X-Respondent-Id before forwarding
+    // to the DO, so a forged header must yield a brand-new respondent id.
     const forgedRes = await fetch(`${API}/api/s/${slug}/resume`, {
       headers: { 'X-Respondent-Id': legitId },
     });
@@ -243,10 +220,6 @@ test.describe('Respondent flow', () => {
   });
 });
 
-// ============================================================
-// WebSocket protocol
-// ============================================================
-
 test.describe('WebSocket protocol', () => {
   const slug = `do-ws-${Date.now()}`;
   let surveyId: string;
@@ -257,7 +230,6 @@ test.describe('WebSocket protocol', () => {
   });
 
   test('WebSocket connects and receives counts', async ({ page }) => {
-    // Intercept WebSocket messages
     await page.addInitScript(() => {
       const origWS = window.WebSocket;
       window.WebSocket = class extends origWS {
@@ -295,10 +267,6 @@ test.describe('WebSocket protocol', () => {
   });
 });
 
-// ============================================================
-// Editor saves sections and questions via UI
-// ============================================================
-
 test.describe('Editor save flow', () => {
   test('create survey, add section and question, save without errors', async ({ page }) => {
     const errors: string[] = [];
@@ -307,17 +275,13 @@ test.describe('Editor save flow', () => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    // Navigate to New Survey
     await page.click('a:has-text("New Survey")');
     await page.waitForURL('**/create');
 
-    // Click Blank Survey
     await page.click('button:has-text("Blank Survey")');
 
-    // Fill title
     await page.fill('input[placeholder="Survey title..."]', 'E2E Save Test');
 
-    // Add a section first, then a question
     const addSectionBtn = page.locator('button:has-text("Add section")');
     await addSectionBtn.scrollIntoViewIfNeeded();
     await addSectionBtn.click();
@@ -328,21 +292,14 @@ test.describe('Editor save flow', () => {
     await shortTextBtn.click();
     await page.waitForTimeout(500);
 
-    // Click Save
     await page.click('button:has-text("Save")');
     await page.waitForURL('**/edit/**', { timeout: 10000 });
 
-    // Verify we're on the edit page
     await expect(page.locator('h1')).toContainText('Edit Survey');
 
-    // No JS errors
     expect(errors).toEqual([]);
   });
 });
-
-// ============================================================
-// Results page loads without errors
-// ============================================================
 
 test.describe('Results page', () => {
   const slug = `do-results-${Date.now()}`;
@@ -363,14 +320,9 @@ test.describe('Results page', () => {
     await expect(page.locator('h1')).toContainText('DO Test');
     await expect(page.locator('text=Response Timeline')).toBeVisible();
 
-    // No JS errors
     expect(errors).toEqual([]);
   });
 });
-
-// ============================================================
-// Survey definition export
-// ============================================================
 
 test.describe('Survey export/import', () => {
   let surveyId: string;
@@ -388,10 +340,6 @@ test.describe('Survey export/import', () => {
     expect(def.sections[0].questions.length).toBeGreaterThan(0);
   });
 });
-
-// ============================================================
-// Publish/unpublish cycle
-// ============================================================
 
 test.describe('Publish cycle', () => {
   let surveyId: string;
@@ -416,10 +364,6 @@ test.describe('Publish cycle', () => {
   });
 });
 
-// ============================================================
-// Archive/unarchive
-// ============================================================
-
 test.describe('Archive cycle', () => {
   let surveyId: string;
 
@@ -436,10 +380,6 @@ test.describe('Archive cycle', () => {
     expect(unarchived.archived_at).toBeNull();
   });
 });
-
-// ============================================================
-// Duplicate survey
-// ============================================================
 
 test.describe('Duplicate survey', () => {
   let surveyId: string;
@@ -458,10 +398,6 @@ test.describe('Duplicate survey', () => {
   });
 });
 
-// ============================================================
-// Timeline and dropoff analytics
-// ============================================================
-
 test.describe('Analytics endpoints', () => {
   const slug = `do-analytics-${Date.now()}`;
   let surveyId: string;
@@ -470,7 +406,6 @@ test.describe('Analytics endpoints', () => {
     const result = await createSurvey(slug);
     surveyId = result.surveyId;
 
-    // Create a respondent via API
     const resumeRes = await fetch(`${API}/api/s/${slug}/resume`);
     const ridCookie = resumeRes.headers.get('set-cookie')?.split(';')[0];
     if (ridCookie) {
@@ -532,15 +467,10 @@ test.describe('Analytics endpoints', () => {
     const rid = list.respondents[0].id;
     const res = await apiDelete(`/api/surveys/${surveyId}/results/respondents/${rid}`);
     expect(res.status).toBe(204);
-    // Verify deleted
     const afterList = await apiGet(`/api/surveys/${surveyId}/results/respondents`);
     expect(afterList.respondents.find((r: { id: string }) => r.id === rid)).toBeUndefined();
   });
 });
-
-// ============================================================
-// Survey import
-// ============================================================
 
 test.describe('Survey import', () => {
   test('import survey definition', async () => {
@@ -573,10 +503,6 @@ test.describe('Survey import', () => {
   });
 });
 
-// ============================================================
-// Survey deletion
-// ============================================================
-
 test.describe('Survey deletion', () => {
   test('delete survey removes it', async () => {
     const survey = await apiPost('/api/surveys', { title: 'To Be Deleted' });
@@ -584,10 +510,6 @@ test.describe('Survey deletion', () => {
     expect(res.status).toBe(204);
   });
 });
-
-// ============================================================
-// Respondent reset
-// ============================================================
 
 test.describe('Respondent reset', () => {
   const slug = `do-reset-${Date.now()}`;
@@ -597,26 +519,19 @@ test.describe('Respondent reset', () => {
   });
 
   test('reset clears respondent cookie', async () => {
-    // Start a session
     const resumeRes = await fetch(`${API}/api/s/${slug}/resume`);
     const ridCookie = resumeRes.headers.get('set-cookie')?.split(';')[0];
     expect(ridCookie).toBeTruthy();
 
-    // Reset
     const resetRes = await fetch(`${API}/api/s/${slug}/reset`, {
       method: 'POST',
       headers: { Cookie: ridCookie! },
     });
     expect(resetRes.status).toBe(204);
-    // The response should have a Set-Cookie that clears the rid cookie
     const clearCookie = resetRes.headers.get('set-cookie');
     expect(clearCookie).toContain('Max-Age=0');
   });
 });
-
-// ============================================================
-// WebSocket operations (explicit tests)
-// ============================================================
 
 test.describe('WebSocket typed operations', () => {
   const slug = `do-ws-ops-${Date.now()}`;
@@ -683,7 +598,6 @@ test.describe('WebSocket typed operations', () => {
             if (msg.type === 'response') {
               responses[msg.requestId] = msg;
               if (msg.requestId === 'create' && !msg.error) {
-                // Now delete it
                 ws.send(
                   JSON.stringify({
                     type: 'request',

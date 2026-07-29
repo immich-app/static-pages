@@ -22,22 +22,17 @@ export function createSurveyLoader(slug: string) {
   let wsClient: SurveyWsClient | undefined;
 
   /**
-   * Time (Date.now()) at which each question first became visible in the
-   * current session. Used to compute `answerMs` per question for analytics.
-   * Plain non-reactive object — it's written from a $effect that reads the
-   * reactive `engine.currentQuestion.id` and stamps a timestamp on change.
-   * Reset on page reload (resume after refresh starts the timer from 0).
+   * When each question first became visible, for the per-question `answerMs`
+   * analytics. Deliberately not $state: it is written from the $effect below,
+   * which reads reactive state. Resets on reload.
    */
   const questionShownAt: Record<string, number> = {};
 
   /**
-   * Pre-flush hooks for debounced question components. When beforeunload
-   * fires, we call every hook BEFORE flushBufferSync so that any pending
-   * 300ms debounce timer in the active text/email/number/textarea component
-   * fires and gets its latest value into the buffer before the beacon sends
-   * it. Multiple hooks can be registered simultaneously (e.g. during the
-   * brief overlap between one component's onDestroy and the next's onMount)
-   * — each unregister removes only the hook it registered.
+   * Pre-flush hooks for debounced question components, run before
+   * flushBufferSync so a pending 300ms debounce lands in the buffer before the
+   * beacon sends it. A Set because two components overlap during the
+   * onDestroy/onMount handover and each must unregister only its own hook.
    */
   const preFlushHooks = new SvelteSet<() => void>();
 
@@ -50,17 +45,13 @@ export function createSurveyLoader(slug: string) {
   }
 
   /**
-   * Synchronously flush every pending debounce into the engine/buffer. Used by
-   * QuestionCard before it validates on Next/Enter, so validation reads the
-   * value the respondent just typed rather than the pre-debounce (often empty)
-   * committed answer.
+   * QuestionCard calls this before validating on Next/Enter so validation sees
+   * what was just typed, not the stale pre-debounce (often empty) answer.
    */
   function flushPending() {
     for (const hook of preFlushHooks) hook();
   }
 
-  // Expose the pre-flush registry via Svelte context so debounced question
-  // components can register without prop drilling through SurveyShell/QuestionCard.
   setContext('survey-pre-flush', { registerPreFlush, unregisterPreFlush, flushPending });
 
   $effect(() => {
@@ -71,13 +62,12 @@ export function createSurveyLoader(slug: string) {
   });
 
   async function loadAndInit() {
-    // Load survey definition
     const data = await getPublishedSurvey(slug);
     survey = data.survey;
     sections = data.sections;
     questions = data.questions;
 
-    // Check if password protected (backend returns no questions/sections)
+    // The backend withholds questions/sections while the password gate is up.
     if (survey.requiresPassword && questions.length === 0) {
       needsPassword = true;
       return;
@@ -114,7 +104,6 @@ export function createSurveyLoader(slug: string) {
   });
 
   async function initializeSurvey() {
-    // Sort questions by section sort order, then question sort order
     const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
     const sortedQuestions: SurveyQuestion[] = [];
     for (const section of sortedSections) {
@@ -124,7 +113,6 @@ export function createSurveyLoader(slug: string) {
     }
     questions = sortedQuestions;
 
-    // Apply randomization if enabled
     if (survey!.randomizeQuestions) {
       questions = randomizeQuestions(questions, sections, slug);
     }
@@ -132,31 +120,25 @@ export function createSurveyLoader(slug: string) {
       questions = randomizeOptionOrder(questions, slug);
     }
 
-    // Create engine and client; give the client the WS connection
     engine = createSurveyEngine(questions);
     client = createApiClient(slug);
     client.onSaveError((msg) => {
       error = msg;
     });
     client.onSaveSuccess(() => {
-      // Clear any lingering save-failure toast once a flush succeeds.
       if (error) error = null;
     });
     if (wsClient) client.setWsClient(wsClient);
 
-    // Resume via WS (HTTP fallback handled by client)
     const resume = await client.fetchResume();
     if (resume.isComplete) {
       alreadyCompleted = true;
     } else if (resume.answers && Object.keys(resume.answers).length > 0) {
-      // Resume on the last question the respondent actually answered, matched
-      // by question ID in the CLIENT's final (section-grouped, possibly
-      // randomized) order. The server's nextQuestionIndex is a positional index
-      // over its own flat sort_order, which interleaves sections and ignores
-      // client-side randomization — applying it positionally lands on the wrong
-      // question. Landing on the last answered question lets the respondent
-      // review it and continue; auto-advancing could skip an in-progress
-      // free-text edit that wasn't flushed before the tab closed.
+      // Resume on the last ANSWERED question, located by id in the client's
+      // final (section-grouped, possibly randomized) order: the server's
+      // nextQuestionIndex is positional over its own flat sort_order, so
+      // applying it here lands on the wrong question. Not auto-advancing also
+      // protects a free-text edit that never got flushed before the tab closed.
       const answered = resume.answers;
       let lastAnsweredIdx = -1;
       for (let i = 0; i < questions.length; i++) {
@@ -186,12 +168,9 @@ export function createSurveyLoader(slug: string) {
   async function handleComplete() {
     if (!client) return;
     try {
-      // Flush any pending debounce timer from the active text/email/number/
-      // textarea component into the buffer BEFORE snapshotting it. Submit is
-      // invoked synchronously from handleNext, before Svelte tears the active
-      // component down, so its onDestroy flush hasn't run yet — without this
-      // an answer typed within the 300ms debounce window is lost. Mirrors the
-      // beforeunload path.
+      // Run the debounce hooks before flushing: submit is invoked synchronously
+      // from handleNext, before Svelte tears the active component down, so its
+      // onDestroy flush hasn't run and a just-typed answer would be lost.
       for (const hook of preFlushHooks) hook();
       const flushed = await client.flushBuffer();
       if (!flushed) {

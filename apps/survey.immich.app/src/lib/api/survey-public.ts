@@ -4,7 +4,6 @@ import type { SurveyWithDetails } from '../types';
 import { getWsClientBySlug } from './survey-ws';
 
 export async function getPublishedSurvey(slug: string): Promise<SurveyWithDetails> {
-  // Use WS if a connection already exists (never creates one)
   try {
     const ws = getWsClientBySlug(slug);
     if (ws?.connected) {

@@ -1,19 +1,15 @@
 /**
- * Shared answer validation — imported by both the client (QuestionCard) and
- * the server (ws-handler, respondent.service). A single source of truth for
- * what constitutes a valid answer to each question type.
- *
- * Returns null if valid, or a human-readable error string.
+ * Shared answer validation — the same rules run on the client (QuestionCard)
+ * and the server (ws-handler, respondent.service). Returns null when valid,
+ * otherwise a human-readable error string.
  */
 
 const LIKERT_VALUES = ['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree'];
 
 /**
- * Absolute hard cap on any answer value (and other-text), independent of a
- * question's configured maxLength. Without this, a text/textarea question with
- * no maxLength accepts an arbitrarily large value, which the server would then
- * persist into DO SQLite — a memory/storage-exhaustion vector. Generous enough
- * for any legitimate long-form answer.
+ * Hard cap independent of a question's configured maxLength: without it a
+ * text/textarea question with no maxLength lets a caller persist an unbounded
+ * value into DO SQLite — a storage-exhaustion vector.
  */
 export const MAX_ANSWER_LENGTH = 20_000;
 
@@ -53,9 +49,8 @@ function wordCount(text: string): number {
 }
 
 export function validateAnswer(question: QuestionSpec, value: string, otherText?: string): string | null {
-  // Coerce defensively: a non-string value (e.g. a JSON number from a
-  // hand-crafted request, or a number-typed input binding) would otherwise
-  // throw on value.trim() below and surface as a 500 on the server.
+  // The declared type doesn't stop a hand-crafted request sending a JSON
+  // number, which would throw on .trim() and surface as a server 500.
   if (typeof value !== 'string') value = value == null ? '' : String(value);
 
   // Absolute length ceiling, enforced before any per-type logic so it applies
@@ -67,13 +62,11 @@ export function validateAnswer(question: QuestionSpec, value: string, otherText?
   const trimmed = value.trim();
   const cfg = question.config ?? {};
 
-  // ── Required check (all types) ──────────────────────────────────────
   if (question.required && trimmed === '') {
     return 'This question is required';
   }
-  if (trimmed === '') return null; // optional + empty → valid
+  if (trimmed === '') return null;
 
-  // ── Per-type validation ─────────────────────────────────────────────
   switch (question.type) {
     case 'text':
     case 'textarea':
@@ -108,8 +101,6 @@ export function validateAnswer(question: QuestionSpec, value: string, otherText?
   }
 }
 
-// ── Text / textarea ─────────────────────────────────────────────────────
-
 function validateText(value: string, question: QuestionSpec, cfg: NonNullable<QuestionSpec['config']>): string | null {
   const maxLen = question.maxLength;
   if (cfg.minLength !== undefined && value.length < cfg.minLength) {
@@ -136,8 +127,6 @@ function validateText(value: string, question: QuestionSpec, cfg: NonNullable<Qu
   return null;
 }
 
-// ── Email ───────────────────────────────────────────────────────────────
-
 function validateEmail(value: string, cfg: NonNullable<QuestionSpec['config']>): string | null {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
     return 'Please enter a valid email address';
@@ -151,8 +140,6 @@ function validateEmail(value: string, cfg: NonNullable<QuestionSpec['config']>):
   }
   return null;
 }
-
-// ── Number ──────────────────────────────────────────────────────────────
 
 function validateNumber(value: string, cfg: NonNullable<QuestionSpec['config']>): string | null {
   const n = Number(value);
@@ -178,8 +165,6 @@ function validateNumber(value: string, cfg: NonNullable<QuestionSpec['config']>)
   return null;
 }
 
-// ── Rating ──────────────────────────────────────────────────────────────
-
 function validateRating(value: string, cfg: NonNullable<QuestionSpec['config']>): string | null {
   const n = Number(value);
   const scaleMax = cfg.scaleMax ?? 5;
@@ -189,8 +174,6 @@ function validateRating(value: string, cfg: NonNullable<QuestionSpec['config']>)
   return null;
 }
 
-// ── NPS ─────────────────────────────────────────────────────────────────
-
 function validateNps(value: string): string | null {
   const n = Number(value);
   if (!Number.isInteger(n) || n < 0 || n > 10) {
@@ -198,8 +181,6 @@ function validateNps(value: string): string | null {
   }
   return null;
 }
-
-// ── Radio ───────────────────────────────────────────────────────────────
 
 function validateRadio(value: string, question: QuestionSpec, otherText?: string): string | null {
   const validValues = new Set((question.options ?? []).map((o) => o.value));
@@ -213,8 +194,6 @@ function validateRadio(value: string, question: QuestionSpec, otherText?: string
   return null;
 }
 
-// ── Checkbox ────────────────────────────────────────────────────────────
-
 function validateCheckbox(
   value: string,
   question: QuestionSpec,
@@ -226,10 +205,8 @@ function validateCheckbox(
     .map((v) => v.trim())
     .filter(Boolean);
 
-  // The top-level required check uses String.trim() which preserves commas,
-  // so a value of "," (or ", , ,") survives that gate even though it
-  // represents zero real selections. Re-check required here against the
-  // actually-selected count.
+  // A value of "," survives the top-level required check (trim keeps commas)
+  // while representing zero real selections — re-check the parsed count.
   if (selected.length === 0) {
     return question.required ? 'This question is required' : null;
   }
@@ -255,8 +232,6 @@ function validateCheckbox(
 
   return null;
 }
-
-// ── Dropdown ────────────────────────────────────────────────────────────
 
 function validateDropdown(value: string, question: QuestionSpec): string | null {
   const validValues = new Set((question.options ?? []).map((o) => o.value));

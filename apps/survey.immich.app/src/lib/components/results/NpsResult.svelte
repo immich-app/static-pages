@@ -31,7 +31,6 @@
 </script>
 
 <div class="space-y-4">
-  <!-- Big NPS number + label -->
   <div class="flex flex-wrap items-end gap-x-8 gap-y-3">
     <div>
       <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">NPS Score</div>
@@ -79,7 +78,6 @@
     <LowSampleNotice count={stats.total} threshold={NPS_MIN_SAMPLE} metricName="NPS" />
   {/if}
 
-  <!-- 3-segment stacked bar (detractor / passive / promoter) -->
   {#if stats.total > 0}
     <div>
       <div class="flex h-4 w-full overflow-hidden rounded-full bg-gray-800">
@@ -113,7 +111,6 @@
       </div>
     </div>
 
-    <!-- Per-score distribution -->
     <div>
       <div class="mb-1 text-[10px] font-medium tracking-wider text-gray-500 uppercase">Score distribution</div>
       <div class="flex h-20 items-end gap-1">

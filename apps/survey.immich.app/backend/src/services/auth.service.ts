@@ -23,15 +23,13 @@ interface OidcConfig {
 let cachedOidcConfig: { data: OidcConfig; fetchedAt: number } | null = null;
 let cachedJwks: { data: { keys: Array<JsonWebKey & { kid?: string; alg?: string }> }; fetchedAt: number } | null = null;
 
-const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+const CACHE_TTL_MS = 60 * 60 * 1000;
 
 export class AuthService {
   constructor(
     private config: AppConfig,
     private db: Kysely<Database>,
   ) {}
-
-  // --- Password-based auth (default) ---
 
   async isSetupComplete(): Promise<boolean> {
     const row = await this.db
@@ -84,8 +82,6 @@ export class AuthService {
   isPasswordAuthEnabled(): boolean {
     return !this.config.disablePasswordAuth;
   }
-
-  // --- OIDC auth ---
 
   async getOidcConfig(): Promise<OidcConfig> {
     if (cachedOidcConfig && Date.now() - cachedOidcConfig.fetchedAt < CACHE_TTL_MS) {
@@ -157,7 +153,6 @@ export class AuthService {
   }
 
   async validateIdToken(idToken: string, nonce: string, accessToken?: string): Promise<UserInfo> {
-    // Decode JWT parts
     const parts = idToken.split('.');
     if (parts.length !== 3) throw new ServiceError('Invalid ID token format', 400);
 
@@ -172,7 +167,6 @@ export class AuthService {
 
     const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'))) as Record<string, unknown>;
 
-    // Verify claims
     if (payload.iss !== this.config.oidc.issuer) throw new ServiceError('Invalid issuer', 400);
     if (
       payload.aud !== this.config.oidc.clientId &&
@@ -185,9 +179,8 @@ export class AuthService {
       throw new ServiceError('Token expired', 400);
     }
 
-    // Verify signature using JWKS. If we can't find the key by `kid` in the
-    // cached set, the IdP may have rotated keys since we last fetched — bust
-    // the cache and retry once before failing.
+    // A `kid` missing from the cached JWKS means the IdP may have rotated keys
+    // since we fetched — bust the cache and retry once before failing.
     let jwks = await this.getJwks();
     let key = header.kid ? jwks.keys.find((k) => k.kid === header.kid) : jwks.keys[0];
     if (!key && header.kid) {
@@ -222,7 +215,6 @@ export class AuthService {
       }
     }
 
-    // Extract role from configurable claim
     const role = this.extractRole(claims);
 
     return {

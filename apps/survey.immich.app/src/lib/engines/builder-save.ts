@@ -14,11 +14,9 @@ import type { BuilderSection, BuilderQuestion } from './builder-types';
 type Conditional = NonNullable<SurveyQuestion['conditional']>;
 
 /**
- * The Skip Logic editor stores its settings in `question.config` (skipSource*
- * / skipCondition*), but the respondent runtime (shouldShowQuestion) reads
- * `question.conditional.showIf`. Translate the config shape into the runtime
- * shape at save time so skip logic actually takes effect. Returns undefined
- * when no source question is configured (no rule).
+ * The Skip Logic editor writes `question.config` (skipSource* / skipCondition*)
+ * but the respondent runtime reads `question.conditional.showIf` — translate at
+ * save time, or skip logic never takes effect.
  */
 function buildConditional(
   config: Record<string, unknown> | undefined,
@@ -58,14 +56,12 @@ export async function saveSections(
 ): Promise<void> {
   const newSectionIds = new Set(newSections.filter((s) => s.id).map((s) => s.id));
 
-  // 1. Delete removed sections
   for (const s of currentSections) {
     if (s.id && !newSectionIds.has(s.id)) {
       await apiDeleteSection(surveyId, s.id);
     }
   }
 
-  // 2. Create new sections and update existing ones
   for (const section of newSections) {
     if (!section.id) {
       const created = await apiCreateSection(surveyId, {
@@ -81,7 +77,7 @@ export async function saveSections(
     }
   }
 
-  // 3. Reorder sections (now all have IDs)
+  // Reorder only now that every section has an ID.
   if (newSections.length > 0) {
     await apiReorderSections(
       surveyId,
@@ -89,20 +85,17 @@ export async function saveSections(
     );
   }
 
-  // 4. Handle questions for each section
   for (const section of newSections) {
     const sectionId = section.id;
     const existingQuestionIds = new Set(allQuestions.filter((q) => q.section_id === sectionId).map((q) => q.id));
     const newQuestionIds = new Set(section.questions.filter((q) => q.id).map((q) => q.id));
 
-    // Delete removed questions
     for (const qId of existingQuestionIds) {
       if (!newQuestionIds.has(qId)) {
         await apiDeleteQuestion(surveyId, qId);
       }
     }
 
-    // Create/update questions
     const hasOptions = (type: string) => ['radio', 'checkbox', 'dropdown'].includes(type);
     for (const q of section.questions) {
       if (!q.id) {
@@ -138,7 +131,7 @@ export async function saveSections(
       }
     }
 
-    // Reorder questions in this section
+    // Reorder only now that every question has an ID.
     if (section.questions.length > 0) {
       await apiReorderQuestions(
         surveyId,

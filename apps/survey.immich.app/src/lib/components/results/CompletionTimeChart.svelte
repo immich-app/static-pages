@@ -47,7 +47,6 @@
     ];
   });
 
-  /** Bucket index containing the median — highlighted in the chart. */
   const medianBucketIndex = $derived.by(() => {
     if (data.median === null) return -1;
     for (let i = 0; i < data.buckets.length; i++) {

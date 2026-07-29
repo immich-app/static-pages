@@ -141,7 +141,6 @@
     ? 'border-immich-primary/30 bg-immich-primary-5 shadow-sm'
     : 'border-gray-200 hover:border-gray-400 dark:border-gray-700 dark:hover:border-gray-500'}"
 >
-  <!-- Collapsed header (always visible) -->
   <div class="flex w-full items-center gap-1 px-4 py-3">
     {#if dragHandle}
       <div
@@ -171,10 +170,8 @@
     </button>
   </div>
 
-  <!-- Expanded editor -->
   {#if expanded}
     <div class="border-t border-gray-200 px-4 pt-4 pb-4 dark:border-gray-700/60">
-      <!-- Action bar -->
       <div class="mb-4 flex items-center justify-between">
         <span class="text-xs font-medium text-gray-500">Question {index + 1}</span>
         <div class="flex items-center gap-0.5">
@@ -228,7 +225,6 @@
       </div>
 
       <div class="space-y-4">
-        <!-- Question text -->
         <div>
           <label class="mb-1.5 block text-xs font-medium tracking-wider text-gray-500 uppercase">Question</label>
           <div bind:this={questionTextInput}>
@@ -240,7 +236,6 @@
           </div>
         </div>
 
-        <!-- Description -->
         <div>
           <label class="mb-1.5 block text-xs font-medium tracking-wider text-gray-500 uppercase"
             >Description <span class="tracking-normal text-gray-500 normal-case">(optional)</span></label
@@ -253,7 +248,6 @@
           />
         </div>
 
-        <!-- Type picker -->
         <div>
           <label class="mb-2 block text-xs font-medium tracking-wider text-gray-500 uppercase">Type</label>
           <div class="flex flex-wrap gap-1.5">
@@ -272,7 +266,6 @@
           </div>
         </div>
 
-        <!-- Settings row -->
         <div class="flex items-center gap-5">
           <label class="flex cursor-pointer items-center gap-2 text-sm">
             <input
@@ -298,12 +291,10 @@
           {/if}
         </div>
 
-        <!-- Options (radio/checkbox) -->
         {#if showOptions}
           <OptionListEditor options={question.options} onChange={(opts) => updateField('options', opts)} />
         {/if}
 
-        <!-- Textarea max length -->
         {#if question.type === 'textarea'}
           <div class="max-w-xs">
             <label class="mb-1.5 block text-xs font-medium tracking-wider text-gray-500 uppercase">Max length</label>
@@ -315,7 +306,6 @@
           </div>
         {/if}
 
-        <!-- Placeholder -->
         {#if ['text', 'email', 'textarea'].includes(question.type)}
           <div>
             <label class="mb-1.5 block text-xs font-medium tracking-wider text-gray-500 uppercase">Placeholder</label>
@@ -327,7 +317,6 @@
           </div>
         {/if}
 
-        <!-- Rating config -->
         {#if question.type === 'rating'}
           <div class="space-y-3">
             <label class="mb-1.5 block text-xs font-medium tracking-wider text-gray-500 uppercase">Rating scale</label>
@@ -377,14 +366,12 @@
           </div>
         {/if}
 
-        <!-- NPS config -->
         {#if question.type === 'nps'}
           <div class="rounded-md bg-gray-100 px-4 py-3 text-sm text-gray-500 dark:bg-gray-800">
             0-10 scale with Detractor/Passive/Promoter segmentation
           </div>
         {/if}
 
-        <!-- Number config -->
         {#if question.type === 'number'}
           <div class="grid grid-cols-2 gap-3">
             <div>
@@ -408,7 +395,6 @@
           </div>
         {/if}
 
-        <!-- Likert config -->
         {#if question.type === 'likert'}
           <div class="grid grid-cols-2 gap-3">
             <div>
@@ -432,7 +418,6 @@
           </div>
         {/if}
 
-        <!-- Validation + Logic — collapsible sections side by side -->
         <div class="flex gap-4 border-t border-gray-200 pt-4 dark:border-gray-700/60">
           <button
             class="flex items-center gap-2 text-xs font-medium tracking-wider text-gray-500 uppercase"

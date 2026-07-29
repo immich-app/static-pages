@@ -139,8 +139,6 @@ resource "cloudflare_workers_deployment" "sessions" {
   }]
 }
 
-# --- Main API worker ---
-
 resource "cloudflare_worker" "api" {
   account_id = var.cloudflare_account_id
   name       = "survey-api${local.resource_suffix}"
@@ -165,7 +163,6 @@ resource "cloudflare_worker_version" "api" {
 
   bindings = local.api_bindings
 
-  # API worker depends on the sessions deployment being live
   depends_on = [cloudflare_workers_deployment.sessions]
 }
 
@@ -179,8 +176,6 @@ resource "cloudflare_workers_deployment" "api" {
     percentage = 100
   }]
 }
-
-# --- Routes ---
 
 data "cloudflare_zone" "immich_app" {
   filter = {

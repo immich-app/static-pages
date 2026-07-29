@@ -81,16 +81,12 @@ async function submitResponse(slug: string, answers: Array<{ questionId: string;
   });
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Results page features
-// ──────────────────────────────────────────────────────────────────────────────
 test.describe.serial('Results page features', () => {
   let setup: SetupResult;
 
   test.beforeAll(async () => {
     setup = await createResultsSurvey();
 
-    // Submit 3 responses with varied data
     await submitResponse(setup.slug, [
       { questionId: setup.questionIds.color, value: 'Red' },
       { questionId: setup.questionIds.name, value: 'Alice Johnson' },
@@ -113,19 +109,16 @@ test.describe.serial('Results page features', () => {
   test('overview tab shows stats cards and question results', async ({ page }) => {
     await page.goto(`/results/${setup.surveyId}`);
 
-    // Wait for results to load - stats cards should appear
     await expect(page.getByText('Total')).toBeVisible({ timeout: 10000 });
     await expect(page.getByText('Completed')).toBeVisible();
     await expect(page.getByText('Completion')).toBeVisible();
 
-    // Question result sections should be displayed
     await expect(page.getByRole('heading', { name: 'Favorite color' })).toBeVisible({
       timeout: 10000,
     });
     await expect(page.getByRole('heading', { name: 'Your name' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Rate our service' })).toBeVisible();
 
-    // Export buttons should be present
     await expect(page.getByRole('button', { name: 'CSV' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'JSON' })).toBeVisible();
   });
@@ -134,15 +127,12 @@ test.describe.serial('Results page features', () => {
     await page.goto(`/results/${setup.surveyId}`);
     await expect(page.getByText('Total')).toBeVisible({ timeout: 10000 });
 
-    // Click the Responses tab
     await page.getByRole('button', { name: 'Responses' }).click();
 
-    // Verify the respondent table appears with column headers
     await expect(page.getByText('Respondent')).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('Status')).toBeVisible();
     await expect(page.getByText('Answers')).toBeVisible();
 
-    // There should be at least 3 rows with "Complete" status
     const completeLabels = page.locator('text=Complete');
     await expect(completeLabels.first()).toBeVisible({ timeout: 5000 });
     expect(await completeLabels.count()).toBeGreaterThanOrEqual(3);
@@ -152,22 +142,17 @@ test.describe.serial('Results page features', () => {
     await page.goto(`/results/${setup.surveyId}`);
     await expect(page.getByText('Total')).toBeVisible({ timeout: 10000 });
 
-    // Click the Search tab
     await page.getByRole('button', { name: 'Search' }).click();
 
-    // Verify the search UI appears
     await expect(page.getByPlaceholder('Search answers...')).toBeVisible({ timeout: 5000 });
 
-    // Search for "Alice"
     await page.getByPlaceholder('Search answers...').fill('Alice');
 
-    // Wait for debounced search results
     await expect(page.getByText('Alice Johnson')).toBeVisible({ timeout: 5000 });
 
-    // Verify result card shows the question text context (within search results, not the filter dropdown)
+    // Scoped to the results list: 'Your name' also appears in the filter dropdown.
     await expect(page.locator('.space-y-2 >> text=Your name')).toBeVisible();
 
-    // Verify showing result count
     await expect(page.getByText(/Showing \d+ of \d+ result/)).toBeVisible();
   });
 
@@ -178,23 +163,17 @@ test.describe.serial('Results page features', () => {
     await page.getByPlaceholder('Search answers...').fill('Alice');
     await expect(page.getByText('Alice Johnson')).toBeVisible({ timeout: 5000 });
 
-    // "Red" isn't in the search results (only the matched 'name' answer is),
-    // so asserting it becomes visible after clicking proves the expansion
-    // loaded the full respondent detail.
+    // Precondition for the assertion further down: "Red" is not in the search results.
     await expect(page.getByText('Red', { exact: true })).toHaveCount(0);
 
-    // The search row is a button; click it to expand
     const resultRow = page.locator('button', { has: page.getByText('Alice Johnson') }).first();
     await resultRow.click();
 
-    // The inline detail panel now shows every answer this respondent gave,
-    // and the matched question ('Your name') gets a "match" chip.
+    // The matched question gets a "match" chip in the expanded detail.
     await expect(page.getByText('match', { exact: true })).toBeVisible({ timeout: 5000 });
-    // Red (their favourite color) was not in the search results — appearing
-    // now proves the expansion pulled the full respondent record.
+    // "Red" appearing now proves the expansion pulled the full respondent record.
     await expect(page.getByText('Red', { exact: true })).toBeVisible();
 
-    // Clicking the same row collapses the detail — the match chip disappears
     await resultRow.click();
     await expect(page.getByText('match', { exact: true })).toHaveCount(0);
   });
@@ -203,8 +182,6 @@ test.describe.serial('Results page features', () => {
     await page.goto(`/results/${setup.surveyId}`);
     await expect(page.getByText('Total')).toBeVisible({ timeout: 10000 });
 
-    // Both analytics cards should render on the overview tab. The heading text
-    // is the easiest selector.
     await expect(page.getByRole('heading', { name: 'Time to Complete' })).toBeVisible({ timeout: 5000 });
     await expect(page.getByRole('heading', { name: 'Time per Question' })).toBeVisible();
   });
@@ -216,7 +193,6 @@ test.describe.serial('Results page features', () => {
     // Set up download listener before clicking
     const downloadPromise = page.waitForEvent('download', { timeout: 10000 });
 
-    // Click CSV export button
     await page.getByRole('button', { name: 'CSV' }).click();
 
     const download = await downloadPromise;

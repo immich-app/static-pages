@@ -131,7 +131,6 @@
     }
   }
 
-  // DnD for questions
   const dndQuestions = $derived(
     section.questions.map((q, i) => ({
       ...q,
@@ -150,7 +149,6 @@
 </script>
 
 <div class="rounded-xl border border-gray-300 dark:border-gray-600">
-  <!-- Section header -->
   <div class="flex items-center justify-between border-b border-gray-200 px-5 py-4 dark:border-gray-700/60">
     <div class="flex items-center gap-3">
       <div class="cursor-grab text-gray-500 hover:text-gray-300 active:cursor-grabbing" title="Drag to reorder">
@@ -211,7 +209,6 @@
   </div>
 
   <div class="space-y-4 px-5 pt-4 pb-5">
-    <!-- Section metadata -->
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
       <div>
         <label class="mb-1.5 block text-xs font-medium tracking-wider text-gray-500 uppercase">Section title</label>
@@ -233,7 +230,6 @@
       </div>
     </div>
 
-    <!-- Questions with DnD -->
     <div
       use:dndzone={{
         items: dndQuestions,
@@ -265,7 +261,6 @@
       {/each}
     </div>
 
-    <!-- Add question type chips -->
     {#if section.questions.length === 0}
       <div class="rounded-lg border border-dashed border-gray-600 px-6 py-8 text-center">
         <p class="mb-4 text-sm text-gray-500">Add your first question</p>

@@ -25,10 +25,8 @@
   const aPct = $derived(stats.percents['Agree']);
   const saPct = $derived(stats.percents['Strongly Agree']);
 
-  // Neutral straddles the midline — half on each side
   const nHalf = $derived(nPct / 2);
 
-  // Total negative includes half of neutral; same for positive
   const totalNeg = $derived(sdPct + dPct + nHalf);
   const totalPos = $derived(saPct + aPct + nHalf);
   const maxSide = $derived(Math.max(totalNeg, totalPos, 1));
@@ -36,7 +34,6 @@
   // Scale so the widest side fills 50% of the bar
   const scale = $derived(50 / maxSide);
 
-  // Widths (as % of total bar) for each segment
   const sdWidth = $derived(sdPct * scale);
   const dWidth = $derived(dPct * scale);
   const nNegWidth = $derived(nHalf * scale);
@@ -86,13 +83,10 @@
   {/if}
 
   {#if stats.total > 0}
-    <!-- Diverging stacked bar -->
     <div class="relative">
-      <!-- Midline -->
       <div class="pointer-events-none absolute top-0 bottom-0 left-1/2 z-10 w-px bg-gray-500/50"></div>
 
       <div class="flex h-8 w-full overflow-hidden rounded-md bg-gray-200/30 dark:bg-gray-800/40">
-        <!-- Left padding to align on midline -->
         <div style="width: {leftPad}%" class="shrink-0"></div>
 
         {#if sdWidth > 0}
@@ -143,7 +137,6 @@
         {/if}
       </div>
 
-      <!-- Legend -->
       <div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-gray-400">
         <span class="flex items-center gap-1.5"
           ><span class="h-2 w-2 rounded-sm bg-red-600/85"></span>Strongly Disagree</span

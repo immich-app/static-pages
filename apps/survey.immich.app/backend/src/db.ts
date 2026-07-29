@@ -2,8 +2,6 @@ import { Kysely } from 'kysely';
 import { CloudflareD1Dialect } from '@immich/kysely-adapter-cloudflare';
 import type { Selectable } from 'kysely';
 
-// --- Table types ---
-
 export interface SurveysTable {
   id: string;
   title: string;
@@ -99,8 +97,6 @@ export interface AdminCredentialsTable {
   created_at: string;
 }
 
-// --- Database interface ---
-
 export interface Database {
   surveys: SurveysTable;
   survey_sections: SurveySectionsTable;
@@ -113,8 +109,6 @@ export interface Database {
   admin_credentials: AdminCredentialsTable;
 }
 
-// --- Row types for backward compatibility ---
-
 export type SurveyRow = Selectable<SurveysTable>;
 export type SectionRow = Selectable<SurveySectionsTable>;
 export type QuestionRow = Selectable<SurveyQuestionsTable>;
@@ -122,8 +116,6 @@ export type RespondentRow = Selectable<RespondentsTable>;
 export type AnswerRow = Selectable<AnswersTable>;
 export type TagRow = Selectable<TagsTable>;
 export type AuditLogRow = Selectable<AuditLogTable>;
-
-// --- Database config ---
 
 export type DbType = 'd1' | 'sqlite' | 'postgres';
 
@@ -139,7 +131,6 @@ export function detectDbType(url?: string): DbType {
   return 'sqlite';
 }
 
-// Sync factory for Workers (D1 dialect doesn't need async init)
 export function createD1Database(d1: D1Database): Kysely<Database> {
   return new Kysely<Database>({
     dialect: new CloudflareD1Dialect({ database: d1 as unknown as import('@cloudflare/workers-types').D1Database }),

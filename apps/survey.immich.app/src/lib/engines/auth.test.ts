@@ -65,9 +65,6 @@ function hasRole(user: AuthUser | null, minRole: UserRole): boolean {
   return ROLE_HIERARCHY[user.role] >= ROLE_HIERARCHY[minRole];
 }
 
-/**
- * Validates basic JWT structure (3 base64url-encoded dot-separated parts).
- */
 function isValidJwtStructure(token: string): boolean {
   const parts = token.split('.');
   if (parts.length !== 3) return false;
@@ -102,15 +99,9 @@ function decodeJwtPayload(token: string): Record<string, unknown> | null {
   }
 }
 
-// ── Helpers ──────────────────────────────────────────────────────────────
-
 function makeUser(role: UserRole): UserInfo {
   return { sub: 'user-1', email: 'user@example.com', name: 'Test User', role };
 }
-
-// ═════════════════════════════════════════════════════════════════════════
-// Tests
-// ═════════════════════════════════════════════════════════════════════════
 
 describe('Role hierarchy — requireRole', () => {
   it('admin user passes admin minRole', () => {
@@ -315,7 +306,6 @@ describe('Session JWT structure', () => {
   it('tampered payload changes decoded content', () => {
     const token = createTestJwt({ sub: 'u1', role: 'admin' });
     const parts = token.split('.');
-    // Tamper the payload
     const tampered = btoa(JSON.stringify({ sub: 'u1', role: 'viewer' }));
     const tamperedToken = `${parts[0]}.${tampered}.${parts[2]}`;
     const decoded = decodeJwtPayload(tamperedToken);

@@ -67,10 +67,6 @@ interface QuestionRow {
   config: string | null;
 }
 
-// ============================================================
-// Data generators
-// ============================================================
-
 function uuid(): string {
   return [8, 4, 4, 4, 12]
     .map((n) => Array.from({ length: n }, () => Math.floor(Math.random() * 16).toString(16)).join(''))
@@ -217,12 +213,7 @@ function generateTallies(questions: QuestionRow[], uniqueValuesPerQuestion: numb
   return tallies;
 }
 
-// ============================================================
-// Profiler
-// ============================================================
-
 function measure<T>(label: string, setup: () => T): { label: string; result: T; bytes: number } {
-  // Force GC before + after for accurate measurement
   if (global.gc) global.gc();
   const before = process.memoryUsage().heapUsed;
 
@@ -239,10 +230,6 @@ function fmt(bytes: number): string {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
 }
-
-// ============================================================
-// Scenarios
-// ============================================================
 
 interface Scenario {
   name: string;
@@ -264,7 +251,6 @@ function profileScenario(scenario: Scenario) {
   console.log(`Scenario: ${scenario.name}`);
   console.log('='.repeat(70));
 
-  // 1. Measure static survey cache
   const staticMeasure = measure('Static cache (survey + sections + questions + tallies)', () => {
     const survey = generateSurvey();
     const sections = generateSections(scenario.sectionCount, survey.id);
@@ -282,7 +268,6 @@ function profileScenario(scenario: Scenario) {
   // Keep reference so GC doesn't collect
   const questions = staticMeasure.result.questions;
 
-  // 2. Measure single respondent (answered all questions)
   const singleRespondent = measure('Single respondent state (all answers)', () => {
     return generateRespondentState(questions, scenario.questionCount, scenario.fillLevel);
   });
@@ -290,7 +275,6 @@ function profileScenario(scenario: Scenario) {
   console.log(`\n  Per-respondent state (all ${scenario.questionCount} questions answered):`);
   console.log(`    ${fmt(singleRespondent.bytes)}`);
 
-  // 3. Measure concurrent respondents at various scales
   console.log(`\n  Concurrent respondent scaling:`);
   console.log(`    ${'Users'.padEnd(10)} ${'Total cache'.padEnd(15)} ${'Per-user avg'.padEnd(15)} ${'% of 100MB'}`);
 
@@ -318,10 +302,6 @@ function profileScenario(scenario: Scenario) {
     );
   }
 }
-
-// ============================================================
-// Main
-// ============================================================
 
 console.log('Survey DO Memory Profiler');
 console.log(`Node ${process.version} | V8 heap used: ${fmt(process.memoryUsage().heapUsed)}`);

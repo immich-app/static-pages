@@ -1,13 +1,11 @@
 <script lang="ts">
   /**
-   * Shown when a question has too few responses for the primary visualisation
-   * to be statistically meaningful. We still show the raw responses so viewers
-   * don't lose any data — just without a chart that would mislead.
+   * Shown when a question has too few responses for its chart to be meaningful.
+   * The raw responses are still rendered, so no data is lost.
    */
   interface Props {
     count: number;
     threshold: number;
-    /** e.g. "NPS", "rating average", "distribution" — what would be misleading */
     metricName?: string;
   }
 

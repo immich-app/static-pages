@@ -99,10 +99,8 @@ export function createSurveyEngine(
 
   const currentQuestion = $derived(surveyQuestions[currentIndex] as SurveyQuestion | undefined);
   const totalVisible = $derived(getVisibleQuestionCount(surveyQuestions, answers));
-  // Count only answers to questions that are still visible. A question hidden by
-  // skip logic after its controlling answer changed keeps its stored answer, so
-  // counting all answers (Object.keys(answers).length) against the visible total
-  // could push progress past 100%.
+  // A question hidden by skip logic keeps its stored answer, so counting every
+  // answer against the visible total could push progress past 100%.
   const answeredVisible = $derived(
     surveyQuestions.filter((q) => q.id in answers && shouldShowQuestion(q, answers)).length,
   );

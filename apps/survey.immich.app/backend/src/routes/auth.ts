@@ -7,7 +7,6 @@ import { getContext } from '../config';
 import type { AppRouter } from '../types';
 
 export function registerAuthRoutes(router: AppRouter) {
-  // Check auth status + setup state
   router.get('/api/auth/me', async (request) => {
     const ctx = getContext(request);
     const authService = new AuthService(ctx.config, ctx.db);
@@ -39,7 +38,6 @@ export function registerAuthRoutes(router: AppRouter) {
     return Response.json({ authenticated: true, user, passwordEnabled, oidcEnabled });
   });
 
-  // Initial admin setup (first-time password)
   router.post('/api/auth/setup', async (request) => {
     const ctx = getContext(request);
     const authService = new AuthService(ctx.config, ctx.db);
@@ -59,7 +57,6 @@ export function registerAuthRoutes(router: AppRouter) {
 
     await authService.setupAdmin(body.password);
 
-    // Auto-login after setup
     const user = await authService.passwordLogin(body.password);
     const sessionToken = await authService.createSessionToken(user);
     const secure = ctx.config.cookieSecure ? 'Secure; ' : '';
@@ -73,7 +70,6 @@ export function registerAuthRoutes(router: AppRouter) {
     });
   });
 
-  // Password login
   router.post('/api/auth/password-login', async (request) => {
     const ctx = getContext(request);
     const authService = new AuthService(ctx.config, ctx.db);
@@ -96,7 +92,6 @@ export function registerAuthRoutes(router: AppRouter) {
     });
   });
 
-  // OIDC login redirect (only if OIDC is configured)
   router.get('/api/auth/login', async (request) => {
     const ctx = getContext(request);
     const authService = new AuthService(ctx.config, ctx.db);
@@ -108,13 +103,9 @@ export function registerAuthRoutes(router: AppRouter) {
     const nonce = crypto.randomUUID();
     const url = new URL(request.url);
     const rawReturnTo = url.searchParams.get('returnTo') ?? '/';
-    // Validate returnTo by parsing against this origin and confirming the
-    // resolved origin still matches. A naive prefix check (e.g. startsWith('/')
-    // && !startsWith('//')) misses backslash variants like /\evil.com — the
-    // WHATWG URL parser folds \ to / for special schemes, so a redirect to
-    // /\evil.com resolves to //evil.com, giving an attacker an open redirect
-    // off the trusted SSO origin (CWE-601). The URL-API check rejects every
-    // variant — backslashes, percent-encoded slashes, schemed URLs, etc.
+    // Parse against this origin rather than prefix-checking: the WHATWG parser
+    // folds `\` to `/`, so `/\evil.com` resolves to `//evil.com` — an open
+    // redirect off the trusted SSO origin (CWE-601).
     let returnTo = '/';
     try {
       const target = new URL(rawReturnTo, url.origin);
@@ -138,7 +129,6 @@ export function registerAuthRoutes(router: AppRouter) {
     });
   });
 
-  // OIDC callback
   router.get('/api/auth/callback', async (request) => {
     const url = new URL(request.url);
     const code = url.searchParams.get('code');
@@ -179,7 +169,6 @@ export function registerAuthRoutes(router: AppRouter) {
     });
   });
 
-  // Logout
   router.post('/api/auth/logout', async () => {
     return new Response(null, {
       status: 204,

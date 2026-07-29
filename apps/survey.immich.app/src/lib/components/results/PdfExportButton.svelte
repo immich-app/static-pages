@@ -54,16 +54,13 @@
         }
       }
 
-      // Dark background
       pdf.setFillColor(17, 24, 39);
       pdf.rect(0, 0, pageWidth, pageHeight, 'F');
 
-      // Title
       const title = element.querySelector('h1')?.textContent ?? 'Survey Results';
       addText(title, 20, true);
       addSpace(4);
 
-      // Stats
       const statCards = element.querySelectorAll('.grid > div');
       if (statCards.length > 0) {
         const stats: string[] = [];
@@ -78,7 +75,6 @@
         }
       }
 
-      // Charts — render canvases as images in the PDF
       const chartContainers = element.querySelectorAll('.rounded-xl');
       for (const container of chartContainers) {
         const heading = container.querySelector('h3')?.textContent?.trim();
@@ -94,7 +90,6 @@
           addSpace(2);
         }
 
-        // Try to capture canvas charts
         const canvas = container.querySelector('canvas') as HTMLCanvasElement | null;
         if (canvas) {
           try {

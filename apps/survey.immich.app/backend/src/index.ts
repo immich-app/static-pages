@@ -36,7 +36,6 @@ function registerAllRoutes(router: ReturnType<typeof AutoRouter>) {
   registerBackupRoutes(router as any);
 }
 
-// Factory for Node.js server: creates a router with pre-built context
 // In Node.js, Response.json() returns an undici Response that fails `instanceof Response`
 // checks in itty-router. This custom format handler detects Response-like objects by
 // checking for the `status` and `headers` properties instead of using instanceof.
@@ -69,7 +68,6 @@ export function createRouter(ctx: AppContext) {
   return nodeRouter;
 }
 
-// Workers entry point: creates context from Env per-request
 const router = AutoRouter<IRequest & { ctx?: AppContext }, [Env, ExecutionContext]>({
   before: [
     preflight,
@@ -92,34 +90,22 @@ const router = AutoRouter<IRequest & { ctx?: AppContext }, [Env, ExecutionContex
 
 registerAllRoutes(router);
 
-// ============================================================
-// DO routing helpers
-// ============================================================
-
 /**
- * Per-isolate cache for slug → survey ID lookups.
+ * Per-isolate cache for slug → survey ID lookups. Without it every public
+ * request and WS upgrade on /api/s/:slug/* hits D1, whose read throughput
+ * (~2000/s) then bottlenecks WS connects. Module scope means the map is shared
+ * across all requests in an isolate; the TTL bounds cross-isolate staleness.
  *
- * Every public HTTP request and every WS upgrade on /api/s/:slug/* needs to
- * translate the slug to a survey ID before forwarding to the DO. Without
- * caching, this hits D1 on every request — under load the D1 read throughput
- * limit (~2000/s) becomes the bottleneck for WS connects.
- *
- * The cache lives in module scope, so it's shared across all requests handled
- * by the same Workers isolate (isolates last minutes). A 60-second TTL bounds
- * cross-isolate staleness for slug renames.
- *
- * We deliberately do NOT cache password_hash — its value gates an auth check
- * (whether a password is required at all), and a stale `null` after an admin
- * adds a password would let unauthenticated respondents through in other
- * isolates for the TTL window. Instead, the DO itself enforces the password
- * requirement using its own properly-invalidated cache, and the worker just
- * verifies the spw_ cookie if present and forwards X-Authenticated.
+ * password_hash is deliberately NOT cached: a stale `null` after an admin adds
+ * a password would let unauthenticated respondents through for the TTL window
+ * in other isolates. The DO gates on its own properly-invalidated copy instead.
  */
 interface CachedSlugEntry {
   id: string;
   cachedAt: number;
 }
 const SLUG_CACHE_TTL_MS = 60_000;
+const MAX_SLUG_CACHE_ENTRIES = 1000;
 const slugCache = new Map<string, CachedSlugEntry>();
 
 /**
@@ -145,22 +131,18 @@ async function slugToRow(db: D1Database, slug: string): Promise<{ id: string } |
 
   if (row) {
     slugCache.set(slug, { id: row.id, cachedAt: Date.now() });
-    // Bound the cache size — unlikely to grow large (one entry per published survey)
-    // but cap it to prevent unbounded growth in pathological cases
-    if (slugCache.size > 1000) {
-      const firstKey = slugCache.keys().next().value;
-      if (firstKey) slugCache.delete(firstKey);
+    if (slugCache.size > MAX_SLUG_CACHE_ENTRIES) {
+      const oldestSlug = slugCache.keys().next().value;
+      if (oldestSlug) slugCache.delete(oldestSlug);
     }
   }
   return row;
 }
 
 /**
- * Drop all slug-cache entries that point at the given survey. Call this after
- * any mutation that invalidates the slug→surveyId mapping — delete, slug
- * change, or password_hash change — so the current isolate doesn't serve
- * stale routes. Other isolates still rely on the TTL to expire; keeping that
- * short (60s) bounds cross-isolate staleness.
+ * Call after any change to the slug→surveyId mapping (survey delete, slug
+ * change) so this isolate stops serving stale routes; other isolates rely on
+ * the TTL to expire.
  */
 function invalidateSlugCacheBySurveyId(surveyId: string): void {
   for (const [slug, entry] of slugCache.entries()) {
@@ -191,7 +173,6 @@ const CATALOG_SYNC_COLUMNS = new Set([
   'randomize_options',
 ]);
 
-/** After forwarding a mutation to the DO, sync catalog fields back to D1 */
 async function syncCatalog(response: Response, db: D1Database, surveyId: string): Promise<void> {
   const syncHeader = response.headers.get('X-Catalog-Sync');
   if (!syncHeader) return;
@@ -205,11 +186,8 @@ async function syncCatalog(response: Response, db: D1Database, surveyId: string)
       .prepare(`UPDATE surveys SET ${setClauses} WHERE id = ?`)
       .bind(...values)
       .run();
-    // If the slug changed, drop stale entries from the per-isolate cache so
-    // future requests for the new slug rebuild the mapping. Other isolates
-    // rely on the TTL to expire — keeping that short (60s) bounds the window.
-    // password_hash changes don't need invalidation here because the cache no
-    // longer stores it; the DO enforces the password gate authoritatively.
+    // password_hash changes need no invalidation — the cache no longer stores
+    // it; the DO enforces the password gate authoritatively.
     if ('slug' in fields) {
       invalidateSlugCacheBySurveyId(surveyId);
     }
@@ -218,7 +196,6 @@ async function syncCatalog(response: Response, db: D1Database, surveyId: string)
   }
 }
 
-/** Initialize a DO with survey data after creation. Throws on failure. */
 async function initDO(env: Env, surveyId: string, data: unknown): Promise<void> {
   const stub = getDOStub(env, surveyId);
   const res = await stub.fetch(
@@ -234,7 +211,6 @@ async function initDO(env: Env, surveyId: string, data: unknown): Promise<void> 
   }
 }
 
-/** Create a clean response copy (stripping internal headers) */
 function cleanResponse(response: Response): Response {
   const cleaned = new Response(response.body, {
     status: response.status,
@@ -247,13 +223,10 @@ function cleanResponse(response: Response): Response {
   return cleaned;
 }
 
-/** Check if this route should be forwarded to the DO */
 function matchDORoute(method: string, pathname: string): { surveyId?: string; slug?: string } | null {
-  // /api/surveys/:id/...
   const surveyMatch = pathname.match(SURVEY_ID_PATTERN);
   if (surveyMatch) {
     const id = surveyMatch[1];
-    // Exclude list and create (handled by itty-router)
     if (id === 'import') return null; // POST /api/surveys/import
     // Tags live in D1, not in the DO — let itty-router handle them
     const subPath = surveyMatch[2] || '';
@@ -262,12 +235,10 @@ function matchDORoute(method: string, pathname: string): { surveyId?: string; sl
     return { surveyId: id };
   }
 
-  // /api/s/:slug/...
   const publicMatch = pathname.match(PUBLIC_PATTERN);
   if (publicMatch) {
     const slug = publicMatch[1];
     const subPath = publicMatch[2] || '';
-    // /api/s/:slug/auth and /api/s/:slug/reset are handled by the worker
     if (subPath === '/auth' || subPath === '/reset') return null;
     return { slug };
   }
@@ -275,13 +246,8 @@ function matchDORoute(method: string, pathname: string): { surveyId?: string; sl
   return null;
 }
 
-// ============================================================
-// Main export
-// ============================================================
-
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    // Skip DO routing if DOs not available (shouldn't happen in Workers but safety check)
     if (!env.SURVEY_SESSIONS) {
       return router.fetch(request, env, ctx);
     }
@@ -290,19 +256,15 @@ export default {
     const method = request.method;
     const pathname = url.pathname;
 
-    // CORS preflight — let itty-router handle it
     if (method === 'OPTIONS') {
       return router.fetch(request, env, ctx);
     }
 
-    // Check if this route should go to the DO
     const doMatch = matchDORoute(method, pathname);
 
     if (!doMatch) {
-      // Not a DO route — goes through itty-router (list, create, import, tags, audit, auth, backup)
       const response = await router.fetch(request, env, ctx);
 
-      // After survey creation/import, initialize the DO with the survey data
       if (response.ok && method === 'POST' && (pathname === '/api/surveys' || pathname === '/api/surveys/import')) {
         const body = await response.json();
         const surveyData = body.survey ?? body;
@@ -310,16 +272,13 @@ export default {
           try {
             await initDO(env, surveyData.id, body.survey ? body : { survey: surveyData });
           } catch (e) {
-            // DO init failed — roll back the D1 catalog entry
             console.error('Rolling back survey creation after DO init failure:', e);
             await env.DB.prepare('DELETE FROM surveys WHERE id = ?').bind(surveyData.id).run();
             return Response.json({ error: 'Failed to initialize survey storage. Please try again.' }, { status: 503 });
           }
         }
-        // Re-wrap with the new body. Strip headers that describe the original
-        // body's encoding/length — Response.json will recompute them against
-        // the re-serialized body, and a stale content-length would be rejected
-        // by downstream infra.
+        // Response.json recomputes content-type/length for the re-serialized
+        // body; a stale content-length here would be rejected downstream.
         const newHeaders = new Headers(response.headers);
         newHeaders.delete('content-length');
         newHeaders.delete('content-type');
@@ -331,7 +290,6 @@ export default {
 
     const config = configFromEnv(env);
 
-    // Resolve survey ID
     let surveyId: string;
 
     if (doMatch.surveyId) {
@@ -363,7 +321,6 @@ export default {
       }
     }
 
-    // WebSocket upgrade — forward original request directly to preserve upgrade semantics
     const stub = getDOStub(env, surveyId);
     if (request.headers.get('Upgrade') === 'websocket') {
       const wsUrl = new URL(request.url);
@@ -379,27 +336,21 @@ export default {
         if (!checkRole(authResult, minRole)) {
           return Response.json({ error: 'Insufficient permissions' }, { status: 403 });
         }
-        wsRole = authResult; // actual role (viewer/editor/admin) so DO can enforce fine-grained checks
+        wsRole = authResult;
       }
 
-      // Strip any client-supplied internal headers — these MUST come from
-      // the worker's own verification, never from the client.
       const wsHeaders = new Headers(request.headers);
       stripInternalHeaders(wsHeaders);
       wsHeaders.set('X-WS-Role', wsRole);
 
       if (isPublicRoute && doMatch.slug) {
-        // Forward respondent cookie ID so the DO can tag the connection for
-        // authenticated-once respondent sessions (no need to re-auth per message).
-        // The header is only set from a verified rid cookie — never from the
-        // client's request headers directly.
+        // Set from the verified rid cookie only. Lets the DO tag the connection
+        // so respondent messages don't each need re-authenticating.
         const respondentId = getRespondentId(request, doMatch.slug);
         if (respondentId) wsHeaders.set('X-Respondent-Id', respondentId);
 
-        // Always verify the spw_ cookie (independent of whether we know the
-        // survey requires a password — the DO will gate based on its own
-        // current password_hash). Forwarding "user holds a valid token for
-        // this survey" lets the DO trust the result without re-verifying.
+        // Verified unconditionally — the DO decides whether a password is
+        // actually required, from its own current password_hash.
         const token = getCookie(request, `spw_${doMatch.slug}`);
         const pw = token
           ? await verifySurveyPasswordTokenSignature(token, surveyId, config.passwordSecret)
@@ -411,13 +362,10 @@ export default {
       return stub.fetch(new Request(request.url, { method: request.method, headers: wsHeaders }));
     }
 
-    // Enforce global slug uniqueness for a top-level survey update here in the
-    // worker, before the DO applies it. Each survey lives in its own DO, so the
-    // DO's own updateSurvey can only see its single survey and can never detect
-    // a sibling already using the slug. The catalog sync that would trip D1's
-    // UNIQUE(slug) constraint runs in waitUntil, where its failure is invisible
-    // to the client — the update would falsely appear to succeed. We buffer the
-    // body so it can still be forwarded after the check.
+    // Slug uniqueness must be checked here: each survey lives in its own DO and
+    // can't see siblings, and the D1 catalog sync that would trip UNIQUE(slug)
+    // runs in waitUntil, where its failure is invisible to the client. The body
+    // is buffered so it can still be forwarded after the check.
     let forwardBody: BodyInit | null = request.body;
     const surveyPutSubPath = pathname.match(SURVEY_ID_PATTERN)?.[2] ?? '';
     if (method === 'PUT' && doMatch.surveyId && (surveyPutSubPath === '' || surveyPutSubPath === '/')) {
@@ -438,21 +386,15 @@ export default {
       }
     }
 
-    // Build headers for the DO request. Strip any client-supplied internal
-    // headers up front — the worker is the only thing allowed to set them.
     const doHeaders = new Headers(request.headers);
     stripInternalHeaders(doHeaders);
 
     if (isPublicRoute) {
-      // Add respondent ID header for public endpoints — ONLY from a verified
-      // rid cookie, never from the client's own X-Respondent-Id header.
+      // Set from the verified rid cookie only, never from a client header.
       const slug = doMatch.slug!;
       const respondentId = getRespondentId(request, slug);
       if (respondentId) doHeaders.set('X-Respondent-Id', respondentId);
 
-      // X-Authenticated reports the true validity of the spw_ cookie. The DO
-      // decides whether a password is required based on its own up-to-date
-      // survey.password_hash and rejects unauthenticated requests when needed.
       const token = getCookie(request, `spw_${slug}`);
       const pw = token
         ? await verifySurveyPasswordTokenSignature(token, surveyId, config.passwordSecret)
@@ -461,7 +403,6 @@ export default {
       if (pw.valid && pw.fingerprint) doHeaders.set('X-Survey-Pw-Fp', pw.fingerprint);
     }
 
-    // Forward to DO
     const doRequest = new Request(request.url, {
       method: request.method,
       headers: doHeaders,
@@ -469,7 +410,6 @@ export default {
     });
     const doResponse = await stub.fetch(doRequest);
 
-    // Handle duplicate: DO returns new survey data, we create D1 entry + new DO
     const isDuplicate = method === 'POST' && pathname.endsWith('/duplicate') && doResponse.status === 201;
     if (isDuplicate) {
       const dupData = (await doResponse.json()) as {
@@ -478,7 +418,6 @@ export default {
         questions: unknown[];
       };
       const newId = dupData.survey.id as string;
-      // Create D1 catalog entry
       const s = dupData.survey;
       await env.DB.prepare(
         `INSERT INTO surveys (id, title, description, slug, status, welcome_title, welcome_description,
@@ -506,22 +445,19 @@ export default {
           s.updated_at,
         )
         .run();
-      // Init new DO
       ctx.waitUntil(initDO(env, newId, dupData));
       const dupResponse = Response.json(dupData, { status: 201 });
       securityHeaders(dupResponse);
       return dupResponse;
     }
 
-    // Handle delete: remove D1 catalog row and tag associations.
-    // ONLY for the top-level DELETE /api/surveys/:id — nested deletes
-    // (sections, questions, respondents) must leave the catalog intact.
+    // Nested deletes (sections, questions, respondents) hit the same DO route,
+    // so only a top-level survey delete may drop the catalog row.
     const surveySubPath = pathname.match(SURVEY_ID_PATTERN)?.[2] ?? '';
     const isTopLevelSurveyDelete = surveySubPath === '' || surveySubPath === '/';
     if (method === 'DELETE' && doResponse.status === 204 && doMatch.surveyId && isTopLevelSurveyDelete) {
-      // Drop any stale slug→id entries for this survey from the per-isolate
-      // cache so a later request (e.g. same slug re-used by a brand new
-      // survey) can't route through to the deleted DO.
+      // Otherwise a new survey re-using this slug could route to the deleted DO
+      // via this isolate's stale cache.
       invalidateSlugCacheBySurveyId(surveyId);
       ctx.waitUntil(
         (async () => {
@@ -533,12 +469,10 @@ export default {
       );
     }
 
-    // Sync catalog back to D1 (for mutations)
     if (method !== 'GET' && method !== 'HEAD') {
       ctx.waitUntil(syncCatalog(doResponse, env.DB, surveyId));
     }
 
-    // Handle respondent cookie from DO response
     const response = cleanResponse(doResponse);
     if (isPublicRoute && doMatch.slug) {
       const newRespondentId = doResponse.headers.get('X-Respondent-Id');
@@ -548,13 +482,9 @@ export default {
       }
     }
 
-    // Apply security headers and CORS. These DO-routed responses carry
-    // credentialed data (admin session cookie, respondent/spw_ cookies), so we
-    // must NOT reflect an arbitrary Origin together with
-    // Access-Control-Allow-Credentials: true (CWE-942) — that would let any
-    // origin, including a sibling *.immich.app (same-site under SameSite=Lax),
-    // read the response cross-origin. Only echo credentialed CORS for the app's
-    // own origin (same-origin, or the configured OIDC redirect origin).
+    // These responses carry credentialed data (session, rid, spw_ cookies), so
+    // reflecting an arbitrary Origin alongside Allow-Credentials (CWE-942) would
+    // let any origin — including a sibling *.immich.app — read them.
     securityHeaders(response);
     const corsOrigin = allowedCredentialedOrigin(request, config);
     if (corsOrigin) {
@@ -589,10 +519,8 @@ function allowedCredentialedOrigin(request: Request, config: import('./config').
   return null;
 }
 
-/** Determine the minimum role required for a DO admin route */
 function getRequiredDORole(method: string, subPath: string): UserRole {
   if (method === 'DELETE') {
-    // Delete survey or delete respondent requires admin
     if (subPath === '/' || subPath === '' || /^\/results\/respondents\//.test(subPath)) {
       return 'admin';
     }

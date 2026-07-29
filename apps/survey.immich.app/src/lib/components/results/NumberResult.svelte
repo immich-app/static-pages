@@ -38,7 +38,6 @@
 
   {#if lowSample}
     <LowSampleNotice count={stats.total} threshold={LOW_SAMPLE_THRESHOLD} metricName="distribution" />
-    <!-- Show raw values as a dot list for very small samples -->
     <div class="flex flex-wrap gap-1.5">
       {#each stats.values as v, i (i + '-' + v)}
         <span class="rounded-md bg-gray-800 px-2 py-0.5 text-xs text-gray-300 tabular-nums">
@@ -49,9 +48,8 @@
   {:else if stats.total === 0}
     <p class="text-sm text-gray-500">No responses yet.</p>
   {:else}
-    <!-- Histogram. Bars use explicit pixel heights (not flex-1 percentage)
-         because the column has no intrinsic cross-axis height, which makes
-         the flex approach collapse to 0. -->
+    <!-- Explicit pixel heights (not flex-1 percentage): the column has no
+         intrinsic cross-axis height, so the flex approach collapses to 0. -->
     {@const CHART_PX = 128}
     <div>
       <div class="flex items-end gap-1" style="height: {CHART_PX + 20}px">

@@ -12,11 +12,9 @@ import type {
 import { getWsClientById, type SurveyWsClient } from './survey-ws';
 
 /**
- * Prefer a WebSocket command op when a live socket is attached, but fall back to
- * the HTTP endpoint when there is no socket OR the op is rejected. The fallback
- * matters in self-hosted Node mode, where the WS is presence-only and rejects
- * command ops — without it these calls would surface an error (or, before the
- * presence server learned to reject, hang for 30s) instead of loading via HTTP.
+ * Prefer a WebSocket command op, falling back to HTTP when there is no socket
+ * or the op is rejected: in self-hosted Node mode the WS is presence-only and
+ * rejects command ops, so without the fallback these calls would just error.
  */
 async function wsOrHttp<T>(
   surveyId: string,

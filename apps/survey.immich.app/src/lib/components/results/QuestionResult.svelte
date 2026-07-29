@@ -14,20 +14,17 @@
     answers: AnswerData[];
     /** Total number of completed respondents for this survey (denominator for % calculations). */
     totalResponses: number;
-    /** Called when the user wants to browse all individual responses. */
     onViewAllResponses?: () => void;
   }
 
   let { question, answers, totalResponses, onViewAllResponses }: Props = $props();
 
-  // Response count for THIS specific question — sum of all answer counts.
-  // For checkbox this is the total combinations, not total selections; ChoiceResult
+  // For checkbox this counts respondent combinations, not selections; ChoiceResult
   // handles its own denominator logic.
   const responseCount = $derived(answers.reduce((sum, a) => sum + a.count, 0));
   const skipCount = $derived(Math.max(0, totalResponses - responseCount));
   const skipRate = $derived(totalResponses > 0 ? (skipCount / totalResponses) * 100 : 0);
 
-  // Question type badge
   const typeLabel = $derived(
     {
       radio: 'Single choice',
@@ -45,7 +42,6 @@
 </script>
 
 <div class="rounded-xl border border-gray-300 p-5 dark:border-gray-700">
-  <!-- Header -->
   <div class="mb-4">
     <div class="mb-1 flex items-start justify-between gap-3">
       <h3 class="text-base leading-snug font-semibold">{question.text}</h3>
@@ -66,7 +62,6 @@
     </div>
   </div>
 
-  <!-- Type-specific visualization -->
   {#if question.type === 'radio' || question.type === 'dropdown' || question.type === 'checkbox'}
     <ChoiceResult {question} {answers} />
   {:else if question.type === 'rating'}

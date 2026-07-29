@@ -1,40 +1,17 @@
-/**
- * Typed WebSocket client for per-survey Durable Object communication.
- *
- * Provides a fully typed request/response API matching the WsOperations contract,
- * plus typed push event listeners. Falls back gracefully when WS is unavailable.
- */
-
 import type { WsOperations, WsPushEvents } from '$shared/ws-protocol';
 
-// ============================================================
-// Client interface
-// ============================================================
-
 export interface SurveyWsClient {
-  /** Send a typed request and await a typed response */
   request<K extends keyof WsOperations>(op: K, data: WsOperations[K]['request']): Promise<WsOperations[K]['response']>;
 
-  /** Listen for push events from the server */
   on<K extends keyof WsPushEvents>(event: K, callback: (data: WsPushEvents[K]) => void): () => void;
 
-  /**
-   * Listen for connection lifecycle changes (e.g. to surface a "lost
-   * connection" toast and clear it on reconnect). Fires immediately with
-   * the current state on subscribe.
-   */
+  /** Fires immediately with the current state on subscribe, then on each change. */
   onConnectionChange(callback: (state: 'connecting' | 'open' | 'closed' | 'failed') => void): () => void;
 
-  /** Close the connection */
   close(): void;
 
-  /** Whether the WS is currently open */
   readonly connected: boolean;
 }
-
-// ============================================================
-// Implementation
-// ============================================================
 
 let requestCounter = 0;
 
@@ -73,7 +50,6 @@ export function createSurveyWsClient(slug: string, type: 'viewer' | 'respondent'
       try {
         const msg = JSON.parse(event.data);
 
-        // Handle response to a request
         if (msg.type === 'response' && msg.requestId) {
           const pending = pendingRequests.get(msg.requestId);
           if (pending) {
@@ -87,7 +63,6 @@ export function createSurveyWsClient(slug: string, type: 'viewer' | 'respondent'
           return;
         }
 
-        // Handle push events
         if (msg.type === 'push' && msg.event) {
           const cbs = pushListeners.get(msg.event);
           if (cbs) for (const cb of cbs) cb(msg.data);
@@ -130,9 +105,8 @@ export function createSurveyWsClient(slug: string, type: 'viewer' | 'respondent'
       op: K,
       data: WsOperations[K]['request'],
     ): Promise<WsOperations[K]['response']> {
-      // Wait for connection if still connecting. We capture `ws` into a local
-      // so a concurrent reconnect that reassigns the outer binding can't make
-      // us remove listeners from the wrong socket.
+      // Capture `ws` locally: a concurrent reconnect reassigns the outer
+      // binding, and listeners must come off the socket they went onto.
       if (ws?.readyState === WebSocket.CONNECTING) {
         const socket = ws;
         await new Promise<void>((resolve, reject) => {
@@ -212,20 +186,15 @@ export function createSurveyWsClient(slug: string, type: 'viewer' | 'respondent'
   };
 }
 
-// ============================================================
-// Global connection registry
-//
-// Two separate maps so lookups are unambiguous: slug+type for survey-taking
-// / results viewing, surveyId for admin-registered clients (viewer WS in
-// the results page, editor WS in the builder). Previously a single map
-// used startsWith() prefix matching which could return either an editor
-// or a viewer connection for the same slug at random.
-// ============================================================
+// Two separate registries so lookups are unambiguous: slug+type for
+// survey-taking / results viewing, surveyId for admin-registered clients. A
+// single map with prefix matching could return either the editor or the viewer
+// connection for the same slug at random.
 
 type WsType = 'viewer' | 'respondent' | 'editor';
 
 const connectionsBySlug = new Map<string, SurveyWsClient>(); // key: `${slug}:${type}`
-const connectionsBySurveyId = new Map<string, SurveyWsClient>(); // key: surveyId
+const connectionsBySurveyId = new Map<string, SurveyWsClient>();
 
 /** Get or create a WS client for a survey */
 export function getSurveyWs(slug: string, type: WsType): SurveyWsClient {
@@ -251,12 +220,10 @@ export function getWsClientBySlug(slug: string, type: WsType = 'respondent'): Su
   return conn?.connected ? conn : undefined;
 }
 
-/** Register a connection under a survey ID (for lookup from API modules) */
 export function registerWsClient(surveyId: string, client: SurveyWsClient): void {
   connectionsBySurveyId.set(surveyId, client);
 }
 
-/** Close and remove a WS connection */
 export function closeSurveyWs(slug: string, type: WsType): void {
   const key = `${slug}:${type}`;
   const conn = connectionsBySlug.get(key);

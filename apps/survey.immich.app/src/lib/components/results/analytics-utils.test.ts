@@ -17,10 +17,6 @@ import {
   type AnswerData,
 } from './analytics-utils';
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Email normalization + classification
-// ═══════════════════════════════════════════════════════════════════════════
-
 describe('normalizeEmail', () => {
   it('lowercases and trims', () => {
     expect(normalizeEmail('  JOHN@Example.COM  ')).toEqual({
@@ -104,10 +100,6 @@ describe('classifyDomain', () => {
     expect(ROLE_EMAIL_PREFIXES.has('noreply')).toBe(true);
   });
 });
-
-// ═══════════════════════════════════════════════════════════════════════════
-// Email summary
-// ═══════════════════════════════════════════════════════════════════════════
 
 describe('computeEmailSummary', () => {
   it('returns empty summary for empty input', () => {
@@ -195,10 +187,6 @@ describe('computeEmailSummary', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// N-grams
-// ═══════════════════════════════════════════════════════════════════════════
-
 describe('computeNgrams', () => {
   it('returns empty array for empty input', () => {
     expect(computeNgrams([])).toEqual([]);
@@ -250,10 +238,6 @@ describe('computeNgrams', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Text stats
-// ═══════════════════════════════════════════════════════════════════════════
-
 describe('computeTextStats', () => {
   it('returns zeros for empty input', () => {
     const s = computeTextStats([]);
@@ -286,10 +270,6 @@ describe('computeTextStats', () => {
     expect(s.longCount).toBe(3);
   });
 });
-
-// ═══════════════════════════════════════════════════════════════════════════
-// Checkbox stats
-// ═══════════════════════════════════════════════════════════════════════════
 
 describe('computeCheckboxStats', () => {
   it('splits comma-separated combinations into per-option counts', () => {
@@ -334,10 +314,6 @@ describe('computeCheckboxStats', () => {
     expect(a?.percent).toBe(75); // 3 of 4 respondents
   });
 });
-
-// ═══════════════════════════════════════════════════════════════════════════
-// Rating
-// ═══════════════════════════════════════════════════════════════════════════
 
 describe('computeRating', () => {
   it('returns null mean for empty input', () => {
@@ -386,10 +362,6 @@ describe('computeRating', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Likert
-// ═══════════════════════════════════════════════════════════════════════════
-
 describe('computeLikert', () => {
   it('returns zero counts for empty input', () => {
     const s = computeLikert([]);
@@ -434,10 +406,6 @@ describe('computeLikert', () => {
     expect(s.mean).toBe(4.5);
   });
 });
-
-// ═══════════════════════════════════════════════════════════════════════════
-// Number stats + buckets
-// ═══════════════════════════════════════════════════════════════════════════
 
 describe('computeNumber', () => {
   it('returns nulls for empty input', () => {

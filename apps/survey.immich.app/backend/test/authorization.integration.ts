@@ -85,7 +85,6 @@ describe('Authorization - editor role', () => {
   beforeAll(async () => {
     editorCookie = await createCookieForRole('editor');
 
-    // Create a survey and tag as editor for delete tests
     const surveyRes = await request('/api/surveys', {
       method: 'POST',
       body: JSON.stringify({ title: `Editor Auth Test ${Date.now()}` }),

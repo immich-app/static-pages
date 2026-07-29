@@ -8,10 +8,6 @@
  *   tsx scripts/load-test.ts --url http://localhost:8787 --users 100 --ramp 30 --duration 120
  */
 
-// ============================================================
-// Types
-// ============================================================
-
 interface Config {
   baseUrl: string;
   password: string;
@@ -52,17 +48,11 @@ interface UserOutcome {
   returning: boolean;
   durationMs: number;
 
-  // Failure categorization — what blocked this user from completing
   failure: FailureMode;
 
-  // WS observability
   wsConnectFailed: boolean; // WS never connected despite retries
-  usedHttpFallback: boolean; // HTTP was used at least once as a fallback
+  usedHttpFallback: boolean;
 }
-
-// ============================================================
-// CLI
-// ============================================================
 
 function parseArgs(): Config {
   const args = process.argv.slice(2);
@@ -79,10 +69,6 @@ function parseArgs(): Config {
     durationSeconds: Number(get('--duration', '120')),
   };
 }
-
-// ============================================================
-// Metrics collector
-// ============================================================
 
 class Metrics {
   private data: Metric[] = [];
@@ -111,7 +97,6 @@ class Metrics {
     );
     console.log(`Throughput: ${(total / elapsed).toFixed(1)} req/s`);
 
-    // Per-endpoint breakdown
     const endpoints = new Map<string, Metric[]>();
     for (const m of this.data) {
       const group = endpoints.get(m.endpoint) ?? [];
@@ -133,20 +118,17 @@ class Metrics {
       );
     }
 
-    // User outcomes
     const total_users = this.outcomes.length;
     const completed = this.outcomes.filter((o) => o.completed).length;
     const abandoned = this.outcomes.filter((o) => o.abandoned && !o.completed).length;
     const returning = this.outcomes.filter((o) => o.returning).length;
     const avgDuration = this.outcomes.reduce((s, o) => s + o.durationMs, 0) / total_users / 1000;
 
-    // WS observability
     const wsConnectFailed = this.outcomes.filter((o) => o.wsConnectFailed).length;
     const usedHttpFallback = this.outcomes.filter((o) => o.usedHttpFallback).length;
     const wsFailedButCompleted = this.outcomes.filter((o) => o.wsConnectFailed && o.completed).length;
     const wsFailedAndFailed = this.outcomes.filter((o) => o.wsConnectFailed && o.failure !== 'none').length;
 
-    // Failure breakdown
     const failures = this.outcomes.filter((o) => o.failure !== 'none');
     const failureBreakdown = {
       load: failures.filter((o) => o.failure === 'load').length,
@@ -210,7 +192,6 @@ class Metrics {
       `  Users who used HTTP fallback at all: ${usedHttpFallback}  (${((usedHttpFallback / total_users) * 100).toFixed(1)}%)`,
     );
 
-    // Error breakdown — grouped by endpoint and error message, with counts
     const errorGroups = new Map<string, number>();
     for (const m of this.data) {
       if (!m.error) continue;
@@ -224,7 +205,6 @@ class Metrics {
       console.log(`\n${'-'.repeat(70)}`);
       console.log('ERROR BREAKDOWN');
       console.log('-'.repeat(70));
-      // Sort by count descending
       const sorted = [...errorGroups.entries()].sort((a, b) => b[1] - a[1]);
       for (const [err, count] of sorted.slice(0, 10)) {
         console.log(`  ${String(count).padStart(5)}  ${err}`);
@@ -237,10 +217,6 @@ class Metrics {
     console.log('');
   }
 }
-
-// ============================================================
-// HTTP helpers
-// ============================================================
 
 async function timedFetch(
   metrics: Metrics,
@@ -263,10 +239,6 @@ async function timedFetch(
     return null;
   }
 }
-
-// ============================================================
-// Auth + survey setup
-// ============================================================
 
 async function authenticate(baseUrl: string, password: string): Promise<string> {
   const meRes = await fetch(`${baseUrl}/api/auth/me`);
@@ -377,7 +349,6 @@ async function createSurvey(baseUrl: string, sessionCookie: string): Promise<{ s
     ],
   };
 
-  // Import survey
   const importRes = await fetch(`${baseUrl}/api/surveys/import`, {
     method: 'POST',
     headers,
@@ -390,7 +361,6 @@ async function createSurvey(baseUrl: string, sessionCookie: string): Promise<{ s
   const imported = (await importRes.json()) as { survey: { id: string }; questions: Question[] };
   const surveyId = imported.survey.id;
 
-  // Set slug
   const slugRes = await fetch(`${baseUrl}/api/surveys/${surveyId}`, {
     method: 'PUT',
     headers,
@@ -398,7 +368,6 @@ async function createSurvey(baseUrl: string, sessionCookie: string): Promise<{ s
   });
   if (!slugRes.ok) throw new Error(`Set slug failed: ${await slugRes.text()}`);
 
-  // Publish
   const pubRes = await fetch(`${baseUrl}/api/surveys/${surveyId}/publish`, {
     method: 'PUT',
     headers,
@@ -425,10 +394,6 @@ async function fetchActualRespondentCount(
     return null;
   }
 }
-
-// ============================================================
-// Answer generation
-// ============================================================
 
 const NAMES = ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank', 'Grace', 'Hank', 'Iris', 'Jack'];
 const COMMENTS = [
@@ -521,12 +486,10 @@ function generateAnswer(q: Question): { questionId: string; value: string; other
   }
 }
 
-// ============================================================
 // WebSocket client using the `ws` package for real Error objects and
 // Cookie header support (Node's built-in WebSocket doesn't let you set
 // either, which gives generic 'WS error' diagnostics and means returning
 // users can't reuse their respondent cookie on reconnect).
-// ============================================================
 
 import WebSocketClass from 'ws';
 type WsInstance = InstanceType<typeof WebSocketClass>;
@@ -549,16 +512,13 @@ function createWsClient(url: string, metrics: Metrics, initialCookie?: string): 
   // Track whether the connection was ever established — if not, upcoming close
   // events count as connect failures, not mid-session drops
   let everConnected = false;
-  // Cookie used on reconnects. Starts with the caller-supplied cookie (if any),
-  // and is updated from the server's Set-Cookie on successful upgrades so that
-  // retries reuse the same respondent identity.
+  // Reused on reconnects so retries keep the same respondent identity.
   let cookie = initialCookie;
 
-  // Exponential backoff with jitter to avoid thundering-herd on shared failure modes.
-  // Base delays: 0.5s, 1s, 2s, 4s, 8s — each ±50% jitter applied on top.
+  // Exponential backoff 0.5s→8s with ±50% jitter, to avoid a thundering herd.
   const computeBackoff = (attempt: number): number => {
     const base = 500 * Math.pow(2, Math.min(attempt, 4));
-    const jitter = base * (0.5 + Math.random()); // 0.5× to 1.5×
+    const jitter = base * (0.5 + Math.random());
     return jitter;
   };
 
@@ -608,7 +568,6 @@ function createWsClient(url: string, metrics: Metrics, initialCookie?: string): 
 
     // The `ws` package emits 'unexpected-response' with the HTTP status when the
     // server returns non-101 (e.g. 429 rate limited, 500 server error, 503).
-    // This gives us much better diagnostics than generic connect failures.
     ws.on('unexpected-response', (_req, res) => {
       metrics.record({
         endpoint: 'WS connect',
@@ -631,15 +590,13 @@ function createWsClient(url: string, metrics: Metrics, initialCookie?: string): 
     });
 
     ws.on('close', (code: number, reason: Buffer) => {
-      // Reject all pending requests on close
       for (const [, req] of pending) req.reject(new Error('WebSocket closed'));
       pending.clear();
 
       if (closed) return;
 
-      // Distinguish connect failure vs mid-session drop
       const wasConnected = everConnected;
-      everConnected = false; // reset for the next connect attempt
+      everConnected = false;
 
       failures++;
       const reasonStr = reason.length > 0 ? reason.toString() : '';
@@ -671,7 +628,6 @@ function createWsClient(url: string, metrics: Metrics, initialCookie?: string): 
     },
 
     async request(op: string, data: Record<string, unknown>): Promise<unknown> {
-      // Wait for connection if still connecting
       if (ws?.readyState === WebSocketClass.CONNECTING) {
         await new Promise<void>((resolve, reject) => {
           const onOpen = () => {
@@ -731,10 +687,6 @@ function createWsClient(url: string, metrics: Metrics, initialCookie?: string): 
     },
   };
 }
-
-// ============================================================
-// User simulation
-// ============================================================
 
 type UserProfile = {
   minDelay: number;
@@ -813,19 +765,14 @@ async function simulateUser(
   });
   const wsUrl = `${config.baseUrl.replace(/^http/, 'ws')}/api/s/${slug}/ws?type=respondent`;
 
-  // ============================================================
-  // Step 1: HTTP GET /api/s/:slug — fetch survey metadata (matches frontend)
-  // ============================================================
+  // Fetch survey metadata over HTTP first, exactly as the frontend does.
   const surveyRes = await timedFetch(metrics, 'GET /api/s/:slug', `${config.baseUrl}/api/s/${slug}`);
   if (!surveyRes || !surveyRes.ok) return outcome('load');
   await surveyRes.json();
   if (isExpired()) return outcome('none', { abandoned: true });
 
-  // ============================================================
-  // Step 2: Connect WebSocket — WS is the only data path. If it fails,
-  // that's a real failure (no HTTP fallback since that would trigger
-  // per-request cookie auth and reduce server capacity).
-  // ============================================================
+  // WS is the only data path: no HTTP fallback, because per-request cookie auth
+  // would reduce the very server capacity this test measures.
   let wsClient: WsClient | null = createWsClient(wsUrl, metrics);
 
   const waitForConnect = async (client: WsClient) => {
@@ -844,9 +791,6 @@ async function simulateUser(
     return outcome('session');
   }
 
-  // ============================================================
-  // Step 3: WS resume — must succeed, no HTTP fallback
-  // ============================================================
   let resumeState: { isComplete: boolean; nextQuestionIndex: number; respondentId?: string };
   try {
     resumeState = (await wsClient.request('resume', {})) as {
@@ -881,16 +825,13 @@ async function simulateUser(
 
   let startIdx = resumeState.nextQuestionIndex;
 
-  // ============================================================
-  // Buffered answer submission via WS only (no HTTP fallback).
-  // On WS failure, answers are re-buffered and retried on the next flush
-  // after the WS auto-reconnect has had a chance to restore the connection.
-  // ============================================================
+  // On WS failure, answers are re-buffered and retried on the next flush, after
+  // the WS auto-reconnect has had a chance to restore the connection.
   const buffer = new Map<string, PendingSave>();
   let inactivityTimer: ReturnType<typeof setTimeout> | null = null;
   let flushing: Promise<boolean> | null = null;
   let consecutiveFailures = 0;
-  const MAX_FLUSH_FAILURES = 5; // give up after this many consecutive failed flushes
+  const MAX_FLUSH_FAILURES = 5;
 
   const clearInactivity = () => {
     if (inactivityTimer) {
@@ -949,12 +890,8 @@ async function simulateUser(
     }
   };
 
-  // ============================================================
-  // Step 4: Answer questions one at a time, buffering writes
-  // ============================================================
-  // Mirrors the real client: when a question first appears on screen we
-  // stamp a "shown at" timestamp, then on answer we report the elapsed ms
-  // so the backend can populate per-question timing analytics.
+  // Mirrors the real client: stamp when a question appears and report the elapsed
+  // ms on answer, so the backend can populate per-question timing analytics.
   const answerQuestions = async (from: number, to: number) => {
     for (let i = from; i < to; i++) {
       if (isExpired()) break;
@@ -969,12 +906,11 @@ async function simulateUser(
       bufferAnswer({ ...answer, answerMs: Date.now() - shownAt });
       questionsAnswered++;
     }
-    // Final flush — retry a few times via inactivity-timer-like loop if WS is recovering
+    // Final flush — retry a few times in case WS is still reconnecting.
     for (let attempt = 0; attempt < 3; attempt++) {
       if (buffer.size === 0) break;
       const ok = await flushBuffer();
       if (ok) break;
-      // Wait for possible WS reconnect
       await new Promise((r) => setTimeout(r, BACKOFF_DELAYS[Math.min(attempt, BACKOFF_DELAYS.length - 1)]));
     }
   };
@@ -1016,9 +952,6 @@ async function simulateUser(
       await answerQuestions(startIdx, questions.length);
     }
 
-    // ============================================================
-    // Step 5: Complete the survey via WS only
-    // ============================================================
     const didAbandon = profile.abandonAt !== null && questionsAnswered >= profile.abandonAt;
     if (didAbandon) {
       return {
@@ -1036,12 +969,9 @@ async function simulateUser(
 
     // Couldn't submit answers we wanted to submit (WS kept failing)
     if (questionsAnswered < questions.length) {
-      // If we got zero answers through, it's an 'answers' failure
-      // If we got some but not all, it's still an 'answers' failure (partial submit)
       return outcome('answers');
     }
 
-    // Try to complete via WS
     if (!wsClient || !wsClient.connected || isExpired()) {
       return outcome('complete');
     }
@@ -1069,10 +999,6 @@ async function simulateUser(
   }
 }
 
-// ============================================================
-// Main
-// ============================================================
-
 async function main() {
   const config = parseArgs();
   const metrics = new Metrics();
@@ -1085,22 +1011,17 @@ async function main() {
   console.log(`Duration: ${config.durationSeconds}s`);
   console.log('');
 
-  // Authenticate
   console.log('Authenticating...');
   const sessionCookie = await authenticate(config.baseUrl, config.password);
 
-  // Create fresh survey
   console.log('Creating survey...');
   const { slug, questions, surveyId } = await createSurvey(config.baseUrl, sessionCookie);
 
-  // Calculate deadline and ramp interval
   const deadline = Date.now() + config.durationSeconds * 1000;
   const interval = config.users > 1 ? (config.rampSeconds * 1000) / (config.users - 1) : 0;
 
-  // Estimate if --duration is long enough for the slowest users to finish.
-  // Slow users: minDelay=3s, maxDelay=15s → avg 9s per question (worst case ~15s).
-  // A user started at the end of the ramp has: (duration - rampSeconds) seconds left.
-  // For reliable completion, that should cover worst-case delay × question count.
+  // Estimate whether --duration covers the slowest users: one started at the end
+  // of the ramp still needs worst-case delay × question count to finish.
   const worstCaseSecsPerUser = questions.length * 15; // matches createUserProfile slow bound
   const minRecommendedDuration = config.rampSeconds + worstCaseSecsPerUser + 5;
   if (config.durationSeconds < minRecommendedDuration) {
@@ -1114,7 +1035,6 @@ async function main() {
 
   console.log(`\nRamping ${config.users} users over ${config.rampSeconds}s...`);
 
-  // Launch users
   const promises: Promise<void>[] = [];
   for (let i = 0; i < config.users; i++) {
     promises.push(
@@ -1129,8 +1049,6 @@ async function main() {
 
   await Promise.all(promises);
 
-  // Query the actual respondent count from the server so we can verify the
-  // load test's expected count matches what was persisted.
   const actualCounts = await fetchActualRespondentCount(config.baseUrl, sessionCookie, surveyId);
   metrics.report(actualCounts);
 }

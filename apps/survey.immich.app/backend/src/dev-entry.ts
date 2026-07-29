@@ -1,6 +1,5 @@
-// Combined entry point for local development and CI testing.
-// Exports both the API worker fetch handler and the SurveyDO class
-// in a single worker, avoiding cross-service DO binding issues.
+// Local dev / CI entry point: the worker and the DO ship in one worker so there
+// is no cross-service DO binding to configure.
 
 export { SurveyDO } from './durable-objects/survey-do';
 export { default } from './index';

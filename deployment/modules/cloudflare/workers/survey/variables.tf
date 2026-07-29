@@ -6,7 +6,7 @@ variable "cloudflare_account_id" {}
 variable "dist_dir" {}
 variable "migrations_dir" {}
 
-# OIDC configuration (optional — leave empty to disable OIDC)
+# Leave these empty to disable OIDC.
 variable "oidc_issuer" {
   description = "OIDC provider issuer URL (e.g., https://auth.example.com/realms/immich)"
   type        = string

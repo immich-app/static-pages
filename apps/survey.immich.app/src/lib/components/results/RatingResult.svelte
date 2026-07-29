@@ -29,7 +29,6 @@
       })),
   );
 
-  // Visual star display for the mean
   function renderStars(mean: number | null): { full: number; half: boolean; empty: number } {
     if (mean === null) return { full: 0, half: false, empty: scaleMax };
     const full = Math.floor(mean);

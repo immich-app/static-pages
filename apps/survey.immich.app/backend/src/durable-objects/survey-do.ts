@@ -1,13 +1,3 @@
-/**
- * SurveyDO — Per-survey Durable Object with SQLite storage.
- *
- * Thin orchestrator that delegates to:
- * - Existing SurveyService / RespondentService (via Kysely adapter)
- * - SurveyCache (in-memory hot data)
- * - WsHandler (typed WebSocket dispatch)
- * - WsBroadcaster (alarm-based viewer updates)
- */
-
 import { DurableObject } from 'cloudflare:workers';
 import { Kysely } from 'kysely';
 import { CloudflareDODialect } from './do-sqlite-dialect';
@@ -46,19 +36,13 @@ export class SurveyDO extends DurableObject {
     this.respondentService = createRespondentService(this.db);
   }
 
-  // ============================================================
-  // Fetch handler
-  // ============================================================
-
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
 
-    // WebSocket upgrade
     if (request.headers.get('Upgrade') === 'websocket') {
       return this.handleWebSocketUpgrade(url, request);
     }
 
-    // HTTP routes (only for operations that stay HTTP)
     try {
       return await this.handleHttp(request, url);
     } catch (e) {
@@ -69,10 +53,6 @@ export class SurveyDO extends DurableObject {
       return Response.json({ error: 'Internal error' }, { status: 500 });
     }
   }
-
-  // ============================================================
-  // WebSocket lifecycle
-  // ============================================================
 
   private handleWebSocketUpgrade(url: URL, request: Request): Response {
     const type = url.searchParams.get('type');
@@ -86,12 +66,9 @@ export class SurveyDO extends DurableObject {
     let respondentId: string | null = null;
     let setCookieHeader: string | null = null;
 
-    // For respondent connections: all validation uses the in-memory cache (zero DB lookups
-    // for survey state), and we create/verify the respondent record here on the upgrade.
     if (type === 'respondent') {
       const survey = this.cache.survey;
 
-      // Survey state checks — all in-memory via cache
       if (survey.status !== 'published') {
         return new Response('Survey not found', { status: 404 });
       }
@@ -108,13 +85,10 @@ export class SurveyDO extends DurableObject {
         return new Response('Authentication required', { status: 403 });
       }
 
-      // Existing respondent from cookie (forwarded via X-Respondent-Id by the API worker)
-      // Existence check is O(1) in memory via the cache's Set<respondentId>
       const existingId = request.headers.get('X-Respondent-Id');
       if (existingId && this.cache.hasRespondent(existingId)) {
         respondentId = existingId;
       } else {
-        // Create a new respondent row — single SQL INSERT, no validation queries
         respondentId = crypto.randomUUID();
         const ip = request.headers.get('CF-Connecting-IP') ?? request.headers.get('X-Forwarded-For') ?? 'unknown';
         this.ctx.storage.sql.exec(
@@ -125,8 +99,6 @@ export class SurveyDO extends DurableObject {
           ip,
           new Date().toISOString(),
         );
-        // Initialize empty in-memory state — zero SQL queries needed for
-        // subsequent resume/submit/complete operations for this new respondent
         this.cache.initRespondent(respondentId);
         this.cache.incrementTotal();
 
@@ -142,12 +114,10 @@ export class SurveyDO extends DurableObject {
     const pair = new WebSocketPair();
     const [client, server] = Object.values(pair);
 
-    // Tag with presence type, verified auth role, and respondent ID (if present)
     const tags: string[] = [type, `role:${verifiedRole}`];
     if (respondentId) tags.push(`rid:${respondentId}`);
     this.ctx.acceptWebSocket(server, tags);
 
-    // Send initial counts
     const counts = getPresenceCounts(this.ctx);
     server.send(JSON.stringify(counts));
     scheduleBroadcast(this.ctx, this.cache.broadcastScheduled);
@@ -180,11 +150,6 @@ export class SurveyDO extends DurableObject {
     this.cache.broadcastScheduled.value = false;
     broadcastToViewers(this.ctx, this.cache);
 
-    // Slow-tier analytics broadcast: runs one set of SQL queries per cycle
-    // (60s default) and fans the result out to every viewer. This means a
-    // survey with 500 viewers on the results page still only runs the
-    // dropoff/timeline/completion-time queries once per minute total —
-    // critical for large-scale live broadcasts.
     this.cache.fastTick += 1;
     if (this.cache.fastTick >= SLOW_TICKS_PER_CYCLE) {
       this.cache.fastTick = 0;
@@ -196,21 +161,14 @@ export class SurveyDO extends DurableObject {
       }
     }
 
-    // Keep the broadcast loop running as long as viewers are connected so they
-    // get periodic counts/stats updates even when no activity is happening.
-    // The loop self-terminates when the last viewer disconnects — the next
-    // alarm fires once, sees zero viewers in broadcastToViewers (early return),
-    // and doesn't re-schedule.
+    // Self-terminating loop: reschedule only while viewers are connected, so they
+    // keep getting periodic counts/stats even when nothing else is happening.
     if (this.ctx.getWebSockets('viewer').length > 0) {
       scheduleBroadcast(this.ctx, this.cache.broadcastScheduled);
     } else {
       this.cache.fastTick = 0;
     }
   }
-
-  // ============================================================
-  // HTTP routes (operations that stay HTTP)
-  // ============================================================
 
   private async handleHttp(request: Request, url: URL): Promise<Response> {
     const path = this.internalPath(url.pathname);
@@ -229,7 +187,6 @@ export class SurveyDO extends DurableObject {
     if (method === 'PUT' && path === '/unarchive') return this.handleUnarchive();
     if (method === 'POST' && path === '/duplicate') return this.handleDuplicate();
 
-    // Results export (binary download, stays HTTP)
     if (method === 'GET' && path === '/results/export') return this.handleExportResults(url);
 
     // Public respondent (cookie-setting endpoints stay HTTP)
@@ -238,11 +195,8 @@ export class SurveyDO extends DurableObject {
     if (method === 'POST' && path === '/public/answers/batch') return this.handleSubmitAnswers(request);
     if (method === 'POST' && path === '/public/complete') return this.handleComplete(request);
 
-    // Section/question CRUD + results via HTTP (self-hosted fallback)
     return this.handleSelfHostedFallback(method, path, request, url);
   }
-
-  // ---- Init ----
 
   private async handleInit(request: Request): Promise<Response> {
     const body = (await request.json()) as {
@@ -324,8 +278,6 @@ export class SurveyDO extends DurableObject {
     return new Response(null, { status: 204 });
   }
 
-  // ---- Survey CRUD (HTTP for catalog sync) ----
-
   private handleGetSurvey(): Response {
     return Response.json({
       survey: toClientSurvey(this.cache.survey),
@@ -349,12 +301,9 @@ export class SurveyDO extends DurableObject {
         /* ignore */
       }
     }
-    // Destroy all DO state (SQLite + KV + alarms). deleteAll() also drops the
-    // SQLite tables, so recreate the empty schema immediately: this same live
-    // instance (not a fresh one) handles the next request, and a query against
-    // a missing table would throw a raw SQL error → 500 instead of the
-    // intended 404. With an empty-but-valid schema, `cache.survey` finds no
-    // row and throws ServiceError('Survey not found', 404).
+    // deleteAll() drops the SQLite tables too, and this same live instance serves
+    // the next request — without recreating the empty schema, queries would throw
+    // raw SQL errors (500) instead of the intended 404 from `cache.survey`.
     await this.ctx.storage.deleteAll();
     recreateSchemaAfterWipe(this.ctx.storage.sql);
     this.cache.invalidateSurvey();
@@ -422,8 +371,6 @@ export class SurveyDO extends DurableObject {
     return Response.json({ survey: newSurvey, sections: newSections, questions: newQuestions }, { status: 201 });
   }
 
-  // ---- Results export (HTTP for binary download) ----
-
   private async handleExportResults(url: URL): Promise<Response> {
     const format = url.searchParams.get('format');
     if (format !== 'csv' && format !== 'json') {
@@ -437,8 +384,6 @@ export class SurveyDO extends DurableObject {
       },
     });
   }
-
-  // ---- Public respondent (HTTP for cookies) ----
 
   private handleGetPublicSurvey(request: Request): Response {
     const survey = this.cache.survey;
@@ -525,8 +470,6 @@ export class SurveyDO extends DurableObject {
     return new Response(null, { status: 204 });
   }
 
-  // ---- HTTP fallback (section/question CRUD, results, definition) ----
-
   private async handleSelfHostedFallback(method: string, path: string, request: Request, url: URL): Promise<Response> {
     const route = this.matchFallbackRoute(method, path, url);
     if (!route) {
@@ -555,7 +498,6 @@ export class SurveyDO extends DurableObject {
     if (match && method === 'PUT') return { op: 'update-section', params: { id: match[1] } };
     if (match && method === 'DELETE') return { op: 'delete-section', params: { id: match[1] } };
 
-    // Questions — reorder before /:id pattern
     match = path.match(/^\/sections\/([^/]+)\/questions\/reorder$/);
     if (match && method === 'PUT') return { op: 'reorder-questions', params: { sectionId: match[1] } };
     match = path.match(/^\/sections\/([^/]+)\/questions$/);
@@ -564,7 +506,6 @@ export class SurveyDO extends DurableObject {
     if (match && method === 'PUT') return { op: 'update-question', params: { id: match[1] } };
     if (match && method === 'DELETE') return { op: 'delete-question', params: { id: match[1] } };
 
-    // Results
     if (method === 'GET' && path === '/results') return { op: 'get-results', params: {} };
     if (method === 'GET' && path === '/results/timeline')
       return { op: 'get-timeline', params: { granularity: url.searchParams.get('granularity') } };
@@ -590,7 +531,6 @@ export class SurveyDO extends DurableObject {
         },
       };
 
-    // Definition
     if (method === 'GET' && path === '/definition') return { op: 'export-definition', params: {} };
 
     return null;
@@ -606,8 +546,6 @@ export class SurveyDO extends DurableObject {
     response.headers.set('Cache-Control', 'private, no-cache');
     return response;
   }
-
-  // ---- Helpers ----
 
   private commandContext(): CommandContext {
     return {

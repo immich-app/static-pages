@@ -1,8 +1,3 @@
-/**
- * Typed WebSocket message dispatcher for the SurveyDO.
- * Routes incoming WS messages to the appropriate service method based on `op`.
- */
-
 import type { WsOperations } from '../../../../shared/ws-protocol';
 import type { SurveyService } from '../../services/survey.service';
 import type { RespondentService } from '../../services/respondent.service';
@@ -45,16 +40,13 @@ function respondError(ws: WebSocket, requestId: string, op: string, message: str
  */
 type MinRole = 'public' | 'viewer' | 'editor' | 'admin';
 const OP_ROLES: Record<string, MinRole> = {
-  // Public (respondent)
   'get-public-survey': 'public',
   resume: 'public',
   'submit-answers': 'public',
   complete: 'public',
 
-  // Admin-only
   'delete-respondent': 'admin',
 
-  // Editor mutations + definition export
   'export-definition': 'editor',
   'create-section': 'editor',
   'update-section': 'editor',
@@ -65,7 +57,6 @@ const OP_ROLES: Record<string, MinRole> = {
   'delete-question': 'editor',
   'reorder-questions': 'editor',
 
-  // Viewer reads (admin dashboard)
   'get-survey': 'viewer',
   'get-results': 'viewer',
   'get-live-results': 'viewer',
@@ -124,8 +115,6 @@ export async function dispatch(
   const { requestId, op, data } = parsed;
   const d = data ?? {};
 
-  // Enforce authorization via the declarative OP_ROLES table. Ops without an
-  // entry are rejected — adding a new op requires an explicit auth decision.
   const requiredRole = OP_ROLES[op];
   if (!requiredRole) {
     respondError(ws, requestId, op, `Unknown operation: ${op}`);
@@ -156,13 +145,11 @@ async function handleOp(
   const cmdCtx: CommandContext = { surveyService, respondentService, cache };
 
   switch (op) {
-    // ---- Survey (WS-only, admin operations use full service) ----
     case 'get-survey': {
       const detail = await surveyService.getSurvey(cache.survey.id);
       return { ...detail, survey: toClientSurvey(detail.survey) };
     }
 
-    // ---- Results (WS uses cache for hot-path performance) ----
     case 'get-results':
       return {
         respondentCounts: cache.counters,
@@ -176,7 +163,6 @@ async function handleOp(
         liveCounts: getPresenceCounts(ctx).data,
       };
 
-    // ---- Public respondent (WS-only, DO fast path) ----
     case 'get-public-survey': {
       const survey = cache.survey;
       if (survey.status !== 'published') throw new ServiceError('Survey not found', 404);
@@ -185,11 +171,8 @@ async function handleOp(
     }
 
     case 'resume': {
-      // Fast path for new users: if cache has the respondent with hasSubmitted=false,
-      // we know they have zero answers — return empty state with zero SQL queries.
-      //
-      // Otherwise (returning user or mid-session resume after submissions), query SQL
-      // for the full answer set since we only keep choice answers in memory.
+      // A cached respondent with hasSubmitted=false provably has zero answers, so we
+      // can skip SQL; anything else must read SQL (only choice answers are cached).
       const respondentId = getWsRespondentId(ws, ctx);
       if (!respondentId) throw new ServiceError('Not a respondent connection', 401);
 
@@ -198,7 +181,6 @@ async function handleOp(
         return { answers: {}, nextQuestionIndex: 0, isComplete: cachedState.isComplete, respondentId };
       }
 
-      // Returning user or mid-session resume — read all answers from SQL
       const answerRows = ctx.storage.sql
         .exec('SELECT question_id, answer, other_text FROM answers WHERE respondent_id = ?', respondentId)
         .toArray() as Array<{ question_id: string; answer: string; other_text: string | null }>;
@@ -211,7 +193,6 @@ async function handleOp(
         };
       }
 
-      // Get isComplete — prefer cache if available, otherwise one more SQL by PK
       let isComplete = cachedState?.isComplete ?? false;
       if (!cachedState) {
         const row = ctx.storage.sql
@@ -220,22 +201,20 @@ async function handleOp(
         isComplete = row?.is_complete === 1;
       }
 
-      // Compute nextQuestionIndex: resume from the question AFTER the last
-      // answered one (not the first unanswered, which would send the user
-      // backwards past optional questions they intentionally skipped).
+      // Resume ON the last answered question (not the first unanswered one, which
+      // would send the user backwards past optional questions they deliberately
+      // skipped) so they can review and complete it.
       const questions = cache.questions;
       let lastAnsweredIndex = -1;
       for (let i = 0; i < questions.length; i++) {
         if (questions[i].id in answers) lastAnsweredIndex = i;
       }
-      // Resume ON the last answered question so the user can review/complete it.
       const nextQuestionIndex = Math.max(0, lastAnsweredIndex);
 
       return { answers, nextQuestionIndex, isComplete, respondentId };
     }
 
     case 'submit-answers': {
-      // Fast path: all validation in-memory, single batched SQL INSERT.
       const respondentId = getWsRespondentId(ws, ctx);
       if (!respondentId) throw new ServiceError('Not a respondent connection', 401);
 
@@ -244,10 +223,9 @@ async function handleOp(
         throw new ServiceError('This survey has closed', 403);
       }
 
-      // Completion is terminal — see RespondentService.submitBatch for the
-      // long form. The cached respondent state is the fast path; if the row
-      // has been evicted (e.g. after a long gap), fall back to a single PK
-      // lookup against SQL so we still catch the post-complete case.
+      // Completion is terminal (see RespondentService.submitBatch). When the cached
+      // state has been evicted we must still hit SQL, or a completed respondent
+      // could keep submitting answers.
       const cachedState = cache.getCachedRespondent(respondentId);
       let isComplete = cachedState?.isComplete ?? false;
       if (!cachedState) {
@@ -284,15 +262,12 @@ async function handleOp(
         if (error) throw new ServiceError(error, 400);
       }
 
-      // Update in-memory state so subsequent operations (complete's tally update)
-      // don't need to re-query the database
       for (const a of answers) {
         cache.setAnswer(respondentId, a.questionId, a.value, a.otherText ?? null);
       }
 
-      // Single batched INSERT — one SQL round-trip regardless of answer count.
-      // answer_ms is nullable and clamped via the shared helper so validation
-      // stays in lockstep with the HTTP path in respondent.service.
+      // answer_ms is clamped via the shared helper so it stays in lockstep with the
+      // HTTP path in respondent.service.
       const now = new Date().toISOString();
       const placeholders = answers.map(() => '(?, ?, ?, ?, ?, ?)').join(', ');
       const values: unknown[] = [];
@@ -307,10 +282,9 @@ async function handleOp(
     }
 
     case 'complete': {
-      // Fast path: in-memory tally update (no SQL read), single UPDATE, evict from cache.
-      // Idempotent: a duplicate `complete` (flaky retry, malicious replay) must
-      // not bump counters or rewrite completed_at — gate the SQL UPDATE on the
-      // 0→1 transition and only mutate cache state when the row actually changed.
+      // Idempotent: a duplicate `complete` (flaky retry, malicious replay) must not
+      // bump counters or rewrite completed_at — hence the 0→1 gated UPDATE and the
+      // `transitioned` check around every cache mutation.
       const respondentId = getWsRespondentId(ws, ctx);
       if (!respondentId) throw new ServiceError('Not a respondent connection', 401);
 
@@ -322,16 +296,14 @@ async function handleOp(
       const transitioned = cursor.rowsWritten > 0;
       if (transitioned) {
         cache.markRespondentComplete(respondentId);
-        cache.updateTalliesOnCompletion(respondentId); // uses in-memory answers, no SQL
+        cache.updateTalliesOnCompletion(respondentId);
         cache.incrementCompleted();
-        // Evict after complete — they won't submit again, free the memory
         cache.removeRespondent(respondentId);
         scheduleBroadcast(ctx, cache.broadcastScheduled);
       }
       return {};
     }
 
-    // ---- Shared operations (section/question CRUD, results queries, definition) ----
     default: {
       const opStr = String(op);
       const result = await execute(opStr, data, cmdCtx);

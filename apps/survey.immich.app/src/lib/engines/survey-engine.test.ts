@@ -176,7 +176,6 @@ describe('randomizeQuestions', () => {
 
   it('questions stay within their section after randomization', () => {
     const result = randomizeQuestions(multiSectionQuestions, sections, 'test-seed');
-    // First 4 should all be from section s1
     const s1Questions = result.slice(0, 4);
     const s2Questions = result.slice(4, 8);
     for (const q of s1Questions) {
@@ -200,7 +199,6 @@ describe('randomizeQuestions', () => {
       { id: 's1', title: 'Section 1', sortOrder: 0 },
     ];
     const result = randomizeQuestions(multiSectionQuestions, reversedSections, 'order-seed');
-    // Even with reversed section array, s1 (sortOrder 0) should come first
     expect(result[0].section_id).toBe('s1');
     expect(result[4].section_id).toBe('s2');
   });
@@ -260,7 +258,6 @@ describe('randomizeOptionOrder', () => {
   it('different seeds produce different option orders', () => {
     const result1 = randomizeOptionOrder(questionsWithOptions, 'opt-seed-a');
     const result2 = randomizeOptionOrder(questionsWithOptions, 'opt-seed-b');
-    // Check at least one question has different option order
     const anyDifferent = result1.some((q, i) => {
       const opts1 = q.options?.map((o) => o.value);
       const opts2 = result2[i].options?.map((o) => o.value);
@@ -293,7 +290,6 @@ describe('randomizeOptionOrder', () => {
       }),
     ];
     const result = randomizeOptionOrder(sameOptions, 'per-q-seed');
-    // Different question IDs mean different seeds, so order should differ
     const opts0 = result[0].options?.map((o) => o.value);
     const opts1 = result[1].options?.map((o) => o.value);
     expect(opts0).not.toEqual(opts1);

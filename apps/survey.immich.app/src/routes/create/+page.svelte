@@ -82,7 +82,6 @@
           password: updates.password ?? undefined,
         });
 
-        // Save initial sections and questions (from templates or user-added)
         if (sections.length > 0) {
           for (const section of sections) {
             const createdSection = await createSection(created.id, {

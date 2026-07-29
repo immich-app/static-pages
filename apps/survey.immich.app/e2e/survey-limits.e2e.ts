@@ -48,30 +48,24 @@ async function createSurveyWithQuestion(opts: {
 }
 
 async function submitOneResponse(slug: string, questionId: string): Promise<void> {
-  // Resume to get a respondent cookie
   const resumeRes = await fetch(`${API}/api/s/${slug}/resume`);
   const cookies = resumeRes.headers.get('set-cookie') ?? '';
   const ridMatch = cookies.match(/rid_[^=]+=([^;]+)/);
   const rid = ridMatch?.[1];
   expect(rid).toBeTruthy();
 
-  // Submit answer
   await fetch(`${API}/api/s/${slug}/answers/batch`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Cookie: `rid_${slug}=${rid}` },
     body: JSON.stringify({ answers: [{ questionId, value: 'Yes' }] }),
   });
 
-  // Complete the response
   await fetch(`${API}/api/s/${slug}/complete`, {
     method: 'POST',
     headers: { Cookie: `rid_${slug}=${rid}` },
   });
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// max_responses limit
-// ──────────────────────────────────────────────────────────────────────────────
 test.describe('Survey with max_responses limit', () => {
   let setup: SurveySetup;
 
@@ -82,7 +76,6 @@ test.describe('Survey with max_responses limit', () => {
       slug,
       maxResponses: 1,
     });
-    // Submit one response to hit the limit
     await submitOneResponse(slug, setup.questionIds[0]);
   });
 
@@ -96,7 +89,6 @@ test.describe('Survey with max_responses limit', () => {
   test('shows error in browser after max_responses reached', async ({ page }) => {
     await page.goto(`/s/${setup.slug}`);
 
-    // The survey should show an error (resume returns 403, frontend shows error state)
     await expect(
       page.locator('text=maximum').or(page.locator('text=closed')).or(page.locator('text=Failed to load survey')),
     ).toBeVisible({
@@ -105,18 +97,16 @@ test.describe('Survey with max_responses limit', () => {
   });
 });
 
-// ──────────────────────────────────────────────────────────────────────────────
-// closes_at past date
-// ──────────────────────────────────────────────────────────────────────────────
 test.describe.serial('Survey with past closes_at date', () => {
   let setup: SurveySetup;
 
   test.beforeAll(async () => {
     const slug = `e2e-closed-${Date.now()}`;
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     setup = await createSurveyWithQuestion({
       title: 'Closed Survey Test',
       slug,
-      closesAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+      closesAt: oneDayAgo,
     });
   });
 
@@ -130,7 +120,6 @@ test.describe.serial('Survey with past closes_at date', () => {
   test('shows closed message in browser', async ({ page }) => {
     await page.goto(`/s/${setup.slug}`);
 
-    // The survey page should display an error (resume returns 403, frontend shows error state)
     await expect(page.locator('text=closed').or(page.locator('text=Failed to load survey'))).toBeVisible({
       timeout: 10000,
     });

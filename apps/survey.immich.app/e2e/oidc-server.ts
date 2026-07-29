@@ -107,11 +107,10 @@ export async function startOidcServer(): Promise<{
 }> {
   const provider = new Provider(ISSUER, configuration);
 
-  // Mount interaction routes as koa middleware (runs before oidc-provider routes)
+  // Middleware added with provider.use() runs before oidc-provider's own routes.
   provider.use(async (ctx, next) => {
     const url = ctx.URL;
 
-    // GET /interaction/:uid — render login or consent form
     const interactionGetMatch = url.pathname.match(/^\/interaction\/([^/]+)$/);
     if (interactionGetMatch && ctx.method === 'GET') {
       const uid = interactionGetMatch[1];
@@ -147,7 +146,6 @@ export async function startOidcServer(): Promise<{
       }
     }
 
-    // POST /interaction/:uid/login — validate credentials and finish login
     if (ctx.method === 'POST' && url.pathname.match(/^\/interaction\/[^/]+\/login$/)) {
       const uid = url.pathname.split('/')[2];
       const body = await readBody(ctx.req);
@@ -179,7 +177,6 @@ export async function startOidcServer(): Promise<{
       return;
     }
 
-    // POST /interaction/:uid/confirm — grant consent and finish
     if (ctx.method === 'POST' && url.pathname.match(/^\/interaction\/[^/]+\/confirm$/)) {
       try {
         const interactionDetails = await provider.interactionDetails(ctx.req, ctx.res);
@@ -231,11 +228,9 @@ export async function startOidcServer(): Promise<{
       return;
     }
 
-    // Everything else falls through to oidc-provider's built-in routes
     await next();
   });
 
-  // Log errors from the provider
   provider.on('server_error', (ctx: unknown, err: Error) => {
     console.error('[OIDC server_error]', err.message, err.stack);
   });

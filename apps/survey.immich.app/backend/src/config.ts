@@ -24,7 +24,6 @@ export interface AppContext {
   config: AppConfig;
 }
 
-// Load config from Cloudflare Workers Env
 export function configFromEnv(env: Env): AppConfig {
   return {
     passwordSecret: env.PASSWORD_SECRET ?? '',
@@ -44,13 +43,10 @@ export function configFromEnv(env: Env): AppConfig {
   };
 }
 
-// Load config from Node.js process.env
 export function configFromProcessEnv(): AppConfig {
   const passwordSecret = process.env.PASSWORD_SECRET ?? '';
   const sessionSecret = process.env.SESSION_SECRET ?? '';
-  // Fail fast instead of booting "healthy" with empty secrets — signing and
-  // verifying session/password tokens against an empty key silently breaks all
-  // auth (and would 500 at token-mint time).
+  // Fail fast: an empty signing key doesn't error, it silently breaks all auth.
   if (!passwordSecret || !sessionSecret) {
     throw new Error('PASSWORD_SECRET and SESSION_SECRET must both be set to non-empty values.');
   }

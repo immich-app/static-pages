@@ -4,10 +4,6 @@ export interface AnswerData {
   count: number;
 }
 
-// ============================================================
-// NPS
-// ============================================================
-
 export interface NpsStats {
   total: number;
   promoters: number;
@@ -47,7 +43,6 @@ export function npsLabel(npsScore: number | null): string {
   return 'Critical';
 }
 
-/** Distribution over all 11 NPS buckets (0-10) */
 export function npsDistribution(answers: AnswerData[]): Array<{ score: number; count: number }> {
   const dist = Array.from({ length: 11 }, (_, i) => ({ score: i, count: 0 }));
   for (const a of answers) {
@@ -56,10 +51,6 @@ export function npsDistribution(answers: AnswerData[]): Array<{ score: number; c
   }
   return dist;
 }
-
-// ============================================================
-// Rating (1-N stars)
-// ============================================================
 
 export interface RatingStats {
   total: number;
@@ -89,10 +80,6 @@ export function computeRating(answers: AnswerData[], scaleMax = 5): RatingStats 
   const topBoxPct = total > 0 ? (topBoxCount / total) * 100 : 0;
   return { total, mean, topBoxPct, distribution };
 }
-
-// ============================================================
-// Likert (5-point agreement)
-// ============================================================
 
 // Ordered from most negative to most positive. Used for diverging bar rendering.
 export const LIKERT_VALUES = ['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree'] as const;
@@ -138,10 +125,6 @@ export function computeLikert(answers: AnswerData[]): LikertStats {
   };
 }
 
-// ============================================================
-// Number (histogram + summary stats)
-// ============================================================
-
 export interface NumberStats {
   total: number;
   mean: number | null;
@@ -177,10 +160,7 @@ export function computeNumber(answers: AnswerData[]): NumberStats {
   };
 }
 
-/**
- * Auto-bucket numeric values into ~10 bins using Sturges-like rules.
- * Returns [{ label, rangeStart, rangeEnd, count }].
- */
+/** Auto-bucket numeric values into ~10 bins using Sturges-like rules. */
 export interface NumberBucket {
   label: string;
   rangeStart: number;
@@ -195,7 +175,6 @@ export function bucketNumbers(values: number[], maxBuckets = 10): NumberBucket[]
   if (min === max) {
     return [{ label: `${min}`, rangeStart: min, rangeEnd: min, count: values.length }];
   }
-  // Integer-only data gets integer bins if the range is small
   const allIntegers = values.every((v) => Number.isInteger(v));
   const range = max - min;
 
@@ -234,10 +213,6 @@ function formatNumber(n: number): string {
   if (Number.isInteger(n)) return String(n);
   return n.toFixed(1);
 }
-
-// ============================================================
-// Text (n-grams + length distribution)
-// ============================================================
 
 const STOPWORDS = new Set([
   'a',
@@ -354,21 +329,16 @@ export interface NgramEntry {
   count: number;
 }
 
-/**
- * Compute top bigrams + trigrams from text responses, filtered against stopwords.
- * Much more useful than a word cloud because counts are explicit and phrases are preserved.
- */
+/** N-grams rather than a word cloud: counts stay explicit and phrases are preserved. */
 export function computeNgrams(answers: AnswerData[], limit = 20): NgramEntry[] {
   const phrases = new Map<string, number>();
 
   for (const a of answers) {
     const tokens = tokenize(a.value);
-    // bigrams
     for (let i = 0; i < tokens.length - 1; i++) {
       const p = `${tokens[i]} ${tokens[i + 1]}`;
       phrases.set(p, (phrases.get(p) ?? 0) + a.count);
     }
-    // trigrams (weighted slightly so they show up alongside bigrams)
     for (let i = 0; i < tokens.length - 2; i++) {
       const p = `${tokens[i]} ${tokens[i + 1]} ${tokens[i + 2]}`;
       phrases.set(p, (phrases.get(p) ?? 0) + a.count);
@@ -420,10 +390,6 @@ export function computeTextStats(answers: AnswerData[]): TextStats {
     blankCount,
   };
 }
-
-// ============================================================
-// Email analysis
-// ============================================================
 
 /**
  * Known disposable / throwaway email providers. These are strong bot signals
@@ -491,9 +457,6 @@ export const FREE_EMAIL_DOMAINS: ReadonlySet<string> = new Set([
   'hey.com',
 ]);
 
-/**
- * Email local-parts that indicate a role-based mailbox rather than a human.
- */
 export const ROLE_EMAIL_PREFIXES: ReadonlySet<string> = new Set([
   'admin',
   'administrator',
@@ -555,7 +518,6 @@ export function classifyDomain(domain: string): EmailKind {
 export interface EmailEntry {
   /** Original casing as submitted (first seen). */
   raw: string;
-  /** Normalized form used for dedupe. */
   normalized: string;
   local: string;
   domain: string;
@@ -665,10 +627,6 @@ export function computeEmailStats(answers: AnswerData[]): EmailStats {
   };
 }
 
-// ============================================================
-// Choice-question helpers
-// ============================================================
-
 /**
  * For checkbox questions, answers are stored as comma-separated values per respondent.
  * Expand them into per-option counts and return the number of respondents who selected
@@ -676,7 +634,7 @@ export function computeEmailStats(answers: AnswerData[]): EmailStats {
  */
 export interface CheckboxStats {
   total: number; // number of respondents
-  totalSelections: number; // sum across all selections
+  totalSelections: number;
   avgSelections: number;
   perOption: Array<{ value: string; count: number; percent: number }>;
 }
@@ -716,18 +674,10 @@ export function computeCheckboxStats(answers: AnswerData[]): CheckboxStats {
   };
 }
 
-// ============================================================
-// Legacy helper (used elsewhere)
-// ============================================================
-
 export function computeDropoffRate(reached: number, answered: number): number {
   if (reached === 0) return 0;
   return Math.round(((reached - answered) / reached) * 100);
 }
-
-// ============================================================
-// Low-sample threshold
-// ============================================================
 
 export const LOW_SAMPLE_THRESHOLD = 5;
 export const NPS_MIN_SAMPLE = 10;

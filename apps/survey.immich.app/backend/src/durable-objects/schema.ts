@@ -1,7 +1,4 @@
-/**
- * SQLite schema for per-survey Durable Object storage.
- * Table names match the main Database interface so Kysely queries work unchanged.
- */
+/** Table names must match the main Database interface so the shared Kysely queries work unchanged. */
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS surveys (
@@ -79,12 +76,13 @@ CREATE TABLE IF NOT EXISTS answers (
 
 const initializedInstances = new WeakSet<SqlStorage>();
 
-/**
- * Additive migrations for existing DO instances. Each entry is idempotent —
- * the catch handles the "column already exists" / "table already has X" errors
- * that SQLite raises when re-running on an already-migrated database.
- */
+/** Additive migrations, replayed on every boot — there is no version table, so each must be safe to re-run. */
 const MIGRATIONS: string[] = ['ALTER TABLE answers ADD COLUMN answer_ms INTEGER'];
+
+function isAlreadyAppliedError(e: unknown): boolean {
+  const msg = e instanceof Error ? e.message.toLowerCase() : '';
+  return msg.includes('duplicate column') || msg.includes('already exists');
+}
 
 function applySchema(sql: SqlStorage): void {
   sql.exec(SCHEMA);
@@ -92,14 +90,7 @@ function applySchema(sql: SqlStorage): void {
     try {
       sql.exec(stmt);
     } catch (e) {
-      // Only swallow the known-benign "duplicate column" / "already exists"
-      // idempotency errors. Any other failure (disk full, corruption, syntax
-      // error in a future migration) must propagate so the DO refuses to
-      // boot with an incomplete schema.
-      const msg = e instanceof Error ? e.message.toLowerCase() : '';
-      if (!msg.includes('duplicate column') && !msg.includes('already exists')) {
-        throw e;
-      }
+      if (!isAlreadyAppliedError(e)) throw e;
     }
   }
 }

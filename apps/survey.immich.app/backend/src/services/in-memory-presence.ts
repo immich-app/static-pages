@@ -57,10 +57,8 @@ export function handlePresenceUpgrade(ws: WebSocket, slug: string, type: 'viewer
   const set = type === 'viewer' ? room.viewers : room.respondents;
   set.add(ws);
 
-  // Send current counts immediately to the new connection
   ws.send(countsMessage(room));
 
-  // Debounced broadcast to other viewers
   scheduleBroadcast(room);
 
   ws.on('message', (raw) => {

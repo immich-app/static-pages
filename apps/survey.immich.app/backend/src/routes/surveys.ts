@@ -120,7 +120,6 @@ export function registerSurveyRoutes(router: AppRouter) {
     return Response.json(result, { status: 201 });
   });
 
-  // Sections — nested under /api/surveys/:surveyId/sections
   router.post('/api/surveys/:id/sections', async (request: AuthenticatedRequest) => {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);
@@ -156,7 +155,6 @@ export function registerSurveyRoutes(router: AppRouter) {
     return new Response(null, { status: 204 });
   });
 
-  // Questions — nested under /api/surveys/:surveyId/
   router.post('/api/surveys/:surveyId/sections/:id/questions', async (request: AuthenticatedRequest) => {
     requireRole(request.user, 'editor');
     const ctx = getContext(request);

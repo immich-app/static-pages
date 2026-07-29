@@ -1,9 +1,7 @@
 /**
- * In-memory cache for the SurveyDO.
- *
- * Holds lazy-loaded survey definition, response counters, and choice tallies.
- * Cleared on hibernation, reloaded on demand from SQLite.
- * Bypasses Kysely for reads (direct ctx.storage.sql for perf).
+ * In-memory cache for the SurveyDO. Cleared whenever the DO hibernates or is
+ * evicted, so every field must be rebuildable from SQLite on demand.
+ * Reads bypass Kysely (direct SqlStorage) for speed.
  */
 
 import type { SurveyRow, SectionRow, QuestionRow } from '../db';
@@ -18,17 +16,10 @@ export interface AnswerTally {
 }
 
 /**
- * Minimal per-respondent state held in memory during a session.
- *
- * We DON'T cache all answers — that's what SQLite is for. We only cache:
- *   - isComplete: so we know the respondent's status
- *   - hasSubmitted: enables the resume fast path (new users skip SQL entirely)
- *   - choiceAnswers: only answers to choice questions (radio, dropdown, etc.)
- *     because updateTalliesOnCompletion needs them — text/textarea answers
- *     are never tallied, so they don't need to live in memory.
- *
- * This keeps the per-user memory cost small and bounded by the choice-question
- * count, independent of how much text the user types.
+ * Minimal per-respondent state held in memory during a session. Only choice
+ * answers are cached (updateTalliesOnCompletion needs them; text answers are never
+ * tallied), keeping per-user memory bounded by the choice-question count rather
+ * than by how much text the user types.
  */
 export interface RespondentState {
   isComplete: boolean;
@@ -55,42 +46,26 @@ export class SurveyCache {
   /** Debounce flag for scheduled broadcasts — shared between ws-handler and survey-do */
   readonly broadcastScheduled = { value: false };
 
-  /**
-   * Fast-tier alarm tick counter. The slow-tier analytics broadcast fires
-   * every Nth fast tick (see SLOW_TICKS_PER_CYCLE in ws-broadcaster). This
-   * lives on the cache so it survives between alarm invocations without
-   * needing to be stored in DO storage.
-   */
+  /** Fast-tier alarm tick counter, held in memory rather than DO storage (see SLOW_TICKS_PER_CYCLE). */
   fastTick = 0;
 
   constructor(private sql: SqlStorage) {}
 
-  /** Check if a respondent exists. Uses in-memory state first, falls back to a fast PK lookup. */
   hasRespondent(id: string): boolean {
     if (this._respondentState.has(id)) return true;
     const row = this.sql.exec('SELECT 1 FROM respondents WHERE id = ? LIMIT 1', id).toArray()[0];
     return !!row;
   }
 
-  /** Add a brand-new respondent to the in-memory state. Called on WS upgrade for new users. */
   initRespondent(id: string): void {
     this._respondentState.set(id, { isComplete: false, hasSubmitted: false, choiceAnswers: new Map() });
   }
 
-  /**
-   * Get cached respondent state without touching SQL. Returns undefined if not cached.
-   * Callers that need to know the full respondent state (including text answers) must
-   * query SQL themselves — we only keep choice answers in memory.
-   */
+  /** Callers needing text answers must query SQL — only choice answers are cached. */
   getCachedRespondent(id: string): RespondentState | undefined {
     return this._respondentState.get(id);
   }
 
-  /**
-   * Record a submitted answer in memory. Only choice answers are kept (for later
-   * tally updates); text/textarea/email/number answers are discarded from cache
-   * since they're already persisted to SQL and not needed for in-memory ops.
-   */
   setAnswer(respondentId: string, questionId: string, value: string, otherText: string | null): void {
     const state = this._respondentState.get(respondentId);
     if (!state) return;
@@ -100,13 +75,11 @@ export class SurveyCache {
     }
   }
 
-  /** Mark a respondent complete in memory. */
   markRespondentComplete(id: string): void {
     const state = this._respondentState.get(id);
     if (state) state.isComplete = true;
   }
 
-  /** Evict a respondent's state from memory (called on complete to reclaim memory). */
   removeRespondent(id: string): void {
     this._respondentState.delete(id);
   }
@@ -135,7 +108,6 @@ export class SurveyCache {
     return this._questions;
   }
 
-  /** Pre-computed set of choice question IDs — used to filter which answers to cache */
   get choiceQuestionIds(): Set<string> {
     if (this._choiceQuestionIds) return this._choiceQuestionIds;
     this._choiceQuestionIds = new Set(this.questions.filter((q) => CHOICE_TYPES.has(q.type)).map((q) => q.id));
@@ -180,7 +152,6 @@ export class SurveyCache {
     return this._tallies;
   }
 
-  /** Check if the survey has been loaded (without triggering a load) */
   get hasSurvey(): boolean {
     if (this._survey) return true;
     const rows = this.sql.exec('SELECT id FROM surveys LIMIT 1').toArray();
@@ -209,15 +180,11 @@ export class SurveyCache {
   }
 
   /**
-   * Update tallies incrementally when a respondent completes — uses in-memory
-   * choice answers, no SQL query needed.
-   *
-   * If the respondent's choice answers aren't in memory (HTTP-only respondent
-   * via sendBeacon, WS reconnect after DO hibernation, or an op race), we
-   * have no in-memory state to fold in. Drop _tallies so the next read
-   * rebuilds the full set from SQL — without this, `incrementCompleted`
-   * would still bump the completion counter while per-option tallies stayed
-   * frozen, causing live-results charts to silently drift.
+   * Folds the respondent's in-memory choice answers into the tallies. When that
+   * state is missing (sendBeacon-only respondent, reconnect after hibernation, op
+   * race) we drop _tallies so the next read rebuilds from SQL — otherwise
+   * incrementCompleted keeps bumping the total while per-option tallies stay frozen
+   * and the live charts silently drift.
    */
   updateTalliesOnCompletion(respondentId: string): void {
     if (!this._tallies) return;
@@ -244,10 +211,9 @@ export class SurveyCache {
   }
 
   /**
-   * Build results for CHOICE questions only, entirely from the in-memory tallies
-   * Map. No SQL queries — used by the 5-second broadcast loop so periodic pushes
-   * stay fully in-memory. Text/textarea/email/number questions are omitted; the
-   * frontend merges these with the existing results from the initial HTTP load.
+   * Choice questions only, straight from the in-memory tallies (no SQL) for the
+   * broadcast loop. Text-style questions are omitted — the frontend merges these
+   * with the results from its initial HTTP load.
    */
   buildChoiceResults(): Array<{ questionId: string; answers: AnswerTally[] }> {
     const tallies = this.tallies;
@@ -260,7 +226,6 @@ export class SurveyCache {
     return results;
   }
 
-  /** Build aggregated results from cache (choice questions) + SQLite (text questions) */
   buildAggregatedResults(): Array<{ questionId: string; answers: AnswerTally[] }> {
     const tallies = this.tallies;
     const results: Array<{ questionId: string; answers: AnswerTally[] }> = [];

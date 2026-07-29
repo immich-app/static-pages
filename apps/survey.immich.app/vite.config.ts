@@ -9,10 +9,8 @@ export default defineConfig({
   },
   server: {
     fs: {
-      // `../../common` is the shared repo-level component library; `./shared`
-      // holds ws-protocol.ts + answer-validation.ts imported via the `$shared`
-      // alias by both the survey UI and its backend. Without allowing it Vite
-      // 403s the import and every respondent page renders a 500.
+      // Without ./shared here Vite 403s the $shared imports and every
+      // respondent page renders a 500.
       allow: ['../../common', './shared'],
     },
     proxy: {

@@ -12,8 +12,6 @@ import type {
 
 import { computeNps, npsLabel, computeDropoffRate } from '../components/results/analytics-utils';
 
-// ── Helpers ──────────────────────────────────────────────────────────────
-
 function makeQuestion(overrides: Partial<SurveyQuestion> & { id: string }): SurveyQuestion {
   return {
     section_id: 's1',
@@ -25,7 +23,7 @@ function makeQuestion(overrides: Partial<SurveyQuestion> & { id: string }): Surv
   };
 }
 
-// ── Chart data mapping (from QuestionResult component) ───────────────────
+// Replica of the chart mapping in the QuestionResult component.
 
 interface ChartAnswer {
   value: string;
@@ -42,24 +40,18 @@ function toChartData(answers: ChartAnswer[], totalResponses: number) {
   }));
 }
 
-// ── Word cloud data preparation ──────────────────────────────────────────
-
 function toWordCloudData(answers: ChartAnswer[]) {
   const sorted = [...answers].sort((a, b) => b.count - a.count);
   return sorted.map((a) => ({ text: a.value, count: a.count }));
 }
 
-// ── Filterable questions logic (from FilterBar) ──────────────────────────
+// Replica of the filterable-type list in FilterBar.
 
 const FILTERABLE_TYPES: QuestionType[] = ['radio', 'checkbox', 'dropdown', 'nps', 'rating', 'likert'];
 
 function filterableQuestions(questions: SurveyQuestion[]): SurveyQuestion[] {
   return questions.filter((q) => FILTERABLE_TYPES.includes(q.type));
 }
-
-// ═══════════════════════════════════════════════════════════════════════════
-// Tests
-// ═══════════════════════════════════════════════════════════════════════════
 
 describe('Type shape validation', () => {
   it('TimelineDataPoint has required fields', () => {
@@ -274,7 +266,6 @@ describe('API URL construction', () => {
       status: 304,
       headers: new Headers(),
     });
-    // Second call sends If-None-Match and gets 304
     const result = await getLiveResults('s-etag');
     expect(result).toBeNull();
   });

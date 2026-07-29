@@ -57,7 +57,6 @@ test.describe.serial('Password-protected survey', () => {
   test('visiting the public URL shows the password gate', async ({ page }) => {
     await page.goto(`/s/${setup.slug}`);
 
-    // The password gate should be visible
     await expect(page.getByText('This survey is password protected')).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('Password Protected Survey')).toBeVisible();
     await expect(page.getByPlaceholder('Enter password')).toBeVisible();
@@ -67,14 +66,11 @@ test.describe.serial('Password-protected survey', () => {
     await page.goto(`/s/${setup.slug}`);
     await expect(page.getByText('This survey is password protected')).toBeVisible({ timeout: 5000 });
 
-    // Enter wrong password
     await page.getByPlaceholder('Enter password').fill('wrong-password');
     await page.getByRole('button', { name: 'Continue' }).click();
 
-    // Should show an error message
     await expect(page.getByText(/incorrect|invalid|wrong/i)).toBeVisible({ timeout: 5000 });
 
-    // Password gate should still be visible
     await expect(page.getByText('This survey is password protected')).toBeVisible();
   });
 
@@ -82,11 +78,9 @@ test.describe.serial('Password-protected survey', () => {
     await page.goto(`/s/${setup.slug}`);
     await expect(page.getByText('This survey is password protected')).toBeVisible({ timeout: 5000 });
 
-    // Enter correct password
     await page.getByPlaceholder('Enter password').fill(SURVEY_PASSWORD);
     await page.getByRole('button', { name: 'Continue' }).click();
 
-    // Should show the welcome screen with Get Started
     await expect(page.getByRole('button', { name: 'Get Started' })).toBeVisible({ timeout: 5000 });
   });
 
@@ -94,27 +88,21 @@ test.describe.serial('Password-protected survey', () => {
     await page.goto(`/s/${setup.slug}`);
     await expect(page.getByText('This survey is password protected')).toBeVisible({ timeout: 5000 });
 
-    // Enter correct password
     await page.getByPlaceholder('Enter password').fill(SURVEY_PASSWORD);
     await page.getByRole('button', { name: 'Continue' }).click();
 
-    // Welcome screen
     await expect(page.getByRole('button', { name: 'Get Started' })).toBeVisible({ timeout: 5000 });
     await page.getByRole('button', { name: 'Get Started' }).click();
 
-    // Dismiss section header
     await dismissSectionHeader(page);
     await waitForTransition(page);
 
-    // Answer the text question
     await expect(page.getByText('What is your name?')).toBeVisible({ timeout: 3000 });
     await page.getByPlaceholder('Enter your name').fill('E2E Password Tester');
     await waitForTransition(page);
 
-    // Submit
     await page.getByRole('button', { name: 'Submit' }).first().click();
 
-    // Thank you screen
     await expect(page.getByText('Thank you!')).toBeVisible({ timeout: 5000 });
   });
 });

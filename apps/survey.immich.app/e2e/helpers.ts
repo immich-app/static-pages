@@ -6,12 +6,10 @@ let sessionCookie: string | null = null;
 export async function ensureAuth(): Promise<string> {
   if (sessionCookie) return sessionCookie;
 
-  // Check if setup is needed
   const meRes = await fetch(`${API}/api/auth/me`);
   const me = (await meRes.json()) as { authenticated: boolean; needsSetup?: boolean };
 
   if (me.needsSetup) {
-    // First-time setup
     const setupRes = await fetch(`${API}/api/auth/setup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -24,7 +22,6 @@ export async function ensureAuth(): Promise<string> {
     }
   }
 
-  // Already set up — login
   const loginRes = await fetch(`${API}/api/auth/password-login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

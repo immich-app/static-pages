@@ -45,14 +45,9 @@
   }
 
   /**
-   * Fill in missing periods between the first and last data point with
-   * zero-valued entries, so a survey that has one response every 10 minutes
-   * at hour granularity still renders as a proper line across the time axis
-   * instead of a single dot on the left.
-   *
-   * Also anchors the range to "now" on the right-hand side so an active
-   * survey always shows up to the present, and to at most a reasonable
-   * lookback window on the left.
+   * Fill missing periods with zero entries so sparse data renders as a line, not
+   * a single dot. The right edge is anchored to "now" so an active survey always
+   * runs up to the present.
    */
   function fillGaps(points: TimelineDataPoint[], g: Granularity): TimelineDataPoint[] {
     if (points.length === 0) return [];
@@ -60,9 +55,8 @@
     const firstReal = parsePeriod(points[0].period, g).getTime();
     const lastReal = parsePeriod(points[points.length - 1].period, g).getTime();
 
-    // Round "now" down to the current bucket boundary (UTC-aligned to the
-    // UNIX epoch — matches how SQLite groups periods via substr on the ISO
-    // timestamp). Pure integer math, no mutable Date instance.
+    // Round "now" down to the current bucket boundary, UTC-aligned to the UNIX
+    // epoch — matches how SQLite groups periods via substr on the ISO timestamp.
     const nowMs = Math.floor(Date.now() / step) * step;
     const tail = Math.max(lastReal, nowMs);
 
@@ -87,7 +81,6 @@
   const filledData = $derived(fillGaps(data, granularity));
 
   function tickLabel(period: string, g: Granularity): string {
-    // Compact axis label. Keeps bars readable.
     const d = parsePeriod(period, g);
     const pad = (n: number) => n.toString().padStart(2, '0');
     if (g === 'minute') return `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;

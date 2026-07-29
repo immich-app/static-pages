@@ -1,12 +1,7 @@
 import { describe, it, expect } from 'vitest';
 
-/**
- * Replicates the parsing logic from BulkPasteModal.svelte's handleSubmit().
- * The original logic is inline in the component:
- *   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
- *   if (lines.length < 2) return;
- *   onSubmit(lines.map(l => ({ label: l, value: l })));
- */
+/** Mirrors BulkPasteModal.svelte's inline handleSubmit() parsing — the component
+ * has no extracted helper to import. */
 function parseBulkPaste(text: string): { label: string; value: string }[] | null {
   const lines = text
     .split('\n')

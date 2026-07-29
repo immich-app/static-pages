@@ -20,7 +20,6 @@
   // For radio/dropdown: one row per selected option.
   const radioTotal = $derived(answers.reduce((sum, a) => sum + a.count, 0));
 
-  // Map option value → option label (defensive: a missing option still displays its raw value)
   const optionLabels = $derived.by(() => {
     const map: Record<string, string> = {};
     for (const opt of question.options ?? []) map[opt.value] = opt.label;
@@ -42,7 +41,6 @@
       }));
     }
 
-    // radio / dropdown
     return [...answers]
       .sort((a, b) => b.count - a.count)
       .map((a, i) => ({

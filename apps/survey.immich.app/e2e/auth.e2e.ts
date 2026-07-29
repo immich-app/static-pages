@@ -4,11 +4,8 @@ import { API, TEST_PASSWORD } from './helpers';
 
 const BASE = process.env.BASE_URL || 'http://localhost:5173';
 
-// ---------------------------------------------------------------------------
-// Password auth tests — serial because setup must precede login
-// ---------------------------------------------------------------------------
+// Serial because setup must precede login.
 test.describe.serial('Password auth', () => {
-  // These tests require a fresh database — skip if admin is already set up
   let needsSetup = false;
   test.beforeAll(async () => {
     const res = await fetch(`${API}/api/auth/me`);
@@ -56,7 +53,6 @@ test.describe.serial('Password auth', () => {
     await page.getByPlaceholder('Confirm password').fill(TEST_PASSWORD);
     await page.getByRole('button', { name: 'Create Admin Account' }).click();
 
-    // After setup, user is auto-logged-in and sees the dashboard header
     await expect(page.getByText('FUTO Surveys')).toBeVisible();
     await expect(page.getByText('admin', { exact: false })).toBeVisible();
   });
@@ -66,7 +62,6 @@ test.describe.serial('Password auth', () => {
     const page = await context.newPage();
     await page.goto(BASE);
 
-    // Should show the login screen (not setup)
     await expect(page.getByText('Sign in to FUTO Surveys')).toBeVisible();
     await expect(page.getByPlaceholder('Admin password')).toBeVisible();
 
@@ -88,7 +83,6 @@ test.describe.serial('Password auth', () => {
   });
 
   test('correct password logs in and shows dashboard', async ({ browser }) => {
-    // Ensure we know a working password — use the password the helpers authenticated with
     const context = await browser.newContext();
     const page = await context.newPage();
     await page.goto(BASE);
@@ -97,7 +91,6 @@ test.describe.serial('Password auth', () => {
     await page.getByPlaceholder('Admin password').fill(TEST_PASSWORD);
     await page.getByRole('button', { name: 'Sign in', exact: true }).click();
 
-    // Should see the authenticated header
     await expect(page.locator('header').getByText('FUTO Surveys')).toBeVisible({ timeout: 5000 });
 
     await context.close();
@@ -108,16 +101,13 @@ test.describe.serial('Password auth', () => {
     const page = await context.newPage();
     await page.goto(BASE);
 
-    // Log in first
     await expect(page.getByText('Sign in to FUTO Surveys')).toBeVisible();
     await page.getByPlaceholder('Admin password').fill(TEST_PASSWORD);
     await page.getByRole('button', { name: 'Sign in', exact: true }).click();
     await expect(page.getByText('FUTO Surveys')).toBeVisible();
 
-    // Click logout
     await page.getByTitle('Log out').click();
 
-    // Should redirect to login screen
     await expect(page.getByText('Sign in to FUTO Surveys')).toBeVisible();
 
     await context.close();
@@ -128,22 +118,17 @@ test.describe.serial('Password auth', () => {
     const page = await context.newPage();
     await page.goto(`${BASE}/create`);
 
-    // Should show login instead of create page
     await expect(page.getByText('Sign in to FUTO Surveys')).toBeVisible();
 
     await context.close();
   });
 });
 
-// ---------------------------------------------------------------------------
-// OIDC auth tests — require the local OIDC server
-// ---------------------------------------------------------------------------
 test.describe.serial('OIDC auth', () => {
   let oidcServer: Awaited<ReturnType<typeof startOidcServer>> | null = null;
   let oidcAvailable = false;
 
   test.beforeAll(async () => {
-    // Check if the backend is configured for our test OIDC server
     try {
       const meRes = await fetch(`${API}/api/auth/me`);
       const me = (await meRes.json()) as { oidcEnabled?: boolean };
@@ -156,10 +141,8 @@ test.describe.serial('OIDC auth', () => {
       return;
     }
 
-    // Start the OIDC test server
     try {
       oidcServer = await startOidcServer();
-      // Verify the discovery endpoint is accessible
       const disco = await fetch(`${ISSUER}/.well-known/openid-configuration`);
       if (disco.ok) {
         oidcAvailable = true;
@@ -196,7 +179,6 @@ test.describe.serial('OIDC auth', () => {
 
     await page.getByRole('button', { name: 'Sign in with SSO' }).click();
 
-    // Should redirect through the backend to the OIDC provider
     await page.waitForURL(/localhost:9090/);
     expect(page.url()).toContain('localhost:9090');
 
@@ -210,18 +192,14 @@ test.describe.serial('OIDC auth', () => {
     const page = await context.newPage();
     await page.goto(BASE);
 
-    // Click SSO button
     await page.getByRole('button', { name: 'Sign in with SSO' }).click();
 
-    // Wait for OIDC provider login page
     await page.waitForURL(/localhost:9090\/interaction\//);
 
-    // Fill in credentials on the OIDC provider's login form
     await page.locator('input[name="login"]').fill('admin@test.com');
     await page.locator('input[name="password"]').fill('testpassword');
     await page.locator('button[type="submit"]').click();
 
-    // Handle consent screen if it appears
     try {
       await page.locator('button:has-text("Authorize")').waitFor({ timeout: 3000 });
       await page.locator('button:has-text("Authorize")').click();
@@ -229,10 +207,8 @@ test.describe.serial('OIDC auth', () => {
       // No consent screen — that's fine
     }
 
-    // Should redirect back to the app
     await page.waitForURL(/localhost:(5173|8787|3000)/, { timeout: 10_000 });
 
-    // Should be authenticated with the admin role
     await expect(page.locator('header').getByText('FUTO Surveys')).toBeVisible({ timeout: 10_000 });
     await expect(page.getByText('Test Admin')).toBeVisible({ timeout: 5000 });
 
@@ -242,7 +218,6 @@ test.describe.serial('OIDC auth', () => {
   test('OIDC user has correct role from claims', async ({ browser }) => {
     test.skip(!oidcAvailable, 'OIDC server not available');
 
-    // Login as editor to verify role mapping works
     const context = await browser.newContext();
     const page = await context.newPage();
     await page.goto(BASE);
@@ -254,7 +229,6 @@ test.describe.serial('OIDC auth', () => {
     await page.locator('input[name="password"]').fill('testpassword');
     await page.locator('button[type="submit"]').click();
 
-    // Handle consent if needed
     try {
       await page.locator('button:has-text("Authorize")').waitFor({ timeout: 3000 });
       await page.locator('button:has-text("Authorize")').click();
@@ -264,7 +238,6 @@ test.describe.serial('OIDC auth', () => {
 
     await page.waitForURL(/localhost:(5173|8787|3000)/, { timeout: 10_000 });
 
-    // Should show editor role
     await expect(page.getByText('Test Editor')).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('editor', { exact: true })).toBeVisible();
 

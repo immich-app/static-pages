@@ -6,9 +6,8 @@ export default defineConfig({
   timeout: 30_000,
   expect: { timeout: 5_000 },
   fullyParallel: false,
-  // Retry twice in CI so transient flakes (WS timing, wrangler cold start)
-  // don't block PRs. Locally, keep at 0 so real regressions surface
-  // immediately instead of being masked by retries.
+  // Retries in CI only, so local runs surface real regressions instead of
+  // masking them.
   retries: process.env.CI ? 2 : 0,
   use: {
     baseURL: process.env.BASE_URL || 'http://localhost:5173',

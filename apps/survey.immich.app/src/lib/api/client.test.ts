@@ -61,7 +61,6 @@ describe('createApiClient', () => {
 
     client.bufferAnswer({ questionId: 'q1', value: 'a' });
 
-    // First failure: silent — answers stay buffered to retry on the next flush.
     const firstFlush = client.flushBuffer();
     await vi.runAllTimersAsync();
     const firstResult = await firstFlush;
@@ -70,8 +69,6 @@ describe('createApiClient', () => {
     expect(client.getBufferSize()).toBe(1);
     expect(onError).not.toHaveBeenCalled();
 
-    // Second consecutive failure: surfaces the toast so the respondent
-    // knows save is genuinely struggling and can act on it.
     const secondFlush = client.flushBuffer();
     await vi.runAllTimersAsync();
     const secondResult = await secondFlush;
@@ -107,8 +104,6 @@ describe('createApiClient', () => {
     await second;
     expect(onError).toHaveBeenCalled();
 
-    // Next flush succeeds — success callback fires so the UI can dismiss
-    // the lingering toast.
     succeed = true;
     const third = client.flushBuffer();
     await vi.runAllTimersAsync();
@@ -119,7 +114,6 @@ describe('createApiClient', () => {
   });
 
   it('preserves newer entries when failed batch is re-added', async () => {
-    // All calls fail
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 500 }));
 
     const client = createApiClient('test-survey');
@@ -128,7 +122,6 @@ describe('createApiClient', () => {
     // Start flush — this clears the buffer, then tries to send
     const flushPromise = client.flushBuffer();
 
-    // While flush is in-flight, buffer a newer value for the same question
     client.bufferAnswer({ questionId: 'q1', value: 'new' });
 
     // Let backoff timers resolve so saveBatch finishes

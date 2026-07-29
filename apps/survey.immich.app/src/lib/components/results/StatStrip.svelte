@@ -1,11 +1,8 @@
 <script lang="ts">
-  /** A compact row of labelled stat values shown above a visualisation. */
   interface Stat {
     label: string;
     value: string;
-    /** Optional accent colour for the value text */
     tone?: 'default' | 'positive' | 'negative' | 'warning';
-    /** Longer description shown as a tooltip */
     hint?: string;
   }
 

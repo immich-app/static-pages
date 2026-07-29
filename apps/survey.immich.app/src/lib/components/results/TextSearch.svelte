@@ -23,7 +23,6 @@
   let searched = $state(false);
   let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 
-  // Respondent detail expansion
   let selectedKey = $state<string | null>(null);
   let selectedDetail = $state<RespondentDetail | null>(null);
   let selectedMatchQuestionId = $state<string | null>(null);
@@ -103,10 +102,8 @@
     doSearch(currentOffset + pageSize);
   }
 
-  // Kick off a (debounced) search whenever the user types or changes the
-  // question filter. The expanded-detail reset happens inside doSearch once
-  // the debounce actually fires, so live typing doesn't wipe the current
-  // drill-down prematurely.
+  // The expanded-detail reset happens inside doSearch once the debounce fires,
+  // so live typing doesn't wipe the user's current drill-down.
   $effect(() => {
     void query;
     void questionFilter;

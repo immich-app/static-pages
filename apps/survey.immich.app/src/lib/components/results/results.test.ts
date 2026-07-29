@@ -19,10 +19,6 @@ function toChartData(answers: ChartAnswer[], totalResponses: number) {
   }));
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// NPS Score Tests
-// ═══════════════════════════════════════════════════════════════════════════
-
 describe('NPS computation', () => {
   it('returns null score for empty input', () => {
     const result = computeNps([]);
@@ -124,10 +120,6 @@ describe('NPS computation', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Chart Data Mapping Tests
-// ═══════════════════════════════════════════════════════════════════════════
-
 describe('Chart data mapping', () => {
   it('maps answers to bar chart data with labels, values, percentages', () => {
     const answers: ChartAnswer[] = [
@@ -178,7 +170,6 @@ describe('Chart data mapping', () => {
     }));
     const data = toChartData(answers, 210);
     expect(data).toHaveLength(20);
-    // First should have highest count
     expect(data[0].value).toBe(20);
     expect(data[19].value).toBe(1);
   });
@@ -193,10 +184,6 @@ describe('Chart data mapping', () => {
     expect(answers.map((a) => a.value)).toEqual(originalOrder);
   });
 });
-
-// ═══════════════════════════════════════════════════════════════════════════
-// Drop-off Rate Tests
-// ═══════════════════════════════════════════════════════════════════════════
 
 describe('Drop-off rate calculations', () => {
   it('returns 0% when all answer', () => {

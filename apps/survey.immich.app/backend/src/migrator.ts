@@ -4,10 +4,8 @@ import { join } from 'node:path';
 import type { Database } from './db';
 
 /**
- * Split a SQL script into individual statements on top-level semicolons,
- * ignoring semicolons inside single-quoted string literals, line comments
- * (`-- …`), and block comments (`/* … *\/`). Naive split on `;` alone would
- * break on trigger bodies or any literal containing a semicolon.
+ * Split a SQL script on top-level semicolons. A naive split would break on
+ * trigger bodies or any string literal containing a semicolon.
  */
 function splitSqlStatements(script: string): string[] {
   const statements: string[] = [];
@@ -38,8 +36,7 @@ function splitSqlStatements(script: string): string[] {
     }
 
     if (ch === '-' && next === '-') {
-      // Line comment — skip to newline (but preserve it in the output so line
-      // counts stay sensible for later error messages)
+      // Stop at the newline, don't consume it — line numbers must stay right.
       while (i < script.length && script[i] !== '\n') i++;
       continue;
     }

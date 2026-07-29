@@ -24,11 +24,8 @@
   let transitioning = $state(false);
   let dismissedSections = new SvelteSet<string>();
 
-  // Pre-populate seen sections when resuming mid-survey so we don't
-  // re-show section headers the user already passed through. Every
-  // section up to and including the current question's section is
-  // marked as "seen". On a fresh start (index 0, no answers) this
-  // produces an empty set and the first section header shows normally.
+  // Resuming mid-survey: every section up to the current question counts as
+  // already seen, so its header isn't re-shown. A fresh start yields an empty set.
   function buildInitialSeenSections(): string[] {
     if (engine.currentIndex === 0 && Object.keys(engine.answers).length === 0) return [];
     const currentQ = engine.currentQuestion;

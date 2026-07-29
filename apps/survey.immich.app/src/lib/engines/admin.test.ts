@@ -3,8 +3,6 @@ import type { Survey, SurveySection, SurveyQuestion } from '../types';
 import type { AuditEntry } from '../api/audit';
 import type { Tag } from '../api/tags';
 
-// ── Survey archiving helpers ─────────────────────────────────────────────
-
 /**
  * Mirrors `surveyFromApi` from engines/builder-transforms.ts
  */
@@ -30,8 +28,6 @@ function surveyFromApi(apiSurvey: Record<string, unknown>): Survey {
     updatedAt: apiSurvey.updated_at as string,
   };
 }
-
-// ── Export/import definition helpers ─────────────────────────────────────
 
 interface ExportDefinition {
   version: number;
@@ -88,10 +84,6 @@ function validateImportDefinition(def: unknown): { valid: boolean; error?: strin
   }
   return { valid: true };
 }
-
-// ═════════════════════════════════════════════════════════════════════════
-// Tests
-// ═════════════════════════════════════════════════════════════════════════
 
 describe('Survey archiving', () => {
   it('archived survey has archivedAt set', () => {

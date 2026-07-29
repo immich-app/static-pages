@@ -88,10 +88,6 @@ function decodeJwtPayload(token: string): Record<string, unknown> | null {
   }
 }
 
-/**
- * Sanitizes text content for safe display — ensures user input is treated as
- * plain text and never interpreted as HTML.
- */
 function sanitizeForDisplay(input: string | null | undefined): string {
   if (input == null) return '';
   return input
@@ -101,10 +97,6 @@ function sanitizeForDisplay(input: string | null | undefined): string {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#x27;');
 }
-
-// ═════════════════════════════════════════════════════════════════════════
-// 1. Constant-time comparison
-// ═════════════════════════════════════════════════════════════════════════
 
 describe('Constant-time comparison — constantTimeEqual', () => {
   it('returns true for identical strings', () => {
@@ -160,10 +152,6 @@ describe('Constant-time comparison — constantTimeEqual', () => {
     expect(constantTimeEqual(a, b)).toBe(false);
   });
 });
-
-// ═════════════════════════════════════════════════════════════════════════
-// 2. Column whitelist validation
-// ═════════════════════════════════════════════════════════════════════════
 
 describe('Column whitelist validation — SURVEY_ALLOWED_COLUMNS', () => {
   it('allows valid column "title"', () => {
@@ -227,10 +215,6 @@ describe('Column whitelist validation — SURVEY_ALLOWED_COLUMNS', () => {
   });
 });
 
-// ═════════════════════════════════════════════════════════════════════════
-// 3. Role hierarchy enforcement
-// ═════════════════════════════════════════════════════════════════════════
-
 describe('Role hierarchy enforcement — canAccess', () => {
   it('admin can access admin routes', () => {
     expect(canAccess('admin', 'admin')).toBe(true);
@@ -281,10 +265,6 @@ describe('Role hierarchy enforcement — canAccess', () => {
   });
 });
 
-// ═════════════════════════════════════════════════════════════════════════
-// 4. Password validation
-// ═════════════════════════════════════════════════════════════════════════
-
 describe('Password validation', () => {
   it('admin password >= 8 chars is accepted', () => {
     expect(isValidAdminPassword('securepass')).toBe(true);
@@ -327,10 +307,6 @@ describe('Password validation', () => {
     expect(isValidAdminPassword('pässwörd')).toBe(true);
   });
 });
-
-// ═════════════════════════════════════════════════════════════════════════
-// 5. XSS prevention
-// ═════════════════════════════════════════════════════════════════════════
 
 describe('XSS prevention — sanitizeForDisplay', () => {
   it('escapes <script> tags', () => {
@@ -383,10 +359,6 @@ describe('XSS prevention — sanitizeForDisplay', () => {
   });
 });
 
-// ═════════════════════════════════════════════════════════════════════════
-// 6. JWT security
-// ═════════════════════════════════════════════════════════════════════════
-
 describe('JWT security', () => {
   it('token with alg: "none" should be rejected by structure check', () => {
     const token = createTestJwt({ alg: 'none', typ: 'JWT' }, { sub: 'u1' });
@@ -395,7 +367,6 @@ describe('JWT security', () => {
     const parts = token.split('.');
     const header = JSON.parse(atob(parts[0]));
     expect(header.alg).toBe('none');
-    // A proper verifier must reject alg:none
     expect(header.alg).not.toBe('HS256');
   });
 
@@ -452,10 +423,6 @@ describe('JWT security', () => {
   });
 });
 
-// ═════════════════════════════════════════════════════════════════════════
-// 7. OIDC state validation
-// ═════════════════════════════════════════════════════════════════════════
-
 describe('OIDC state validation', () => {
   it('matching state parameter passes validation', () => {
     const originalState = 'abc123-random-state';
@@ -484,17 +451,13 @@ describe('OIDC state validation', () => {
   it('AUTH_STATE_COOKIE_NAME is set and state cookie max-age is bounded', () => {
     // Mirrors constants from backend/src/constants.ts
     const AUTH_STATE_COOKIE_NAME = 'auth_state';
-    const SESSION_MAX_AGE = 8 * 60 * 60; // 8 hours
+    const SESSION_MAX_AGE = 8 * 60 * 60;
     expect(AUTH_STATE_COOKIE_NAME).toBe('auth_state');
     // State cookies should expire — max-age must be finite and positive
     expect(SESSION_MAX_AGE).toBeGreaterThan(0);
     expect(SESSION_MAX_AGE).toBeLessThanOrEqual(86400); // should not exceed 24 hours
   });
 });
-
-// ═════════════════════════════════════════════════════════════════════════
-// 8. Survey password gate
-// ═════════════════════════════════════════════════════════════════════════
 
 describe('Survey password gate', () => {
   interface SurveyApiResponse {

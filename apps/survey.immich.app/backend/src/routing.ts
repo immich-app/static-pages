@@ -1,9 +1,6 @@
 /**
- * Shared URL patterns for the API worker ↔ DO routing layer.
- *
- * The worker matches these to decide whether to forward to a SurveyDO;
- * the DO's internal router strips the same prefixes to dispatch to its
- * HTTP handlers. Keeping the two in one module prevents drift.
+ * Shared by the worker's DO-forwarding check and the DO's own router, which
+ * strips the same prefixes — one module so the two can't drift.
  */
 
 /** /api/surveys/:surveyId(/...)? */

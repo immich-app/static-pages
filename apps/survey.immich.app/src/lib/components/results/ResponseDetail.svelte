@@ -3,7 +3,6 @@
 
   interface Props {
     detail: RespondentDetail;
-    /** When provided, the matching answer gets highlighted and scrolled into view. */
     highlightQuestionId?: string | null;
   }
 

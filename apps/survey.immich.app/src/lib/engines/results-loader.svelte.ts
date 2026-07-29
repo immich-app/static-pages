@@ -95,11 +95,7 @@ export function createResultsLoader(surveyId: string) {
     }
   }
 
-  /**
-   * Pick an initial granularity based on the spread of response timestamps.
-   * New/active surveys get minute-level detail; long-running surveys default
-   * to hour or day so the chart isn't drowned in buckets.
-   */
+  /** Coarsen the bucket size with the timestamp span so the chart isn't drowned in buckets. */
   function pickGranularity(data: TimelineDataPoint[]): Granularity {
     if (data.length <= 1) return 'minute';
     // Server returns minute-granularity periods as "YYYY-MM-DDTHH:MM".
@@ -130,8 +126,7 @@ export function createResultsLoader(surveyId: string) {
   onMount(() => {
     (async () => {
       try {
-        // First load uses minute granularity so we can inspect the timestamp
-        // span and pick a sensible initial granularity below.
+        // Fetch at minute granularity so pickGranularity can measure the span.
         const [surveyData, resultsData, initialTimeline, dropoff, ctimes, qtimings] = await Promise.all([
           getSurvey(surveyId),
           getLiveResults(surveyId),
@@ -162,7 +157,6 @@ export function createResultsLoader(surveyId: string) {
       }
       loading = false;
 
-      // Connect WebSocket for real-time updates
       if (survey?.slug) {
         wsClient = createSurveyWsClient(survey.slug, 'viewer');
         registerWsClient(surveyId, wsClient);
@@ -177,21 +171,16 @@ export function createResultsLoader(surveyId: string) {
 
         wsClient.on('results', (data) => {
           respondentCounts = data.respondentCounts;
-          // The broadcast only contains choice question results (no SQL on the
-          // server for periodic pushes). Merge them with the existing results
-          // so text/textarea/email/number answers from the initial HTTP load
-          // stay intact.
+          // Pushes carry only choice-question results — merge rather than
+          // replace so text/email/number answers from the initial load survive.
           const updates: Record<string, (typeof data.results)[number]> = {};
           for (const r of data.results) updates[r.questionId] = r;
           results = results.map((r) => updates[r.questionId] ?? r);
         });
 
-        // Slow-tier analytics (once per minute, fanned out to all viewers).
-        // Contains timeline, drop-off, and completion-time histogram — the
-        // fields that need SQL aggregations and so can't live in the 5s push.
-        // The server always sends timeline at minute granularity; we drop the
-        // payload's timeline if the user has picked a coarser bucket so their
-        // roll-up stays consistent with what they asked for.
+        // Slow-tier analytics (once a minute) — the SQL aggregations that can't
+        // ride the 5s push. Its timeline is always minute-granular, so ignore
+        // that field when the user has chosen a coarser bucket.
         wsClient.on('analytics', (data) => {
           if (granularity === 'minute') {
             timelineData = data.timeline;

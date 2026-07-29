@@ -79,14 +79,12 @@
       </div>
     </div>
 
-    <!-- Tabs -->
     <div class="animate-in animate-in-delay-1 mb-6">
       <ResultsTabs active={loader.activeTab} onChange={(t) => (loader.activeTab = t)} />
     </div>
 
     <div id="results-content">
       {#if loader.activeTab === 'overview'}
-        <!-- KPI strip -->
         <div class="animate-in animate-in-delay-1 mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
           <div
             class="rounded-xl border border-gray-200 bg-gradient-to-br from-gray-50 to-transparent p-4 dark:border-gray-700/80 dark:from-gray-800/40"
@@ -136,7 +134,6 @@
           </div>
         </div>
 
-        <!-- Timeline -->
         <div class="animate-in animate-in-delay-2 mb-6">
           <TimelineChart
             data={loader.timelineData}
@@ -145,24 +142,20 @@
           />
         </div>
 
-        <!-- Completion time histogram -->
         <div class="animate-in animate-in-delay-2 mb-6">
           <CompletionTimeChart data={loader.completionTimes} />
         </div>
 
-        <!-- Per-question timing -->
         <div class="animate-in animate-in-delay-2 mb-6">
           <QuestionTimingChart data={loader.questionTimings} />
         </div>
 
-        <!-- Drop-off -->
         {#if loader.dropoffData.length > 0}
           <div class="animate-in animate-in-delay-2 mb-6">
             <DropoffChart data={loader.dropoffData} />
           </div>
         {/if}
 
-        <!-- Per-question results -->
         <div class="space-y-4">
           {#each loader.sortedQuestions as question, i (question.id)}
             {@const result = loader.getQuestionResult(question.id)}

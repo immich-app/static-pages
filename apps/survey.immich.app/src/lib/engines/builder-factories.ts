@@ -38,10 +38,8 @@ export function createQuestionOfType(type: QuestionType, sortOrder: number): Bui
   switch (type) {
     case 'radio':
     case 'checkbox':
-      // keep default options
-      break;
     case 'dropdown':
-      // dropdown also needs options like radio
+      // keep the default options from createDefaultQuestion
       break;
     case 'rating':
       base.options = [];

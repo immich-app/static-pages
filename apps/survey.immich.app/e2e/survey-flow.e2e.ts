@@ -14,7 +14,6 @@ test.beforeAll(async () => {
 });
 
 test.beforeEach(async ({ context }) => {
-  // Set the session cookie so page requests are authenticated
   const BASE = process.env.BASE_URL || 'http://localhost:5173';
   const { name, value } = parseCookie(cookie);
   await context.addCookies([{ name, value, url: BASE }]);
@@ -29,7 +28,6 @@ async function createFullSurvey(): Promise<SetupResult> {
   const section3 = await apiPost(`/api/surveys/${surveyId}/sections`, { title: 'Scale Questions' });
 
   const questions = [
-    // Section 1: Choice types
     {
       key: 'radio',
       sectionId: section1.id,
@@ -71,7 +69,6 @@ async function createFullSurvey(): Promise<SetupResult> {
       },
     },
 
-    // Section 2: Input types
     {
       key: 'text',
       sectionId: section2.id,
@@ -89,7 +86,6 @@ async function createFullSurvey(): Promise<SetupResult> {
     },
     { key: 'textarea', sectionId: section2.id, body: { text: 'Tell us more', type: 'textarea', required: false } },
 
-    // Section 3: Scale types
     {
       key: 'rating',
       sectionId: section3.id,
@@ -136,78 +132,62 @@ test.describe('Full survey with all 10 question types', () => {
     await page.goto(`/s/${setup.slug}`);
     await page.getByRole('button', { name: 'Get Started' }).click();
 
-    // Section 1: Choice Questions
     await dismissSectionHeader(page);
 
-    // Q1: Radio
     await expect(page.getByText('Pick a color')).toBeVisible({ timeout: 3000 });
     await page.getByRole('radio', { name: 'Blue' }).click();
     // Auto-advances
     await expect(page.getByText('Select hobbies')).toBeVisible({ timeout: 3000 });
 
-    // Q2: Checkbox
     await waitForTransition(page);
     await page.getByRole('checkbox', { name: 'Reading' }).click();
     await page.getByRole('checkbox', { name: 'Gaming' }).click();
     await clickNext(page);
 
-    // Q3: Dropdown
     await expect(page.getByText('Choose a country')).toBeVisible({ timeout: 3000 });
     await waitForTransition(page);
     await page.locator('select').selectOption('Germany');
     await clickNext(page);
 
-    // Section 2: Input Questions
     await dismissSectionHeader(page);
 
-    // Q4: Text
     await expect(page.getByText('Your name')).toBeVisible({ timeout: 3000 });
     await page.getByPlaceholder('Enter name').fill('E2E Tester');
     await clickNext(page);
 
-    // Q5: Number
     await expect(page.getByText('Your age')).toBeVisible({ timeout: 3000 });
     await waitForTransition(page);
     await page.locator('input[type="number"]').fill('30');
     await clickNext(page);
 
-    // Q6: Email
     await expect(page.getByText('Your email')).toBeVisible({ timeout: 3000 });
     await page.getByPlaceholder('you@example.com').fill('e2e@test.com');
     await clickNext(page);
 
-    // Q7: Textarea (optional) — skip
     await expect(page.getByText('Tell us more')).toBeVisible({ timeout: 3000 });
     await clickNext(page, 'Skip');
 
-    // Section 3: Scale Questions
     await dismissSectionHeader(page);
 
-    // Q8: Rating — click the 4th star
     await expect(page.getByText('Rate our service')).toBeVisible({ timeout: 3000 });
     await waitForTransition(page);
-    // Rating stars are buttons — click the 4th one
     await page.locator('[data-rating-value="4"]').click();
     await clickNext(page);
 
-    // Q9: NPS — click score 9
     await expect(page.getByText('How likely to recommend?')).toBeVisible({ timeout: 3000 });
     await waitForTransition(page);
     await page.getByLabel('Score 9').click();
     await clickNext(page);
 
-    // Q10: Likert — click Agree
     await expect(page.getByText('I am satisfied')).toBeVisible({ timeout: 3000 });
     await waitForTransition(page);
     await page.getByRole('button', { name: 'Agree', exact: true }).click();
     await clickNext(page, 'Submit');
 
-    // Thank you
     await expect(page.getByText('Thank you!')).toBeVisible({ timeout: 5000 });
   });
 
   test('results contain all question types', async () => {
-    // Submit via API to ensure data
     const resumeRes = await fetch(`${API}/api/s/${setup.slug}/resume`);
     const cookies = resumeRes.headers.get('set-cookie') ?? '';
     const ridMatch = cookies.match(/rid_[^=]+=([^;]+)/);
@@ -270,15 +250,12 @@ test.describe('Full survey with all 10 question types', () => {
   test('results page renders with stats and question results', async ({ page }) => {
     await page.goto(`/results/${setup.surveyId}`);
 
-    // Wait for results to load
     await expect(page.getByText('Total')).toBeVisible({ timeout: 10000 });
     await expect(page.getByText('Completed')).toBeVisible();
     await expect(page.getByText('Completion')).toBeVisible();
 
-    // Question results should render (check for question text as heading in result cards)
     await expect(page.getByRole('heading', { name: 'Pick a color' })).toBeVisible({ timeout: 10000 });
 
-    // Export buttons should be present
     await expect(page.getByRole('button', { name: 'CSV' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'JSON' })).toBeVisible();
   });
@@ -303,7 +280,7 @@ test.describe('Survey duplication', () => {
     expect(dup.status).toBe('draft');
     expect(dup.id).not.toBe(survey.id);
 
-    // Verify the duplicate has sections and questions (retry — DO init is async)
+    // Retry: the duplicated survey's DO initialises asynchronously.
     let data: Record<string, unknown[]> = { sections: [], questions: [] };
     for (let attempt = 0; attempt < 5; attempt++) {
       const res = await fetch(`${API}/api/surveys/${dup.id}`, {
@@ -321,14 +298,11 @@ test.describe('Survey duplication', () => {
     await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Surveys' })).toBeVisible();
 
-    // Count initial surveys
     const initialCards = await page.locator('[class*="card-hover"]').count();
 
-    // Click duplicate on the first survey
     const duplicateBtn = page.locator('button[title="Duplicate"]').first();
     if (await duplicateBtn.isVisible()) {
       await duplicateBtn.click();
-      // Should have one more survey now
       await expect(page.locator('[class*="card-hover"]')).toHaveCount(initialCards + 1, { timeout: 5000 });
     }
   });
@@ -366,7 +340,6 @@ test.describe('Survey with skip logic across question types', () => {
     const survey = await apiPost('/api/surveys', { title: 'Skip Logic Flow Test' });
     const section = await apiPost(`/api/surveys/${survey.id}/sections`, { title: 'Feedback' });
 
-    // Q1: Radio trigger
     const q1 = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
       text: 'Have you used our product?',
       type: 'radio',
@@ -377,7 +350,6 @@ test.describe('Survey with skip logic across question types', () => {
       ],
     });
 
-    // Q2: Rating - only if Q1 = Yes
     await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
       text: 'Rate your experience',
       type: 'rating',
@@ -386,7 +358,6 @@ test.describe('Survey with skip logic across question types', () => {
       conditional: { showIf: { questionId: q1.id, condition: 'equals', value: 'Yes' } },
     });
 
-    // Q3: Text - only if Q1 = No
     await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
       text: 'What prevented you from trying it?',
       type: 'text',
@@ -395,7 +366,6 @@ test.describe('Survey with skip logic across question types', () => {
       conditional: { showIf: { questionId: q1.id, condition: 'equals', value: 'No' } },
     });
 
-    // Q4: NPS - always shown
     await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
       text: 'How likely to recommend?',
       type: 'nps',
@@ -413,19 +383,15 @@ test.describe('Survey with skip logic across question types', () => {
     await page.getByRole('button', { name: 'Get Started' }).click();
     await dismissSectionHeader(page);
 
-    // Q1: select Yes
     await expect(page.getByText('Have you used our product?')).toBeVisible({ timeout: 3000 });
     await page.getByRole('radio', { name: 'Yes' }).click();
 
-    // Should show Q2 (rating), not Q3 (text)
     await expect(page.getByText('Rate your experience')).toBeVisible({ timeout: 3000 });
     await expect(page.getByText('What prevented you from trying it?')).not.toBeVisible();
 
-    // Rate and continue
     await page.locator('[data-rating-value="4"]').click();
     await clickNext(page);
 
-    // Should show Q4 (NPS) - Q3 was skipped
     await expect(page.getByText('How likely to recommend?')).toBeVisible({ timeout: 3000 });
     await page.getByLabel('Score 8').click();
     await clickNext(page, 'Submit');
@@ -438,19 +404,15 @@ test.describe('Survey with skip logic across question types', () => {
     await page.getByRole('button', { name: 'Get Started' }).click();
     await dismissSectionHeader(page);
 
-    // Q1: select No
     await expect(page.getByText('Have you used our product?')).toBeVisible({ timeout: 3000 });
     await page.getByRole('radio', { name: 'No' }).click();
 
-    // Should show Q3 (text), not Q2 (rating)
     await expect(page.getByText('What prevented you from trying it?')).toBeVisible({ timeout: 3000 });
     await expect(page.getByText('Rate your experience')).not.toBeVisible();
 
-    // Fill text and continue
     await page.getByPlaceholder('Tell us why').fill('No time');
     await clickNext(page);
 
-    // Should show Q4 (NPS) - Q2 was skipped
     await expect(page.getByText('How likely to recommend?')).toBeVisible({ timeout: 3000 });
     await page.getByLabel('Score 5').click();
     await clickNext(page, 'Submit');
@@ -493,7 +455,6 @@ test.describe('Survey with skip logic across question types', () => {
     await apiPut(`/api/surveys/${survey.id}`, { slug });
     await apiPut(`/api/surveys/${survey.id}/publish`);
 
-    // Submit two responses via API
     async function submitResponse(answers: Array<{ questionId: string; value: string }>) {
       const resumeRes = await fetch(`${API}/api/s/${slug}/resume`);
       const cookies = resumeRes.headers.get('set-cookie') ?? '';
@@ -523,7 +484,6 @@ test.describe('Survey with skip logic across question types', () => {
       { questionId: qNps.id, value: '5' },
     ]);
 
-    // Check results
     const res = await fetch(`${API}/api/surveys/${survey.id}/results`, {
       headers: getAuthHeaders(),
     });
@@ -539,9 +499,6 @@ test.describe('Survey with skip logic across question types', () => {
   });
 });
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Enter-to-advance keyboard behaviour
-// ──────────────────────────────────────────────────────────────────────────────
 test.describe('Enter key advances on single-line inputs', () => {
   let slug: string;
 
@@ -651,20 +608,16 @@ test.describe('Enter key advances on single-line inputs', () => {
 
 test.describe('Survey builder with new types', () => {
   test('can add all question types in the builder', async ({ page }) => {
-    // Create a survey first
     await page.goto('/');
     await page.getByRole('link', { name: 'New Survey' }).first().click();
-    // Template picker shows — click Blank Survey
     await page.getByRole('button', { name: 'Blank Survey' }).click();
     await page.getByPlaceholder('Survey title...').fill('Builder Types Test');
     await page.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText('Edit Survey')).toBeVisible({ timeout: 5000 });
 
-    // Add section
     await page.getByText('Add section').click();
     await page.getByPlaceholder('e.g., About You').fill('All Types');
 
-    // Add one of each new type using the section's add-question chips (last instance on page)
     const typesToAdd = ['Rating', 'NPS', 'Number', 'Dropdown', 'Likert'];
     for (const type of typesToAdd) {
       // The add-question chips are the last buttons with these names on the page
@@ -672,8 +625,7 @@ test.describe('Survey builder with new types', () => {
       await page.waitForTimeout(300);
     }
 
-    // Verify we have 5 questions (the first was added as empty default when section was created...
-    // actually the section starts empty, so we should have exactly 5)
+    // The new section starts empty, so exactly 5 questions are expected.
     await expect(page.getByText('5 questions', { exact: true })).toBeVisible({ timeout: 3000 });
   });
 });

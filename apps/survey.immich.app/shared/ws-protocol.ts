@@ -1,18 +1,7 @@
 /**
- * Typed WebSocket protocol for per-survey Durable Object communication.
- *
- * This file defines the contract between the frontend WS client and the
- * backend DO WS handler. Both sides import these types for full type safety.
- *
- * Wire format:
- *   Client → Server: { type: "request", requestId, op, data }
- *   Server → Client: { type: "response", requestId, op, data } | { type: "response", requestId, op, error }
- *   Server → Client: { type: "push", event, data }
+ * Typed WebSocket protocol shared by the frontend WS client and the backend DO
+ * WS handler — a change here changes both sides of the wire at once.
  */
-
-// ============================================================
-// Row types (wire format — matches database schema)
-// ============================================================
 
 export interface SurveyRow {
   id: string;
@@ -60,10 +49,6 @@ export interface QuestionRow {
   config: string | null;
 }
 
-// ============================================================
-// Input types (for mutations)
-// ============================================================
-
 export interface UpdateSurveyInput {
   title?: string;
   description?: string;
@@ -103,11 +88,7 @@ export interface CreateQuestionInput {
   config?: Record<string, unknown>;
 }
 
-/**
- * Maximum number of answers accepted in a single submit-answers batch. Shared
- * so the client chunks its flush to match exactly what the server enforces
- * (respondent.service / ws-handler reject any larger batch with a 400).
- */
+/** Server rejects a larger submit-answers batch with a 400, so the client chunks its flush to match. */
 export const BATCH_ANSWER_LIMIT = 20;
 
 export interface UpdateQuestionInput {
@@ -137,10 +118,6 @@ export interface AnswerInput {
   /** Client-measured ms spent on this question before committing. */
   answerMs?: number;
 }
-
-// ============================================================
-// Response payload types
-// ============================================================
 
 export interface SurveyWithDetailsPayload {
   survey: SurveyRow;
@@ -295,22 +272,16 @@ export interface SurveyDefinitionPayload {
   }>;
 }
 
-// ============================================================
-// WS Operations — the full typed API
-// ============================================================
-
 export interface WsOperations {
-  // Survey (read-only via WS; mutations stay HTTP for D1 catalog sync)
+  // Read-only over WS — survey mutations stay on HTTP so the D1 catalog stays in sync.
   'get-survey': { request: Record<string, never>; response: SurveyWithDetailsPayload };
   'export-definition': { request: Record<string, never>; response: SurveyDefinitionPayload };
 
-  // Sections
   'create-section': { request: CreateSectionInput; response: SectionRow };
   'update-section': { request: { id: string } & UpdateSectionInput; response: SectionRow };
   'delete-section': { request: { id: string }; response: Record<string, never> };
   'reorder-sections': { request: { items: ReorderItem[] }; response: Record<string, never> };
 
-  // Questions
   'create-question': {
     request: { sectionId: string } & CreateQuestionInput;
     response: QuestionRow;
@@ -322,7 +293,6 @@ export interface WsOperations {
     response: Record<string, never>;
   };
 
-  // Results
   'get-results': { request: Record<string, never>; response: ResultsPayload };
   'get-live-results': { request: Record<string, never>; response: LiveResultsPayload };
   'get-timeline': { request: { granularity: 'minute' | 'hour' | 'day' }; response: TimelineDataPoint[] };
@@ -337,16 +307,11 @@ export interface WsOperations {
   'delete-respondent': { request: { respondentId: string }; response: Record<string, never> };
   'search-answers': { request: SearchInput; response: SearchResultsPayload };
 
-  // Public respondent
   'get-public-survey': { request: Record<string, never>; response: PublicSurveyPayload };
   resume: { request: Record<string, never>; response: ResumePayload };
   'submit-answers': { request: { answers: AnswerInput[] }; response: Record<string, never> };
   complete: { request: Record<string, never>; response: Record<string, never> };
 }
-
-// ============================================================
-// Push Events — server-initiated messages
-// ============================================================
 
 export interface WsPushEvents {
   counts: { activeViewers: number; activeRespondents: number };
@@ -354,10 +319,6 @@ export interface WsPushEvents {
   results: ResultsPayload;
   analytics: SlowAnalyticsPayload;
 }
-
-// ============================================================
-// Wire format types
-// ============================================================
 
 /** Client → Server */
 export type WsRequestMessage = {
@@ -395,8 +356,6 @@ export type WsPushMessage = {
   };
 }[keyof WsPushEvents];
 
-/** Any message the server can send */
 export type WsServerMessage = WsResponseMessage | WsPushMessage;
 
-/** Any message the client can send */
 export type WsClientMessage = WsRequestMessage;

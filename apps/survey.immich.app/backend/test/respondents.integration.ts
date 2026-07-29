@@ -25,16 +25,13 @@ describe('Respondent Flow', () => {
     expect(res.status).toBe(200);
     const data = (await res.json()) as { isComplete: boolean; answers: Record<string, unknown> };
     expect(data.isComplete).toBe(false);
-    // New respondent cookie is set
     expect(res.headers.get('set-cookie')).toBeTruthy();
   });
 
   it('submits batch answers and completes', async () => {
-    // Get respondent
     const resumeRes = await request(`/api/s/${slug}/resume`);
     const ridCookie = resumeRes.headers.get('set-cookie')?.split(';')[0] ?? '';
 
-    // Submit answers
     const batchRes = await request(`/api/s/${slug}/answers/batch`, {
       method: 'POST',
       cookie: ridCookie,
@@ -48,14 +45,12 @@ describe('Respondent Flow', () => {
     });
     expect(batchRes.status).toBe(204);
 
-    // Complete
     const completeRes = await request(`/api/s/${slug}/complete`, {
       method: 'POST',
       cookie: ridCookie,
     });
     expect(completeRes.status).toBe(204);
 
-    // Resume returns completed
     const resumeAgain = await request(`/api/s/${slug}/resume`, { cookie: ridCookie });
     const data = (await resumeAgain.json()) as { isComplete: boolean };
     expect(data.isComplete).toBe(true);
@@ -112,7 +107,6 @@ describe('Survey Password Protection', () => {
     expect(authRes.status).toBe(204);
     const pwCookie = authRes.headers.get('set-cookie')?.split(';')[0] ?? '';
 
-    // Now can access the survey
     const surveyRes = await request(`/api/s/${slug}`, { cookie: pwCookie });
     const data = (await surveyRes.json()) as { questions: unknown[] };
     expect(data.questions.length).toBe(3);

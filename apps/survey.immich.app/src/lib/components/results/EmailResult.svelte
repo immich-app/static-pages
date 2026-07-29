@@ -153,7 +153,6 @@
   function filterChipClass(key: FilterKind): string {
     const active = filter === key;
     if (!active) return 'border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-300 dark:border-gray-700';
-    // Tone-coloured when active
     switch (key) {
       case 'corporate':
         return 'border-emerald-500/60 bg-emerald-500/10 text-emerald-400';
@@ -173,7 +172,6 @@
   <StatStrip {stats} />
 
   {#if qualityTotal > 0}
-    <!-- Quality split: corporate vs free vs disposable -->
     <div>
       <div
         class="mb-1.5 flex items-center justify-between text-[10px] font-medium tracking-wider text-gray-500 uppercase"
@@ -210,7 +208,6 @@
   {/if}
 
   {#if summary.topDomains.length > 0}
-    <!-- Top domains -->
     <div>
       <div class="mb-2 text-[10px] font-medium tracking-wider text-gray-500 uppercase">Top domains</div>
       <div class="space-y-1.5">
@@ -228,7 +225,6 @@
   {/if}
 
   {#if summary.entries.length > 0}
-    <!-- Filter + search + actions -->
     <div class="space-y-2">
       <div class="flex flex-wrap items-center gap-1.5">
         {#each filters as f (f.key)}
@@ -279,7 +275,6 @@
       </div>
     </div>
 
-    <!-- Email list -->
     <div class="space-y-1">
       {#each visibleEntries as e (e.normalized)}
         <div class="flex items-center gap-2 rounded-md bg-gray-100/60 px-3 py-1.5 text-sm dark:bg-gray-800/60">

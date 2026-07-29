@@ -38,7 +38,6 @@ async function createConditionalSurvey(): Promise<SetupResult> {
   const survey = await apiPost('/api/surveys', { title: 'Conditional Logic Test' });
   const section = await apiPost(`/api/surveys/${survey.id}/sections`, { title: 'Section 1' });
 
-  // Q1: Radio question with Yes/No options
   const q1 = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
     text: 'Do you like testing?',
     type: 'radio',
@@ -49,7 +48,6 @@ async function createConditionalSurvey(): Promise<SetupResult> {
     ],
   });
 
-  // Q2: Text question shown only if Q1 equals "Yes"
   const q2 = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
     text: 'What do you like about testing?',
     type: 'text',
@@ -64,7 +62,6 @@ async function createConditionalSurvey(): Promise<SetupResult> {
     },
   });
 
-  // Q3: Text question shown only if Q1 equals "No"
   const q3 = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
     text: 'What would make testing better?',
     type: 'text',
@@ -79,7 +76,6 @@ async function createConditionalSurvey(): Promise<SetupResult> {
     },
   });
 
-  // Q4: Unconditional text question
   const q4 = await apiPost(`/api/surveys/${survey.id}/sections/${section.id}/questions`, {
     text: 'Any final thoughts?',
     type: 'text',
@@ -109,15 +105,13 @@ test.describe.serial('Conditional skip logic', () => {
     await page.goto(`/s/${setup.slug}`);
     await page.getByRole('button', { name: 'Get Started' }).click();
 
-    // Dismiss section header
     await dismissSectionHeader(page);
     await waitForTransition(page);
 
-    // Q1: Radio - select "Yes"
     await expect(page.getByText('Do you like testing?')).toBeVisible({ timeout: 3000 });
     await page.getByRole('radio', { name: 'Yes' }).click();
 
-    // Radio auto-advances -> Q2 should appear (conditional: showIf Q1 equals "Yes")
+    // Radio auto-advances, so no Next click is needed here.
     await expect(page.getByText('What do you like about testing?')).toBeVisible({ timeout: 3000 });
     await page.getByPlaceholder('Tell us more').fill('Everything!');
     await waitForTransition(page);
@@ -126,10 +120,8 @@ test.describe.serial('Conditional skip logic', () => {
       .first()
       .click();
 
-    // Q3 should be skipped -> Q4 should appear
     await expect(page.getByText('Any final thoughts?')).toBeVisible({ timeout: 3000 });
 
-    // Q3 should not be visible (it was skipped)
     await expect(page.getByText('What would make testing better?')).not.toBeVisible();
   });
 
@@ -137,15 +129,13 @@ test.describe.serial('Conditional skip logic', () => {
     await page.goto(`/s/${setup.slug}`);
     await page.getByRole('button', { name: 'Get Started' }).click();
 
-    // Dismiss section header
     await dismissSectionHeader(page);
     await waitForTransition(page);
 
-    // Q1: Radio - select "No"
     await expect(page.getByText('Do you like testing?')).toBeVisible({ timeout: 3000 });
     await page.getByRole('radio', { name: 'No' }).click();
 
-    // Radio auto-advances -> Q2 should be skipped -> Q3 should appear (conditional: showIf Q1 equals "No")
+    // Radio auto-advances, so no Next click is needed here.
     await expect(page.getByText('What would make testing better?')).toBeVisible({ timeout: 3000 });
     await page.getByPlaceholder('Your suggestions').fill('More automation');
     await waitForTransition(page);
@@ -154,10 +144,8 @@ test.describe.serial('Conditional skip logic', () => {
       .first()
       .click();
 
-    // Q4 should appear
     await expect(page.getByText('Any final thoughts?')).toBeVisible({ timeout: 3000 });
 
-    // Q2 should not be visible (it was skipped)
     await expect(page.getByText('What do you like about testing?')).not.toBeVisible();
   });
 });

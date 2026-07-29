@@ -1,25 +1,19 @@
 <script lang="ts">
   /**
-   * Lightweight horizontal bar — pure CSS, no Chart.js.
-   * Far faster to render than Chart.js for simple per-row bars and gives us
-   * much finer control over the label layout (label + count + % on one row,
-   * bar directly underneath).
+   * Pure CSS rather than Chart.js: faster for simple per-row bars, and it lets us
+   * put label + count + % on one row with the bar directly underneath.
    */
   interface BarRow {
     label: string;
     value: number;
     percent: number;
-    /** Optional colour override (defaults to primary) */
     colorClass?: string;
-    /** Show this row with emphasised styling (e.g. top answer) */
     highlight?: boolean;
   }
 
   interface Props {
     rows: BarRow[];
-    /** Display label suffix for count (e.g. "respondents", "responses") */
     countLabel?: string;
-    /** Max width of the bar relative to the widest value (default 100% = scaled to max) */
     scaleTo?: 'max' | 'total';
   }
 

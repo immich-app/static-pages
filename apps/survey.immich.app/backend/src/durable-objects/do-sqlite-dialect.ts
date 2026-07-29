@@ -1,10 +1,7 @@
 /**
- * Kysely dialect adapter for Cloudflare Durable Object SQLite storage.
- *
- * This allows the DO to reuse the same repositories and services as the
- * main API worker — just backed by DO SQLite instead of D1.
- *
- * Modeled after @immich/kysely-adapter-cloudflare (CloudflareD1Dialect).
+ * Kysely dialect over DO SQLite so the DO can reuse the same repositories and
+ * services as the D1-backed API worker. Modeled after CloudflareD1Dialect in
+ * @immich/kysely-adapter-cloudflare.
  */
 
 import {

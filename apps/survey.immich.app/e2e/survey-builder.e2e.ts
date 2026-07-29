@@ -8,7 +8,6 @@ test.beforeAll(async () => {
 });
 
 test.beforeEach(async ({ context }) => {
-  // Set the session cookie so page requests are authenticated
   const BASE = process.env.BASE_URL || 'http://localhost:5173';
   const { name, value } = parseCookie(cookie);
   await context.addCookies([{ name, value, url: BASE }]);
@@ -81,14 +80,10 @@ async function createSimpleSurvey(opts?: {
   return { surveyId: survey.id, slug, sectionId: section.id, questionIds };
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 1. Create page with survey templates
-// ──────────────────────────────────────────────────────────────────────────────
 test.describe('Create page with survey templates', () => {
   test('template cards are visible and clicking one pre-populates the builder', async ({ page }) => {
     await page.goto('/create');
 
-    // Verify template cards are visible
     await expect(page.getByText('Customer Satisfaction')).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('Event Feedback')).toBeVisible();
     await expect(page.getByText('Employee Engagement')).toBeVisible();
@@ -99,75 +94,56 @@ test.describe('Create page with survey templates', () => {
     await page.goto('/create');
     await expect(page.getByText('Customer Satisfaction')).toBeVisible({ timeout: 5000 });
 
-    // Click the Customer Satisfaction template
     await page.getByText('Customer Satisfaction').first().click();
     await waitForTransition(page);
 
-    // Verify builder is shown with pre-populated title
     await expect(page.getByText('Create Survey')).toBeVisible({ timeout: 5000 });
     const titleInput = page.locator('input[placeholder="Survey title..."]');
     await expect(titleInput).toHaveValue('Customer Satisfaction');
 
-    // Save the survey
     await page.getByRole('button', { name: 'Save' }).click();
 
-    // Verify redirect to /edit/{id}
     await page.waitForURL(/\/edit\/[a-f0-9-]+/, { timeout: 10000 });
     await expect(page.getByText('Edit Survey')).toBeVisible({ timeout: 5000 });
 
-    // Extract the survey ID from the URL
     const url = page.url();
     const surveyId = url.match(/\/edit\/([a-f0-9-]+)/)?.[1];
     expect(surveyId).toBeTruthy();
 
-    // Verify via API that sections and questions were created
     const data = await apiGet(`/api/surveys/${surveyId}`);
     expect(data.sections.length).toBeGreaterThanOrEqual(2);
     expect(data.questions.length).toBeGreaterThanOrEqual(3);
   });
 });
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 2. Create page saves sections (blank survey)
-// ──────────────────────────────────────────────────────────────────────────────
 test.describe('Create page saves sections (blank survey)', () => {
   test('creates a blank survey and adds sections on edit page', async ({ page }) => {
     await page.goto('/create');
     await expect(page.getByText('Blank Survey')).toBeVisible({ timeout: 5000 });
 
-    // Click Blank Survey
     await page.getByText('Blank Survey').click();
     await waitForTransition(page);
 
-    // Fill in title
     await page.locator('input[placeholder="Survey title..."]').fill('Blank Builder E2E');
 
-    // Save - this creates the survey and redirects to /edit/{id}
     await page.getByRole('button', { name: 'Save' }).click();
 
-    // Verify redirect to /edit/{id}
     await page.waitForURL(/\/edit\/[a-f0-9-]+/, { timeout: 10000 });
     await expect(page.getByText('Edit Survey')).toBeVisible({ timeout: 5000 });
 
-    // Now add a section on the edit page
     await page.getByText('Add section').click();
     await waitForTransition(page);
 
-    // Fill section title
     await page.getByPlaceholder('e.g., About You').fill('Demo Section');
 
-    // Add a Single Choice question
     await page.getByRole('button', { name: 'Single Choice' }).last().click();
     await waitForTransition(page);
 
-    // Fill in question text
     await page.getByPlaceholder('What would you like to ask?').fill('Favorite fruit?');
 
-    // Save on the edit page
     await page.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText('Changes saved')).toBeVisible({ timeout: 5000 });
 
-    // Extract survey ID and verify via API
     const surveyId = page.url().match(/\/edit\/([a-f0-9-]+)/)?.[1];
     expect(surveyId).toBeTruthy();
 
@@ -179,9 +155,6 @@ test.describe('Create page saves sections (blank survey)', () => {
   });
 });
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 3. Preview mode
-// ──────────────────────────────────────────────────────────────────────────────
 test.describe('Preview mode', () => {
   let setup: SurveySetup;
 
@@ -193,42 +166,31 @@ test.describe('Preview mode', () => {
     await page.goto(`/edit/${setup.surveyId}`);
     await expect(page.getByText('Edit Survey')).toBeVisible({ timeout: 5000 });
 
-    // Click Preview button
     await page.getByRole('button', { name: 'Preview' }).click();
     await waitForTransition(page);
 
-    // Verify preview modal is open - scope all interactions to it
     const previewModal = page.locator('.fixed.inset-0.z-50');
     await expect(previewModal).toBeVisible({ timeout: 3000 });
 
-    // Look for Get Started button inside preview
     const getStartedBtn = previewModal.getByRole('button', { name: 'Get Started' });
     await expect(getStartedBtn).toBeVisible({ timeout: 3000 });
 
-    // Click Get Started
     await getStartedBtn.click();
     await waitForTransition(page);
 
-    // Dismiss section header in preview
     const continueBtn = previewModal.getByRole('button', { name: 'Continue' });
     await continueBtn.click();
     await waitForTransition(page);
 
-    // Verify the question text appears inside the preview modal
     await expect(previewModal.getByText('Question 1')).toBeVisible({ timeout: 3000 });
 
-    // Close the preview by pressing Escape
     await page.keyboard.press('Escape');
     await waitForTransition(page);
 
-    // Verify we're back to the editor
     await expect(page.getByText('Edit Survey')).toBeVisible({ timeout: 3000 });
   });
 });
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 4. Inline validation errors
-// ──────────────────────────────────────────────────────────────────────────────
 test.describe('Inline validation errors', () => {
   let setup: SurveySetup;
 
@@ -245,28 +207,21 @@ test.describe('Inline validation errors', () => {
     await page.getByRole('button', { name: 'Get Started' }).click();
     await waitForTransition(page);
 
-    // Dismiss section header
     await dismissSectionHeader(page);
     await waitForTransition(page);
 
-    // Verify question is visible
     await expect(page.getByRole('heading', { name: 'Question 1' })).toBeVisible({ timeout: 3000 });
 
-    // Click Submit/Next without answering
     await page
       .getByRole('button', { name: /Next|Submit/ })
       .first()
       .click();
     await waitForTransition(page);
 
-    // Verify validation error
     await expect(page.getByRole('alert').getByText('This question is required')).toBeVisible({ timeout: 3000 });
   });
 });
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 5. Keyboard navigation
-// ──────────────────────────────────────────────────────────────────────────────
 test.describe('Keyboard navigation', () => {
   let setup: SurveySetup;
 
@@ -284,14 +239,11 @@ test.describe('Keyboard navigation', () => {
     await page.getByRole('button', { name: 'Get Started' }).click();
     await waitForTransition(page);
 
-    // Dismiss section header
     await dismissSectionHeader(page);
     await waitForTransition(page);
 
-    // Verify question is visible
     await expect(page.getByRole('heading', { name: 'Question 1' })).toBeVisible({ timeout: 3000 });
 
-    // Tab to focus into the radio group area, then press ArrowDown
     await page.keyboard.press('Tab');
     await page.keyboard.press('ArrowDown');
     await waitForTransition(page);
@@ -301,19 +253,15 @@ test.describe('Keyboard navigation', () => {
   });
 });
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 6. Survey scheduling and limits
-// ──────────────────────────────────────────────────────────────────────────────
 test.describe('Survey scheduling and limits', () => {
   test('closed survey blocks responses via API', async () => {
-    // Create a survey with a past close date
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const setup = await createSimpleSurvey({
       title: 'Closed Survey Test',
-      closesAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+      closesAt: oneDayAgo,
       publish: true,
     });
 
-    // Try to resume - should get an error about survey being closed
     const res = await apiRawGet(`/api/s/${setup.slug}/resume`);
     expect(res.status).toBe(403);
     const body = await res.json();
@@ -327,7 +275,6 @@ test.describe('Survey scheduling and limits', () => {
       publish: true,
     });
 
-    // First response: resume, submit answers, complete
     const resume1Res = await apiRawGet(`/api/s/${setup.slug}/resume`);
     expect(resume1Res.status).toBe(200);
     const cookies1 = resume1Res.headers.get('set-cookie') ?? '';
@@ -335,20 +282,17 @@ test.describe('Survey scheduling and limits', () => {
     const rid1 = ridMatch1?.[1];
     expect(rid1).toBeTruthy();
 
-    // Submit answer
     await fetch(`${API}/api/s/${setup.slug}/answers/batch`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Cookie: `rid_${setup.slug}=${rid1}` },
       body: JSON.stringify({ answers: [{ questionId: setup.questionIds[0], value: 'Alpha' }] }),
     });
 
-    // Complete
     await fetch(`${API}/api/s/${setup.slug}/complete`, {
       method: 'POST',
       headers: { Cookie: `rid_${setup.slug}=${rid1}` },
     });
 
-    // Second response: should be blocked
     const resume2Res = await apiRawGet(`/api/s/${setup.slug}/resume`);
     expect(resume2Res.status).toBe(403);
     const body2 = await resume2Res.json();
@@ -356,9 +300,6 @@ test.describe('Survey scheduling and limits', () => {
   });
 });
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 7. DnD save (question reordering via API)
-// ──────────────────────────────────────────────────────────────────────────────
 test.describe('Question reordering via builder', () => {
   let setup: SurveySetup;
 
@@ -373,25 +314,20 @@ test.describe('Question reordering via builder', () => {
     await page.goto(`/edit/${setup.surveyId}`);
     await expect(page.getByText('Edit Survey')).toBeVisible({ timeout: 5000 });
 
-    // The page should show 3 questions
     await expect(page.getByText('3 questions').first()).toBeVisible({ timeout: 3000 });
 
-    // Expand the last question (Question 3) by clicking on its collapsed row
     await page.getByText('Question 3').click();
     await waitForTransition(page);
 
-    // Use the move up button within the expanded question editor
     const expandedQuestion = page.locator('[data-question-index="0-2"]');
     const moveUpButton = expandedQuestion.locator('button[title="Move up"]');
     await moveUpButton.click();
     await waitForTransition(page);
 
-    // Save
     await page.getByRole('button', { name: 'Save' }).click();
     await waitForTransition(page);
     await expect(page.getByText('Changes saved')).toBeVisible({ timeout: 5000 });
 
-    // Verify via API that sort order changed
     const data = await apiGet(`/api/surveys/${setup.surveyId}`);
     const questions = data.questions.sort(
       (a: Record<string, number>, b: Record<string, number>) => a.sort_order - b.sort_order,
@@ -402,9 +338,6 @@ test.describe('Question reordering via builder', () => {
   });
 });
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 8. Question templates in builder
-// ──────────────────────────────────────────────────────────────────────────────
 test.describe('Question templates in builder', () => {
   let surveyId: string;
 
@@ -422,30 +355,24 @@ test.describe('Question templates in builder', () => {
     await page.goto(`/edit/${surveyId}`);
     await expect(page.getByText('Edit Survey')).toBeVisible({ timeout: 5000 });
 
-    // Click the Template button in the add-question chip area
     await page.getByRole('button', { name: 'Template' }).click();
     await waitForTransition(page);
 
-    // Verify template dropdown shows categories — use exact match for category headers
+    // Category headers need exact match so they don't match other text on the page.
     const dropdown = page.locator('.absolute.top-full');
     await expect(dropdown).toBeVisible({ timeout: 3000 });
     await expect(dropdown.getByText('Feedback', { exact: true })).toBeVisible();
     await expect(dropdown.getByText('Demographics', { exact: true })).toBeVisible();
 
-    // Click "Net Promoter Score" template
     await dropdown.getByRole('button', { name: 'Net Promoter Score' }).click();
     await waitForTransition(page);
 
-    // Verify the NPS question was added with pre-filled text
     await expect(page.getByText('How likely are you to recommend us to a friend or colleague?')).toBeVisible({
       timeout: 3000,
     });
   });
 });
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 9. Bulk option paste
-// ──────────────────────────────────────────────────────────────────────────────
 test.describe('Bulk option paste', () => {
   let surveyId: string;
 
@@ -467,31 +394,24 @@ test.describe('Bulk option paste', () => {
     await page.goto(`/edit/${surveyId}`);
     await expect(page.getByText('Edit Survey')).toBeVisible({ timeout: 5000 });
 
-    // Expand the question by clicking on it
     await page.getByText('Paste Q').click();
     await waitForTransition(page);
 
-    // Click "Paste options" button
     await page.getByRole('button', { name: 'Paste options' }).click();
     await waitForTransition(page);
 
-    // Verify the modal is visible using the heading specifically
     await expect(page.getByRole('heading', { name: 'Paste Options' })).toBeVisible({ timeout: 3000 });
 
-    // Target the textarea inside the modal (the one with the multi-line placeholder)
     const modal = page.locator('.fixed.inset-0.z-50');
     const textarea = modal.locator('textarea');
     await textarea.fill('Red\nGreen\nBlue\nYellow');
 
-    // Verify option count
     await expect(modal.getByText('4 options')).toBeVisible({ timeout: 3000 });
 
-    // Click Apply
     await modal.getByRole('button', { name: 'Apply' }).click();
     await waitForTransition(page);
 
-    // Verify the options were replaced in the editor (check for option labels in inputs)
-    // The OptionListEditor renders inputs with the option values
+    // OptionListEditor renders one input per option.
     const optionInputs = page.locator('.space-y-1\\.5 input[placeholder="Option label..."]');
     await expect(optionInputs).toHaveCount(4, { timeout: 3000 });
     await expect(optionInputs.nth(0)).toHaveValue('Red');
@@ -501,9 +421,6 @@ test.describe('Bulk option paste', () => {
   });
 });
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 10. Undo/redo
-// ──────────────────────────────────────────────────────────────────────────────
 test.describe('Undo/redo', () => {
   let surveyId: string;
 
@@ -516,14 +433,12 @@ test.describe('Undo/redo', () => {
     await page.goto(`/edit/${surveyId}`);
     await expect(page.getByText('Edit Survey')).toBeVisible({ timeout: 5000 });
 
-    // Verify initial title
     const titleInput = page.locator('input[placeholder="Survey title..."]');
     await expect(titleInput).toHaveValue('Undo Redo Test');
 
     // Wait for initial snapshot to be taken (debounce timer is 500ms)
     await page.waitForTimeout(800);
 
-    // Change the title
     await titleInput.fill('Changed Title');
     await expect(titleInput).toHaveValue('Changed Title');
 
@@ -539,17 +454,12 @@ test.describe('Undo/redo', () => {
     await page.keyboard.press(`${modifier}+z`);
     await waitForTransition(page);
 
-    // Verify the title reverted
     await expect(titleInput).toHaveValue('Undo Redo Test', { timeout: 3000 });
   });
 });
 
-// ──────────────────────────────────────────────────────────────────────────────
-// 11. Skip logic builder UI
-// ──────────────────────────────────────────────────────────────────────────────
 test.describe('Skip logic builder UI', () => {
   test('skip logic dropdown shows preceding questions from the same section', async ({ page }) => {
-    // Create a survey with 3 questions via API
     const setup = await createSimpleSurvey({
       title: 'Skip Logic Builder Test',
       questionCount: 3,
@@ -558,24 +468,19 @@ test.describe('Skip logic builder UI', () => {
     await page.goto(`/edit/${setup.surveyId}`);
     await expect(page.getByText('Edit Survey')).toBeVisible({ timeout: 5000 });
 
-    // Expand the third question (index 2) by clicking its header
     await page.getByRole('button', { name: /Question 3/ }).click();
     await waitForTransition(page);
 
-    // Open the skip logic section
     await page.getByText('Skip Logic').click();
     await waitForTransition(page);
 
-    // Should NOT show "No preceding questions" since Q3 has Q1 and Q2 before it
     await expect(page.getByText('No preceding questions')).not.toBeVisible();
 
-    // Should show a "Source question" select with the preceding questions
     await expect(page.getByText('Source question')).toBeVisible({ timeout: 3000 });
     const sourceLabel = page.getByText('Source question');
     const select = sourceLabel.locator('..').locator('select');
     await expect(select).toBeVisible();
 
-    // The select should contain Q1 and Q2 as options
     await expect(select.locator('option', { hasText: 'Q1:' })).toBeAttached();
     await expect(select.locator('option', { hasText: 'Q2:' })).toBeAttached();
   });
@@ -589,15 +494,12 @@ test.describe('Skip logic builder UI', () => {
     await page.goto(`/edit/${setup.surveyId}`);
     await expect(page.getByText('Edit Survey')).toBeVisible({ timeout: 5000 });
 
-    // Expand the first question
     await page.getByRole('button', { name: /Question 1/ }).click();
     await waitForTransition(page);
 
-    // Open skip logic
     await page.getByText('Skip Logic').click();
     await waitForTransition(page);
 
-    // First question should show the "no preceding questions" message
     await expect(page.getByText('No preceding questions')).toBeVisible({ timeout: 3000 });
   });
 });

@@ -32,10 +32,8 @@ export default [
     },
   },
   {
-    // Disable a few rules that are noisy (or meaningless) on the backend /
-    // e2e code where the frontend-centric defaults don't apply, but keep
-    // the core TS checks on. This lets us catch obvious mistakes in those
-    // trees without needing a full secondary config.
+    // Frontend-centric defaults don't apply to the backend/e2e trees; keep
+    // the core TS checks and drop the rest rather than add a second config.
     files: ['backend/**/*.ts', 'e2e/**/*.ts'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',

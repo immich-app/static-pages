@@ -1,13 +1,11 @@
 import type { Kysely } from 'kysely';
 import type { Database } from '../db';
 
-// Tables that must always be present in a backup
 const REQUIRED_TABLES = ['surveys', 'tags', 'survey_tags', 'audit_log', 'admin_credentials'] as const;
 
 /**
- * Expected columns per table. Restore rejects any row that's missing a
- * required column or carries an unknown one — prevents a malformed or
- * malicious backup from silently corrupting the live schema.
+ * Column allowlist per table: restore rejects any row carrying a column that
+ * isn't listed here, so a malformed or malicious backup can't reach the schema.
  */
 const TABLE_COLUMNS: Record<string, readonly string[]> = {
   surveys: [
@@ -140,7 +138,6 @@ export class BackupService {
       throw new Error('Backup data is missing');
     }
 
-    // Validate required tables
     for (const table of REQUIRED_TABLES) {
       if (!Array.isArray(backup.data[table])) {
         throw new Error(`Backup is missing required table: ${table}`);
@@ -161,11 +158,9 @@ export class BackupService {
       ['admin_credentials', 'admin_credentials'],
     ];
 
-    // Validate every row up-front — any schema violation rejects the whole
-    // restore before we touch the live DB. This matters because on D1 the
-    // Kysely `transaction()` wrapper isn't a true cross-table transaction
-    // (D1 can't BEGIN/COMMIT over the HTTP binding), so a mid-restore failure
-    // would otherwise leave the DB half-wiped.
+    // Validate every row before touching the live DB: on D1 the Kysely
+    // `transaction()` wrapper isn't a real transaction (no BEGIN/COMMIT over
+    // the HTTP binding), so a mid-restore failure would leave it half-wiped.
     const validatedRows: Record<string, Record<string, unknown>[]> = {};
     for (const [key, table] of tables) {
       const rows = (backup.data as Record<string, unknown[]>)[key];
@@ -188,7 +183,7 @@ export class BackupService {
       await trx.deleteFrom('audit_log').execute();
       await trx.deleteFrom('admin_credentials').execute();
 
-      // Insert in FK order — required tables first, then optional if present
+      // Insert in FK order
       for (const [key, table] of tables) {
         const rows = validatedRows[key];
         for (const row of rows) {

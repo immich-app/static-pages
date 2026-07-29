@@ -29,7 +29,6 @@
     return Math.max(...p95s) * 1.05;
   });
 
-  /** Convert a ms value to a 0–100 percentage of the x-axis. */
   function xPct(ms: number | null): number {
     if (ms === null || !Number.isFinite(ms) || xMax <= 0) return 0;
     return Math.max(0, Math.min(100, (ms / xMax) * 100));
@@ -83,7 +82,6 @@
                 n={row.sampleSize} · median {formatDuration(row.medianMs)}
               </span>
             </div>
-            <!-- Track + box plot. All sub-elements are percentage-positioned -->
             <div class="relative h-5 rounded bg-gray-800/30">
               {#if row.sampleSize > 0}
                 {@const p5 = xPct(row.p5Ms)}
@@ -91,20 +89,16 @@
                 {@const p50 = xPct(row.medianMs)}
                 {@const p75 = xPct(row.p75Ms)}
                 {@const p95 = xPct(row.p95Ms)}
-                <!-- Whisker line (p5 → p95) -->
                 <div
                   class="absolute top-1/2 h-px -translate-y-1/2 bg-purple-400/50"
                   style="left: {p5}%; width: {Math.max(0, p95 - p5)}%"
                 ></div>
-                <!-- Whisker caps at p5 and p95 -->
                 <div class="absolute top-1/2 h-2 w-px -translate-y-1/2 bg-purple-400/50" style="left: {p5}%"></div>
                 <div class="absolute top-1/2 h-2 w-px -translate-y-1/2 bg-purple-400/50" style="left: {p95}%"></div>
-                <!-- IQR box (p25 → p75) -->
                 <div
                   class="absolute top-1/2 h-3 -translate-y-1/2 rounded bg-purple-500/60"
                   style="left: {p25}%; width: {Math.max(0.5, p75 - p25)}%"
                 ></div>
-                <!-- Median tick -->
                 <div
                   class="absolute top-1/2 h-4 w-0.5 -translate-y-1/2 bg-white dark:bg-gray-100"
                   style="left: {p50}%"
@@ -120,7 +114,6 @@
       {/each}
     </div>
 
-    <!-- X-axis ticks -->
     <div class="relative mt-2 ml-9 h-4 sm:mr-20">
       <div class="absolute top-0 right-0 left-0 h-px bg-gray-700"></div>
       {#each ticks as t (t.ms)}

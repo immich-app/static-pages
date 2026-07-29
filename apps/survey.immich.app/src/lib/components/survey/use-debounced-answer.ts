@@ -1,12 +1,9 @@
 import { getContext, onDestroy } from 'svelte';
 
 /**
- * Creates a debounced answer handler for text-like question components.
- *
- * On each keystroke, clears the previous timer and starts a new 300ms one.
- * Registers with the survey loader's pre-flush hook (via Svelte context) so
- * that `beforeunload` flushes the pending value into the answer buffer before
- * the sendBeacon fires. Also flushes on component destroy (normal navigation).
+ * Registers with the survey loader's pre-flush hook (via Svelte context) so a
+ * pending value lands in the answer buffer before `beforeunload` fires its
+ * sendBeacon; also flushes on destroy for normal navigation.
  */
 export function useDebouncedAnswer(
   getLatestValue: () => string,
@@ -38,7 +35,6 @@ export function useDebouncedAnswer(
     }, 300);
   }
 
-  // Register so beforeunload can flush us before the beacon fires
   ctx?.registerPreFlush(flush);
 
   onDestroy(() => {

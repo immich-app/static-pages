@@ -5,7 +5,6 @@ import type { AppContext } from '../config';
 import { ServiceError } from '../services/errors';
 import { getCookie } from '../cookie';
 
-// Extend request with user info
 export interface AuthenticatedRequest extends IRequest {
   user?: UserInfo;
 }
@@ -15,12 +14,10 @@ export function authMiddleware(ctx: AppContext): (request: AuthenticatedRequest)
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // Skip auth for public routes
     if (path.startsWith('/api/s/') || path.startsWith('/api/auth/') || path.startsWith('/api/t/')) {
       return;
     }
 
-    // All other /api/ routes require auth
     if (!path.startsWith('/api/')) return;
 
     const token = getCookie(request, SESSION_COOKIE_NAME);

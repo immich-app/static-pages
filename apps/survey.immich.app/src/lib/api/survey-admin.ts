@@ -75,11 +75,10 @@ export async function updateSurvey(
     password?: string | null;
   },
 ): Promise<Survey> {
-  // Filter out undefined keys so we only send fields the user explicitly set
-  const filtered = Object.fromEntries(Object.entries(input).filter(([, v]) => v !== undefined));
+  const explicitlySetFields = Object.fromEntries(Object.entries(input).filter(([, v]) => v !== undefined));
   const data = await request<Record<string, unknown>>(`/api/surveys/${id}`, {
     method: 'PUT',
-    body: JSON.stringify(filtered),
+    body: JSON.stringify(explicitlySetFields),
   });
   return surveyFromApi(data);
 }

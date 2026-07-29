@@ -1,13 +1,8 @@
 /**
- * Shared command handler for operations that are identical between the DO's HTTP
- * fallback path and the WebSocket message handler.
+ * Commands shared by the DO's HTTP fallback path and its WebSocket handler.
  *
- * Each command calls the appropriate service method, handles cache invalidation,
- * and returns the raw result. Transport-specific concerns (Response wrapping,
- * WS message framing) are handled by the callers.
- *
- * Returns `undefined` for operations with no response body (deletes, reorders).
- * Returns `null` if the operation is not recognized (caller should handle it).
+ * Returns `undefined` for operations with no response body, and `null` when the op
+ * is unrecognized — the declared `unknown | null` return type can't express either.
  */
 
 import type { SurveyService } from '../services/survey.service';
@@ -25,7 +20,6 @@ export async function execute(op: string, data: Record<string, unknown>, ctx: Co
   const surveyId = ctx.cache.survey.id;
 
   switch (op) {
-    // ---- Sections ----
     case 'create-section': {
       const result = await ctx.surveyService.createSection(surveyId, data as { title: string; description?: string });
       ctx.cache.invalidateSurvey();
@@ -51,7 +45,6 @@ export async function execute(op: string, data: Record<string, unknown>, ctx: Co
       return undefined;
     }
 
-    // ---- Questions ----
     case 'create-question': {
       const { sectionId, ...input } = data as { sectionId: string; [key: string]: unknown };
       const result = await ctx.surveyService.createQuestion(sectionId, input as any);
@@ -78,7 +71,6 @@ export async function execute(op: string, data: Record<string, unknown>, ctx: Co
       return undefined;
     }
 
-    // ---- Results ----
     case 'get-results':
       return ctx.respondentService.getResults(surveyId);
 
@@ -125,7 +117,6 @@ export async function execute(op: string, data: Record<string, unknown>, ctx: Co
       });
     }
 
-    // ---- Definition ----
     case 'export-definition':
       return ctx.surveyService.exportDefinition(surveyId);
 

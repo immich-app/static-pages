@@ -53,10 +53,8 @@
 
   async function handleNext() {
     if (!question) return;
-    // Commit any pending debounced text input (Enter/Next can fire within the
-    // 300ms debounce window) and let the flushed value propagate to the `answer`
-    // prop before validating — otherwise we'd validate the stale pre-debounce
-    // value and wrongly block a just-typed valid answer.
+    // Enter/Next can fire inside the 300ms debounce window: flush first and let
+    // the value reach the `answer` prop, or we validate the stale one.
     preFlush?.flushPending?.();
     await tick();
     const error = validateAnswer(question, answer?.value ?? '', answer?.otherText);
@@ -69,17 +67,13 @@
     onNext();
   }
 
+  const TAGS_WITH_NATIVE_ENTER_BEHAVIOUR = new Set(['TEXTAREA', 'BUTTON', 'A']);
+
   function handleKeydown(e: KeyboardEvent) {
     if (e.key !== 'Enter' || e.shiftKey) return;
     const target = e.target as HTMLElement | null;
     if (!target) return;
-    // Textareas keep their native behaviour (newline on Enter).
-    if (target.tagName === 'TEXTAREA') return;
-    // Buttons and links: let their native activation run instead (Next, Back,
-    // choice toggles, etc. all work via Enter that way).
-    if (target.tagName === 'BUTTON' || target.tagName === 'A') return;
-    // Everything else — text/email/number/tel/url/search/password and selects
-    // — advances to the next question.
+    if (TAGS_WITH_NATIVE_ENTER_BEHAVIOUR.has(target.tagName)) return;
     e.preventDefault();
     handleNext();
   }

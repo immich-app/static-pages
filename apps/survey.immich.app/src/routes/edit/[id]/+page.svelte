@@ -24,7 +24,6 @@
       allQuestions = data.questions;
       sections = sectionsFromApi(data.sections, data.questions);
 
-      // Establish WS connection for editor operations (section/question CRUD)
       if (survey.slug) {
         wsClient = createSurveyWsClient(survey.slug, 'editor');
         registerWsClient(surveyId, wsClient);
@@ -68,7 +67,6 @@
     try {
       await saveSections(survey.id, sections, newSections, allQuestions);
 
-      // Refresh data
       const data = await getSurvey(survey.id);
       survey = data.survey;
       allQuestions = data.questions;
