@@ -1,0 +1,140 @@
+@import 'tailwindcss';
+@import '@immich/ui/theme/default.css';
+@import '$common/theme/theme.css';
+@source '../../node_modules/@immich/ui/dist';
+@source '../../../../common';
+
+@theme inline {
+  --color-immich-primary: rgb(var(--immich-primary));
+  --color-immich-primary-10: rgb(var(--immich-primary) / 0.1);
+  --color-immich-primary-5: rgb(var(--immich-primary) / 0.05);
+}
+
+/* Prevent double-tap zoom on mobile for survey response pages */
+button,
+select,
+[role='radio'],
+[role='checkbox'] {
+  touch-action: manipulation;
+}
+
+/* Visible focus indicators for keyboard navigation */
+:focus-visible {
+  outline: 2px solid rgb(var(--immich-primary));
+  outline-offset: 2px;
+}
+
+/* Screen reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Staggered fade-in for page content */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Toast slide-in */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Status dot pulse for published surveys */
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-in {
+    animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .animate-in-delay-1 {
+    animation-delay: 60ms;
+  }
+  .animate-in-delay-2 {
+    animation-delay: 120ms;
+  }
+  .animate-in-delay-3 {
+    animation-delay: 180ms;
+  }
+  .animate-in-delay-4 {
+    animation-delay: 240ms;
+  }
+
+  .toast-in {
+    animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .status-published::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    margin-right: 6px;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-in,
+  .toast-in {
+    animation: none;
+  }
+
+  .status-published::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    margin-right: 6px;
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Subtle card hover lift */
+.card-hover {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+  border-color: rgb(var(--immich-primary) / 0.4);
+  box-shadow:
+    0 0 0 1px rgb(var(--immich-primary) / 0.1),
+    0 4px 16px rgb(0 0 0 / 0.1);
+}

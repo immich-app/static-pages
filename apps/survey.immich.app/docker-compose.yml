@@ -1,0 +1,50 @@
+services:
+  survey:
+    build: .
+    ports:
+      - '${PORT:-3000}:3000'
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-/data/survey.db}
+      # Required — fail fast at `docker compose up` if unset rather than booting
+      # with empty secrets (which mint/verify invalid session & password tokens).
+      - SESSION_SECRET=${SESSION_SECRET:?SESSION_SECRET is required}
+      - PASSWORD_SECRET=${PASSWORD_SECRET:?PASSWORD_SECRET is required}
+      - COOKIE_SECURE=${COOKIE_SECURE:-false}
+      - OIDC_ISSUER=${OIDC_ISSUER:-}
+      - OIDC_CLIENT_ID=${OIDC_CLIENT_ID:-}
+      - OIDC_CLIENT_SECRET=${OIDC_CLIENT_SECRET:-}
+      - OIDC_REDIRECT_URI=${OIDC_REDIRECT_URI:-}
+      - OIDC_ROLE_CLAIM=${OIDC_ROLE_CLAIM:-groups}
+      - OIDC_ROLE_MAP_ADMIN=${OIDC_ROLE_MAP_ADMIN:-survey-admin}
+      - OIDC_ROLE_MAP_EDITOR=${OIDC_ROLE_MAP_EDITOR:-survey-editor}
+    volumes:
+      - survey-data:/data
+    restart: unless-stopped
+    # node:20-slim ships neither wget nor curl, so probe /api/auth/me (200 when
+    # healthy, authenticated or not) with Node's built-in fetch.
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - '-e'
+        - "fetch('http://localhost:3000/api/auth/me').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  # Optional: Use PostgreSQL instead of SQLite
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: survey
+      POSTGRES_USER: survey
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-survey}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    profiles:
+      - postgres
+
+volumes:
+  survey-data:
+  pgdata:

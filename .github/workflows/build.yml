@@ -77,7 +77,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app_name: ['root', 'ui', 'api', 'awesome', 'my', 'get', 'buy', 'datasets']
+        app_name: ['root', 'ui', 'api', 'awesome', 'my', 'get', 'buy', 'datasets', 'survey']
     env:
       TF_VAR_app_name: ${{ matrix.app_name }}
       TF_VAR_stage: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || '' }}
