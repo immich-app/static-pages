@@ -26,6 +26,19 @@ variable "oidc_client_secret" {
   default     = ""
 }
 
+variable "oidc_client_id_dev" {
+  description = "OIDC client ID of the dev_mode application used by non-production stages"
+  type        = string
+  default     = ""
+}
+
+variable "oidc_client_secret_dev" {
+  description = "OIDC client secret of the dev_mode application used by non-production stages"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
 variable "oidc_role_claim" {
   description = "Claim containing the user's role. Zitadel flattens project roles into a top-level `role` claim (a single string); it never emits `groups`."
   type        = string

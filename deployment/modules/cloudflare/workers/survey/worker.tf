@@ -1,36 +1,54 @@
 locals {
-  oidc_configured = var.oidc_issuer != "" && var.oidc_client_id != "" && var.oidc_client_secret != ""
-  oidc_enabled    = local.oidc_configured && var.env == "prod" && var.stage == ""
+  is_production = var.env == "prod" && var.stage == ""
 
+  # Production and preview authenticate against different Zitadel applications.
+  # Preview hostnames are per-PR and unbounded, so they can only be registered
+  # as a glob, which Zitadel permits only on a dev_mode application — and
+  # dev_mode also drops the https requirement, so it must not be enabled on the
+  # application production uses.
+  oidc_client_id     = local.is_production ? var.oidc_client_id : var.oidc_client_id_dev
+  oidc_client_secret = local.is_production ? var.oidc_client_secret : var.oidc_client_secret_dev
+
+  # All-or-nothing: a half-populated config yields a worker that advertises
+  # oidcEnabled and then builds an authorize URL with an empty redirect_uri.
+  oidc_enabled = var.oidc_issuer != "" && local.oidc_client_id != "" && local.oidc_client_secret != ""
+
+  # Derived so it always matches the hostname this stage actually serves.
   oidc_redirect_uri = "https://${module.domain.fqdn}/api/auth/callback"
 
-  oidc_bindings = local.oidc_enabled ? [
-    {
-      name = "OIDC_ISSUER"
-      type = "plain_text"
-      text = var.oidc_issuer
-    },
-    {
-      name = "OIDC_CLIENT_ID"
-      type = "plain_text"
-      text = var.oidc_client_id
-    },
-    {
-      name = "OIDC_CLIENT_SECRET"
-      type = "secret_text"
-      text = var.oidc_client_secret
-    },
-    {
-      name = "OIDC_REDIRECT_URI"
-      type = "plain_text"
-      text = local.oidc_redirect_uri
-    },
-    {
-      name = "DISABLE_PASSWORD_AUTH"
-      type = "plain_text"
-      text = "true"
-    },
-  ] : []
+  oidc_bindings = concat(
+    local.oidc_enabled ? [
+      {
+        name = "OIDC_ISSUER"
+        type = "plain_text"
+        text = var.oidc_issuer
+      },
+      {
+        name = "OIDC_CLIENT_ID"
+        type = "plain_text"
+        text = local.oidc_client_id
+      },
+      {
+        name = "OIDC_CLIENT_SECRET"
+        type = "secret_text"
+        text = local.oidc_client_secret
+      },
+      {
+        name = "OIDC_REDIRECT_URI"
+        type = "plain_text"
+        text = local.oidc_redirect_uri
+      },
+    ] : [],
+    # Only production goes SSO-only. Previews keep password auth alongside OIDC
+    # so a misconfigured claim leaves the stage debuggable instead of shut.
+    local.oidc_enabled && local.is_production ? [
+      {
+        name = "DISABLE_PASSWORD_AUTH"
+        type = "plain_text"
+        text = "true"
+      },
+    ] : [],
+  )
 
   api_bindings = concat(
     [
