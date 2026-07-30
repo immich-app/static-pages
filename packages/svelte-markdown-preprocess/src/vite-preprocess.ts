@@ -6,11 +6,14 @@ import { markedSvelte } from './markdown.js';
 
 type MaybePromise<T> = Promise<T> | T;
 
+export type MarkdownImage = { name: string; path: string };
+
 export type FileWithContent = { filename: string; content: string };
 export type FileWithFrontMatter = { filename: string; attributes: FrontMatterAttributes; body: string };
 export type FileWithScriptBody = FileWithFrontMatter & { scriptBody: string };
 export type FileWithMarkup = FileWithScriptBody & { markup: string };
-export type FileWithLayout = FileWithMarkup & { layout?: string };
+export type FileWithImages = FileWithMarkup & { images: MarkdownImage[] };
+export type FileWithLayout = FileWithImages & { layout?: string };
 export type FileWithSvelte = FileWithLayout & { svelte: string };
 
 export type FrontMatterAttributes = {
@@ -25,6 +28,8 @@ export type SvelteMarkdownPreprocessLayouts = {
 };
 
 const SCRIPT_BODY_REGEX = /<script.*>(?<body>(.|\n)*?)<\/script>/;
+const MARKDOWN_IMAGE_SRC_REGEX = /(<Markdown\.Image\b[^>]*?\bsrc=)"([^"]*)"/g;
+const IMG_SRC_REGEX = /(<img\b[^>]*?\bsrc=)"([^"]*)"/g;
 
 export type SvelteMarkdownPreprocessOptions = {
   /** defaults to `['.md', '.mdx']` */
@@ -62,6 +67,7 @@ export class SvelteMarkdownPreprocess {
       .then((file) => this.parseFrontMatter(file))
       .then((file) => this.parseScriptBody(file))
       .then((file) => this.parseMarkdown(file))
+      .then((file) => this.parseImages(file))
       .then((file) => this.parseLayout(file))
       .then((file) => this.parseSvelte(file))
       .then((file) => ({ code: file.svelte }));
@@ -96,7 +102,31 @@ export class SvelteMarkdownPreprocess {
     return { ...file, markup };
   }
 
-  parseLayout(file: FileWithMarkup): MaybePromise<FileWithLayout> {
+  parseImages(file: FileWithMarkup): MaybePromise<FileWithImages> {
+    const images: MarkdownImage[] = [];
+
+    let markup = file.markup;
+
+    for (const regex of [MARKDOWN_IMAGE_SRC_REGEX, IMG_SRC_REGEX]) {
+      markup = markup.replaceAll(regex, (match, prefix: string, path: string) => {
+        if (!path.startsWith('./') && !path.startsWith('../')) {
+          return match;
+        }
+
+        let image = images.find((item) => item.path === path);
+        if (!image) {
+          image = { name: `__image_${images.length}`, path };
+          images.push(image);
+        }
+
+        return `${prefix}{${image.name}}`;
+      });
+    }
+
+    return { ...file, markup, images };
+  }
+
+  parseLayout(file: FileWithImages): MaybePromise<FileWithLayout> {
     const layoutKey = file.attributes.layout;
     const layout = layoutKey ? this.#layouts[layoutKey] : (this.#layouts.default ?? this.#layouts._);
     return { ...file, layout };
@@ -113,6 +143,7 @@ export class SvelteMarkdownPreprocess {
     return [
       `  import { Markdown } from '@immich/ui';`,
       file.layout ? `  import Layout from '${file.layout}';` : undefined,
+      ...file.images.map((image) => `  import ${image.name} from '${image.path}';`),
     ];
   }
 

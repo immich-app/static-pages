@@ -166,6 +166,21 @@ exports[`markup > should render 'img-attribute-quote.md' correctly 1`] = `
 }
 `;
 
+exports[`markup > should render 'img-tag.md' correctly 1`] = `
+{
+  "code": "<script>
+  import { Markdown } from '@immich/ui';
+  import __image_0 from './img/relative.webp';
+  import __image_1 from '../img/parent.webp';
+</script>
+<img src={__image_0} alt="relative" /><Markdown.Space />
+<img class="rounded" src={__image_1} alt="parent" /><Markdown.Space />
+<img src="/img/absolute.webp" alt="absolute" /><Markdown.Space />
+<img src="https://immich.app/remote.webp" alt="remote" />
+",
+}
+`;
+
 exports[`markup > should render 'link.md' correctly 1`] = `
 {
   "code": "<script>
