@@ -9,6 +9,7 @@ id: d8e152fd-80ec-48f0-bd97-637ad320c588
 publishedAt: 2026-07-31
 slug: 2026-july-recap
 title: July recap
+type: recap
 ---
 
 Hello everyone!
