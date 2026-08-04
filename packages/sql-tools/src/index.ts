@@ -24,6 +24,7 @@ export * from 'src/decorators/trigger.decorator';
 export * from 'src/decorators/unique.decorator';
 export * from 'src/decorators/update-date-column.decorator';
 export * from 'src/migration';
+export * from 'src/migration-order';
 export * from 'src/naming/default.naming';
 export * from 'src/naming/naming.interface';
 export * from 'src/register-enum';

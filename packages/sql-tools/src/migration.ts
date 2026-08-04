@@ -12,6 +12,7 @@ import {
   schemaFromCode,
   schemaFromDatabase,
 } from 'src';
+import { ORDER_FILENAME, maybeSyncOrder } from 'src/migration-order';
 
 type MigrationProps = {
   up: string[];
@@ -168,6 +169,9 @@ export class Migrator {
     mkdirSync(folder, { recursive: true });
     writeFileSync(fullPath, this.#asMigration({ up, down }));
     console.log(`Wrote ${fullPath}`);
+    if (maybeSyncOrder(folder)) {
+      console.log(`Updated ${join(folder, ORDER_FILENAME)}`);
+    }
   }
 
   async #compare() {
@@ -239,6 +243,10 @@ ${downSql}
         rmSync(filePath, { force: true });
         console.log(`Removed ${filePath}`);
       }
+    }
+
+    if (maybeSyncOrder(sourceFolder)) {
+      console.log(`Updated ${join(sourceFolder, ORDER_FILENAME)}`);
     }
   }
 
