@@ -25,7 +25,11 @@ const program = new Command('sql-tools');
 
 program
   .requiredOption('-u, --url <url>', 'Database connection url')
-  .option('-f, --folder <migrationsFolder>', 'Path to the runnable (compiled) migration files', 'dist/schema/migrations')
+  .option(
+    '-f, --folder <migrationsFolder>',
+    'Path to the runnable (compiled) migration files',
+    'dist/schema/migrations',
+  )
   .option('--source-folder <migrationsSourceFolder>', 'Path to the migration source files', 'src/schema/migrations');
 
 program
