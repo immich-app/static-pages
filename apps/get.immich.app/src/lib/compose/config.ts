@@ -32,11 +32,22 @@ const isPort = (value: string) => {
   return value.trim() !== '' && Number.isSafeInteger(port) && port >= 1 && port <= 65_535;
 };
 
+const ID_MESSAGE = 'Enter a numeric ID.';
+
+const isId = (value: string) => {
+  const id = Number(value);
+  return value.trim() !== '' && Number.isSafeInteger(id) && id >= 0;
+};
+
 const required = (message: string) => z.string().refine((value) => value.trim() !== '', message);
 
 const immichConfigSchema = z.object({
   timezone: z.string(),
-  rootless: z.boolean(),
+  rootless: z.object({
+    enabled: z.boolean(),
+    uid: z.string(),
+    gid: z.string(),
+  }),
   port: z.string().refine(isPort, PORT_MESSAGE),
   hwaccel: z.object({
     transcoding: transcodeAccelSchema,
@@ -90,7 +101,11 @@ export const FOLDER_OVERRIDES: { key: keyof StorageOverrides; label: string; sub
 
 export const DEFAULT_CONFIG: ImmichConfig = {
   timezone: '',
-  rootless: false,
+  rootless: {
+    enabled: false,
+    uid: '1000',
+    gid: '1000',
+  },
   port: '2283',
   hwaccel: {
     transcoding: 'cpu',
@@ -149,6 +164,15 @@ const collectMounts = (config: ImmichConfig): Mount[] => {
 
 const validationSchema = immichConfigSchema.superRefine((config, ctx) => {
   const fail = (path: string[], message: string) => ctx.addIssue({ code: 'custom', path, message });
+
+  if (config.rootless.enabled) {
+    if (!isId(config.rootless.uid)) {
+      fail(['rootless', 'uid'], ID_MESSAGE);
+    }
+    if (!isId(config.rootless.gid)) {
+      fail(['rootless', 'gid'], ID_MESSAGE);
+    }
+  }
 
   if (config.database.external) {
     if (!config.database.externalUrl.trim()) {

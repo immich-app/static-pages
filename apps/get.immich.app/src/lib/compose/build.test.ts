@@ -147,7 +147,7 @@ describe('buildCompose', () => {
 
   it('hardens every service and rewires cache/volumes in rootless mode', () => {
     const config = structuredClone(DEFAULT_CONFIG);
-    config.rootless = true;
+    config.rootless.enabled = true;
     const spec = parse(buildCompose(config, VERSION));
     for (const name of ['immich-server', 'immich-machine-learning', 'redis', 'database']) {
       expect(spec.services[name].user).toBe('1000:1000');
@@ -161,6 +161,15 @@ describe('buildCompose', () => {
     ]);
     expect(spec.services.redis.volumes).toEqual(['./redis:/data']);
     expect(spec.volumes).toBeUndefined();
+  });
+
+  it('applies a custom uid and gid to every service', () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+    config.rootless = { enabled: true, uid: '99', gid: '100' };
+    const spec = parse(buildCompose(config, VERSION));
+    for (const name of ['immich-server', 'immich-machine-learning', 'redis', 'database']) {
+      expect(spec.services[name].user).toBe('99:100');
+    }
   });
 
   it('external Postgres drops the db service, sets DB_URL, and trims depends_on', () => {
