@@ -21,6 +21,7 @@
     Label,
     Link,
     LoadingSpinner,
+    NumberInput,
     Select,
     Stack,
     Switch,
@@ -192,11 +193,19 @@
               {#if config.rootless.enabled}
                 <div class="grid grid-cols-2 gap-4">
                   <Field label="UID" invalid={!!errors['rootless.uid']}>
-                    <Input bind:value={config.rootless.uid} placeholder={DEFAULT_CONFIG.rootless.uid} />
+                    <NumberInput
+                      bind:value={config.rootless.uid}
+                      min={0}
+                      placeholder={String(DEFAULT_CONFIG.rootless.uid)}
+                    />
                     {@render fieldError(errors['rootless.uid'])}
                   </Field>
                   <Field label="GID" invalid={!!errors['rootless.gid']}>
-                    <Input bind:value={config.rootless.gid} placeholder={DEFAULT_CONFIG.rootless.gid} />
+                    <NumberInput
+                      bind:value={config.rootless.gid}
+                      min={0}
+                      placeholder={String(DEFAULT_CONFIG.rootless.gid)}
+                    />
                     {@render fieldError(errors['rootless.gid'])}
                   </Field>
                 </div>
@@ -298,7 +307,12 @@
                 </Stack>
 
                 <Field label="Host Port" invalid={!!errors.port}>
-                  <Input bind:value={config.port} placeholder={DEFAULT_CONFIG.port} />
+                  <NumberInput
+                    bind:value={config.port}
+                    min={1}
+                    max={65_535}
+                    placeholder={String(DEFAULT_CONFIG.port)}
+                  />
                   {@render fieldError(errors.port)}
                 </Field>
 
@@ -415,7 +429,7 @@
                     {@render fieldError(errors['redis.host'])}
                   </Field>
                   <Field label="Port" invalid={!!errors['redis.port']}>
-                    <Input bind:value={config.redis.port} placeholder="6379" />
+                    <NumberInput bind:value={config.redis.port} min={1} max={65_535} placeholder="6379" />
                     {@render fieldError(errors['redis.port'])}
                   </Field>
                   <Field label="Password">

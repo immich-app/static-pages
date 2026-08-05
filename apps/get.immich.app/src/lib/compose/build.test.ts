@@ -102,7 +102,7 @@ describe('buildCompose', () => {
 
   it('maps a custom host port onto container port 2283', () => {
     const config = structuredClone(DEFAULT_CONFIG);
-    config.port = '8080';
+    config.port = 8080;
     expect(parse(buildCompose(config, VERSION)).services['immich-server'].ports).toEqual(['8080:2283']);
   });
 
@@ -115,7 +115,7 @@ describe('buildCompose', () => {
 
   it('produces the default output once advanced settings are stripped', () => {
     const config = structuredClone(DEFAULT_CONFIG);
-    config.port = '9999';
+    config.port = 9999;
     config.storage.customFolders = true;
     config.storage.overrides.thumbs = '/mnt/fast/thumbs';
     config.database.external = true;
@@ -211,7 +211,7 @@ describe('buildCompose', () => {
 
   it('applies a custom uid and gid to every service', () => {
     const config = structuredClone(DEFAULT_CONFIG);
-    config.rootless = { enabled: true, uid: '99', gid: '100' };
+    config.rootless = { enabled: true, uid: 99, gid: 100 };
     const spec = parse(buildCompose(config, VERSION));
     for (const name of ['immich-server', 'immich-machine-learning', 'redis', 'database']) {
       expect(spec.services[name].user).toBe('99:100');
@@ -232,7 +232,7 @@ describe('buildCompose', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.redis.external = true;
     config.redis.host = 'redis.example.com';
-    config.redis.port = '6380';
+    config.redis.port = 6380;
     config.redis.password = 'secret';
     const server = parse(buildCompose(config, VERSION)).services['immich-server'];
     expect(parse(buildCompose(config, VERSION)).services.redis).toBeUndefined();

@@ -27,17 +27,11 @@ const mlAccelSchema = z.custom<MlAccel>((value) => typeof value === 'string' && 
 
 const PORT_MESSAGE = 'Enter a port between 1 and 65535.';
 
-const isPort = (value: string) => {
-  const port = Number(value);
-  return value.trim() !== '' && Number.isSafeInteger(port) && port >= 1 && port <= 65_535;
-};
+const isPort = (value?: number) => value !== undefined && Number.isSafeInteger(value) && value >= 1 && value <= 65_535;
 
 const ID_MESSAGE = 'Enter a numeric ID.';
 
-const isId = (value: string) => {
-  const id = Number(value);
-  return value.trim() !== '' && Number.isSafeInteger(id) && id >= 0;
-};
+const isId = (value?: number) => value !== undefined && Number.isSafeInteger(value) && value >= 0;
 
 // WSL exposes Windows drives as single letter mounts, e.g. /mnt/c.
 const isWindowsPath = (path: string) => /^[a-zA-Z]:[\\/]/.test(path) || /^\/mnt\/[a-z](\/|$)/i.test(path);
@@ -50,10 +44,10 @@ const immichConfigSchema = z.object({
   timezone: z.string(),
   rootless: z.object({
     enabled: z.boolean(),
-    uid: z.string(),
-    gid: z.string(),
+    uid: z.number().optional(),
+    gid: z.number().optional(),
   }),
-  port: z.string().refine(isPort, PORT_MESSAGE),
+  port: z.number().optional().refine(isPort, PORT_MESSAGE),
   containerNames: z.boolean(),
   hwaccel: z.object({
     transcoding: transcodeAccelSchema,
@@ -77,7 +71,7 @@ const immichConfigSchema = z.object({
   redis: z.object({
     external: z.boolean(),
     host: z.string(),
-    port: z.string(),
+    port: z.number().optional(),
     password: z.string(),
   }),
   network: z.object({
@@ -117,10 +111,10 @@ export const DEFAULT_CONFIG: ImmichConfig = {
   timezone: '',
   rootless: {
     enabled: false,
-    uid: '1000',
-    gid: '1000',
+    uid: 1000,
+    gid: 1000,
   },
-  port: '2283',
+  port: 2283,
   containerNames: true,
   hwaccel: {
     transcoding: 'cpu',
@@ -149,7 +143,7 @@ export const DEFAULT_CONFIG: ImmichConfig = {
   redis: {
     external: false,
     host: '',
-    port: '',
+    port: undefined,
     password: '',
   },
   network: {
@@ -236,7 +230,7 @@ const validationSchema = immichConfigSchema.superRefine((config, ctx) => {
     if (!config.redis.host.trim()) {
       fail(['redis', 'host'], 'A host is required for external Redis.');
     }
-    if (config.redis.port.trim() && !isPort(config.redis.port)) {
+    if (config.redis.port !== undefined && !isPort(config.redis.port)) {
       fail(['redis', 'port'], PORT_MESSAGE);
     }
   }

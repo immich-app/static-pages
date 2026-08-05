@@ -6,7 +6,7 @@ import { FOLDER_OVERRIDES, type ImmichConfig } from './config';
 import type { ComposeFile, ComposeService } from './spec';
 
 const rootlessHardening = ({ uid, gid }: ImmichConfig['rootless']): ComposeService => ({
-  user: `${uid.trim()}:${gid.trim()}`,
+  user: `${uid ?? ''}:${gid ?? ''}`,
   security_opt: ['no-new-privileges:true'],
   cap_drop: ['NET_RAW'],
 });
@@ -53,7 +53,7 @@ const buildServerEnvironment = ({ timezone, database, redis }: ImmichConfig) => 
 
   if (redis.external) {
     environment.REDIS_HOSTNAME = redis.host.trim();
-    environment.REDIS_PORT = unlessDefault(redis.port.trim(), '6379');
+    environment.REDIS_PORT = unlessDefault(String(redis.port ?? ''), '6379');
     environment.REDIS_PASSWORD = redis.password.trim();
   }
 
@@ -120,7 +120,7 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
           '/etc/localtime:/etc/localtime:ro',
         ],
         environment: serverEnvironment,
-        ports: [`${config.port.trim()}:2283`],
+        ports: [`${config.port ?? ''}:2283`],
         depends_on: Object.keys(backingServices),
         networks: externalNetwork ? ['default', externalNetwork] : [],
         restart: 'always',

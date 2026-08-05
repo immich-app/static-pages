@@ -7,10 +7,10 @@ describe('validate', () => {
   });
 
   it('rejects a port that is empty or out of range', () => {
-    for (const port of ['', '  ', 'abc', '0', '65536']) {
+    for (const port of [undefined, 0, -1, 1.5, 65_536]) {
       expect(validate({ ...DEFAULT_CONFIG, port }).port).toBeTruthy();
     }
-    expect(validate({ ...DEFAULT_CONFIG, port: '8080' }).port).toBeUndefined();
+    expect(validate({ ...DEFAULT_CONFIG, port: 8080 }).port).toBeUndefined();
   });
 
   it('requires the upload location', () => {
@@ -98,21 +98,21 @@ describe('validate', () => {
     config.redis.external = true;
     config.redis.host = 'redis.example.com';
     expect(validate(config)['redis.port']).toBeUndefined();
-    config.redis.port = '99999';
+    config.redis.port = 99_999;
     expect(validate(config)['redis.port']).toBeTruthy();
   });
 
   it('checks the rootless uid and gid only while rootless is on', () => {
     const off = structuredClone(DEFAULT_CONFIG);
-    off.rootless = { enabled: false, uid: '', gid: 'abc' };
+    off.rootless = { enabled: false, uid: undefined, gid: -1 };
     expect(validate(off)).toEqual({});
 
     const on = structuredClone(DEFAULT_CONFIG);
-    on.rootless = { enabled: true, uid: '', gid: 'abc' };
+    on.rootless = { enabled: true, uid: undefined, gid: -1 };
     expect(validate(on)['rootless.uid']).toBeTruthy();
     expect(validate(on)['rootless.gid']).toBeTruthy();
 
-    on.rootless = { enabled: true, uid: '99', gid: '100' };
+    on.rootless = { enabled: true, uid: 99, gid: 100 };
     expect(validate(on)).toEqual({});
   });
 
