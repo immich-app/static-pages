@@ -124,6 +124,7 @@ describe('buildCompose', () => {
     config.redis.host = 'redis.example.com';
     config.containerNames = false;
     config.storage.externalLibraries = [{ path: '/mnt/media/photos', readOnly: true }];
+    config.network = { external: true, name: 'proxy' };
 
     expect(buildCompose(withoutAdvanced(config), VERSION)).toBe(buildCompose(DEFAULT_CONFIG, VERSION));
   });
@@ -189,6 +190,23 @@ describe('buildCompose', () => {
       '/mnt/media/writable:/mnt/media/writable',
       '/etc/localtime:/etc/localtime:ro',
     ]);
+  });
+
+  it('attaches only the server to an external network, keeping the default one', () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+    config.network = { external: true, name: 'proxy' };
+    const spec = parse(buildCompose(config, VERSION));
+    expect(spec.services['immich-server'].networks).toEqual(['default', 'proxy']);
+    expect(spec.services['immich-machine-learning'].networks).toBeUndefined();
+    expect(spec.services.redis.networks).toBeUndefined();
+    expect(spec.services.database.networks).toBeUndefined();
+    expect(spec.networks).toEqual({ proxy: { external: true } });
+  });
+
+  it('adds no network keys when the external network is off', () => {
+    const spec = parse(buildCompose(DEFAULT_CONFIG, VERSION));
+    expect(spec.services['immich-server'].networks).toBeUndefined();
+    expect(spec.networks).toBeUndefined();
   });
 
   it('applies a custom uid and gid to every service', () => {

@@ -61,9 +61,11 @@ const buildServerEnvironment = ({ timezone, database, redis }: ImmichConfig) => 
 };
 
 export const buildComposeSpec = (config: ImmichConfig, version: string): ComposeFile => {
-  const { rootless } = config;
+  const { rootless, network } = config;
   const serverEnvironment = buildServerEnvironment(config);
   const containerName = (name: string) => (config.containerNames ? name : '');
+
+  const externalNetwork = network.external ? network.name.trim() : '';
 
   const libraryMounts = config.storage.externalLibraries
     .filter(({ path }) => path.trim())
@@ -120,6 +122,7 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
         environment: serverEnvironment,
         ports: [`${config.port.trim()}:2283`],
         depends_on: Object.keys(backingServices),
+        networks: externalNetwork ? ['default', externalNetwork] : [],
         restart: 'always',
         healthcheck: { disable: false },
       },
@@ -158,7 +161,9 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
       .map((name) => [name, null]),
   );
 
-  const spec: ComposeFile = { name: 'immich', services, volumes };
+  const networks = externalNetwork ? { [externalNetwork]: { external: true } } : {};
+
+  const spec: ComposeFile = { name: 'immich', services, volumes, networks };
 
   return pruneEmpty(spec);
 };
