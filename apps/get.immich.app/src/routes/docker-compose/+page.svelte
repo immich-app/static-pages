@@ -13,6 +13,7 @@
     CodeBlock,
     Field,
     Heading,
+    HelperText,
     Icon,
     IconButton,
     Input,
@@ -99,7 +100,7 @@
 
 {#snippet fieldError(message: string | undefined)}
   {#if message}
-    <Text size="small" color="danger">{message}</Text>
+    <HelperText color="danger">{message}</HelperText>
   {/if}
 {/snippet}
 
@@ -224,14 +225,11 @@
               </Field>
 
               {#if advanced}
-                <Field label="Custom folder locations">
+                <Field label="Custom folder locations" description="Mount individual subfolders on separate storage.">
                   <Switch bind:checked={config.storage.customFolders} class="flex justify-between gap-4" />
                 </Field>
                 {#if config.storage.customFolders}
-                  <Text size="small" color="muted">
-                    Mount individual subfolders on separate storage. Leave a field blank to keep it under the upload
-                    location.
-                  </Text>
+                  <Text size="small" color="muted">Leave a field blank to keep it under the upload location.</Text>
                   {#each FOLDER_OVERRIDES as folder (folder.key)}
                     {@const error = errors[`storage.overrides.${folder.key}`]}
                     <Field label={folder.label} invalid={!!error}>
