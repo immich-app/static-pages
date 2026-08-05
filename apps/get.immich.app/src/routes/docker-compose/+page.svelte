@@ -230,26 +230,6 @@
                 </datalist>
               </Field>
 
-              {#if advanced}
-                <Field label="Host Port" invalid={!!errors.port}>
-                  <Input bind:value={config.port} placeholder={DEFAULT_CONFIG.port} />
-                  {@render fieldError(errors.port)}
-                </Field>
-
-                <Field
-                  label="External network"
-                  description="Attach the server to a network you already created."
-                >
-                  <Switch bind:checked={config.network.external} class="flex justify-between gap-4" />
-                </Field>
-                {#if config.network.external}
-                  <Field label="Network name" invalid={!!errors['network.name']}>
-                    <Input bind:value={config.network.name} placeholder="proxy" />
-                    {@render fieldError(errors['network.name'])}
-                  </Field>
-                {/if}
-              {/if}
-
               <Field label="Upload Location" invalid={!!errors['storage.uploadLocation']}>
                 <Input bind:value={config.storage.uploadLocation} placeholder={DEFAULT_CONFIG.storage.uploadLocation} />
                 {@render fieldError(errors['storage.uploadLocation'])}
@@ -272,10 +252,7 @@
 
                 <Stack gap={2}>
                   <Label label="External libraries" size="small" />
-                  <Text size="small" color="muted">
-                    Existing media, mounted at the same path inside the container. Turn off read-only to let Immich
-                    delete files and write XMP sidecars.
-                  </Text>
+                  <Text size="small" color="muted">Existing media, mounted at the same path inside the container.</Text>
                   {#each config.storage.externalLibraries as library, index (index)}
                     {@const error = errors[`storage.externalLibraries.${index}.path`]}
                     {@const name = library.path.trim() || `row ${index + 1}`}
@@ -303,17 +280,37 @@
                       {@render fieldError(error)}
                     </Field>
                   {/each}
+                  {#if config.storage.externalLibraries.some(({ readOnly }) => !readOnly)}
+                    <Text size="small" color="muted">
+                      Where read-only is off, Immich can delete files and write XMP sidecars.
+                    </Text>
+                  {/if}
                   <Button
                     size="small"
                     variant="outline"
                     color="secondary"
                     leadingIcon={mdiPlus}
-                    fullWidth
+                    class="self-start"
                     onclick={addLibrary}
                   >
                     Add library
                   </Button>
                 </Stack>
+
+                <Field label="Host Port" invalid={!!errors.port}>
+                  <Input bind:value={config.port} placeholder={DEFAULT_CONFIG.port} />
+                  {@render fieldError(errors.port)}
+                </Field>
+
+                <Field label="External network" description="Attach the server to a network you already created.">
+                  <Switch bind:checked={config.network.external} class="flex justify-between gap-4" />
+                </Field>
+                {#if config.network.external}
+                  <Field label="Network name" invalid={!!errors['network.name']}>
+                    <Input bind:value={config.network.name} placeholder="proxy" />
+                    {@render fieldError(errors['network.name'])}
+                  </Field>
+                {/if}
               {/if}
 
               <Field label="Transcoding Hardware Acceleration">
