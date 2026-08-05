@@ -39,6 +39,9 @@ const isId = (value: string) => {
   return value.trim() !== '' && Number.isSafeInteger(id) && id >= 0;
 };
 
+// WSL exposes Windows drives as single letter mounts, e.g. /mnt/c.
+const isWindowsPath = (path: string) => /^[a-zA-Z]:[\\/]/.test(path) || /^\/mnt\/[a-z](\/|$)/i.test(path);
+
 const required = (message: string) => z.string().refine((value) => value.trim() !== '', message);
 
 const immichConfigSchema = z.object({
@@ -183,10 +186,10 @@ const validationSchema = immichConfigSchema.superRefine((config, ctx) => {
       const location = config.database.mount.location.trim();
       if (!location) {
         fail(['database', 'mount', 'location'], 'Database location is required.');
-      } else if (/^[a-zA-Z]:[\\/]/.test(location)) {
+      } else if (isWindowsPath(location)) {
         fail(
           ['database', 'mount', 'location'],
-          "The database can't be on a Windows drive, use a named volume instead.",
+          "The database can't be on a Windows drive or WSL mount, use a named volume instead.",
         );
       }
     }
