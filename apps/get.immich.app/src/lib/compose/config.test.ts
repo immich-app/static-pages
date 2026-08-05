@@ -88,6 +88,20 @@ describe('validate', () => {
     expect(validate(config)['redis.port']).toBeTruthy();
   });
 
+  it('checks the rootless uid and gid only while rootless is on', () => {
+    const off = structuredClone(DEFAULT_CONFIG);
+    off.rootless = { enabled: false, uid: '', gid: 'abc' };
+    expect(validate(off)).toEqual({});
+
+    const on = structuredClone(DEFAULT_CONFIG);
+    on.rootless = { enabled: true, uid: '', gid: 'abc' };
+    expect(validate(on)['rootless.uid']).toBeTruthy();
+    expect(validate(on)['rootless.gid']).toBeTruthy();
+
+    on.rootless = { enabled: true, uid: '99', gid: '100' };
+    expect(validate(on)).toEqual({});
+  });
+
   it('flags server mounts that point at the same host path', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.storage.uploadLocation = '/mnt/data';

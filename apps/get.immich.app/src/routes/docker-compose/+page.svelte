@@ -177,12 +177,19 @@
               </Field>
 
               <Field label="Rootless mode">
-                <Switch bind:checked={config.rootless} class="flex justify-between gap-4" />
+                <Switch bind:checked={config.rootless.enabled} class="flex justify-between gap-4" />
               </Field>
-              {#if config.rootless}
-                <Text size="small" color="muted">
-                  Runs services as UID 1000. The mounted folders must be owned by that user.
-                </Text>
+              {#if config.rootless.enabled}
+                <div class="grid grid-cols-2 gap-4">
+                  <Field label="UID" invalid={!!errors['rootless.uid']}>
+                    <Input bind:value={config.rootless.uid} placeholder={DEFAULT_CONFIG.rootless.uid} />
+                    {@render fieldError(errors['rootless.uid'])}
+                  </Field>
+                  <Field label="GID" invalid={!!errors['rootless.gid']}>
+                    <Input bind:value={config.rootless.gid} placeholder={DEFAULT_CONFIG.rootless.gid} />
+                    {@render fieldError(errors['rootless.gid'])}
+                  </Field>
+                </div>
               {/if}
             </Stack>
           </CardBody>

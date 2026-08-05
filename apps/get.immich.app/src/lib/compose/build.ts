@@ -5,11 +5,11 @@ import { IMAGES } from './images';
 import { FOLDER_OVERRIDES, type ImmichConfig } from './config';
 import type { ComposeFile, ComposeService } from './spec';
 
-const ROOTLESS_HARDENING: ComposeService = {
-  user: '1000:1000',
+const rootlessHardening = ({ uid, gid }: ImmichConfig['rootless']): ComposeService => ({
+  user: `${uid.trim()}:${gid.trim()}`,
   security_opt: ['no-new-privileges:true'],
   cap_drop: ['NET_RAW'],
-};
+});
 
 const ROOTLESS_VOLUMES = new Map<string, string[]>([
   ['immich-machine-learning', ['./ml-model-cache:/cache', './ml-dotcache:/.cache', './ml-config:/.config']],
@@ -128,9 +128,9 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
     ...backingServices,
   };
 
-  if (rootless) {
+  if (rootless.enabled) {
     for (const [name, service] of Object.entries(services)) {
-      const hardened = deepmerge(service, ROOTLESS_HARDENING);
+      const hardened = deepmerge(service, rootlessHardening(rootless));
       const rootlessVolumes = ROOTLESS_VOLUMES.get(name);
       if (rootlessVolumes) {
         hardened.volumes = rootlessVolumes;
