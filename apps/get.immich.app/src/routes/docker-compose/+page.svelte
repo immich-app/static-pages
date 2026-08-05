@@ -235,6 +235,19 @@
                   <Input bind:value={config.port} placeholder={DEFAULT_CONFIG.port} />
                   {@render fieldError(errors.port)}
                 </Field>
+
+                <Field
+                  label="External network"
+                  description="Attach the server to a network you already created."
+                >
+                  <Switch bind:checked={config.network.external} class="flex justify-between gap-4" />
+                </Field>
+                {#if config.network.external}
+                  <Field label="Network name" invalid={!!errors['network.name']}>
+                    <Input bind:value={config.network.name} placeholder="proxy" />
+                    {@render fieldError(errors['network.name'])}
+                  </Field>
+                {/if}
               {/if}
 
               <Field label="Upload Location" invalid={!!errors['storage.uploadLocation']}>

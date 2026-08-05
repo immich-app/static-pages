@@ -80,6 +80,10 @@ const immichConfigSchema = z.object({
     port: z.string(),
     password: z.string(),
   }),
+  network: z.object({
+    external: z.boolean(),
+    name: z.string(),
+  }),
 });
 
 export type ImmichConfig = z.infer<typeof immichConfigSchema>;
@@ -91,6 +95,7 @@ const ADVANCED_RESETS: ((config: ImmichConfig) => void)[] = [
   (config) => (config.redis.external = DEFAULT_CONFIG.redis.external),
   (config) => (config.containerNames = DEFAULT_CONFIG.containerNames),
   (config) => (config.storage.externalLibraries = structuredClone(DEFAULT_CONFIG.storage.externalLibraries)),
+  (config) => (config.network.external = DEFAULT_CONFIG.network.external),
 ];
 
 export const withoutAdvanced = (config: ImmichConfig): ImmichConfig => {
@@ -147,6 +152,10 @@ export const DEFAULT_CONFIG: ImmichConfig = {
     port: '',
     password: '',
   },
+  network: {
+    external: false,
+    name: '',
+  },
 };
 
 type ValidationErrors = Record<string, string>;
@@ -196,6 +205,10 @@ const validationSchema = immichConfigSchema.superRefine((config, ctx) => {
     } else if (!location.startsWith('/')) {
       fail(['storage', 'externalLibraries', String(index), 'path'], 'Enter an absolute path, e.g. /mnt/media/photos.');
     }
+  }
+
+  if (config.network.external && !config.network.name.trim()) {
+    fail(['network', 'name'], 'A network name is required.');
   }
 
   if (config.database.external) {

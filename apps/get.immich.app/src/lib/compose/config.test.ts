@@ -116,6 +116,18 @@ describe('validate', () => {
     expect(validate(on)).toEqual({});
   });
 
+  it('requires a network name only when the external network is on', () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+    config.network = { external: false, name: '' };
+    expect(validate(config)['network.name']).toBeUndefined();
+
+    config.network = { external: true, name: '' };
+    expect(validate(config)['network.name']).toBeTruthy();
+
+    config.network = { external: true, name: 'proxy' };
+    expect(validate(config)['network.name']).toBeUndefined();
+  });
+
   it('requires a path on every external library row', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.storage.externalLibraries = [
