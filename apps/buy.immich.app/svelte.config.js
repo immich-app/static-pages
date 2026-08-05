@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 
 dotenv.config({ path: '../../.env' });
 
-process.env.PUBLIC_IMMICH_PAY_HOST = process.env.PUBLIC_IMMICH_PAY_HOST || 'https://pay.futo.org';
+process.env.PUBLIC_IMMICH_PAY_HOST = process.env.PUBLIC_IMMICH_PAY_HOST || 'https://pay2.futo.org';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
