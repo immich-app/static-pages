@@ -9,6 +9,7 @@
     "sourceMap": true,
     "strict": true,
     "target": "es2024",
+    "lib": ["es2025"],
     "module": "es2022",
     "moduleResolution": "bundler",
     "declaration": true,
