@@ -286,7 +286,10 @@
                   {@render fieldError(errors['database.externalUrl'])}
                 </Field>
               {:else}
-                <Field label="Use a named volume">
+                <Field
+                  label="Use a named volume"
+                  description="Docker manages the storage location. Recommended on Windows and macOS."
+                >
                   <Switch
                     checked={config.database.mount.type === 'volume'}
                     onCheckedChange={(value) =>
@@ -301,10 +304,6 @@
                     <Input bind:value={config.database.mount.location} placeholder={defaultDatabaseLocation} />
                     {@render fieldError(errors['database.mount.location'])}
                   </Field>
-                {:else}
-                  <Text size="small" color="muted">
-                    Docker manages the storage location. Recommended on Windows and macOS.
-                  </Text>
                 {/if}
                 <Field label="Database storage type">
                   <Select bind:value={config.database.storageType} options={Object.values(StorageType)} />
