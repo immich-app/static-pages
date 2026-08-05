@@ -1,7 +1,6 @@
 <script lang="ts">
   import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/state';
-  import PageContent from '$common/components/PageContent.svelte';
   import { posts } from '$lib';
   import '$lib/app.css';
   import { getSearchProvider } from '$lib/search';
@@ -21,6 +20,7 @@
     Logo,
     NavbarItem,
     ScreencastOverlay,
+    SiteFooter,
     Text,
     ThemeSwitcher,
     TooltipProvider,
@@ -160,8 +160,9 @@
       </div>
     </AppShellSidebar>
 
-    <PageContent class="mx-auto w-full max-w-(--breakpoint-lg)">
+    <div class="mx-auto flex h-full flex-col">
       {@render children?.()}
-    </PageContent>
+      <SiteFooter />
+    </div>
   </AppShell>
 </TooltipProvider>

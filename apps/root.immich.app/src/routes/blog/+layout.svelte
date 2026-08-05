@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/state';
+  import PageContent from '$lib/components/PageContent.svelte';
   import type { Snippet } from 'svelte';
   import { tv } from 'tailwind-variants';
 
@@ -22,6 +23,8 @@
   });
 </script>
 
-<div class={styles({ releaseNotes: isReleaseNotePage })}>
-  {@render children?.()}
-</div>
+<PageContent>
+  <div class={styles({ releaseNotes: isReleaseNotePage })}>
+    {@render children?.()}
+  </div>
+</PageContent>
