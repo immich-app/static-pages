@@ -122,6 +122,7 @@ describe('buildCompose', () => {
     config.database.externalUrl = 'postgresql://u:p@h:5432/immich';
     config.redis.external = true;
     config.redis.host = 'redis.example.com';
+    config.containerNames = false;
 
     expect(buildCompose(withoutAdvanced(config), VERSION)).toBe(buildCompose(DEFAULT_CONFIG, VERSION));
   });
@@ -161,6 +162,16 @@ describe('buildCompose', () => {
     ]);
     expect(spec.services.redis.volumes).toEqual(['./redis:/data']);
     expect(spec.volumes).toBeUndefined();
+  });
+
+  it('omits container names when the toggle is off', () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+    config.containerNames = false;
+    const spec = parse(buildCompose(config, VERSION));
+    for (const name of ['immich-server', 'immich-machine-learning', 'redis', 'database']) {
+      expect(spec.services[name].container_name).toBeUndefined();
+    }
+    expect(parse(buildCompose(DEFAULT_CONFIG, VERSION)).services['immich-server'].container_name).toBe('immich_server');
   });
 
   it('applies a custom uid and gid to every service', () => {

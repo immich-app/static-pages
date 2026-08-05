@@ -63,12 +63,13 @@ const buildServerEnvironment = ({ timezone, database, redis }: ImmichConfig) => 
 export const buildComposeSpec = (config: ImmichConfig, version: string): ComposeFile => {
   const { rootless } = config;
   const serverEnvironment = buildServerEnvironment(config);
+  const containerName = (name: string) => (config.containerNames ? name : '');
 
   const backingServices: Record<string, ComposeService> = {};
 
   if (!config.redis.external) {
     backingServices.redis = {
-      container_name: 'immich_redis',
+      container_name: containerName('immich_redis'),
       image: IMAGES.redis,
       healthcheck: { test: 'redis-cli ping || exit 1' },
       restart: 'always',
@@ -77,7 +78,7 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
 
   if (!config.database.external) {
     backingServices.database = {
-      container_name: 'immich_postgres',
+      container_name: containerName('immich_postgres'),
       image: IMAGES.database,
       environment: {
         POSTGRES_PASSWORD: config.database.password,
@@ -104,7 +105,7 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
   const services: Record<string, ComposeService> = {
     'immich-server': deepmerge<ComposeService>(
       {
-        container_name: 'immich_server',
+        container_name: containerName('immich_server'),
         image: IMAGES.server(version),
         volumes: [`${config.storage.uploadLocation}:/data`, ...overrideMounts, '/etc/localtime:/etc/localtime:ro'],
         environment: serverEnvironment,
@@ -117,7 +118,7 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
     ),
     'immich-machine-learning': deepmerge<ComposeService>(
       {
-        container_name: 'immich_machine_learning',
+        container_name: containerName('immich_machine_learning'),
         image: IMAGES.machineLearning(version + ML_BACKENDS[config.hwaccel.ml].tag),
         volumes: [`${NamedVolume.ModelCache}:/cache`],
         restart: 'always',

@@ -192,6 +192,15 @@
                   </Field>
                 </div>
               {/if}
+
+              {#if advanced}
+                <Field
+                  label="Container names"
+                  description="Turn off to run more than one Immich stack on the same host."
+                >
+                  <Switch bind:checked={config.containerNames} class="flex justify-between gap-4" />
+                </Field>
+              {/if}
             </Stack>
           </CardBody>
         </Card>

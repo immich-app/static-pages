@@ -52,6 +52,7 @@ const immichConfigSchema = z.object({
     gid: z.string(),
   }),
   port: z.string().refine(isPort, PORT_MESSAGE),
+  containerNames: z.boolean(),
   hwaccel: z.object({
     transcoding: transcodeAccelSchema,
     ml: mlAccelSchema,
@@ -85,6 +86,7 @@ const ADVANCED_RESETS: ((config: ImmichConfig) => void)[] = [
   (config) => (config.storage.customFolders = DEFAULT_CONFIG.storage.customFolders),
   (config) => (config.database.external = DEFAULT_CONFIG.database.external),
   (config) => (config.redis.external = DEFAULT_CONFIG.redis.external),
+  (config) => (config.containerNames = DEFAULT_CONFIG.containerNames),
 ];
 
 export const withoutAdvanced = (config: ImmichConfig): ImmichConfig => {
@@ -110,6 +112,7 @@ export const DEFAULT_CONFIG: ImmichConfig = {
     gid: '1000',
   },
   port: '2283',
+  containerNames: true,
   hwaccel: {
     transcoding: 'cpu',
     ml: 'cpu',
