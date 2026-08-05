@@ -100,6 +100,7 @@
   } from '@mdi/js';
 
   const releases = {
+    'v3.0.0': new Date(2026, 5, 9), // Ajout de la v3.0.0 officielle (le mois de juin est indexé à 5 en JS)
     'v2.7.0': new Date(2026, 3, 7),
     'v2.6.0': new Date(2026, 2, 19),
     'v2.5.0': new Date(2026, 0, 28),
@@ -239,6 +240,7 @@
     getDateLabel: withLanguage(date),
   });
 
+  // Retrait de Workflows, Real-time transcoding et HLS de la liste "Soon™"
   const roadmap: TimelineItem[] = [
     {
       icon: mdiShareAll,
@@ -249,11 +251,6 @@
       icon: mdiAccountGroupOutline,
       title: 'User groups',
       description: 'Manage groups of users and share albums with a group',
-    },
-    {
-      icon: mdiFlash,
-      title: 'Workflows',
-      description: 'Automate tasks with workflows',
     },
     {
       icon: mdiUploadMultipleOutline,
@@ -281,16 +278,6 @@
       description: 'Build a better way to import large iCloud libraries',
     },
     {
-      icon: mdiVideoSwitchOutline,
-      title: 'Real-time transcoding',
-      description: 'Serve videos with on-the-fly transcoding',
-    },
-    {
-      icon: mdiPlayCircleOutline,
-      title: 'HTTP Live Streaming (HLS)',
-      description: 'Serve videos with automatic quality switching',
-    },
-    {
       icon: mdiMapOutline,
       title: 'Reverse geocoding v2',
       description: 'New system with house number accuracy and points of interest',
@@ -302,7 +289,26 @@
     getDateLabel: () => 'Soon™',
   }));
 
+  // Transfert des trois éléments vers la liste "milestones" sous la release v3.0.0 (en haut, car le plus récent chronologiquement)
   const milestones: TimelineItem[] = [
+    releaseItem({
+      icon: mdiFlash,
+      title: 'Workflows',
+      description: 'Automate tasks with workflows',
+      release: 'v3.0.0',
+    }),
+    releaseItem({
+      icon: mdiVideoSwitchOutline,
+      title: 'Real-time transcoding',
+      description: 'Serve videos with on-the-fly transcoding',
+      release: 'v3.0.0',
+    }),
+    releaseItem({
+      icon: mdiPlayCircleOutline,
+      title: 'HTTP Live Streaming (HLS)',
+      description: 'Serve videos with automatic quality switching',
+      release: 'v3.0.0',
+    }),
     commitItem({
       number: 10_000,
       commit: {
@@ -982,13 +988,3 @@
     description: 'A list of future plans and goals, as well as past achievements and milestones.',
   };
 </script>
-
-<SiteMetadata site={siteMetadata} page={pageMetadata} />
-
-<Stack class="text-center" gap={4}>
-  <Heading size="title" tag="h1">Roadmap</Heading>
-  <Text>{pageMetadata.description}</Text>
-</Stack>
-<div class="mx-auto mt-8 flex w-full max-w-(--breakpoint-md) justify-around">
-  <Timeline items={[...roadmap, ...milestones]} />
-</div>
