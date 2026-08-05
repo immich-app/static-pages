@@ -44,6 +44,8 @@ const isWindowsPath = (path: string) => /^[a-zA-Z]:[\\/]/.test(path) || /^\/mnt\
 
 const required = (message: string) => z.string().refine((value) => value.trim() !== '', message);
 
+const externalLibrarySchema = z.object({ path: z.string(), readOnly: z.boolean() });
+
 const immichConfigSchema = z.object({
   timezone: z.string(),
   rootless: z.object({
@@ -61,6 +63,7 @@ const immichConfigSchema = z.object({
     uploadLocation: required('Upload location is required.'),
     customFolders: z.boolean(),
     overrides: storageOverridesSchema,
+    externalLibraries: z.array(externalLibrarySchema),
   }),
   database: z.object({
     mount: databaseMountSchema,
@@ -87,6 +90,7 @@ const ADVANCED_RESETS: ((config: ImmichConfig) => void)[] = [
   (config) => (config.database.external = DEFAULT_CONFIG.database.external),
   (config) => (config.redis.external = DEFAULT_CONFIG.redis.external),
   (config) => (config.containerNames = DEFAULT_CONFIG.containerNames),
+  (config) => (config.storage.externalLibraries = structuredClone(DEFAULT_CONFIG.storage.externalLibraries)),
 ];
 
 export const withoutAdvanced = (config: ImmichConfig): ImmichConfig => {
@@ -126,6 +130,7 @@ export const DEFAULT_CONFIG: ImmichConfig = {
       profile: '',
       backups: '',
     },
+    externalLibraries: [],
   },
   database: {
     mount: { type: 'bind', location: './postgres' },
@@ -159,6 +164,10 @@ const collectMounts = (config: ImmichConfig): Mount[] => {
     }
   }
 
+  for (const [index, { path }] of config.storage.externalLibraries.entries()) {
+    mounts.push({ path: ['storage', 'externalLibraries', String(index), 'path'], location: path });
+  }
+
   if (!config.database.external && config.database.mount.type === 'bind') {
     mounts.push({ path: ['database', 'mount', 'location'], location: config.database.mount.location });
   }
@@ -177,6 +186,15 @@ const validationSchema = immichConfigSchema.superRefine((config, ctx) => {
     }
     if (!isId(config.rootless.gid)) {
       fail(['rootless', 'gid'], ID_MESSAGE);
+    }
+  }
+
+  for (const [index, { path }] of config.storage.externalLibraries.entries()) {
+    const location = path.trim();
+    if (!location) {
+      fail(['storage', 'externalLibraries', String(index), 'path'], 'A path is required.');
+    } else if (!location.startsWith('/')) {
+      fail(['storage', 'externalLibraries', String(index), 'path'], 'Enter an absolute path, e.g. /mnt/media/photos.');
     }
   }
 

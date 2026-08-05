@@ -65,6 +65,10 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
   const serverEnvironment = buildServerEnvironment(config);
   const containerName = (name: string) => (config.containerNames ? name : '');
 
+  const libraryMounts = config.storage.externalLibraries
+    .filter(({ path }) => path.trim())
+    .map(({ path, readOnly }) => `${path.trim()}:${path.trim()}${readOnly ? ':ro' : ''}`);
+
   const backingServices: Record<string, ComposeService> = {};
 
   if (!config.redis.external) {
@@ -107,7 +111,12 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
       {
         container_name: containerName('immich_server'),
         image: IMAGES.server(version),
-        volumes: [`${config.storage.uploadLocation}:/data`, ...overrideMounts, '/etc/localtime:/etc/localtime:ro'],
+        volumes: [
+          `${config.storage.uploadLocation}:/data`,
+          ...overrideMounts,
+          ...libraryMounts,
+          '/etc/localtime:/etc/localtime:ro',
+        ],
         environment: serverEnvironment,
         ports: [`${config.port.trim()}:2283`],
         depends_on: Object.keys(backingServices),
