@@ -116,6 +116,38 @@ describe('validate', () => {
     expect(validate(on)).toEqual({});
   });
 
+  it('requires a path on every external library row', () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+    config.storage.externalLibraries = [
+      { path: '/mnt/media/photos', readOnly: true },
+      { path: ' '.repeat(2), readOnly: true },
+    ];
+    expect(validate(config)['storage.externalLibraries.0.path']).toBeUndefined();
+    expect(validate(config)['storage.externalLibraries.1.path']).toBeTruthy();
+  });
+
+  it('requires external library paths to be absolute', () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+
+    for (const path of ['asdf', './here', '../up', String.raw`C:\photos`]) {
+      config.storage.externalLibraries = [{ path, readOnly: true }];
+      expect(validate(config)['storage.externalLibraries.0.path']).toContain('absolute');
+    }
+
+    for (const path of ['/mnt/media/photos', '/srv/photos']) {
+      config.storage.externalLibraries = [{ path, readOnly: true }];
+      expect(validate(config)['storage.externalLibraries.0.path']).toBeUndefined();
+    }
+  });
+
+  it('flags an external library that overlaps another mount', () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+    config.storage.uploadLocation = '/mnt/media';
+    config.storage.externalLibraries = [{ path: '/mnt/media/photos', readOnly: true }];
+    expect(validate(config)['storage.externalLibraries.0.path']).toContain('overlaps');
+    expect(validate(config)['storage.uploadLocation']).toContain('overlaps');
+  });
+
   it('flags server mounts that point at the same host path', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.storage.uploadLocation = '/mnt/data';

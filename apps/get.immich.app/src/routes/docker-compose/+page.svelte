@@ -9,6 +9,7 @@
     CardBody,
     CardHeader,
     CardTitle,
+    Checkbox,
     Code,
     CodeBlock,
     Field,
@@ -25,7 +26,7 @@
     Switch,
     Text,
   } from '@immich/ui';
-  import { mdiDiceMultiple, mdiDownload } from '@mdi/js';
+  import { mdiClose, mdiDiceMultiple, mdiDownload, mdiPlus } from '@mdi/js';
   import { onMount } from 'svelte';
   import { yaml as yamlLanguage } from 'svelte-highlight/languages';
   import vs2015 from 'svelte-highlight/styles/vs2015';
@@ -81,6 +82,14 @@
       crypto.getRandomValues(new Uint8Array(24)),
       (byte) => alphabet[byte % alphabet.length],
     ).join('');
+  };
+
+  const addLibrary = () => {
+    config.storage.externalLibraries.push({ path: '', readOnly: true });
+  };
+
+  const removeLibrary = (index: number) => {
+    config.storage.externalLibraries.splice(index, 1);
   };
 
   const handleDownload = () => {
@@ -247,6 +256,51 @@
                     </Field>
                   {/each}
                 {/if}
+
+                <Stack gap={2}>
+                  <Label label="External libraries" size="small" />
+                  <Text size="small" color="muted">
+                    Existing media, mounted at the same path inside the container. Turn off read-only to let Immich
+                    delete files and write XMP sidecars.
+                  </Text>
+                  {#each config.storage.externalLibraries as library, index (index)}
+                    {@const error = errors[`storage.externalLibraries.${index}.path`]}
+                    {@const name = library.path.trim() || `row ${index + 1}`}
+                    <Field invalid={!!error}>
+                      <div class="flex items-center gap-2">
+                        <div class="grow">
+                          <Input
+                            bind:value={library.path}
+                            placeholder="/mnt/media/photos"
+                            aria-label={`External library path ${index + 1}`}
+                          />
+                        </div>
+                        <Field class="w-auto">
+                          <Checkbox bind:checked={library.readOnly} aria-label={`Read-only for ${name}`} />
+                        </Field>
+                        <Text size="small" color="muted">Read-only</Text>
+                        <IconButton
+                          icon={mdiClose}
+                          onclick={() => removeLibrary(index)}
+                          aria-label={`Remove ${name}`}
+                          variant="ghost"
+                          color="secondary"
+                        />
+                      </div>
+                      {@render fieldError(error)}
+                    </Field>
+                  {/each}
+                  <Button
+                    size="small"
+                    variant="outline"
+                    color="secondary"
+                    leadingIcon={mdiPlus}
+                    fullWidth
+                    onclick={addLibrary}
+                  >
+                    Add library
+                  </Button>
+                </Stack>
               {/if}
 
               <Field label="Transcoding Hardware Acceleration">

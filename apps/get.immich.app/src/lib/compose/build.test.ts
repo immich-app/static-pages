@@ -123,6 +123,7 @@ describe('buildCompose', () => {
     config.redis.external = true;
     config.redis.host = 'redis.example.com';
     config.containerNames = false;
+    config.storage.externalLibraries = [{ path: '/mnt/media/photos', readOnly: true }];
 
     expect(buildCompose(withoutAdvanced(config), VERSION)).toBe(buildCompose(DEFAULT_CONFIG, VERSION));
   });
@@ -172,6 +173,22 @@ describe('buildCompose', () => {
       expect(spec.services[name].container_name).toBeUndefined();
     }
     expect(parse(buildCompose(DEFAULT_CONFIG, VERSION)).services['immich-server'].container_name).toBe('immich_server');
+  });
+
+  it('mounts external libraries at the same path, honouring read-only', () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+    config.storage.externalLibraries = [
+      { path: '/mnt/media/photos', readOnly: true },
+      { path: '/mnt/media/writable', readOnly: false },
+      { path: ' '.repeat(3), readOnly: true },
+    ];
+    const volumes = parse(buildCompose(config, VERSION)).services['immich-server'].volumes;
+    expect(volumes).toEqual([
+      './library:/data',
+      '/mnt/media/photos:/mnt/media/photos:ro',
+      '/mnt/media/writable:/mnt/media/writable',
+      '/etc/localtime:/etc/localtime:ro',
+    ]);
   });
 
   it('applies a custom uid and gid to every service', () => {
