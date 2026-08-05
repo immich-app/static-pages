@@ -47,6 +47,20 @@ describe('validate', () => {
     expect(validate(config)['database.mount.location']).toBeUndefined();
   });
 
+  it('rejects WSL drive mounts for the database, without catching ordinary /mnt paths', () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+
+    for (const location of ['/mnt/c/immich/postgres', '/mnt/c', '/mnt/D/data']) {
+      config.database.mount = { type: 'bind', location };
+      expect(validate(config)['database.mount.location']).toContain('Windows');
+    }
+
+    for (const location of ['/mnt/data', '/mnt/storage/postgres', '/srv/mnt/data', '/mnt/cache/pg']) {
+      config.database.mount = { type: 'bind', location };
+      expect(validate(config)['database.mount.location']).toBeUndefined();
+    }
+  });
+
   it('requires the redis host only when external Redis is on', () => {
     expect(validate(DEFAULT_CONFIG)['redis.host']).toBeUndefined();
     const config = structuredClone(DEFAULT_CONFIG);
