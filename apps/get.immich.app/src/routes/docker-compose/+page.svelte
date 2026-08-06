@@ -1,5 +1,4 @@
 <script lang="ts">
-  import FullPageLayout from '$common/components/FullPageLayout.svelte';
   import { buildCompose } from '$lib/compose/build';
   import { ML_ACCELS, TRANSCODE_ACCELS } from '$lib/compose/hwaccel';
   import { DEFAULT_CONFIG, FOLDER_OVERRIDES, StorageType, validate, withoutAdvanced } from '$lib/compose/config';
@@ -10,6 +9,7 @@
     CardHeader,
     CardTitle,
     Checkbox,
+    Container,
     Code,
     CodeBlock,
     Field,
@@ -30,7 +30,6 @@
   import { mdiClose, mdiDiceMultiple, mdiDownload, mdiPlus } from '@mdi/js';
   import { onMount } from 'svelte';
   import { yaml as yamlLanguage } from 'svelte-highlight/languages';
-  import vs2015 from 'svelte-highlight/styles/vs2015';
 
   const config = $state(structuredClone(DEFAULT_CONFIG));
   const defaultDatabaseLocation =
@@ -114,7 +113,7 @@
   {/if}
 {/snippet}
 
-<FullPageLayout size="giant">
+<Container size="giant" center>
   <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
     <div>
       <Heading size="large" tag="h1">Docker Compose</Heading>
@@ -447,17 +446,10 @@
       {#if versionFailed}
         <Text color="danger">Could not reach the Immich version service. Reload the page to try again.</Text>
       {:else if version}
-        <CodeBlock
-          code={compose}
-          language={yamlLanguage}
-          lineNumbers
-          copy={!hasErrors}
-          lightTheme={vs2015}
-          darkTheme={vs2015}
-        />
+        <CodeBlock code={compose} language={yamlLanguage} lineNumbers copy={!hasErrors} />
       {:else}
         <LoadingSpinner />
       {/if}
     </div>
   </div>
-</FullPageLayout>
+</Container>
