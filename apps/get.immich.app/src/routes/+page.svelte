@@ -2,7 +2,6 @@
   import portainerIcon from '$common/img/portainer.svg';
   import truenasIcon from '$common/img/truenas-scale.svg';
   import unraidIcon from '$common/img/unraid.svg';
-  import FullPageLayout from '$common/components/FullPageLayout.svelte';
   import {
     Button,
     Card,
@@ -12,12 +11,11 @@
     CardHeader,
     CardTitle,
     Constants,
+    Container,
     Heading,
     Icon,
     Link,
-    Logo,
     Stack,
-    SupporterBadge,
     Text,
     appStoreBadge,
     fdroidBadge,
@@ -26,13 +24,8 @@
   import { mdiAndroid, mdiDocker } from '@mdi/js';
 </script>
 
-<FullPageLayout size="large">
+<Container size="large" center>
   <Stack gap={8}>
-    <SupporterBadge effect="always">
-      <Logo size="large" variant="icon" />
-      <Heading size="large" color="primary" tag="h1">Get Immich</Heading>
-    </SupporterBadge>
-
     <Stack gap={2}>
       <div>
         <Heading size="large" tag="h2">Mobile Apps</Heading>
@@ -143,4 +136,4 @@
       </section>
     </Stack>
   </Stack>
-</FullPageLayout>
+</Container>
