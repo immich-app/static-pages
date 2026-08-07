@@ -105,6 +105,6 @@
     <div class="grow">
       {@render children?.()}
     </div>
-    <SiteFooter />
+    <SiteFooter class="mt-16" />
   </section>
 </AppShell>

@@ -133,5 +133,5 @@
       </Stack>
     </Stack>
   </Container>
-  <SiteFooter />
+  <SiteFooter class="mt-16" />
 </AppShell>
