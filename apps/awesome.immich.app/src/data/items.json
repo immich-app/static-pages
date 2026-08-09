@@ -190,6 +190,11 @@
         "title": "Lightroom Immich Plugin: lrc-immich-plugin",
         "description": "Lightroom plugin to publish, export photos from Lightroom to Immich. Import from Immich to Lightroom is also supported.",
         "href": "https://blog.fokuspunk.de/lrc-immich-plugin/"
+      },
+      {
+        "title": "Rollfilm",
+        "description": "Desktop photo manager for macOS, Windows and Linux. Import from a memory card, cull, rate and edit RAW files, then mirror photos and albums to Immich in the background. Semantic search runs locally.",
+        "href": "https://github.com/pasqualkreher/rollfilm"
       }
     ]
   },
