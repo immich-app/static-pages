@@ -216,7 +216,9 @@ export const markedSvelte = (): MarkedExtension => ({
   },
 });
 
-/** Render markdown to plain text */
+/**
+Render markdown to plain text
+*/
 export const markedText = (markdown: string): string => {
   const md = new Marked().use(markedSvelte());
   const { body } = fm<{ body: string }>(markdown);

@@ -7,7 +7,9 @@ export type TableOptions = {
   synchronize?: boolean;
 };
 
-/** Table comments here */
+/**
+Table comments here
+*/
 export const Table = (options: string | TableOptions = {}): ClassDecorator => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   return (object: Function) => void register({ type: 'table', item: { object, options: asOptions(options) } });

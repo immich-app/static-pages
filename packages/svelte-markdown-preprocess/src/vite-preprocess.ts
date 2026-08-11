@@ -32,7 +32,9 @@ const MARKDOWN_IMAGE_SRC_REGEX = /(<Markdown\.Image\b[^>]*?\bsrc=)"([^"]*)"/g;
 const IMG_SRC_REGEX = /(<img\b[^>]*?\bsrc=)"([^"]*)"/g;
 
 export type SvelteMarkdownPreprocessOptions = {
-  /** defaults to `['.md', '.mdx']` */
+  /**
+  defaults to `['.md', '.mdx']`
+  */
   extensions?: string[];
   layouts?: SvelteMarkdownPreprocessLayouts;
 };
