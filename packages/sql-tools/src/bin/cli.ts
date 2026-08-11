@@ -25,7 +25,12 @@ const program = new Command('sql-tools');
 
 program
   .requiredOption('-u, --url <url>', 'Database connection url')
-  .option('-f, --folder <migrationsFolder>', 'Path to the migration files', 'dist/schema/migrations');
+  .option(
+    '-f, --folder <migrationsFolder>',
+    'Path to the runnable (compiled) migration files',
+    'dist/schema/migrations',
+  )
+  .option('--source-folder <migrationsSourceFolder>', 'Path to the migration source files', 'src/schema/migrations');
 
 program
   .command('query')
@@ -48,12 +53,7 @@ migrations
 migrations
   .command('revert')
   .description('Revert the most recent migration')
-  .requiredOption(
-    '-f, --folder <migrationsFolder>',
-    'Path to the folder the migration files are in',
-    'src/schema/migrations',
-  )
-  .action(withMigrator((migrator, { folder }) => migrator.revert(join(process.cwd(), folder))));
+  .action(withMigrator((migrator, { sourceFolder }) => migrator.revert(join(process.cwd(), sourceFolder))));
 
 migrations
   .command('create')
