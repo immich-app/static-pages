@@ -14,7 +14,7 @@
   const { size = 'large', color = 'secondary', class: className, children }: Props = $props();
 </script>
 
-<PageContent class={cleanClass(color === 'secondary' ? 'bg-light' : 'bg-primary-100')}>
+<PageContent class={cleanClass(color === 'secondary' ? 'bg-light' : 'bg-primary-50')}>
   <Container {size} center>
     <div class={cleanClass('my-8 lg:h-112 lg:my-0', className)}>
       {@render children?.()}
