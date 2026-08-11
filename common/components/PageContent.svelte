@@ -16,5 +16,5 @@
       {@render children?.()}
     </div>
   </div>
-  <SiteFooter />
+  <SiteFooter class="mt-16" />
 </div>

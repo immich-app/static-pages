@@ -30,8 +30,10 @@
 
 <SiteMetadata site={blogMetadata} />
 
-<Heading size="title" tag="h1" fontWeight="bold" class="mb-1">Blog</Heading>
-<Text color="muted" class="mt-4">{blogMetadata.description}</Text>
+<div>
+  <Heading size="title" tag="h1" fontWeight="bold" class="mb-1">Blog</Heading>
+  <Text color="muted" class="mt-4">{blogMetadata.description}</Text>
+</div>
 
 <div class="flex flex-wrap gap-1">
   <a href={Routes.blog()}>

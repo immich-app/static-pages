@@ -1,8 +1,9 @@
 <script lang="ts">
   import type { TimelineItem } from '$lib';
   import { siteMetadata } from '$lib';
+  import PageContent from '$lib/components/PageContent.svelte';
   import Timeline from '$lib/components/Timeline.svelte';
-  import { Heading, SiteMetadata, Stack, Text } from '@immich/ui';
+  import { Container, Heading, SiteMetadata, Stack, Text } from '@immich/ui';
   import {
     mdiAccountGroup,
     mdiAccountGroupOutline,
@@ -985,10 +986,14 @@
 
 <SiteMetadata site={siteMetadata} page={pageMetadata} />
 
-<Stack class="text-center" gap={4}>
-  <Heading size="title" tag="h1">Roadmap</Heading>
-  <Text>{pageMetadata.description}</Text>
-</Stack>
-<div class="mx-auto mt-8 flex w-full max-w-(--breakpoint-md) justify-around">
-  <Timeline items={[...roadmap, ...milestones]} />
-</div>
+<PageContent>
+  <Container size="medium" center>
+    <Stack class="text-center" gap={4}>
+      <Heading size="title" tag="h1">Roadmap</Heading>
+      <Text>{pageMetadata.description}</Text>
+    </Stack>
+    <div class="mx-auto mt-8 flex w-full max-w-(--breakpoint-md) justify-around">
+      <Timeline items={[...roadmap, ...milestones]} />
+    </div>
+  </Container>
+</PageContent>
