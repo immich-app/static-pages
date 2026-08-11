@@ -26,7 +26,9 @@ export type TimelineItem = {
 export const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
 type Attributes = {
-  /** uuid-v7, which can be generated with `npx -y uuid v7` */
+  /**
+  uuid-v7, which can be generated with `npx -y uuid v7`
+  */
   id: string;
   title: string;
   description: string;

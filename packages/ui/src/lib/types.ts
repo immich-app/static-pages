@@ -307,7 +307,9 @@ export type ToastShow = ToastOpenProps & {
 
 export type ToastOptions = {
   id?: string;
-  /** default: 3000ms */
+  /**
+  default: 3000ms
+  */
   timeout?: number;
   closable?: boolean;
 };
@@ -375,12 +377,18 @@ export type ActionItemTag = {
 
 export type ActionItem = {
   title: string;
-  /** renders as badges on the item */
+  /**
+  renders as badges on the item
+  */
   tags?: Array<string | ActionItemTag>;
   description?: string;
-  /** searchable text in addition to title, tags, and description */
+  /**
+  searchable text in addition to title, tags, and description
+  */
   text?: string | string[];
-  /** text that should be highlighted as a match */
+  /**
+  text that should be highlighted as a match
+  */
   highlights?: string[];
   icon?: IconLike;
   iconClass?: string;

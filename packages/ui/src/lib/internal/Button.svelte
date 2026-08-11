@@ -11,7 +11,9 @@
   import { tv } from 'tailwind-variants';
 
   type InternalButtonProps = ButtonProps & {
-    /** when true, button width to height ratio is 1:1 */
+    /**
+    when true, button width to height ratio is 1:1
+    */
     icon?: boolean;
   };
 
