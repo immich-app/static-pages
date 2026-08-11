@@ -12,6 +12,7 @@
   import FeatureHighlight from '$lib/components/FeatureHighlight.svelte';
   import PageContent from '$lib/components/PageContent.svelte';
   import SupportCard from '$lib/components/SupportCard.svelte';
+  import SupportLinkCard from '$lib/components/SupportLinkCard.svelte';
   import {
     appStoreBadge,
     Button,
@@ -19,7 +20,6 @@
     Container,
     Heading,
     Icon,
-    Link,
     Logo,
     playStoreBadge,
     SiteMetadata,
@@ -27,7 +27,7 @@
     themeManager,
     VStack,
   } from '@immich/ui';
-  import { mdiOpenInNew } from '@mdi/js';
+  import { mdiKeyVariant, mdiOpenInNew, mdiSourcePull, mdiTshirtCrew } from '@mdi/js';
   import { siDiscord, siGithub } from 'simple-icons';
 </script>
 
@@ -135,26 +135,30 @@
 
   <FeatureContainer size="large" class="flex items-center">
     <div>
-      <Heading size="large" tag="h2" class="mb-8 lg:text-center">Support Immich</Heading>
-      <div class="grid w-full grid-cols-1 gap-8 lg:grid-cols-3">
-        <SupportCard title="Product Key" href={Constants.Sites.Buy} text="Buy a key">
-          <Text>
-            Building Immich takes a lot of time and effort. We have full-time engineers working on it to make it as good
-            as we possibly can. Consider buying a product key to support the project.
-          </Text>
+      <Heading size="large" tag="h2" class="mb-8 text-center">Support Immich</Heading>
+      <div class="flex w-full flex-col gap-5">
+        <SupportCard title="Product Key" icon={mdiKeyVariant} href={Constants.Sites.Buy} text="Buy a key">
+          Building Immich takes a lot of time and effort. We have full-time engineers working on it to make it as good
+          as we possibly can. Consider buying a product key to support the project.
         </SupportCard>
-        <SupportCard title="Merch Store" href={Constants.Sites.Store} text="View store">
-          <Text>
-            Immich has a great collection of t-shirts, hats, and other branded merch on our online store. Pick up some
-            swag today and support open source software.
-          </Text>
-        </SupportCard>
-        <SupportCard title="Contribute" icon={siGithub} href={Constants.Socials.Github} text="GitHub">
-          <Text>
-            Immich is open source software, which means anyone can contribute. Submit a pull request, open an bug
-            report, or suggest a new feature on <Link href={Constants.Socials.Github}>GitHub</Link>.
-          </Text>
-        </SupportCard>
+
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <SupportLinkCard
+            title="Merch Store"
+            icon={mdiTshirtCrew}
+            color="warning"
+            href={Constants.Sites.Store}
+            text="View store"
+          />
+          <SupportLinkCard
+            title="Contribute"
+            icon={mdiSourcePull}
+            color="info"
+            buttonIcon={siGithub}
+            href={Constants.Socials.Github}
+            text="GitHub"
+          />
+        </div>
       </div>
     </div>
   </FeatureContainer>
