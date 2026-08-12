@@ -80,7 +80,7 @@
 
   <FeatureHighlight>
     {#snippet label()}
-      <Heading size="large" tag="h3" class="mb-2">Mobile app</Heading>
+      <Heading size="large" tag="h3" class="mb-2">Mobile App</Heading>
       <Text size="large">
         View and manage your photos and videos directly from the mobile app. Immich makes it easy to organize, explore
         and share your precious memories on both Apple and Android.
