@@ -22,4 +22,4 @@ shamefullyHoist: false
 verifyDepsBeforeRun: install
 
 overrides:
-  svelte-highlight: 7.16.2
+  svelte-highlight: 7.14.1
