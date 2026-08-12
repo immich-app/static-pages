@@ -22,6 +22,7 @@
     mdiChartBoxMultipleOutline,
     mdiCheckAll,
     mdiCheckboxMarked,
+    mdiClockOutline,
     mdiCloudUploadOutline,
     mdiCollage,
     mdiContentDuplicate,
@@ -37,6 +38,7 @@
     mdiFaceManOutline,
     mdiFaceRecognition,
     mdiFile,
+    mdiFileCheckOutline,
     mdiFileSearch,
     mdiFlash,
     mdiFolder,
@@ -63,7 +65,6 @@
     mdiMaterialDesign,
     mdiMatrix,
     mdiMerge,
-    mdiMonitor,
     mdiMotionPlayOutline,
     mdiMovieOpenPlayOutline,
     mdiOcr,
@@ -72,6 +73,7 @@
     mdiPartyPopper,
     mdiPencil,
     mdiPlayCircleOutline,
+    mdiPresentationPlay,
     mdiRaw,
     mdiRocketLaunch,
     mdiRotate360,
@@ -101,6 +103,7 @@
   } from '@mdi/js';
 
   const releases = {
+    'v3.0.0': new Date(2026, 6, 2),
     'v2.7.0': new Date(2026, 3, 7),
     'v2.6.0': new Date(2026, 2, 19),
     'v2.5.0': new Date(2026, 0, 28),
@@ -218,7 +221,7 @@
     const { value: commit, date } = item.commit;
     const value = item.number.toLocaleString();
     const title = item.title ?? `${value} Commits`;
-    const description = item.description ?? `${value} Commits on GitHub`;
+    const description = item.description ?? `${value} Commits on GitHub.`;
 
     return {
       icon: mdiPartyPopper,
@@ -244,57 +247,42 @@
     {
       icon: mdiShareAll,
       title: 'Better sharing',
-      description: 'Improve sharing capabilities, especially around facial recognition data',
+      description: 'Improve sharing capabilities, especially around facial recognition data.',
     },
     {
       icon: mdiAccountGroupOutline,
       title: 'User groups',
-      description: 'Manage groups of users and share albums with a group',
-    },
-    {
-      icon: mdiFlash,
-      title: 'Workflows',
-      description: 'Automate tasks with workflows',
+      description: 'Manage groups of users and share albums with a group.',
     },
     {
       icon: mdiUploadMultipleOutline,
       title: 'Chunked uploads',
-      description: 'Upload large files in smaller chunks to improve reliability',
+      description: 'Upload large files in smaller chunks to improve reliability.',
     },
     {
       icon: mdiCameraBurst,
       title: 'Automatic stacking',
-      description: 'Automatically stack burst photos',
-    },
-    {
-      icon: mdiImagePlusOutline,
-      title: 'Smart albums',
-      description: 'Automatically create albums based on rules',
+      description: 'Automatically stack burst photos.',
     },
     {
       icon: mdiImageAlbum,
       title: 'Smart memories',
-      description: 'Automatically create memories based on events, locations, and people',
+      description: 'Automatically create memories based on events, locations, and people.',
+    },
+    {
+      icon: mdiImagePlusOutline,
+      title: 'Smart albums',
+      description: 'Automatically create albums based on rules.',
     },
     {
       icon: mdiImport,
       title: 'iCloud import',
-      description: 'Build a better way to import large iCloud libraries',
-    },
-    {
-      icon: mdiVideoSwitchOutline,
-      title: 'Real-time transcoding',
-      description: 'Serve videos with on-the-fly transcoding',
-    },
-    {
-      icon: mdiPlayCircleOutline,
-      title: 'HTTP Live Streaming (HLS)',
-      description: 'Serve videos with automatic quality switching',
+      description: 'Build a better way to import large iCloud libraries.',
     },
     {
       icon: mdiMapOutline,
       title: 'Reverse geocoding v2',
-      description: 'New system with house number accuracy and points of interest',
+      description: 'New system with house number accuracy and points of interest.',
     },
   ].map((item) => ({
     ...item,
@@ -304,6 +292,60 @@
   }));
 
   const milestones: TimelineItem[] = [
+    releaseItem({
+      icon: mdiVideoSwitchOutline,
+      title: 'Real-time transcoding (web)',
+      description: 'Serve videos with on-the-fly transcoding to the web.',
+      release: 'v3.0.0',
+    }),
+    releaseItem({
+      icon: mdiPlayCircleOutline,
+      title: 'HTTP Live Streaming (HLS)',
+      description: 'Serve videos with automatic quality switching.',
+      release: 'v3.0.0',
+    }),
+    releaseItem({
+      icon: mdiFlash,
+      title: 'Workflows',
+      description: 'Automate tasks with workflows.',
+      release: 'v3.0.0',
+    }),
+    releaseItem({
+      icon: mdiPresentationPlay,
+      title: 'Slideshow mode (mobile)',
+      description: 'Start a full-screen slideshow on mobile.',
+      release: 'v3.0.0',
+    }),
+    releaseItem({
+      icon: mdiTune,
+      title: 'Basic editor (mobile)',
+      description: 'Non-destructive edits (crop, rotate, and mirror) directly on mobile.',
+      release: 'v3.0.0',
+    }),
+    releaseItem({
+      icon: mdiOcr,
+      title: 'Optical Character Recognition (ORC) (mobile).',
+      description: 'Show extracted text as an overlay on mobile, for easy copying.',
+      release: 'v3.0.0',
+    }),
+    releaseItem({
+      icon: mdiClockOutline,
+      title: 'Recently added',
+      description: 'View images sorted by when they were uploaded.',
+      release: 'v3.0.0',
+    }),
+    releaseItem({
+      icon: mdiFileCheckOutline,
+      title: 'Integrity report',
+      description: 'View a report of files that are untracked, missing, or have a checksum mismatch.',
+      release: 'v3.0.0',
+    }),
+    releaseItem({
+      icon: mdiEyeOutline,
+      title: 'Release candidates',
+      description: 'Add support for release candidates in our release workflow.',
+      release: 'v3.0.0',
+    }),
     commitItem({
       number: 10_000,
       commit: {
@@ -315,107 +357,107 @@
     releaseItem({
       icon: mdiSecurity,
       title: 'Content Security Policy',
-      description: 'Harden Immich with a default Content Security Policy',
+      description: 'Harden Immich with a default Content Security Policy.',
       release: 'v2.7.0',
     }),
     releaseItem({
       icon: mdiUpdate,
       title: 'Deploy version.immich.cloud',
-      description: 'Dedicated version service for Immich',
+      description: 'Dedicated version service for Immich.',
       release: 'v2.7.0',
     }),
     releaseItem({
       icon: mdiMapOutline,
       title: 'Map side panel (web)',
-      description: 'View a timeline of assets while using the map',
+      description: 'View a timeline of assets while using the map.',
       release: 'v2.6.0',
     }),
     releaseItem({
       icon: mdiBroom,
       title: 'Free up space',
-      description: 'Automatically delete files that have already been backed up',
+      description: 'Automatically delete files that have already been backed up.',
       release: 'v2.5.0',
     }),
     releaseItem({
       icon: mdiBackupRestore,
       title: 'Database backup & restore',
-      description: 'Manage and restore database backups via the web interface',
+      description: 'Manage and restore database backups via the web interface.',
       release: 'v2.5.0',
     }),
     releaseItem({
       icon: mdiTune,
       title: 'Basic editor',
-      description: 'Crop, rotate, and mirror images directly in Immich',
+      description: 'Crop, rotate, and mirror images directly in Immich.',
       release: 'v2.5.0',
     }),
     starMilestone(90_000, new Date(2026, 0, 26)),
     releaseItem({
       icon: mdiSync,
       title: 'Delete synchronization',
-      description: 'Synchronize deletes from the web to mobile (Android)',
+      description: 'Synchronize deletes from the web to mobile (Android).',
       release: 'v2.3.0',
     }),
     releaseItem({
       icon: mdiOcr,
       title: 'Optical character recognition (OCR)',
-      description: 'Use machine learning to extract text from images and make it searchable',
+      description: 'Use machine learning to extract text from images and make it searchable.',
       release: 'v2.2.0',
     }),
     starMilestone(80_000, new Date(2025, 9, 5)),
     releaseItem({
       icon: mdiDisc,
-      title: 'Retro DVD & stealth merch',
+      title: 'Retro DVD & stealth merch.',
       description:
-        'Launched a demo DVD that comes pre-installed with Immich v2, as well as a new lineup of stealth merch',
+        'Launched a demo DVD that comes pre-installed with Immich v2, as well as a new lineup of stealth merch.',
       release: 'v2.0.0',
     }),
     releaseItem({
       icon: mdiApi,
       title: 'New API documentation',
-      description: 'Launched a dedicated website for API documentation: https://api.immich.app/',
+      description: 'Launched a dedicated website for API documentation: https://api.immich.app/.',
       release: 'v2.0.0',
     }),
     releaseItem({
       icon: mdiWeb,
       title: 'New homepage',
-      description: 'Launched a new version of our website: https://immich.app/',
+      description: 'Launched a new version of our website: https://immich.app/.',
       release: 'v2.0.0',
     }),
     releaseItem({
       icon: mdiRocketLaunch,
       title: 'Stable release',
-      description: 'Immich goes stable with v2.0.0',
+      description: 'Immich goes stable with v2.0.0.',
       release: 'v2.0.0',
     }),
     releaseItem({
       icon: mdiCloudUploadOutline,
       title: 'Better background backups',
-      description: 'Rework background backups to be more reliable',
+      description: 'Rework background backups to be more reliable.',
       release: 'v1.141.1',
     }),
     starMilestone(70_000, new Date(2025, 6, 9)),
     releaseItem({
       icon: mdiTableKey,
       title: 'Fine grained access controls',
-      description: 'Granular access controls for api keys',
+      description: 'Granular access controls for api keys.',
       release: 'v1.135.0',
     }),
     releaseItem({
       icon: mdiCast,
       title: 'Google Cast (web and mobile)',
-      description: 'Cast assets to Google Cast/Chromecast compatible devices',
+      description: 'Cast assets to Google Cast/Chromecast compatible devices.',
       release: 'v1.135.0',
     }),
     releaseItem({
       icon: mdiLockOutline,
       title: 'Private/locked photos',
-      description: 'Private assets with extra protections',
+      description: 'Private assets with extra protections.',
       release: 'v1.133.0',
     }),
     releaseItem({
       icon: mdiFolderMultiple,
       title: 'Folders view in the mobile app',
-      description: 'Browse your photos and videos in their folder structure inside the mobile app',
+      description: 'Browse your photos and videos in their folder structure inside the mobile app.',
       release: 'v1.130.0',
     }),
     starMilestone(60_000, new Date(2025, 2, 4)),
@@ -429,75 +471,75 @@
     releaseItem({
       icon: mdiLinkEdit,
       title: 'Automatic URL switching',
-      description: 'The mobile app now supports automatic switching between different server URLs',
+      description: 'The mobile app now supports automatic switching between different server URLs.',
       release: 'v1.122.0',
     }),
     releaseItem({
       icon: mdiMovieOpenPlayOutline,
       title: 'Native video player',
-      description: 'HDR videos are now fully supported using the Immich native video player',
+      description: 'HDR videos are now fully supported using the Immich native video player.',
       release: 'v1.122.0',
     }),
     releaseItem({
       icon: mdiDatabaseOutline,
       title: 'Automatic database dumps',
-      description: 'Database dumps are now integrated into the Immich server',
+      description: 'Database dumps are now integrated into the Immich server.',
       release: 'v1.120.0',
     }),
     starMilestone(50_000, new Date(2024, 10, 1)),
     releaseItem({
       icon: mdiFaceRecognition,
       title: 'Metadata Face Import',
-      description: 'Read face metadata in Digikam format during import',
+      description: 'Read face metadata in Digikam format during import.',
       release: 'v1.114.0',
     }),
     releaseItem({
       icon: mdiTagMultiple,
       title: 'Tags',
-      description: 'Tag your photos and videos',
+      description: 'Tag your photos and videos.',
       release: 'v1.113.0',
     }),
     releaseItem({
       icon: mdiFolderSync,
       title: 'Album sync (mobile)',
-      description: 'Sync or mirror an album from your phone to the Immich server',
+      description: 'Sync or mirror an album from your phone to the Immich server.',
       release: 'v1.113.0',
     }),
     releaseItem({
       icon: mdiFolderMultiple,
       title: 'Folders view',
-      description: 'Browse your photos and videos in their folder structure',
+      description: 'Browse your photos and videos in their folder structure.',
       release: 'v1.113.0',
     }),
     releaseItem({
       icon: mdiPalette,
       title: 'Theming (mobile)',
-      description: 'Pick a primary color for the mobile app',
+      description: 'Pick a primary color for the mobile app.',
       release: 'v1.112.0',
     }),
     releaseItem({
       icon: mdiStarOutline,
       title: 'Star rating',
-      description: 'Rate your photos and videos',
+      description: 'Rate your photos and videos.',
       release: 'v1.112.0',
     }),
     releaseItem({
       icon: mdiCrop,
       title: 'Editor (mobile)',
-      description: 'Crop and rotate on mobile',
+      description: 'Crop and rotate on mobile.',
       release: 'v1.111.0',
     }),
     releaseItem({
       icon: mdiMap,
       title: 'Deploy tiles.immich.cloud',
-      description: 'Dedicated tile server for Immich',
+      description: 'Dedicated tile server for Immich.',
       release: 'v1.111.0',
     }),
     starMilestone(40_000, new Date(2024, 6, 21)),
     releaseItem({
       icon: mdiShare,
       title: 'Deploy my.immich.app',
-      description: 'Url router for immich links',
+      description: 'Url router for immich links.',
       release: 'v1.109.0',
     }),
     releaseItem({
@@ -509,19 +551,19 @@
     releaseItem({
       icon: mdiHistory,
       title: 'Versioned documentation',
-      description: 'View documentation as it was at the time of past releases',
+      description: 'View documentation as it was at the time of past releases.',
       release: 'v1.106.1',
     }),
     releaseItem({
       icon: mdiWeb,
       title: 'Web translations',
-      description: 'Translate the web application to multiple languages',
+      description: 'Translate the web application to multiple languages.',
       release: 'v1.106.1',
     }),
     releaseItem({
       icon: mdiContentDuplicate,
       title: 'Similar image detection',
-      description: "Detect duplicate assets that aren't exactly identical",
+      description: "Detect duplicate assets that aren't exactly identical.",
       release: 'v1.106.1',
     }),
     releaseItem({
@@ -534,56 +576,56 @@
     releaseItem({
       icon: mdiPencil,
       title: 'Read-write external libraries',
-      description: 'Edit, update, and delete files in external libraries',
+      description: 'Edit, update, and delete files in external libraries.',
       release: 'v1.104.0',
     }),
     releaseItem({
       icon: mdiEmailOutline,
       title: 'Email notifications',
-      description: 'Send emails for important events',
+      description: 'Send emails for important events.',
       release: 'v1.104.0',
     }),
     {
       icon: mdiHandshakeOutline,
       title: 'Immich joins FUTO!',
-      description: 'Joined Futo and Immich core team goes full-time',
+      description: 'Joined Futo and Immich core team goes full-time.',
       getDateLabel: withLanguage(new Date(2024, 4, 1)),
     },
     releaseItem({
       icon: mdiEyeOutline,
       title: 'Read-only albums',
-      description: 'Share albums with other users as read-only',
+      description: 'Share albums with other users as read-only.',
       release: 'v1.103.0',
     }),
     releaseItem({
       icon: mdiBookmark,
       title: 'Permanent URLs (Web)',
-      description: 'Assets on the web now have permanent URLs',
+      description: 'Assets on the web now have permanent URLs.',
       release: 'v1.103.0',
     }),
     starMilestone(30_000, new Date(2024, 2, 20)),
     releaseItem({
       icon: mdiChartBoxMultipleOutline,
       title: 'OpenTelemetry metrics',
-      description: 'OpenTelemetry metrics for local evaluation and advanced debugging',
+      description: 'OpenTelemetry metrics for local evaluation and advanced debugging.',
       release: 'v1.99.0',
     }),
     releaseItem({
       icon: 'immich',
       title: 'New logo',
-      description: 'Immich got its new logo',
+      description: 'Immich got its new logo.',
       release: 'v1.98.0',
     }),
     releaseItem({
       icon: mdiMagnifyScan,
       title: 'Search enhancement with advanced filters',
-      description: 'Advanced search with filters by date, location and more',
+      description: 'Advanced search with filters by date, location and more.',
       release: 'v1.95.0',
     }),
     releaseItem({
       icon: mdiScaleBalance,
       title: 'AGPL License',
-      description: 'Immich switches to AGPLv3 license',
+      description: 'Immich switches to AGPLv3 license.',
       release: 'v1.95.0',
     }),
     releaseItem({
@@ -601,19 +643,19 @@
     releaseItem({
       icon: mdiAccountGroupOutline,
       title: '250 unique contributors',
-      description: '250 amazing people contributed to Immich',
+      description: '250 amazing people contributed to Immich.',
       release: 'v1.93.0',
     }),
     releaseItem({
       icon: mdiMatrix,
       title: 'Search improvement with pgvecto.rs',
-      description: 'Moved the search from typesense to pgvecto.rs',
+      description: 'Moved the search from typesense to pgvecto.rs.',
       release: 'v1.91.0',
     }),
     releaseItem({
       icon: mdiPencil,
       title: 'Edit metadata',
-      description: "Edit a photo or video's date, time, hours, timezone, and GPS information",
+      description: "Edit a photo or video's date, time, hours, timezone, and GPS information.",
       release: 'v1.90.0',
     }),
     releaseItem({
@@ -632,7 +674,7 @@
     releaseItem({
       icon: mdiForum,
       title: 'Activity',
-      description: 'Comment a photo or a video in a shared album',
+      description: 'Comment a photo or a video in a shared album.',
       release: 'v1.84.0',
     }),
     starMilestone(20_000, new Date(2023, 9, 28)),
@@ -673,7 +715,7 @@
       release: 'v1.75.0',
     }),
     releaseItem({
-      icon: mdiMonitor,
+      icon: mdiPresentationPlay,
       title: 'Slideshow mode (web)',
       description: 'Start a full-screen slideshow from an Album on the web.',
       release: 'v1.75.0',
@@ -808,7 +850,7 @@
     releaseItem({
       icon: mdiText,
       title: 'Asset descriptions',
-      description: 'Save an asset description',
+      description: 'Save an asset description.',
       release: 'v1.54.0',
     }),
     releaseItem({
