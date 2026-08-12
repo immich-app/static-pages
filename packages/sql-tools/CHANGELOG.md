@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.6.0](https://github.com/immich-app/static-pages/compare/sql-tools-v0.5.2...sql-tools-v0.6.0) (2026-08-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* **sql-tools:** separate runtime and source migration folders ([#687](https://github.com/immich-app/static-pages/issues/687))
+
+### Features
+
+* **sql-tools:** maintain and verify a migration ORDER file ([#688](https://github.com/immich-app/static-pages/issues/688)) ([6d757b3](https://github.com/immich-app/static-pages/commit/6d757b3dfabfaf5662dbacea3418808957dc5379))
+
+
+### Bug Fixes
+
+* **deps:** update dependency commander to v15 ([#572](https://github.com/immich-app/static-pages/issues/572)) ([7025d2d](https://github.com/immich-app/static-pages/commit/7025d2d09d503cf9cf3e70dca84d77de4bcbe1b0))
+* **deps:** update typescript-projects ([#523](https://github.com/immich-app/static-pages/issues/523)) ([d203861](https://github.com/immich-app/static-pages/commit/d203861feb6255a29591617e83b908380a9cf124))
+* publish ([#484](https://github.com/immich-app/static-pages/issues/484)) ([ae86d91](https://github.com/immich-app/static-pages/commit/ae86d91734eec38de16479df9a838feacfa7426d))
+* **sql-tools:** separate runtime and source migration folders ([#687](https://github.com/immich-app/static-pages/issues/687)) ([942478f](https://github.com/immich-app/static-pages/commit/942478ffb8d62d7a1624bd8e5c0bcd72ddc7dced))
+
 ## [0.5.2](https://github.com/immich-app/packages/compare/sql-tools-v0.5.1...sql-tools-v0.5.2) (2026-04-22)
 
 
