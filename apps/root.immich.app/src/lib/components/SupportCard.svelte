@@ -15,7 +15,7 @@
 </script>
 
 <div
-  class="group flex flex-col items-start gap-6 rounded-3xl border border-primary-300 bg-primary-50 p-10 transition-colors hover:border-primary-400 sm:flex-row sm:items-center sm:gap-8"
+  class="group flex flex-col items-start gap-6 rounded-2xl border border-primary-300 bg-primary-50 p-10 transition-colors hover:border-primary-400 sm:flex-row sm:items-center sm:gap-8"
 >
   <Icon
     {icon}
