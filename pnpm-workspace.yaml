@@ -7,6 +7,8 @@ dedupePeerDependents: true
 
 allowBuilds:
   '@tailwindcss/oxide': true
+  better-sqlite3: true
+  core-js: false
   cpu-features: false
   esbuild: true
   exifreader: false
