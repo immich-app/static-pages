@@ -12,6 +12,7 @@ import {
   schemaFromCode,
   schemaFromDatabase,
 } from 'src';
+import { ORDER_FILENAME, maybeSyncOrder } from 'src/migration-order';
 
 type MigrationProps = {
   up: string[];
@@ -129,14 +130,14 @@ export class Migrator {
     return reverted.migrationName;
   }
 
-  async revert(migrationsDistFolder: string) {
+  async revert(sourceFolder: string) {
     const migrationName = await this.#revertLastMigration();
     if (!migrationName) {
       console.log('No migrations to revert');
       return;
     }
 
-    this.#markMigrationAsReverted(migrationName, migrationsDistFolder);
+    this.#markMigrationAsReverted(migrationName, sourceFolder);
   }
 
   async generate({ dist, targetPath, withComments }: { dist: string; targetPath: string; withComments: boolean }) {
@@ -168,6 +169,9 @@ export class Migrator {
     mkdirSync(folder, { recursive: true });
     writeFileSync(fullPath, this.#asMigration({ up, down }));
     console.log(`Wrote ${fullPath}`);
+    if (maybeSyncOrder(folder)) {
+      console.log(`Updated ${join(folder, ORDER_FILENAME)}`);
+    }
   }
 
   async #compare() {
@@ -217,9 +221,9 @@ ${downSql}
 `;
   }
 
-  #markMigrationAsReverted(migrationName: string, migrationsDistFolder: string) {
-    const sourcePath = join(this.#migrationsFolder, `${migrationName}.ts`);
-    const revertedFolder = join(this.#migrationsFolder, 'reverted');
+  #markMigrationAsReverted(migrationName: string, sourceFolder: string) {
+    const sourcePath = join(sourceFolder, `${migrationName}.ts`);
+    const revertedFolder = join(sourceFolder, 'reverted');
     const revertedPath = join(revertedFolder, `${migrationName}.ts`);
 
     if (existsSync(revertedPath)) {
@@ -232,13 +236,17 @@ ${downSql}
       console.warn(`Source migration file not found for ${migrationName}`);
     }
 
-    const distBase = join(migrationsDistFolder, migrationName);
+    const distBase = join(this.#migrationsFolder, migrationName);
     for (const extension of ['.js', '.js.map', '.d.ts']) {
       const filePath = `${distBase}${extension}`;
       if (existsSync(filePath)) {
         rmSync(filePath, { force: true });
         console.log(`Removed ${filePath}`);
       }
+    }
+
+    if (maybeSyncOrder(sourceFolder)) {
+      console.log(`Updated ${join(sourceFolder, ORDER_FILENAME)}`);
     }
   }
 

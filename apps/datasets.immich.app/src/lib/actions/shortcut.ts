@@ -10,7 +10,9 @@ export type Shortcut = {
 
 export type ShortcutOptions<T = HTMLElement> = {
   shortcut: Shortcut;
-  /** If true, the event handler will not execute if the event comes from an input field */
+  /**
+  If true, the event handler will not execute if the event comes from an input field
+  */
   ignoreInputFields?: boolean;
   onShortcut: (event: KeyboardEvent & { currentTarget: T }) => unknown;
   preventDefault?: boolean;
@@ -58,7 +60,9 @@ export const matchesShortcut = (event: KeyboardEvent, shortcut: Shortcut) => {
   );
 };
 
-/** Bind a single keyboard shortcut to node. */
+/**
+Bind a single keyboard shortcut to node.
+*/
 export const shortcut = <T extends HTMLElement>(
   node: T,
   option: ShortcutOptions<T>,
@@ -73,7 +77,9 @@ export const shortcut = <T extends HTMLElement>(
   };
 };
 
-/** Binds multiple keyboard shortcuts to node */
+/**
+Binds multiple keyboard shortcuts to node
+*/
 export const shortcuts = <T extends HTMLElement>(
   node: T,
   options: ShortcutOptions<T>[],

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { browser } from '$app/environment';
   import type { TimelineItem } from '$lib';
-  import { Card, CardBody, Checkbox, Icon, Link, Logo, Text } from '@immich/ui';
+  import { Checkbox, Icon, Link, Logo, Text } from '@immich/ui';
 
   type Props = {
     items: TimelineItem[];
@@ -28,7 +28,7 @@
       </div>
 
       <div
-        class="-z-1 flex h-full w-[12px] translate-x-[-25px] flex-col items-center overflow-hidden"
+        class="-z-1 flex h-full w-3 -translate-x-6.25 flex-col items-center overflow-hidden"
         class:justify-end={isFirst}
       >
         <div
@@ -38,40 +38,20 @@
         ></div>
       </div>
 
-      <!-- card -->
-      <Card color="secondary" class={isLast ? '' : 'my-2'}>
-        <CardBody>
-          <div class="flex flex-col gap-2">
-            <!-- header -->
-            <div class="flex w-full justify-between gap-2">
-              <div class="flex items-center gap-2">
-                {#if cardIcon === 'immich'}
-                  <Logo variant="icon" class="h-6" />
-                {:else}
-                  <Icon icon={cardIcon} class={item.iconClass ?? 'text-primary'} />
-                {/if}
-                <Text color={done ? undefined : 'secondary'} variant={done ? undefined : 'italic'}>{item.title}</Text>
-              </div>
-
-              <div class="hidden md:flex">
-                <Text color="primary">
-                  {#if item.link}
-                    <Link href={item.link.href}>
-                      [{item.link.text}]
-                    </Link>
-                  {/if}
-                </Text>
-              </div>
+      <div class={[isLast ? '' : 'my-2', 'w-full rounded-2xl bg-light-100 p-4']}>
+        <div class="flex flex-col gap-2">
+          <!-- header -->
+          <div class="flex w-full justify-between gap-2">
+            <div class="flex items-center gap-2">
+              {#if cardIcon === 'immich'}
+                <Logo variant="icon" class="h-6" />
+              {:else}
+                <Icon icon={cardIcon} class={item.iconClass ?? 'text-primary'} />
+              {/if}
+              <Text color={done ? undefined : 'secondary'} variant={done ? undefined : 'italic'}>{item.title}</Text>
             </div>
 
-            <!-- description -->
-            <Text color="muted" size="small">{item.description}</Text>
-
-            <!-- footer -->
-            <div class="flex items-center justify-between md:hidden">
-              <Text color="muted" size="small">
-                {dateLabel}
-              </Text>
+            <div class="hidden md:flex">
               <Text color="primary">
                 {#if item.link}
                   <Link href={item.link.href}>
@@ -81,8 +61,25 @@
               </Text>
             </div>
           </div>
-        </CardBody>
-      </Card>
+
+          <!-- description -->
+          <Text color="muted" size="small">{item.description}</Text>
+
+          <!-- footer -->
+          <div class="flex items-center justify-between md:hidden">
+            <Text color="muted" size="small">
+              {dateLabel}
+            </Text>
+            <Text color="primary">
+              {#if item.link}
+                <Link href={item.link.href}>
+                  [{item.link.text}]
+                </Link>
+              {/if}
+            </Text>
+          </div>
+        </div>
+      </div>
     </li>
   {/each}
 </ul>

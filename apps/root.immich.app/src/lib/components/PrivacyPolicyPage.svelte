@@ -1,5 +1,6 @@
 <script lang="ts">
   import { siteMetadata } from '$lib';
+  import PageContent from '$lib/components/PageContent.svelte';
   import { Card, CardBody, Container, Heading, SiteMetadata, Text } from '@immich/ui';
   import { DateTime } from 'luxon';
   import type { Snippet } from 'svelte';
@@ -24,16 +25,18 @@
 
 <SiteMetadata site={siteMetadata} page={pageMetadata} />
 
-<Container size="medium" center>
-  <section class="flex flex-col gap-2">
-    <Heading tag="h1" size="title">{pageMetadata.title}</Heading>
-    <Text color="muted">Last updated: {updatedAt.toLocaleString(DateTime.DATE_FULL)}</Text>
-    <Text>{pageMetadata.description}</Text>
-  </section>
+<PageContent>
+  <Container size="medium" center>
+    <section class="flex flex-col gap-2">
+      <Heading tag="h1" size="title">{pageMetadata.title}</Heading>
+      <Text color="muted">Last updated: {updatedAt.toLocaleString(DateTime.DATE_FULL)}</Text>
+      <Text>{pageMetadata.description}</Text>
+    </section>
 
-  <Card color="secondary" class="mt-8">
-    <CardBody class="pt-0">
-      {@render children?.()}
-    </CardBody>
-  </Card>
-</Container>
+    <Card color="secondary" class="mt-8">
+      <CardBody class="pt-0">
+        {@render children?.()}
+      </CardBody>
+    </Card>
+  </Container>
+</PageContent>

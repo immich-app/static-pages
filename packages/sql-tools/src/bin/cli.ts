@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { sql } from 'kysely';
-import { join } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+import { ORDER_FILENAME, parseOrder, readOrder, syncOrder, verifyOrder } from 'src/migration-order';
 import { Migrator } from 'src/migration';
 
 const withMigrator =
@@ -11,6 +13,9 @@ const withMigrator =
     async function (...args: any[]) {
       const command: Command = args.at(-1);
       const options = command.optsWithGlobals();
+      if (!options.url) {
+        throw new Error(`Missing required option '-u, --url <url>'`);
+      }
 
       const migrator = new Migrator({
         connectionParams: { connectionType: 'url', url: options.url },
@@ -24,8 +29,13 @@ const withMigrator =
 const program = new Command('sql-tools');
 
 program
-  .requiredOption('-u, --url <url>', 'Database connection url')
-  .option('-f, --folder <migrationsFolder>', 'Path to the migration files', 'dist/schema/migrations');
+  .option('-u, --url <url>', 'Database connection url')
+  .option(
+    '-f, --folder <migrationsFolder>',
+    'Path to the runnable (compiled) migration files',
+    'dist/schema/migrations',
+  )
+  .option('--source-folder <migrationsSourceFolder>', 'Path to the migration source files', 'src/schema/migrations');
 
 program
   .command('query')
@@ -48,12 +58,7 @@ migrations
 migrations
   .command('revert')
   .description('Revert the most recent migration')
-  .requiredOption(
-    '-f, --folder <migrationsFolder>',
-    'Path to the folder the migration files are in',
-    'src/schema/migrations',
-  )
-  .action(withMigrator((migrator, { folder }) => migrator.revert(join(process.cwd(), folder))));
+  .action(withMigrator((migrator, { sourceFolder }) => migrator.revert(join(process.cwd(), sourceFolder))));
 
 migrations
   .command('create')
@@ -64,6 +69,37 @@ migrations
     'src/Migration',
   )
   .action(withMigrator((migrator, _, [path]) => migrator.create(join(process.cwd(), path ?? 'src/Migration'), [], [])));
+
+migrations
+  .command('sync-order')
+  .description(`Regenerate the ${ORDER_FILENAME} file from the migration files on disk`)
+  .action((_: unknown, command: Command) => {
+    const folder = resolve(process.cwd(), command.optsWithGlobals().sourceFolder);
+    const { changed, next } = syncOrder(folder);
+    console.log(
+      changed
+        ? `Wrote ${join(folder, ORDER_FILENAME)} (${next.length} migrations)`
+        : `${ORDER_FILENAME} is already up to date (${next.length} migrations)`,
+    );
+  });
+
+migrations
+  .command('verify-order')
+  .description(`Verify the ${ORDER_FILENAME} file matches the migration files on disk`)
+  .option('--append-only-from <path>', `Baseline ${ORDER_FILENAME} file that must be a prefix of the current one`)
+  .action((options: { appendOnlyFrom?: string }, command: Command) => {
+    const folder = resolve(process.cwd(), command.optsWithGlobals().sourceFolder);
+    const appendOnlyFrom = options.appendOnlyFrom
+      ? parseOrder(readFileSync(options.appendOnlyFrom, 'utf8'))
+      : undefined;
+
+    const errors = verifyOrder(folder, { appendOnlyFrom });
+    if (errors.length > 0) {
+      throw new Error(errors.map((error) => `- ${error}`).join('\n'));
+    }
+
+    console.log(`${ORDER_FILENAME} is consistent (${readOrder(folder)?.length ?? 0} migrations)`);
+  });
 
 migrations
   .command('generate')

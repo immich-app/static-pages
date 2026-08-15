@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   FileWithContent,
-  FileWithMarkup,
+  FileWithImages,
   FileWithScriptBody,
   SvelteMarkdownPreprocess,
   svelteMarkdownPreprocess,
@@ -70,6 +70,118 @@ describe(svelteMarkdownPreprocess.name, () => {
     });
   });
 
+  describe('images', () => {
+    it('should import relative images so vite can optimize them', async () => {
+      const result = await svelteMarkdownPreprocess().markup({
+        filename: 'test.md',
+        content: `![Alt text](./img/example.webp "Example")`,
+      });
+
+      expect(result).toMatchObject({ code: expect.stringContaining(`import __image_0 from './img/example.webp';`) });
+      expect(result).toMatchObject({
+        // eslint-disable-next-line unicorn/no-incorrect-template-string-interpolation
+        code: expect.stringContaining(`<Markdown.Image src={__image_0} alt="Alt text" title="Example"/>`),
+      });
+    });
+
+    it('should import images from a parent directory', async () => {
+      await expect(
+        svelteMarkdownPreprocess().markup({ filename: 'test.md', content: `![](../img/example.webp)` }),
+      ).resolves.toMatchObject({ code: expect.stringContaining(`import __image_0 from '../img/example.webp';`) });
+    });
+
+    it('should reuse a single import for a repeated image', async () => {
+      const result = await svelteMarkdownPreprocess().markup({
+        filename: 'test.md',
+        content: `![One](./img/example.webp)\n\n![Two](./img/example.webp)`,
+      });
+
+      expect(result?.code.match(/import __image_0/g)).toHaveLength(1);
+      expect(result?.code).not.toContain('__image_1');
+      expect(result?.code.match(/src=\{__image_0}/g)).toHaveLength(2);
+    });
+
+    it('should give each distinct image its own import', async () => {
+      const result = await svelteMarkdownPreprocess().markup({
+        filename: 'test.md',
+        content: `![One](./img/one.webp)\n\n![Two](./img/two.webp)`,
+      });
+
+      expect(result?.code).toContain(`import __image_0 from './img/one.webp';`);
+      expect(result?.code).toContain(`import __image_1 from './img/two.webp';`);
+    });
+
+    it('should leave absolute and remote images alone', async () => {
+      const result = await svelteMarkdownPreprocess().markup({
+        filename: 'test.md',
+        content: `![One](/img/one.webp)\n\n![Two](https://immich.app/two.webp)`,
+      });
+
+      expect(result?.code).not.toContain('import __image_0');
+      expect(result?.code).toContain(`src="/img/one.webp"`);
+      expect(result?.code).toContain(`src="https://immich.app/two.webp"`);
+    });
+
+    it('should import relative images in img tags', async () => {
+      const result = await svelteMarkdownPreprocess().markup({
+        filename: 'test.md',
+        content: `<img src="./img/example.webp" alt="Alt text">`,
+      });
+
+      expect(result?.code).toContain(`import __image_0 from './img/example.webp';`);
+      // eslint-disable-next-line unicorn/no-incorrect-template-string-interpolation
+      expect(result?.code).toContain(`<img src={__image_0} alt="Alt text">`);
+    });
+
+    it('should import img tags from a parent directory', async () => {
+      await expect(
+        svelteMarkdownPreprocess().markup({ filename: 'test.md', content: `<img src="../img/example.webp">` }),
+      ).resolves.toMatchObject({ code: expect.stringContaining(`import __image_0 from '../img/example.webp';`) });
+    });
+
+    it('should import relative images in img tags with attributes before the src', async () => {
+      await expect(
+        svelteMarkdownPreprocess().markup({
+          filename: 'test.md',
+          content: `<img class="rounded" src="./img/example.webp">`,
+        }),
+        // eslint-disable-next-line unicorn/no-incorrect-template-string-interpolation
+      ).resolves.toMatchObject({ code: expect.stringContaining(`<img class="rounded" src={__image_0}>`) });
+    });
+
+    it('should leave absolute and remote img tags alone', async () => {
+      const result = await svelteMarkdownPreprocess().markup({
+        filename: 'test.md',
+        content: `<img src="/img/one.webp">\n\n<img src="https://immich.app/two.webp">`,
+      });
+
+      expect(result?.code).not.toContain('import __image_0');
+      expect(result?.code).toContain(`src="/img/one.webp"`);
+      expect(result?.code).toContain(`src="https://immich.app/two.webp"`);
+    });
+
+    it('should reuse a single import across markdown and img tag references', async () => {
+      const result = await svelteMarkdownPreprocess().markup({
+        filename: 'test.md',
+        content: `![One](./img/example.webp)\n\n<img src="./img/example.webp">`,
+      });
+
+      expect(result?.code.match(/import __image_0/g)).toHaveLength(1);
+      expect(result?.code).not.toContain('__image_1');
+      expect(result?.code.match(/src=\{__image_0}/g)).toHaveLength(2);
+    });
+
+    it('should not treat other tags as images', async () => {
+      const result = await svelteMarkdownPreprocess().markup({
+        filename: 'test.md',
+        content: `<video src="./video/example.webm"></video>`,
+      });
+
+      expect(result?.code).not.toContain('import __image_0');
+      expect(result?.code).toContain(`src="./video/example.webm"`);
+    });
+  });
+
   describe('method overrides', () => {
     it('should allow injecting front matter', async () => {
       class CustomPlugin extends SvelteMarkdownPreprocess {
@@ -126,7 +238,7 @@ describe(svelteMarkdownPreprocess.name, () => {
 
     it('should allow injecting a layout', async () => {
       class CustomPlugin extends SvelteMarkdownPreprocess {
-        parseLayout(file: FileWithMarkup) {
+        parseLayout(file: FileWithImages) {
           return { ...file, layout: '$lib/layouts/Custom.svelte' };
         }
       }

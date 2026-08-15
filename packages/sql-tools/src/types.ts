@@ -54,7 +54,9 @@ export type BaseContextOptions = {
 };
 
 export type SchemaFromCodeOptions = BaseContextOptions & {
-  /** automatically create indexes on foreign key columns */
+  /**
+  automatically create indexes on foreign key columns
+  */
   createForeignKeyIndexes?: boolean;
   reset?: boolean;
 
@@ -492,7 +494,9 @@ export type DatabaseForeignKeyConstraint = ColumBasedConstraint & {
   referenceColumnNames: string[];
   onUpdate?: ActionType;
   onDelete?: ActionType;
-  /** table create sql should not inline this constraint */
+  /**
+  table create sql should not inline this constraint
+  */
   deferred?: boolean;
   synchronize: boolean;
 };
@@ -569,7 +573,9 @@ export type Comparer<T> = {
   onMissing: (source: T) => SchemaDiff[];
   onExtra: (target: T) => SchemaDiff[];
   onCompare: CompareFunction<T>;
-  /** if two items have the same key, they are considered identical and can be renamed via `onRename` */
+  /**
+  if two items have the same key, they are considered identical and can be renamed via `onRename`
+  */
   getRenameKey?: (item: T) => string;
   onRename?: (source: T, target: T) => SchemaDiff[];
 };

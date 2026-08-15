@@ -18,6 +18,6 @@
         {@render children?.()}
       </Container>
     </div>
-    <SiteFooter />
+    <SiteFooter class="mt-16" />
   </section>
 </Scrollable>

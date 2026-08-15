@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { TimelineItem } from '$lib';
   import { posts, siteMetadata } from '$lib';
+  import PageContent from '$lib/components/PageContent.svelte';
   import Timeline from '$lib/components/Timeline.svelte';
   import { asGithubLink, Heading, SiteMetadata, Stack, Text } from '@immich/ui';
   import {
@@ -236,15 +237,17 @@
 
 <SiteMetadata site={siteMetadata} page={pageMetadata} />
 
-<Stack class="text-center" gap={4}>
-  <Heading size="title" tag="h1">{pageMetadata.title}</Heading>
-  <Text>{pageMetadata.description}</Text>
-</Stack>
+<PageContent>
+  <Stack class="text-center" gap={4}>
+    <Heading size="title" tag="h1">{pageMetadata.title}</Heading>
+    <Text>{pageMetadata.description}</Text>
+  </Stack>
 
-<div class="mx-auto mt-8 flex w-full max-w-(--breakpoint-md) justify-around">
-  <Timeline
-    items={items
-      .toSorted((a, b) => b.date.getTime() - a.date.getTime())
-      .map((item) => ({ ...item, getDateLabel: withLanguage(item.date) }))}
-  />
-</div>
+  <div class="mx-auto mt-8 flex w-full max-w-(--breakpoint-md) justify-around">
+    <Timeline
+      items={items
+        .toSorted((a, b) => b.date.getTime() - a.date.getTime())
+        .map((item) => ({ ...item, getDateLabel: withLanguage(item.date) }))}
+    />
+  </div>
+</PageContent>
