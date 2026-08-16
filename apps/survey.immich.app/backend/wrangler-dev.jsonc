@@ -18,9 +18,6 @@
       },
     ],
   },
-  // SurveyDO is the only Durable Object class and is SQLite-backed from the
-  // start. (The earlier v1 "SurveySession" class never existed — it only
-  // produced a "no such Durable Object class is exported" warning on boot.)
   "migrations": [
     {
       "tag": "v1",

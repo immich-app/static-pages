@@ -451,6 +451,13 @@ export class SurveyDO extends DurableObject {
       answers: Array<{ questionId: string; value: string; otherText?: string; answerMs?: number }>;
     };
     await this.respondentService.submitBatch(survey.slug!, respondentId, answers, survey);
+
+    // The unload beacon submits over HTTP even in WebSocket mode, so without this
+    // the cached choice answers miss whatever was flushed on the way out and the
+    // live tallies under-count once the respondent completes.
+    for (const a of answers) {
+      this.cache.setAnswer(respondentId, a.questionId, a.value, a.otherText ?? null);
+    }
     return new Response(null, { status: 204 });
   }
 
