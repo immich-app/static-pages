@@ -262,10 +262,6 @@ async function handleOp(
         if (error) throw new ServiceError(error, 400);
       }
 
-      for (const a of answers) {
-        cache.setAnswer(respondentId, a.questionId, a.value, a.otherText ?? null);
-      }
-
       // answer_ms is clamped via the shared helper so it stays in lockstep with the
       // HTTP path in respondent.service.
       const now = new Date().toISOString();
@@ -278,6 +274,13 @@ async function handleOp(
         `INSERT OR REPLACE INTO answers (respondent_id, question_id, answer, other_text, answered_at, answer_ms) VALUES ${placeholders}`,
         ...values,
       );
+
+      // Cache only after the write lands: a throw here leaves answers in
+      // choiceAnswers that were never persisted, and completion would fold them
+      // into the live tallies.
+      for (const a of answers) {
+        cache.setAnswer(respondentId, a.questionId, a.value, a.otherText ?? null);
+      }
       return {};
     }
 

@@ -11,19 +11,12 @@
       },
     ],
   },
-  // The deployed sessions worker reached tag "v2" through this chain, so it must
-  // be preserved as-is: v1 created the original "SurveySession" class and v2
-  // introduced the SQLite-backed "SurveyDO". The Terraform deploy (worker.tf)
-  // asserts old_tag == new_tag == "v2" against this state. `durable-objects/
-  // index.ts` still exports `SurveyDO as SurveySession` so the v1 class name
-  // remains resolvable.
+  // This config only drives `wrangler build`; Terraform deploys the worker and
+  // applies the migration itself, so this must stay in sync with the block in
+  // deployment/modules/cloudflare/workers/survey/worker.tf.
   "migrations": [
     {
       "tag": "v1",
-      "new_classes": ["SurveySession"],
-    },
-    {
-      "tag": "v2",
       "new_sqlite_classes": ["SurveyDO"],
     },
   ],
