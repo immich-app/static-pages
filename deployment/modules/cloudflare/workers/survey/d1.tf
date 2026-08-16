@@ -13,6 +13,10 @@ resource "null_resource" "d1_migrations" {
   }
 
   provisioner "local-exec" {
+    # local-exec defaults to /bin/sh, which is dash on the CI runners and has no
+    # pipefail.
+    interpreter = ["/bin/bash", "-c"]
+
     # Re-running an already-applied migration is benign ("already exists" /
     # "duplicate column"); every other error must exit non-zero so the failure is
     # visible in the workflow instead of being masked.

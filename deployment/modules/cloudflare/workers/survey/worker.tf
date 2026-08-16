@@ -109,6 +109,51 @@ resource "cloudflare_worker" "sessions" {
   }
 }
 
+# Cloudflare applies a version's migration when the version is deployed, and
+# rejects it unless old_tag matches the tag the Worker is already on. A fresh
+# Worker therefore needs the class-creating migration with no old_tag, and every
+# later deploy needs a no-op migration carrying that same tag — no single block
+# is valid in both states. This version exists only to run the first migration
+# and is frozen once created, so each new environment bootstraps itself and the
+# rolling version below stays on the no-op tag forever after.
+resource "cloudflare_worker_version" "sessions_bootstrap" {
+  account_id         = var.cloudflare_account_id
+  worker_id          = cloudflare_worker.sessions.id
+  compatibility_date = "2025-06-03"
+
+  main_module = "sessions.js"
+
+  modules = [{
+    name         = "sessions.js"
+    content_file = "${var.dist_dir}/sessions.js"
+    content_type = "application/javascript+module"
+  }]
+
+  migrations = {
+    new_tag            = "v1"
+    new_sqlite_classes = ["SurveyDO"]
+  }
+
+  lifecycle {
+    ignore_changes = all
+  }
+}
+
+resource "cloudflare_workers_deployment" "sessions_bootstrap" {
+  account_id  = var.cloudflare_account_id
+  script_name = cloudflare_worker.sessions.name
+  strategy    = "percentage"
+
+  versions = [{
+    version_id = cloudflare_worker_version.sessions_bootstrap.id
+    percentage = 100
+  }]
+
+  lifecycle {
+    ignore_changes = all
+  }
+}
+
 resource "cloudflare_worker_version" "sessions" {
   account_id         = var.cloudflare_account_id
   worker_id          = cloudflare_worker.sessions.id
@@ -123,9 +168,11 @@ resource "cloudflare_worker_version" "sessions" {
   }]
 
   migrations = {
-    old_tag = "v2"
-    new_tag = "v2"
+    old_tag = "v1"
+    new_tag = "v1"
   }
+
+  depends_on = [cloudflare_workers_deployment.sessions_bootstrap]
 }
 
 resource "cloudflare_workers_deployment" "sessions" {
@@ -137,6 +184,12 @@ resource "cloudflare_workers_deployment" "sessions" {
     version_id = cloudflare_worker_version.sessions.id
     percentage = 100
   }]
+
+  lifecycle {
+    # Redeploying the frozen bootstrap would otherwise silently roll the Worker
+    # back to the code it was first created with.
+    replace_triggered_by = [cloudflare_workers_deployment.sessions_bootstrap]
+  }
 }
 
 resource "cloudflare_worker" "api" {
@@ -146,6 +199,11 @@ resource "cloudflare_worker" "api" {
   observability = {
     enabled = true
   }
+
+  # Ordering only, so that destroy runs in reverse and tears this Worker down
+  # first: Cloudflare refuses to delete the sessions Worker while this one still
+  # binds its Durable Object namespace.
+  depends_on = [cloudflare_worker.sessions]
 }
 
 resource "cloudflare_worker_version" "api" {
@@ -184,16 +242,22 @@ data "cloudflare_zone" "immich_app" {
   }
 }
 
+# A Worker with no deployed version does not exist as far as the routes API is
+# concerned, and referencing only the name would let these race the deployment.
 resource "cloudflare_workers_route" "survey_api_root" {
   zone_id = data.cloudflare_zone.immich_app.zone_id
   pattern = "${module.domain.fqdn}/api"
   script  = cloudflare_worker.api.name
+
+  depends_on = [cloudflare_workers_deployment.api]
 }
 
 resource "cloudflare_workers_route" "survey_api_wildcard" {
   zone_id = data.cloudflare_zone.immich_app.zone_id
   pattern = "${module.domain.fqdn}/api/*"
   script  = cloudflare_worker.api.name
+
+  depends_on = [cloudflare_workers_deployment.api]
 }
 
 module "domain" {
