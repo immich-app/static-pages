@@ -21,7 +21,7 @@
     "@playwright/test": "^1.58.2",
     "@sveltejs/adapter-static": "^3.0.8",
     "@sveltejs/kit": "^2.43.2",
-    "@sveltejs/vite-plugin-svelte": "^6.2.4",
+    "@sveltejs/vite-plugin-svelte": "^7.0.0",
     "@tailwindcss/vite": "^4.1.13",
     "@types/d3-cloud": "^1.2.9",
     "@types/d3-selection": "^3.0.11",
