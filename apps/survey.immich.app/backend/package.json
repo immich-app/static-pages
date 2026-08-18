@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.0.0",
-    "@hono/node-server": "^1.19.12",
+    "@hono/node-server": "^2.0.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/pg": "^8.20.0",
     "@types/ws": "^8.18.1",
