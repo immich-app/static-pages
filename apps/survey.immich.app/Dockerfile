@@ -1,4 +1,4 @@
-FROM node:20-slim AS frontend-builder
+FROM node:20-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0 AS frontend-builder
 # pnpm version is pinned via the root package.json "packageManager" field
 ENV COREPACK_ENABLE_STRICT=1
 RUN corepack enable
@@ -15,7 +15,7 @@ RUN pnpm install --frozen-lockfile --filter survey...
 COPY apps/survey.immich.app/ apps/survey.immich.app/
 RUN cd apps/survey.immich.app && pnpm run build
 
-FROM node:20-slim AS backend-builder
+FROM node:20-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0 AS backend-builder
 ENV COREPACK_ENABLE_STRICT=1
 RUN corepack enable
 WORKDIR /app
@@ -28,7 +28,7 @@ RUN pnpm install --frozen-lockfile --filter survey-backend...
 COPY apps/survey.immich.app/backend/ apps/survey.immich.app/backend/
 RUN cd apps/survey.immich.app/backend && npx esbuild src/server.ts --bundle --platform=node --format=esm --outdir=dist --external:better-sqlite3 --external:pg
 
-FROM node:20-slim
+FROM node:20-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0
 ENV COREPACK_ENABLE_STRICT=1
 RUN corepack enable
 WORKDIR /app
