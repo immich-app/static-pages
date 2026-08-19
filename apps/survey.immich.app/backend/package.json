@@ -15,22 +15,23 @@
     "test:integration:watch": "vitest"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.0.0",
-    "@hono/node-server": "^1.19.12",
-    "@types/better-sqlite3": "^7.6.13",
-    "@types/pg": "^8.20.0",
+    "@cloudflare/workers-types": "^5.20260819.1",
+    "@hono/node-server": "^2.1.1",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/pg": "^8.23.1",
     "@types/ws": "^8.18.1",
-    "esbuild": "^0.28.0",
-    "hono": "^4.12.9",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.2",
-    "vitest": "^4.1.0",
-    "wrangler": "^4.75.0",
-    "ws": "^8.20.0"
+    "esbuild": "^0.28.2",
+    "hono": "^4.13.3",
+    "tsx": "^4.23.12",
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "vitest": "^4.1.11",
+    "wrangler": "^4.124.0",
+    "ws": "^8.21.3"
   },
   "dependencies": {
-    "itty-router": "^5.0.18",
-    "better-sqlite3": "^12.8.0",
-    "pg": "^8.20.0"
+    "itty-router": "^5.0.24",
+    "better-sqlite3": "^13.0.3",
+    "pg": "^8.23.0"
   }
 }
