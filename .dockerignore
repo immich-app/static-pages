@@ -1,0 +1,10 @@
+# Build/dev output that the images produce themselves. Without this, COPY drags
+# the host's pnpm symlink farm and stale build artifacts into the build context.
+**/node_modules
+**/.svelte-kit
+**/build
+**/dist
+**/.wrangler
+**/test-results
+**/playwright-report
+.git

@@ -19,6 +19,13 @@ export default defineConfig([
   eslintPluginUnicorn.configs.recommended,
   {
     languageOptions: {
+      // apps/survey.immich.app has its own flat config, and ESLint loads it in
+      // the same process as this one. typescript-eslint records a candidate
+      // tsconfigRootDir per config file it is loaded from and refuses to guess
+      // once there is more than one, so both configs pin theirs explicitly.
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname,
+      },
       globals: {
         ...globals.browser,
         ...globals.node,

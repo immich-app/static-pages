@@ -1,34 +1,29 @@
-FROM node:20-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0 AS frontend-builder
+FROM node:24-slim@sha256:3638d9a6fe4030bd716be989438248074489337ba3275657f93595428be4fc03 AS frontend-builder
 # pnpm version is pinned via the root package.json "packageManager" field
 ENV COREPACK_ENABLE_STRICT=1
 RUN corepack enable
 WORKDIR /app
-# pnpm --frozen-lockfile fails unless every package.json referenced by
-# pnpm-workspace.yaml exists, hence the unrelated app manifests below.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/survey.immich.app/package.json apps/survey.immich.app/
 COPY apps/survey.immich.app/backend/package.json apps/survey.immich.app/backend/
-COPY apps/datasets.immich.app/backend/package.json apps/datasets.immich.app/backend/
-COPY apps/futo-backups-survey.immich.app/backend/package.json apps/futo-backups-survey.immich.app/backend/
 COPY common/ common/
-RUN pnpm install --frozen-lockfile --filter survey...
+RUN pnpm install --frozen-lockfile --filter survey.immich.app...
 COPY apps/survey.immich.app/ apps/survey.immich.app/
 RUN cd apps/survey.immich.app && pnpm run build
 
-FROM node:20-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0 AS backend-builder
+FROM node:24-slim@sha256:3638d9a6fe4030bd716be989438248074489337ba3275657f93595428be4fc03 AS backend-builder
 ENV COREPACK_ENABLE_STRICT=1
 RUN corepack enable
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/survey.immich.app/package.json apps/survey.immich.app/
 COPY apps/survey.immich.app/backend/package.json apps/survey.immich.app/backend/
-COPY apps/datasets.immich.app/backend/package.json apps/datasets.immich.app/backend/
-COPY apps/futo-backups-survey.immich.app/backend/package.json apps/futo-backups-survey.immich.app/backend/
 RUN pnpm install --frozen-lockfile --filter survey-backend...
+COPY apps/survey.immich.app/shared/ apps/survey.immich.app/shared/
 COPY apps/survey.immich.app/backend/ apps/survey.immich.app/backend/
-RUN cd apps/survey.immich.app/backend && npx esbuild src/server.ts --bundle --platform=node --format=esm --outdir=dist --external:better-sqlite3 --external:pg
+RUN cd apps/survey.immich.app/backend && pnpm run build:node
 
-FROM node:20-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0
+FROM node:24-slim@sha256:3638d9a6fe4030bd716be989438248074489337ba3275657f93595428be4fc03
 ENV COREPACK_ENABLE_STRICT=1
 RUN corepack enable
 WORKDIR /app
