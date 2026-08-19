@@ -23,7 +23,8 @@
     "esbuild": "^0.28.0",
     "hono": "^4.12.9",
     "tsx": "^4.21.0",
-    "typescript": "^7.0.0",
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
     "vitest": "^4.1.0",
     "wrangler": "^4.75.0",
     "ws": "^8.20.0"
