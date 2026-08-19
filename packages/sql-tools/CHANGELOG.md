@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/immich-app/static-pages/compare/sql-tools-v0.6.0...sql-tools-v0.6.1) (2026-08-19)
+
+
+### Bug Fixes
+
+* **sql-tools:** force ISO DateStyle on postgres connections ([#719](https://github.com/immich-app/static-pages/issues/719)) ([b91935e](https://github.com/immich-app/static-pages/commit/b91935ed1cf930978bc6a84b5faf87e4eac68735))
+
 ## [0.6.0](https://github.com/immich-app/static-pages/compare/sql-tools-v0.5.2...sql-tools-v0.6.0) (2026-08-11)
 
 
