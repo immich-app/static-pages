@@ -2,6 +2,7 @@
   "name": "survey-backend",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
@@ -9,13 +10,13 @@
     "build": "pnpm build:workers",
     "build:workers": "wrangler build --config wrangler-do.jsonc && mv dist/index.js dist/sessions.js && wrangler build",
     "start": "tsx src/server.ts",
-    "build:node": "esbuild src/server.ts --bundle --platform=node --format=esm --outdir=dist --external:better-sqlite3 --external:pg",
+    "build:node": "esbuild src/server.ts --bundle --platform=node --format=esm --outdir=dist --external:better-sqlite3 --external:pg --banner:js=\"import { createRequire as topLevelCreateRequire } from 'node:module'; const require = topLevelCreateRequire(import.meta.url);\"",
     "load-test": "tsx scripts/load-test.ts",
     "test:integration": "vitest run",
     "test:integration:watch": "vitest"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20260819.1",
+    "@cloudflare/workers-types": "^5.20260818.1",
     "@hono/node-server": "^2.1.1",
     "@types/better-sqlite3": "^9.6.0",
     "@types/pg": "^8.23.1",
@@ -30,7 +31,9 @@
     "ws": "^8.21.3"
   },
   "dependencies": {
+    "@immich/kysely-adapter-cloudflare": "^0.1.0",
     "itty-router": "^5.0.24",
+    "kysely": "^0.29.5",
     "better-sqlite3": "^13.0.3",
     "pg": "^8.23.0"
   }
