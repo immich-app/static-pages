@@ -20,7 +20,7 @@ services:
     volumes:
       - survey-data:/data
     restart: unless-stopped
-    # node:20-slim ships neither wget nor curl, so probe /api/auth/me (200 when
+    # node:24-slim ships neither wget nor curl, so probe /api/auth/me (200 when
     # healthy, authenticated or not) with Node's built-in fetch.
     healthcheck:
       test:
