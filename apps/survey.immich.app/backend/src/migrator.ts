@@ -1,4 +1,6 @@
-import { Migrator, type Migration, type MigrationProvider, sql, type Kysely } from 'kysely';
+import { sql, type Kysely } from 'kysely';
+// kysely 0.29 moved the migrator out of the root entry point.
+import { Migrator, type Migration, type MigrationProvider } from 'kysely/migration';
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { Database } from './db';
