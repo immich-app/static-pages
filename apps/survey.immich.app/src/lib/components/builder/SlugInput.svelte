@@ -12,7 +12,7 @@
   const error = $derived(value ? validateSlug(value) : null);
 
   function handleInput(e: Event) {
-    const raw = (e.target as HTMLInputElement).value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+    const raw = (e.target as HTMLInputElement).value.toLowerCase().replaceAll(/[^a-z0-9-]/g, '');
     onChange(raw);
   }
 </script>

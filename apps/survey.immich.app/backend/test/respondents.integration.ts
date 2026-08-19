@@ -30,7 +30,7 @@ describe('Respondent Flow', () => {
 
   it('submits batch answers and completes', async () => {
     const resumeRes = await request(`/api/s/${slug}/resume`);
-    const ridCookie = resumeRes.headers.get('set-cookie')?.split(';')[0] ?? '';
+    const ridCookie = resumeRes.headers.get('set-cookie')?.split(';', 1)[0] ?? '';
 
     const batchRes = await request(`/api/s/${slug}/answers/batch`, {
       method: 'POST',
@@ -58,7 +58,7 @@ describe('Respondent Flow', () => {
 
   it('rejects answers for questions not in survey', async () => {
     const resumeRes = await request(`/api/s/${slug}/resume`);
-    const ridCookie = resumeRes.headers.get('set-cookie')?.split(';')[0] ?? '';
+    const ridCookie = resumeRes.headers.get('set-cookie')?.split(';', 1)[0] ?? '';
 
     const res = await request(`/api/s/${slug}/answers/batch`, {
       method: 'POST',
@@ -105,7 +105,7 @@ describe('Survey Password Protection', () => {
       body: JSON.stringify({ password: 'survey-pass-1234' }),
     });
     expect(authRes.status).toBe(204);
-    const pwCookie = authRes.headers.get('set-cookie')?.split(';')[0] ?? '';
+    const pwCookie = authRes.headers.get('set-cookie')?.split(';', 1)[0] ?? '';
 
     const surveyRes = await request(`/api/s/${slug}`, { cookie: pwCookie });
     const data = (await surveyRes.json()) as { questions: unknown[] };

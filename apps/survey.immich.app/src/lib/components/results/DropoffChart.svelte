@@ -15,24 +15,24 @@
   const startingCohort = $derived(data[0]?.respondentsReached ?? data[0]?.respondentsAnswered ?? 0);
 
   function widthPct(value: number): number {
-    if (startingCohort <= 0) return 0;
+    if (startingCohort <= 0) {return 0;}
     return Math.max(1, Math.min(100, (value / startingCohort) * 100));
   }
 
   function severityClass(rate: number): string {
-    if (rate >= 30) return 'bg-red-500/70';
-    if (rate >= 15) return 'bg-amber-500/70';
+    if (rate >= 30) {return 'bg-red-500/70';}
+    if (rate >= 15) {return 'bg-amber-500/70';}
     return 'bg-emerald-500/70';
   }
 
   function severityText(rate: number): string {
-    if (rate >= 30) return 'text-red-400';
-    if (rate >= 15) return 'text-amber-400';
+    if (rate >= 30) {return 'text-red-400';}
+    if (rate >= 15) {return 'text-amber-400';}
     return 'text-emerald-400';
   }
 
   function retainedPct(row: DropoffDataPoint): number {
-    if (startingCohort <= 0) return 0;
+    if (startingCohort <= 0) {return 0;}
     return Math.round((row.respondentsReached / startingCohort) * 100);
   }
 

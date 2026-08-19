@@ -35,8 +35,8 @@
     try {
       await setup(password, requiresToken ? setupToken.trim() : undefined);
       await refreshAuth();
-    } catch (err) {
-      error = err instanceof Error ? err.message : 'Setup failed';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Setup failed';
     }
     submitting = false;
   }
@@ -45,7 +45,7 @@
 <div class="flex min-h-screen flex-col items-center justify-center p-6">
   <div class="w-full max-w-sm">
     <div class="mb-8 flex flex-col items-center gap-3 text-center">
-      <div class="flex h-16 w-16 items-center justify-center rounded-full bg-gray-800">
+      <div class="flex size-16 items-center justify-center rounded-full bg-gray-800">
         <Icon icon={mdiShieldLock} size="32" class="text-immich-primary" />
       </div>
       <h1 class="text-2xl font-bold">Welcome to FUTO Surveys</h1>

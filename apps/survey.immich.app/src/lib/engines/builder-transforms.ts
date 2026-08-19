@@ -2,7 +2,7 @@ import type { QuestionType, Survey, SurveyQuestion, SurveySection } from '../typ
 import type { BuilderSection } from './builder-types';
 
 function safeJsonParse<T>(value: string | null | undefined, fallback: T): T {
-  if (!value) return fallback;
+  if (!value) {return fallback;}
   try {
     return JSON.parse(value) as T;
   } catch {

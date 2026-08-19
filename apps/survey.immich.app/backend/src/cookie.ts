@@ -5,7 +5,7 @@ export function getCookie(
   name: string,
 ): string | undefined {
   const header = request.headers.get('Cookie') ?? '';
-  const match = header.match(new RegExp(`(?:^|;\\s*)${name}=([^;]+)`));
+  const match = header.match(new RegExp(String.raw`(?:^|;\s*)${name}=([^;]+)`));
   return match?.[1];
 }
 

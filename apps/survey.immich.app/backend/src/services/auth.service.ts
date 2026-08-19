@@ -88,7 +88,7 @@ export class AuthService {
       return cachedOidcConfig.data;
     }
     const res = await fetch(`${this.config.oidc.issuer}/.well-known/openid-configuration`);
-    if (!res.ok) throw new ServiceError('Failed to fetch OIDC configuration', 500);
+    if (!res.ok) {throw new ServiceError('Failed to fetch OIDC configuration', 500);}
     const data = (await res.json()) as OidcConfig;
     cachedOidcConfig = { data, fetchedAt: Date.now() };
     return data;
@@ -100,7 +100,7 @@ export class AuthService {
     }
     const config = await this.getOidcConfig();
     const res = await fetch(config.jwks_uri);
-    if (!res.ok) throw new ServiceError('Failed to fetch JWKS', 500);
+    if (!res.ok) {throw new ServiceError('Failed to fetch JWKS', 500);}
     const data = (await res.json()) as { keys: Array<JsonWebKey & { kid?: string; alg?: string }> };
     cachedJwks = { data, fetchedAt: Date.now() };
     return data;
@@ -141,11 +141,11 @@ export class AuthService {
   private async fetchUserInfo(accessToken: string): Promise<Record<string, unknown> | null> {
     try {
       const config = await this.getOidcConfig();
-      if (!config.userinfo_endpoint) return null;
+      if (!config.userinfo_endpoint) {return null;}
       const res = await fetch(config.userinfo_endpoint, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      if (!res.ok) return null;
+      if (!res.ok) {return null;}
       return (await res.json()) as Record<string, unknown>;
     } catch {
       return null;
@@ -154,9 +154,9 @@ export class AuthService {
 
   async validateIdToken(idToken: string, nonce: string, accessToken?: string): Promise<UserInfo> {
     const parts = idToken.split('.');
-    if (parts.length !== 3) throw new ServiceError('Invalid ID token format', 400);
+    if (parts.length !== 3) {throw new ServiceError('Invalid ID token format', 400);}
 
-    const header = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/'))) as {
+    const header = JSON.parse(atob(parts[0].replaceAll('-', '+').replaceAll('_', '/'))) as {
       kid?: string;
       alg?: string;
     };
@@ -165,16 +165,16 @@ export class AuthService {
       throw new ServiceError(`Unsupported token algorithm: ${header.alg}`, 400);
     }
 
-    const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'))) as Record<string, unknown>;
+    const payload = JSON.parse(atob(parts[1].replaceAll('-', '+').replaceAll('_', '/'))) as Record<string, unknown>;
 
-    if (payload.iss !== this.config.oidc.issuer) throw new ServiceError('Invalid issuer', 400);
+    if (payload.iss !== this.config.oidc.issuer) {throw new ServiceError('Invalid issuer', 400);}
     if (
       payload.aud !== this.config.oidc.clientId &&
       !(Array.isArray(payload.aud) && (payload.aud as string[]).includes(this.config.oidc.clientId))
     ) {
       throw new ServiceError('Invalid audience', 400);
     }
-    if (payload.nonce !== nonce) throw new ServiceError('Invalid nonce', 400);
+    if (payload.nonce !== nonce) {throw new ServiceError('Invalid nonce', 400);}
     if (typeof payload.exp !== 'number' || payload.exp < Date.now() / 1000) {
       throw new ServiceError('Token expired', 400);
     }
@@ -188,7 +188,7 @@ export class AuthService {
       jwks = await this.getJwks();
       key = jwks.keys.find((k) => k.kid === header.kid);
     }
-    if (!key) throw new ServiceError('No matching signing key found', 400);
+    if (!key) {throw new ServiceError('No matching signing key found', 400);}
 
     const signingKey = await crypto.subtle.importKey(
       'jwk',
@@ -201,11 +201,11 @@ export class AuthService {
     const signatureValid = await crypto.subtle.verify(
       'RSASSA-PKCS1-v1_5',
       signingKey,
-      Uint8Array.from(atob(parts[2].replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0)),
+      Uint8Array.from(atob(parts[2].replaceAll('-', '+').replaceAll('_', '/')), (c) => c.charCodeAt(0)),
       new TextEncoder().encode(`${parts[0]}.${parts[1]}`),
     );
 
-    if (!signatureValid) throw new ServiceError('Invalid token signature', 400);
+    if (!signatureValid) {throw new ServiceError('Invalid token signature', 400);}
 
     let claims: Record<string, unknown> = payload;
     if (accessToken) {
@@ -239,14 +239,14 @@ export class AuthService {
     }
 
     if (Array.isArray(value)) {
-      if (value.includes(this.config.oidc.roleMapAdmin)) return 'admin';
-      if (value.includes(this.config.oidc.roleMapEditor)) return 'editor';
+      if (value.includes(this.config.oidc.roleMapAdmin)) {return 'admin';}
+      if (value.includes(this.config.oidc.roleMapEditor)) {return 'editor';}
       return 'viewer';
     }
 
     if (typeof value === 'string') {
-      if (value === this.config.oidc.roleMapAdmin) return 'admin';
-      if (value === this.config.oidc.roleMapEditor) return 'editor';
+      if (value === this.config.oidc.roleMapAdmin) {return 'admin';}
+      if (value === this.config.oidc.roleMapEditor) {return 'editor';}
     }
 
     return 'viewer';
@@ -277,8 +277,8 @@ export class AuthService {
     );
     const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(`${header}.${payload}`));
     const signature = btoa(String.fromCharCode(...new Uint8Array(sig)))
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
+      .replaceAll('+', '-')
+      .replaceAll('/', '_')
       .replace(/=+$/, '');
 
     return `${header}.${payload}.${signature}`;

@@ -250,11 +250,11 @@ test.describe('Full survey with all 10 question types', () => {
   test('results page renders with stats and question results', async ({ page }) => {
     await page.goto(`/results/${setup.surveyId}`);
 
-    await expect(page.getByText('Total')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Total')).toBeVisible({ timeout: 10_000 });
     await expect(page.getByText('Completed')).toBeVisible();
     await expect(page.getByText('Completion')).toBeVisible();
 
-    await expect(page.getByRole('heading', { name: 'Pick a color' })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { name: 'Pick a color' })).toBeVisible({ timeout: 10_000 });
 
     await expect(page.getByRole('button', { name: 'CSV' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'JSON' })).toBeVisible();
@@ -287,7 +287,7 @@ test.describe('Survey duplication', () => {
         headers: getAuthHeaders(),
       });
       data = await res.json();
-      if (data.sections?.length > 0) break;
+      if (data.sections?.length > 0) {break;}
       await new Promise((r) => setTimeout(r, 1000));
     }
     expect(data.sections.length).toBe(1);

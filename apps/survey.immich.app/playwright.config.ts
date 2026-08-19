@@ -4,7 +4,7 @@ export default defineConfig({
   testDir: './e2e',
   testMatch: '*.e2e.ts',
   timeout: 30_000,
-  expect: { timeout: 5_000 },
+  expect: { timeout: 5000 },
   fullyParallel: false,
   // Retries in CI only, so local runs surface real regressions instead of
   // masking them.

@@ -22,7 +22,7 @@
 <div class="mx-auto max-w-4xl px-6 py-10">
   {#if loader.loading}
     <div class="flex flex-col items-center justify-center py-24">
-      <div class="border-t-immich-primary h-8 w-8 animate-spin rounded-full border-2 border-gray-600"></div>
+      <div class="border-t-immich-primary size-8 animate-spin rounded-full border-2 border-gray-600"></div>
       <p class="mt-4 text-sm text-gray-500">Loading results...</p>
     </div>
   {:else if loader.error}
@@ -87,7 +87,7 @@
       {#if loader.activeTab === 'overview'}
         <div class="animate-in animate-in-delay-1 mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
           <div
-            class="rounded-xl border border-gray-200 bg-gradient-to-br from-gray-50 to-transparent p-4 dark:border-gray-700/80 dark:from-gray-800/40"
+            class="rounded-xl border border-gray-200 bg-linear-to-br from-gray-50 to-transparent p-4 dark:border-gray-700/80 dark:from-gray-800/40"
           >
             <div class="flex items-center gap-1.5 text-gray-500">
               <Icon icon={mdiAccountGroup} size="14" />
@@ -97,7 +97,7 @@
             <p class="text-[11px] text-gray-500">respondents</p>
           </div>
           <div
-            class="rounded-xl border border-gray-200 bg-gradient-to-br from-green-50/40 to-transparent p-4 dark:border-gray-700/80 dark:from-green-900/20"
+            class="rounded-xl border border-gray-200 bg-linear-to-br from-green-50/40 to-transparent p-4 dark:border-gray-700/80 dark:from-green-900/20"
           >
             <div class="flex items-center gap-1.5 text-gray-500">
               <Icon icon={mdiCheckCircle} size="14" />
@@ -111,7 +111,7 @@
             </p>
           </div>
           <div
-            class="rounded-xl border border-gray-200 bg-gradient-to-br from-blue-50/40 to-transparent p-4 dark:border-gray-700/80 dark:from-blue-900/20"
+            class="rounded-xl border border-gray-200 bg-linear-to-br from-blue-50/40 to-transparent p-4 dark:border-gray-700/80 dark:from-blue-900/20"
           >
             <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Completion</div>
             <p class="mt-1.5 text-2xl font-bold text-blue-400 tabular-nums">
@@ -122,7 +122,7 @@
             </div>
           </div>
           <div
-            class="rounded-xl border border-gray-200 bg-gradient-to-br from-purple-50/40 to-transparent p-4 dark:border-gray-700/80 dark:from-purple-900/20"
+            class="rounded-xl border border-gray-200 bg-linear-to-br from-purple-50/40 to-transparent p-4 dark:border-gray-700/80 dark:from-purple-900/20"
           >
             <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Live now</div>
             <p class="mt-1.5 text-2xl font-bold text-purple-400 tabular-nums">

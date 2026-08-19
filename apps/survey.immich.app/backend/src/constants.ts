@@ -38,9 +38,11 @@ export const ROLE_HIERARCHY: Record<string, number> = { admin: 3, editor: 2, vie
  */
 export const MAX_ANSWER_MS = 24 * 60 * 60 * 1000;
 
-/** Returns null for missing/invalid input so callers store NULL rather than poisoning aggregates. */
+/**
+Returns null for missing/invalid input so callers store NULL rather than poisoning aggregates.
+*/
 export function clampAnswerMs(raw: unknown): number | null {
-  if (typeof raw !== 'number' || !Number.isFinite(raw) || raw < 0) return null;
+  if (typeof raw !== 'number' || !Number.isFinite(raw) || raw < 0) {return null;}
   return Math.min(Math.floor(raw), MAX_ANSWER_MS);
 }
 
@@ -67,9 +69,11 @@ export const COMPLETION_TIME_BUCKETS: ReadonlyArray<{
   { label: '>1h', minSeconds: 3600, maxSeconds: null },
 ];
 
-/** Nearest-rank percentile; `sorted` MUST already be ascending. Null when empty. */
+/**
+Nearest-rank percentile; `sorted` MUST already be ascending. Null when empty.
+*/
 export function percentile(sorted: number[], p: number): number | null {
-  if (sorted.length === 0) return null;
+  if (sorted.length === 0) {return null;}
   const idx = Math.min(sorted.length - 1, Math.max(0, Math.floor((p / 100) * (sorted.length - 1))));
   return sorted[idx];
 }

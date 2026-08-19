@@ -14,7 +14,7 @@ describe('Results API', () => {
     questionIds = survey.questionIds;
 
     const resumeRes = await request(`/api/s/${slug}/resume`);
-    const ridCookie = resumeRes.headers.get('set-cookie')?.split(';')[0] ?? '';
+    const ridCookie = resumeRes.headers.get('set-cookie')?.split(';', 1)[0] ?? '';
 
     await request(`/api/s/${slug}/answers/batch`, {
       method: 'POST',

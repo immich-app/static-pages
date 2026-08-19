@@ -15,7 +15,7 @@
   const maxBucket = $derived(Math.max(1, ...buckets.map((b) => b.count)));
 
   function fmt(n: number | null, digits = 1): string {
-    if (n === null) return '–';
+    if (n === null) {return '–';}
     return Number.isInteger(n) ? String(n) : n.toFixed(digits);
   }
 

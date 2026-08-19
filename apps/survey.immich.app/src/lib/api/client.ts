@@ -6,7 +6,9 @@ interface PendingSave {
   questionId: string;
   value: string;
   otherText?: string;
-  /** Client-measured milliseconds spent on this question before committing. */
+  /**
+  Client-measured milliseconds spent on this question before committing.
+  */
   answerMs?: number;
 }
 
@@ -54,7 +56,7 @@ export function createApiClient(slug: string) {
     // text field would count and typing "Hello" would flush after 4 characters.
     const isNew = !answerBuffer.has(data.questionId);
     answerBuffer.set(data.questionId, data);
-    if (isNew) unflushedCount++;
+    if (isNew) {unflushedCount++;}
     resetInactivityTimer();
 
     if (unflushedCount >= FLUSH_THRESHOLD) {
@@ -71,7 +73,7 @@ export function createApiClient(slug: string) {
         while (!wsClient?.connected && Date.now() < deadline) {
           await new Promise((r) => setTimeout(r, 100));
         }
-        if (!wsClient?.connected) return false;
+        if (!wsClient?.connected) {return false;}
       }
       try {
         await wsClient.request('submit-answers', { answers });
@@ -90,10 +92,9 @@ export function createApiClient(slug: string) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ answers }),
-          credentials: 'same-origin',
         });
-        if (res.ok) return true;
-        if (res.status < 500) return false;
+        if (res.ok) {return true;}
+        if (res.status < 500) {return false;}
       } catch {
         // network error, retry
       }
@@ -105,7 +106,7 @@ export function createApiClient(slug: string) {
   }
 
   async function flushBuffer(): Promise<boolean> {
-    if (answerBuffer.size === 0) return true;
+    if (answerBuffer.size === 0) {return true;}
 
     if (inactivityTimer !== null) {
       clearTimeout(inactivityTimer);
@@ -121,7 +122,7 @@ export function createApiClient(slug: string) {
     for (let i = 0; i < all.length; i += BATCH_ANSWER_LIMIT) {
       const chunk = all.slice(i, i + BATCH_ANSWER_LIMIT);
       const ok = await saveBatch(chunk);
-      if (!ok) failed.push(...chunk);
+      if (!ok) {failed.push(...chunk);}
     }
     const success = failed.length === 0;
     if (success) {
@@ -148,7 +149,7 @@ export function createApiClient(slug: string) {
     // Page unload path — sendBeacon is HTTP-only. This is the ONE place where
     // HTTP is used in ws mode, since the WebSocket can't reliably finish
     // pending sends during unload.
-    if (answerBuffer.size === 0) return;
+    if (answerBuffer.size === 0) {return;}
 
     if (inactivityTimer !== null) {
       clearTimeout(inactivityTimer);
@@ -194,7 +195,7 @@ export function createApiClient(slug: string) {
     }
 
     mode = 'http';
-    const res = await fetch(`${base}/resume`, { credentials: 'same-origin' });
+    const res = await fetch(`${base}/resume`);
     if (!res.ok) {
       throw new Error(`Failed to load survey (${res.status})`);
     }
@@ -211,7 +212,6 @@ export function createApiClient(slug: string) {
     }
     const res = await fetch(`${base}/complete`, {
       method: 'POST',
-      credentials: 'same-origin',
     });
     if (!res.ok) {
       throw new Error(`Failed to submit survey (${res.status})`);
@@ -231,10 +231,12 @@ export function createApiClient(slug: string) {
   }
 
   function destroy(): void {
-    if (inactivityTimer !== null) {
-      clearTimeout(inactivityTimer);
-      inactivityTimer = null;
+    if (inactivityTimer === null) {
+    	return;
     }
+
+    clearTimeout(inactivityTimer);
+    inactivityTimer = null;
   }
 
   return {

@@ -30,7 +30,7 @@
   );
 
   function renderStars(mean: number | null): { full: number; half: boolean; empty: number } {
-    if (mean === null) return { full: 0, half: false, empty: scaleMax };
+    if (mean === null) {return { full: 0, half: false, empty: scaleMax };}
     const full = Math.floor(mean);
     const half = mean - full >= 0.25 && mean - full < 0.75;
     const fullShown = half ? full : Math.round(mean);
@@ -52,7 +52,7 @@
       <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Average</div>
       <div class="mt-0.5 flex items-baseline gap-2">
         <span class="text-3xl font-bold text-gray-200 tabular-nums">
-          {stats.mean !== null ? stats.mean.toFixed(1) : '–'}
+          {stats.mean === null ? '–' : stats.mean.toFixed(1)}
         </span>
         <span class="text-sm text-gray-500">/ {scaleMax}</span>
       </div>

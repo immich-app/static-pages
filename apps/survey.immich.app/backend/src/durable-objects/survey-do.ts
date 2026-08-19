@@ -45,11 +45,11 @@ export class SurveyDO extends DurableObject {
 
     try {
       return await this.handleHttp(request, url);
-    } catch (e) {
-      if (e instanceof ServiceError) {
-        return Response.json({ error: e.message }, { status: e.status });
+    } catch (error) {
+      if (error instanceof ServiceError) {
+        return Response.json({ error: error.message }, { status: error.status });
       }
-      console.error('SurveyDO error:', e);
+      console.error('SurveyDO error:', error);
       return Response.json({ error: 'Internal error' }, { status: 500 });
     }
   }
@@ -115,7 +115,7 @@ export class SurveyDO extends DurableObject {
     const [client, server] = Object.values(pair);
 
     const tags: string[] = [type, `role:${verifiedRole}`];
-    if (respondentId) tags.push(`rid:${respondentId}`);
+    if (respondentId) {tags.push(`rid:${respondentId}`);}
     this.ctx.acceptWebSocket(server, tags);
 
     const counts = getPresenceCounts(this.ctx);
@@ -123,13 +123,13 @@ export class SurveyDO extends DurableObject {
     scheduleBroadcast(this.ctx, this.cache.broadcastScheduled);
 
     const headers = new Headers();
-    if (setCookieHeader) headers.set('Set-Cookie', setCookieHeader);
+    if (setCookieHeader) {headers.set('Set-Cookie', setCookieHeader);}
 
     return new Response(null, { status: 101, webSocket: client, headers });
   }
 
   async webSocketMessage(ws: WebSocket, message: string | ArrayBuffer): Promise<void> {
-    if (typeof message !== 'string') return;
+    if (typeof message !== 'string') {return;}
     const services = {
       survey: this.surveyService,
       respondent: this.respondentService,
@@ -155,8 +155,8 @@ export class SurveyDO extends DurableObject {
       this.cache.fastTick = 0;
       if (this.ctx.getWebSockets('viewer').length > 0 && this.cache.hasSurvey) {
         // Fire-and-forget: we don't block the next fast broadcast on analytics.
-        broadcastSlowAnalytics(this.ctx, this.cache.survey.id, this.respondentService).catch((e) => {
-          console.error('slow analytics broadcast failed:', e);
+        broadcastSlowAnalytics(this.ctx, this.cache.survey.id, this.respondentService).catch((error) => {
+          console.error('slow analytics broadcast failed:', error);
         });
       }
     }
@@ -175,25 +175,25 @@ export class SurveyDO extends DurableObject {
     const method = request.method;
 
     // Init (called by API worker on survey creation)
-    if (method === 'POST' && path === '/init') return this.handleInit(request);
+    if (method === 'POST' && path === '/init') {return this.handleInit(request);}
 
     // Survey CRUD (stays HTTP for D1 catalog sync)
-    if ((path === '/' || path === '') && method === 'GET') return this.handleGetSurvey();
-    if ((path === '/' || path === '') && method === 'PUT') return this.handleUpdateSurvey(request);
-    if ((path === '/' || path === '') && method === 'DELETE') return this.handleDeleteSurvey();
-    if (method === 'PUT' && path === '/publish') return this.handlePublish();
-    if (method === 'PUT' && path === '/unpublish') return this.handleUnpublish();
-    if (method === 'PUT' && path === '/archive') return this.handleArchive();
-    if (method === 'PUT' && path === '/unarchive') return this.handleUnarchive();
-    if (method === 'POST' && path === '/duplicate') return this.handleDuplicate();
+    if ((path === '/' || path === '') && method === 'GET') {return this.handleGetSurvey();}
+    if ((path === '/' || path === '') && method === 'PUT') {return this.handleUpdateSurvey(request);}
+    if ((path === '/' || path === '') && method === 'DELETE') {return this.handleDeleteSurvey();}
+    if (method === 'PUT' && path === '/publish') {return this.handlePublish();}
+    if (method === 'PUT' && path === '/unpublish') {return this.handleUnpublish();}
+    if (method === 'PUT' && path === '/archive') {return this.handleArchive();}
+    if (method === 'PUT' && path === '/unarchive') {return this.handleUnarchive();}
+    if (method === 'POST' && path === '/duplicate') {return this.handleDuplicate();}
 
-    if (method === 'GET' && path === '/results/export') return this.handleExportResults(url);
+    if (method === 'GET' && path === '/results/export') {return this.handleExportResults(url);}
 
     // Public respondent (cookie-setting endpoints stay HTTP)
-    if (method === 'GET' && path === '/public') return this.handleGetPublicSurvey(request);
-    if (method === 'GET' && path === '/public/resume') return this.handleResume(request);
-    if (method === 'POST' && path === '/public/answers/batch') return this.handleSubmitAnswers(request);
-    if (method === 'POST' && path === '/public/complete') return this.handleComplete(request);
+    if (method === 'GET' && path === '/public') {return this.handleGetPublicSurvey(request);}
+    if (method === 'GET' && path === '/public/resume') {return this.handleResume(request);}
+    if (method === 'POST' && path === '/public/answers/batch') {return this.handleSubmitAnswers(request);}
+    if (method === 'POST' && path === '/public/complete') {return this.handleComplete(request);}
 
     return this.handleSelfHostedFallback(method, path, request, url);
   }
@@ -298,7 +298,9 @@ export class SurveyDO extends DurableObject {
       try {
         ws.close(1000, 'Survey deleted');
       } catch {
-        /* ignore */
+        /*
+        ignore
+        */
       }
     }
     // deleteAll() drops the SQLite tables too, and this same live instance serves
@@ -446,7 +448,7 @@ export class SurveyDO extends DurableObject {
       return Response.json({ error: 'Authentication required' }, { status: 403 });
     }
     const respondentId = request.headers.get('X-Respondent-Id');
-    if (!respondentId) return Response.json({ error: 'No respondent cookie' }, { status: 400 });
+    if (!respondentId) {return Response.json({ error: 'No respondent cookie' }, { status: 400 });}
     const { answers } = (await request.json()) as {
       answers: Array<{ questionId: string; value: string; otherText?: string; answerMs?: number }>;
     };
@@ -467,7 +469,7 @@ export class SurveyDO extends DurableObject {
       return Response.json({ error: 'Authentication required' }, { status: 403 });
     }
     const respondentId = request.headers.get('X-Respondent-Id');
-    if (!respondentId) return Response.json({ error: 'No respondent cookie' }, { status: 400 });
+    if (!respondentId) {return Response.json({ error: 'No respondent cookie' }, { status: 400 });}
     const completed = await this.respondentService.complete(survey.slug!, respondentId, survey);
     if (completed) {
       this.cache.incrementCompleted();
@@ -481,7 +483,7 @@ export class SurveyDO extends DurableObject {
     const route = this.matchFallbackRoute(method, path, url);
     if (!route) {
       // Live results has transport-specific ETag handling
-      if (method === 'GET' && path === '/results/live') return this.handleLiveResults(request);
+      if (method === 'GET' && path === '/results/live') {return this.handleLiveResults(request);}
       return new Response('Not found', { status: 404 });
     }
 
@@ -489,7 +491,7 @@ export class SurveyDO extends DurableObject {
     const data = { ...route.params, ...body };
     const result = await execute(route.op, data, this.commandContext());
 
-    if (result === undefined) return new Response(null, { status: 204 });
+    if (result === undefined) {return new Response(null, { status: 204 });}
     return Response.json(result, { status: route.status ?? 200 });
   }
 
@@ -499,36 +501,36 @@ export class SurveyDO extends DurableObject {
     url: URL,
   ): { op: string; params: Record<string, unknown>; status?: number } | null {
     // Sections — reorder before /:id pattern
-    if (method === 'POST' && path === '/sections') return { op: 'create-section', params: {}, status: 201 };
-    if (method === 'PUT' && path === '/sections/reorder') return { op: 'reorder-sections', params: {} };
+    if (method === 'POST' && path === '/sections') {return { op: 'create-section', params: {}, status: 201 };}
+    if (method === 'PUT' && path === '/sections/reorder') {return { op: 'reorder-sections', params: {} };}
     let match = path.match(/^\/sections\/([^/]+)$/);
-    if (match && method === 'PUT') return { op: 'update-section', params: { id: match[1] } };
-    if (match && method === 'DELETE') return { op: 'delete-section', params: { id: match[1] } };
+    if (match && method === 'PUT') {return { op: 'update-section', params: { id: match[1] } };}
+    if (match && method === 'DELETE') {return { op: 'delete-section', params: { id: match[1] } };}
 
     match = path.match(/^\/sections\/([^/]+)\/questions\/reorder$/);
-    if (match && method === 'PUT') return { op: 'reorder-questions', params: { sectionId: match[1] } };
+    if (match && method === 'PUT') {return { op: 'reorder-questions', params: { sectionId: match[1] } };}
     match = path.match(/^\/sections\/([^/]+)\/questions$/);
-    if (match && method === 'POST') return { op: 'create-question', params: { sectionId: match[1] }, status: 201 };
+    if (match && method === 'POST') {return { op: 'create-question', params: { sectionId: match[1] }, status: 201 };}
     match = path.match(/^\/questions\/([^/]+)$/);
-    if (match && method === 'PUT') return { op: 'update-question', params: { id: match[1] } };
-    if (match && method === 'DELETE') return { op: 'delete-question', params: { id: match[1] } };
+    if (match && method === 'PUT') {return { op: 'update-question', params: { id: match[1] } };}
+    if (match && method === 'DELETE') {return { op: 'delete-question', params: { id: match[1] } };}
 
-    if (method === 'GET' && path === '/results') return { op: 'get-results', params: {} };
+    if (method === 'GET' && path === '/results') {return { op: 'get-results', params: {} };}
     if (method === 'GET' && path === '/results/timeline')
-      return { op: 'get-timeline', params: { granularity: url.searchParams.get('granularity') } };
-    if (method === 'GET' && path === '/results/completion-times') return { op: 'get-completion-times', params: {} };
-    if (method === 'GET' && path === '/results/question-timings') return { op: 'get-question-timings', params: {} };
-    if (method === 'GET' && path === '/results/dropoff') return { op: 'get-dropoff', params: {} };
+      {return { op: 'get-timeline', params: { granularity: url.searchParams.get('granularity') } };}
+    if (method === 'GET' && path === '/results/completion-times') {return { op: 'get-completion-times', params: {} };}
+    if (method === 'GET' && path === '/results/question-timings') {return { op: 'get-question-timings', params: {} };}
+    if (method === 'GET' && path === '/results/dropoff') {return { op: 'get-dropoff', params: {} };}
     if (method === 'GET' && path === '/results/respondents')
-      return {
+      {return {
         op: 'list-respondents',
         params: { offset: url.searchParams.get('offset'), limit: url.searchParams.get('limit') },
-      };
+      };}
     match = path.match(/^\/results\/respondents\/([^/]+)$/);
-    if (match && method === 'GET') return { op: 'get-respondent', params: { respondentId: match[1] } };
-    if (match && method === 'DELETE') return { op: 'delete-respondent', params: { respondentId: match[1] } };
+    if (match && method === 'GET') {return { op: 'get-respondent', params: { respondentId: match[1] } };}
+    if (match && method === 'DELETE') {return { op: 'delete-respondent', params: { respondentId: match[1] } };}
     if (method === 'GET' && path === '/results/search')
-      return {
+      {return {
         op: 'search-answers',
         params: {
           query: url.searchParams.get('q') ?? '',
@@ -536,9 +538,9 @@ export class SurveyDO extends DurableObject {
           offset: url.searchParams.get('offset'),
           limit: url.searchParams.get('limit'),
         },
-      };
+      };}
 
-    if (method === 'GET' && path === '/definition') return { op: 'export-definition', params: {} };
+    if (method === 'GET' && path === '/definition') {return { op: 'export-definition', params: {} };}
 
     return null;
   }
@@ -547,7 +549,7 @@ export class SurveyDO extends DurableObject {
     const presence = getPresenceCounts(this.ctx).data;
     const results = await this.respondentService.getLiveResults(this.cache.survey.id, presence);
     const etag = `"${results.respondentCounts.completed}-${results.respondentCounts.total}"`;
-    if (request.headers.get('If-None-Match') === etag) return new Response(null, { status: 304 });
+    if (request.headers.get('If-None-Match') === etag) {return new Response(null, { status: 304 });}
     const response = Response.json(results);
     response.headers.set('ETag', etag);
     response.headers.set('Cache-Control', 'private, no-cache');
@@ -564,16 +566,16 @@ export class SurveyDO extends DurableObject {
 
   private internalPath(pathname: string): string {
     const surveyMatch = pathname.match(SURVEY_ID_PATTERN);
-    if (surveyMatch) return surveyMatch[2] || '/';
+    if (surveyMatch) {return surveyMatch[2] || '/';}
     const publicMatch = pathname.match(PUBLIC_PATTERN);
-    if (publicMatch) return '/public' + (publicMatch[2] || '');
+    if (publicMatch) {return '/public' + (publicMatch[2] || '');}
     return pathname;
   }
 
   private passwordGateAllows(request: Request): boolean {
     const survey = this.cache.survey;
-    if (!survey.password_hash) return true;
-    if (request.headers.get('X-Authenticated') !== 'true') return false;
+    if (!survey.password_hash) {return true;}
+    if (request.headers.get('X-Authenticated') !== 'true') {return false;}
     return fingerprintMatchesPassword(request.headers.get('X-Survey-Pw-Fp'), survey.password_hash);
   }
 

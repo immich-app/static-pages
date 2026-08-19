@@ -17,7 +17,7 @@
 </script>
 
 {#if loader.error && loader.engine?.currentQuestion}
-  <div class="fixed top-2 left-1/2 z-[100] w-full max-w-lg -translate-x-1/2 px-4">
+  <div class="fixed top-2 left-1/2 z-100 w-full max-w-lg -translate-x-1/2 px-4">
     <div class="flex items-center justify-between gap-3 rounded-lg bg-red-600 px-4 py-3 text-sm text-white shadow-lg">
       <p>{loader.error}</p>
       <button onclick={() => loader.dismissError()} class="shrink-0 font-semibold hover:underline">Dismiss</button>
@@ -30,7 +30,7 @@
     {#if embedded}
       <p class="text-gray-400">Loading...</p>
     {:else}
-      <div class="h-8 w-8 animate-spin rounded-full border-2 border-gray-600 border-t-blue-400"></div>
+      <div class="size-8 animate-spin rounded-full border-2 border-gray-600 border-t-blue-400"></div>
       <p class="text-sm text-gray-400">Loading survey...</p>
     {/if}
   </div>
@@ -41,7 +41,7 @@
     <div class="text-center">
       <p class="text-lg text-red-400">{loader.error}</p>
       {#if showReloadOnError}
-        <button class="mt-4 text-sm text-gray-400 hover:underline" onclick={() => window.location.reload()}>
+        <button class="mt-4 text-sm text-gray-400 hover:underline" onclick={() => location.reload()}>
           Try again
         </button>
       {/if}
@@ -69,7 +69,7 @@
     <div class="text-center">
       <p class="text-gray-400">Something went wrong loading this survey.</p>
       {#if showReloadOnError}
-        <button class="mt-4 text-sm text-blue-400 hover:underline" onclick={() => window.location.reload()}>
+        <button class="mt-4 text-sm text-blue-400 hover:underline" onclick={() => location.reload()}>
           Try again
         </button>
       {/if}

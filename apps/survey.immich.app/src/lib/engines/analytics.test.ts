@@ -47,10 +47,10 @@ function toWordCloudData(answers: ChartAnswer[]) {
 
 // Replica of the filterable-type list in FilterBar.
 
-const FILTERABLE_TYPES: QuestionType[] = ['radio', 'checkbox', 'dropdown', 'nps', 'rating', 'likert'];
+const FILTERABLE_TYPES: Set<QuestionType> = new Set(['radio', 'checkbox', 'dropdown', 'nps', 'rating', 'likert']);
 
 function filterableQuestions(questions: SurveyQuestion[]): SurveyQuestion[] {
-  return questions.filter((q) => FILTERABLE_TYPES.includes(q.type));
+  return questions.filter((q) => FILTERABLE_TYPES.has(q.type));
 }
 
 describe('Type shape validation', () => {

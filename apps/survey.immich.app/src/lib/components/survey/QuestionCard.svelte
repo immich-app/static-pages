@@ -37,7 +37,7 @@
   let autoNextTimer: ReturnType<typeof setTimeout> | undefined;
 
   function handleRadioAnswer(value: string, otherText?: string) {
-    if (!question) return;
+    if (!question) {return;}
     onAnswer(value, otherText);
     validationError = null;
     if (value !== 'Other' || !question.hasOther) {
@@ -52,7 +52,7 @@
   }
 
   async function handleNext() {
-    if (!question) return;
+    if (!question) {return;}
     // Enter/Next can fire inside the 300ms debounce window: flush first and let
     // the value reach the `answer` prop, or we validate the stale one.
     preFlush?.flushPending?.();
@@ -70,10 +70,10 @@
   const TAGS_WITH_NATIVE_ENTER_BEHAVIOUR = new Set(['TEXTAREA', 'BUTTON', 'A']);
 
   function handleKeydown(e: KeyboardEvent) {
-    if (e.key !== 'Enter' || e.shiftKey) return;
+    if (e.key !== 'Enter' || e.shiftKey) {return;}
     const target = e.target as HTMLElement | null;
-    if (!target) return;
-    if (TAGS_WITH_NATIVE_ENTER_BEHAVIOUR.has(target.tagName)) return;
+    if (!target) {return;}
+    if (TAGS_WITH_NATIVE_ENTER_BEHAVIOUR.has(target.tagName)) {return;}
     e.preventDefault();
     handleNext();
   }
@@ -127,7 +127,7 @@
   </div>
 
   <div
-    class="bg-light fixed bottom-0 left-0 z-40 flex w-full justify-center border-t border-gray-200 px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6 sm:pt-4 dark:border-gray-800"
+    class="fixed bottom-0 left-0 z-40 flex w-full justify-center border-t border-gray-200 bg-light px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6 sm:pt-4 dark:border-gray-800"
   >
     <div class="flex w-full max-w-[640px] items-center gap-3">
       {#if canGoBack}

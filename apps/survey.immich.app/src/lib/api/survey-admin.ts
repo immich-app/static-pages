@@ -16,10 +16,10 @@ export async function listSurveysPaginated(opts: {
   limit?: number;
 }): Promise<{ surveys: Survey[]; total: number }> {
   const params = new URLSearchParams();
-  if (opts.includeArchived) params.set('archived', 'true');
-  if (opts.search) params.set('search', opts.search);
-  if (opts.offset) params.set('offset', String(opts.offset));
-  if (opts.limit) params.set('limit', String(opts.limit));
+  if (opts.includeArchived) {params.set('archived', 'true');}
+  if (opts.search) {params.set('search', opts.search);}
+  if (opts.offset) {params.set('offset', String(opts.offset));}
+  if (opts.limit) {params.set('limit', String(opts.limit));}
   const data = await request<{ surveys: Array<Record<string, unknown>>; total: number }>(`/api/surveys?${params}`);
   return { surveys: data.surveys.map(surveyFromApi), total: data.total };
 }

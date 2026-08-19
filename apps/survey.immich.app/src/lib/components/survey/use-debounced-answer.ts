@@ -20,11 +20,13 @@ export function useDebouncedAnswer(
   >('survey-pre-flush');
 
   function flush() {
-    if (debounceTimer !== undefined) {
-      clearTimeout(debounceTimer);
-      debounceTimer = undefined;
-      onAnswer(getLatestValue());
+    if (debounceTimer === undefined) {
+    	return;
     }
+
+    clearTimeout(debounceTimer);
+    debounceTimer = undefined;
+    onAnswer(getLatestValue());
   }
 
   function handleInput() {

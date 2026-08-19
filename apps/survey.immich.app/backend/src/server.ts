@@ -45,8 +45,8 @@ async function main() {
   const migrationsDir = join(__dirname, '..', 'migrations');
   try {
     await runMigrations(db, migrationsDir);
-  } catch (e) {
-    console.error('Migration error:', e);
+  } catch (error) {
+    console.error('Migration error:', error);
   }
 
   const ctx: AppContext = { db, config };
@@ -113,7 +113,7 @@ async function main() {
   });
 }
 
-main().catch((e) => {
-  console.error('Failed to start server:', e);
+main().catch((error) => {
+  console.error('Failed to start server:', error);
   process.exit(1);
 });

@@ -8,10 +8,10 @@
   let { data }: Props = $props();
 
   function formatDuration(ms: number | null): string {
-    if (ms === null || !Number.isFinite(ms)) return '–';
-    if (ms < 1000) return `${ms}ms`;
+    if (ms === null || !Number.isFinite(ms)) {return '–';}
+    if (ms < 1000) {return `${ms}ms`;}
     const secs = Math.round(ms / 100) / 10;
-    if (secs < 60) return `${secs}s`;
+    if (secs < 60) {return `${secs}s`;}
     const mins = Math.floor(secs / 60);
     const remSec = Math.round(secs - mins * 60);
     return remSec === 0 ? `${mins}m` : `${mins}m ${remSec}s`;
@@ -25,12 +25,12 @@
    */
   const xMax = $derived.by(() => {
     const p95s = data.map((q) => q.p95Ms ?? 0).filter((v) => v > 0);
-    if (p95s.length === 0) return 1;
+    if (p95s.length === 0) {return 1;}
     return Math.max(...p95s) * 1.05;
   });
 
   function xPct(ms: number | null): number {
-    if (ms === null || !Number.isFinite(ms) || xMax <= 0) return 0;
+    if (ms === null || !Number.isFinite(ms) || xMax <= 0) {return 0;}
     return Math.max(0, Math.min(100, (ms / xMax) * 100));
   }
 
@@ -40,12 +40,12 @@
    * actual max.
    */
   const ticks = $derived.by(() => {
-    if (xMax <= 0) return [] as Array<{ ms: number; label: string }>;
+    if (xMax <= 0) {return [] as Array<{ ms: number; label: string }>;}
     const targetTicks = 5;
     const rough = xMax / targetTicks;
     const pow = Math.pow(10, Math.floor(Math.log10(rough)));
     const candidates = [1, 2, 5, 10].map((m) => m * pow);
-    const step = candidates.find((c) => c >= rough) ?? candidates[candidates.length - 1];
+    const step = candidates.find((c) => c >= rough) ?? candidates.at(-1);
     const out: Array<{ ms: number; label: string }> = [];
     for (let v = 0; v <= xMax; v += step) {
       out.push({ ms: v, label: formatDuration(Math.round(v)) });
@@ -82,7 +82,7 @@
                 n={row.sampleSize} · median {formatDuration(row.medianMs)}
               </span>
             </div>
-            <div class="relative h-5 rounded bg-gray-800/30">
+            <div class="relative h-5 rounded-sm bg-gray-800/30">
               {#if row.sampleSize > 0}
                 {@const p5 = xPct(row.p5Ms)}
                 {@const p25 = xPct(row.p25Ms)}
@@ -96,7 +96,7 @@
                 <div class="absolute top-1/2 h-2 w-px -translate-y-1/2 bg-purple-400/50" style="left: {p5}%"></div>
                 <div class="absolute top-1/2 h-2 w-px -translate-y-1/2 bg-purple-400/50" style="left: {p95}%"></div>
                 <div
-                  class="absolute top-1/2 h-3 -translate-y-1/2 rounded bg-purple-500/60"
+                  class="absolute top-1/2 h-3 -translate-y-1/2 rounded-sm bg-purple-500/60"
                   style="left: {p25}%; width: {Math.max(0.5, p75 - p25)}%"
                 ></div>
                 <div
@@ -115,7 +115,7 @@
     </div>
 
     <div class="relative mt-2 ml-9 h-4 sm:mr-20">
-      <div class="absolute top-0 right-0 left-0 h-px bg-gray-700"></div>
+      <div class="absolute inset-x-0 top-0 h-px bg-gray-700"></div>
       {#each ticks as t (t.ms)}
         <div class="absolute top-0 -translate-x-1/2" style="left: {xPct(t.ms)}%">
           <div class="h-1 w-px bg-gray-700"></div>

@@ -58,7 +58,7 @@ function parseArgs(): Config {
   const args = process.argv.slice(2);
   const get = (flag: string, def: string) => {
     const i = args.indexOf(flag);
-    return i >= 0 && args[i + 1] ? args[i + 1] : def;
+    return i !== -1 && args[i + 1] ? args[i + 1] : def;
   };
 
   return {
@@ -194,7 +194,7 @@ class Metrics {
 
     const errorGroups = new Map<string, number>();
     for (const m of this.data) {
-      if (!m.error) continue;
+      if (!m.error) {continue;}
       // Normalize "retry in Xms" to make messages comparable
       const normalized = m.error.replace(/retry in \d+ms/, 'retry');
       const key = `${m.endpoint}: ${normalized}`;
@@ -205,7 +205,7 @@ class Metrics {
       console.log(`\n${'-'.repeat(70)}`);
       console.log('ERROR BREAKDOWN');
       console.log('-'.repeat(70));
-      const sorted = [...errorGroups.entries()].sort((a, b) => b[1] - a[1]);
+      const sorted = [...errorGroups].sort((a, b) => b[1] - a[1]);
       for (const [err, count] of sorted.slice(0, 10)) {
         console.log(`  ${String(count).padStart(5)}  ${err}`);
       }
@@ -229,12 +229,12 @@ async function timedFetch(
     const res = await fetch(url, init);
     metrics.record({ endpoint, status: res.status, latencyMs: performance.now() - start });
     return res;
-  } catch (e) {
+  } catch (error) {
     metrics.record({
       endpoint,
       status: 0,
       latencyMs: performance.now() - start,
-      error: e instanceof Error ? e.message : 'Network error',
+      error: error instanceof Error ? error.message : 'Network error',
     });
     return null;
   }
@@ -245,22 +245,18 @@ async function authenticate(baseUrl: string, password: string): Promise<string> 
   const me = (await meRes.json()) as { authenticated: boolean; needsSetup?: boolean };
 
   let res: Response;
-  if (me.needsSetup) {
-    res = await fetch(`${baseUrl}/api/auth/setup`, {
+  res = me.needsSetup ? (await fetch(`${baseUrl}/api/auth/setup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password }),
-    });
-  } else {
-    res = await fetch(`${baseUrl}/api/auth/password-login`, {
+    })) : (await fetch(`${baseUrl}/api/auth/password-login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password }),
-    });
-  }
+    }));
 
-  const cookie = res.headers.get('set-cookie')?.split(';')[0];
-  if (!cookie) throw new Error('Authentication failed — check password');
+  const cookie = res.headers.get('set-cookie')?.split(';', 1)[0];
+  if (!cookie) {throw new Error('Authentication failed — check password');}
   return cookie;
 }
 
@@ -366,13 +362,13 @@ async function createSurvey(baseUrl: string, sessionCookie: string): Promise<{ s
     headers,
     body: JSON.stringify({ slug }),
   });
-  if (!slugRes.ok) throw new Error(`Set slug failed: ${await slugRes.text()}`);
+  if (!slugRes.ok) {throw new Error(`Set slug failed: ${await slugRes.text()}`);}
 
   const pubRes = await fetch(`${baseUrl}/api/surveys/${surveyId}/publish`, {
     method: 'PUT',
     headers,
   });
-  if (!pubRes.ok) throw new Error(`Publish failed: ${await pubRes.text()}`);
+  if (!pubRes.ok) {throw new Error(`Publish failed: ${await pubRes.text()}`);}
 
   console.log(`Survey created: ${slug} (${imported.questions.length} questions)`);
   return { slug, questions: imported.questions, surveyId };
@@ -387,7 +383,7 @@ async function fetchActualRespondentCount(
     const res = await fetch(`${baseUrl}/api/surveys/${surveyId}/results`, {
       headers: { Cookie: sessionCookie },
     });
-    if (!res.ok) return null;
+    if (!res.ok) {return null;}
     const data = (await res.json()) as { respondentCounts?: { total: number; completed: number } };
     return data.respondentCounts ?? null;
   } catch {
@@ -436,29 +432,33 @@ function generateAnswer(q: Question): { questionId: string; value: string; other
       const count = Math.min(1 + Math.floor(Math.random() * 3), options.length);
       const shuffled = [...options].sort(() => Math.random() - 0.5);
       const selected = shuffled.slice(0, count).map((o) => o.value);
-      if (q.has_other && Math.random() < 0.1) selected.push('Other');
+      if (q.has_other && Math.random() < 0.1) {selected.push('Other');}
       return {
         ...base,
         value: selected.join(','),
-        ...(selected.includes('Other') ? { otherText: 'Custom option' } : {}),
+        ...(selected.includes('Other') && { otherText: 'Custom option' }),
       };
     }
-    case 'dropdown':
+    case 'dropdown': {
       return { ...base, value: options.length > 0 ? randomItem(options).value : 'option1' };
-    case 'text':
+    }
+    case 'text': {
       return { ...base, value: randomItem(NAMES) };
-    case 'textarea':
+    }
+    case 'textarea': {
       return { ...base, value: randomItem(COMMENTS) };
-    case 'email':
-      return { ...base, value: `user${Math.floor(Math.random() * 100000)}@example.com` };
+    }
+    case 'email': {
+      return { ...base, value: `user${Math.floor(Math.random() * 100_000)}@example.com` };
+    }
     case 'number': {
       let min = 0,
         max = 100;
       if (q.config) {
         try {
           const cfg = JSON.parse(q.config);
-          if (cfg.min != null) min = cfg.min;
-          if (cfg.max != null) max = cfg.max;
+          if (cfg.min != null) {min = cfg.min;}
+          if (cfg.max != null) {max = cfg.max;}
         } catch {
           // Malformed config JSON — keep the default min/max.
         }
@@ -470,19 +470,22 @@ function generateAnswer(q: Question): { questionId: string; value: string; other
       if (q.config) {
         try {
           const cfg = JSON.parse(q.config);
-          if (cfg.scaleMax) scaleMax = cfg.scaleMax;
+          if (cfg.scaleMax) {scaleMax = cfg.scaleMax;}
         } catch {
           // Malformed config JSON — keep the default scaleMax.
         }
       }
       return { ...base, value: String(1 + Math.floor(Math.random() * scaleMax)) };
     }
-    case 'nps':
+    case 'nps': {
       return { ...base, value: String(Math.floor(Math.random() * 11)) };
-    case 'likert':
+    }
+    case 'likert': {
       return { ...base, value: randomItem(LIKERT) };
-    default:
+    }
+    default: {
       return { ...base, value: 'test' };
+    }
   }
 }
 
@@ -523,10 +526,10 @@ function createWsClient(url: string, metrics: Metrics, initialCookie?: string): 
   };
 
   function connect() {
-    if (closed) return;
+    if (closed) {return;}
     const start = performance.now();
     const opts: ConstructorParameters<typeof WebSocketClass>[2] = {};
-    if (cookie) opts.headers = { Cookie: cookie };
+    if (cookie) {opts.headers = { Cookie: cookie };}
     ws = new WebSocketClass(url, opts);
 
     // Capture Set-Cookie from the upgrade response so reconnects reuse the
@@ -556,8 +559,8 @@ function createWsClient(url: string, metrics: Metrics, initialCookie?: string): 
           const req = pending.get(msg.requestId);
           if (req) {
             pending.delete(msg.requestId);
-            if (msg.error) req.reject(new Error(msg.error));
-            else req.resolve(msg.data);
+            if (msg.error) {req.reject(new Error(msg.error));}
+            else {req.resolve(msg.data);}
           }
         }
         // push events (counts, stats, results) are ignored by respondent clients
@@ -590,10 +593,10 @@ function createWsClient(url: string, metrics: Metrics, initialCookie?: string): 
     });
 
     ws.on('close', (code: number, reason: Buffer) => {
-      for (const [, req] of pending) req.reject(new Error('WebSocket closed'));
+      for (const [, req] of pending) {req.reject(new Error('WebSocket closed'));}
       pending.clear();
 
-      if (closed) return;
+      if (closed) {return;}
 
       const wasConnected = everConnected;
       everConnected = false;
@@ -699,7 +702,7 @@ type UserProfile = {
 function createUserProfile(totalQuestions: number): UserProfile {
   const isFast = Math.random() < 0.4;
   const minDelay = isFast ? 500 : 3000;
-  const maxDelay = isFast ? 3000 : 15000;
+  const maxDelay = isFast ? 3000 : 15_000;
 
   const willAbandon = Math.random() < 0.25;
   const abandonAt = willAbandon ? 1 + Math.floor(Math.random() * (totalQuestions - 1)) : null;
@@ -767,9 +770,9 @@ async function simulateUser(
 
   // Fetch survey metadata over HTTP first, exactly as the frontend does.
   const surveyRes = await timedFetch(metrics, 'GET /api/s/:slug', `${config.baseUrl}/api/s/${slug}`);
-  if (!surveyRes || !surveyRes.ok) return outcome('load');
+  if (!surveyRes || !surveyRes.ok) {return outcome('load');}
   await surveyRes.json();
-  if (isExpired()) return outcome('none', { abandoned: true });
+  if (isExpired()) {return outcome('none', { abandoned: true });}
 
   // WS is the only data path: no HTTP fallback, because per-request cookie auth
   // would reduce the very server capacity this test measures.
@@ -778,7 +781,7 @@ async function simulateUser(
   const waitForConnect = async (client: WsClient) => {
     // Wait up to ~13s to match the frontend's 3 retries × 3s delay + initial attempt
     for (let i = 0; i < 130; i++) {
-      if (client.connected) return true;
+      if (client.connected) {return true;}
       await new Promise((r) => setTimeout(r, 100));
     }
     return false;
@@ -834,14 +837,16 @@ async function simulateUser(
   const MAX_FLUSH_FAILURES = 5;
 
   const clearInactivity = () => {
-    if (inactivityTimer) {
-      clearTimeout(inactivityTimer);
-      inactivityTimer = null;
+    if (!inactivityTimer) {
+    	return;
     }
+
+    clearTimeout(inactivityTimer);
+    inactivityTimer = null;
   };
 
   const saveBatchWs = async (batch: PendingSave[]): Promise<boolean> => {
-    if (!wsClient || !wsClient.connected) return false;
+    if (!wsClient || !wsClient.connected) {return false;}
     try {
       await wsClient.request('submit-answers', { answers: batch });
       return true;
@@ -851,8 +856,8 @@ async function simulateUser(
   };
 
   const flushBuffer = async (): Promise<boolean> => {
-    if (flushing) return flushing;
-    if (buffer.size === 0) return true;
+    if (flushing) {return flushing;}
+    if (buffer.size === 0) {return true;}
     clearInactivity();
     const batch = [...buffer.values()];
     buffer.clear();
@@ -865,7 +870,7 @@ async function simulateUser(
         consecutiveFailures++;
         // Restore unsent answers so the next flush retries them
         for (const item of batch) {
-          if (!buffer.has(item.questionId)) buffer.set(item.questionId, item);
+          if (!buffer.has(item.questionId)) {buffer.set(item.questionId, item);}
         }
       }
       return success;
@@ -894,13 +899,13 @@ async function simulateUser(
   // ms on answer, so the backend can populate per-question timing analytics.
   const answerQuestions = async (from: number, to: number) => {
     for (let i = from; i < to; i++) {
-      if (isExpired()) break;
-      if (profile.abandonAt !== null && questionsAnswered >= profile.abandonAt) break;
-      if (consecutiveFailures >= MAX_FLUSH_FAILURES) break;
+      if (isExpired()) {break;}
+      if (profile.abandonAt !== null && questionsAnswered >= profile.abandonAt) {break;}
+      if (consecutiveFailures >= MAX_FLUSH_FAILURES) {break;}
 
       const shownAt = Date.now();
       await randomDelay(profile.minDelay, profile.maxDelay);
-      if (isExpired()) break;
+      if (isExpired()) {break;}
 
       const answer = generateAnswer(questions[i]);
       bufferAnswer({ ...answer, answerMs: Date.now() - shownAt });
@@ -908,9 +913,9 @@ async function simulateUser(
     }
     // Final flush — retry a few times in case WS is still reconnecting.
     for (let attempt = 0; attempt < 3; attempt++) {
-      if (buffer.size === 0) break;
+      if (buffer.size === 0) {break;}
       const ok = await flushBuffer();
-      if (ok) break;
+      if (ok) {break;}
       await new Promise((r) => setTimeout(r, BACKOFF_DELAYS[Math.min(attempt, BACKOFF_DELAYS.length - 1)]));
     }
   };
@@ -925,7 +930,7 @@ async function simulateUser(
         // server recognises the same respondent instead of creating a new one.
         wsClient.close();
         wsClient = null;
-        await randomDelay(5000, 20000);
+        await randomDelay(5000, 20_000);
 
         if (!isExpired()) {
           wsClient = createWsClient(wsUrl, metrics, respondentCookie);
@@ -1053,7 +1058,7 @@ async function main() {
   metrics.report(actualCounts);
 }
 
-main().catch((e) => {
-  console.error('Fatal error:', e);
+main().catch((error) => {
+  console.error('Fatal error:', error);
   process.exit(1);
 });

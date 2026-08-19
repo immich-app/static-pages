@@ -69,8 +69,8 @@ async function createSimpleSurvey(opts?: {
 
   await apiPut(`/api/surveys/${survey.id}`, {
     slug,
-    ...(opts?.closesAt ? { closes_at: opts.closesAt } : {}),
-    ...(opts?.maxResponses !== undefined ? { max_responses: opts.maxResponses } : {}),
+    ...(opts?.closesAt && { closes_at: opts.closesAt }),
+    ...((opts?.maxResponses !== undefined) && { max_responses: opts.maxResponses }),
   });
 
   if (publish) {
@@ -103,7 +103,7 @@ test.describe('Create page with survey templates', () => {
 
     await page.getByRole('button', { name: 'Save' }).click();
 
-    await page.waitForURL(/\/edit\/[a-f0-9-]+/, { timeout: 10000 });
+    await page.waitForURL(/\/edit\/[a-f0-9-]+/, { timeout: 10_000 });
     await expect(page.getByText('Edit Survey')).toBeVisible({ timeout: 5000 });
 
     const url = page.url();
@@ -128,7 +128,7 @@ test.describe('Create page saves sections (blank survey)', () => {
 
     await page.getByRole('button', { name: 'Save' }).click();
 
-    await page.waitForURL(/\/edit\/[a-f0-9-]+/, { timeout: 10000 });
+    await page.waitForURL(/\/edit\/[a-f0-9-]+/, { timeout: 10_000 });
     await expect(page.getByText('Edit Survey')).toBeVisible({ timeout: 5000 });
 
     await page.getByText('Add section').click();
@@ -412,7 +412,7 @@ test.describe('Bulk option paste', () => {
     await waitForTransition(page);
 
     // OptionListEditor renders one input per option.
-    const optionInputs = page.locator('.space-y-1\\.5 input[placeholder="Option label..."]');
+    const optionInputs = page.locator(String.raw`.space-y-1\.5 input[placeholder="Option label..."]`);
     await expect(optionInputs).toHaveCount(4, { timeout: 3000 });
     await expect(optionInputs.nth(0)).toHaveValue('Red');
     await expect(optionInputs.nth(1)).toHaveValue('Green');

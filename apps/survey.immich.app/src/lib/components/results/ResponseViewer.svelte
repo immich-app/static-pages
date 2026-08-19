@@ -51,7 +51,7 @@
 
   async function handleDelete(event: MouseEvent, respondentId: string) {
     event.stopPropagation();
-    if (!confirm('Delete this response and all its answers? This cannot be undone.')) return;
+    if (!confirm('Delete this response and all its answers? This cannot be undone.')) {return;}
     deletingId = respondentId;
     try {
       await deleteRespondent(surveyId, respondentId);

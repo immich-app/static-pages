@@ -17,7 +17,7 @@ describe('Survey creation validation', () => {
   it('rejects whitespace-only title', async () => {
     const res = await authedRequest('/api/surveys', {
       method: 'POST',
-      body: JSON.stringify({ title: '   ' }),
+      body: JSON.stringify({ title: ' '.repeat(3) }),
     });
     expect(res.status).toBe(400);
   });
@@ -122,7 +122,7 @@ describe('Question creation validation', () => {
   it('rejects whitespace-only question text', async () => {
     const res = await authedRequest(`/api/surveys/${surveyId}/sections/${sectionId}/questions`, {
       method: 'POST',
-      body: JSON.stringify({ text: '   ', type: 'text' }),
+      body: JSON.stringify({ text: ' '.repeat(3), type: 'text' }),
     });
     expect(res.status).toBe(400);
   });

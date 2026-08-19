@@ -16,16 +16,16 @@ export function estimateCompletionSeconds(sections: BuilderSection[]): number {
   let total = 0;
   for (const section of sections) {
     for (const q of section.questions) {
-      if (q.type === 'textarea') total += 45;
-      else if (q.type === 'text' || q.type === 'email') total += 20;
-      else total += 15;
+      if (q.type === 'textarea') {total += 45;}
+      else if (q.type === 'text' || q.type === 'email') {total += 20;}
+      else {total += 15;}
     }
   }
   return total;
 }
 
 export function formatDuration(seconds: number): string {
-  if (seconds < 60) return 'under 1 min';
+  if (seconds < 60) {return 'under 1 min';}
   const mins = Math.round(seconds / 60);
   return `~${mins} min`;
 }

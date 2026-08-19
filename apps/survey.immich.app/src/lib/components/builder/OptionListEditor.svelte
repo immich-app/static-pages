@@ -27,7 +27,7 @@
   }
 
   function removeOption(index: number) {
-    if (options.length <= 2) return;
+    if (options.length <= 2) {return;}
     onChange(options.filter((_, i) => i !== index));
     tick().then(() => {
       const focusIdx = Math.min(index, options.length - 2);
@@ -47,7 +47,7 @@
 
   function moveOption(index: number, direction: 'up' | 'down') {
     const target = direction === 'up' ? index - 1 : index + 1;
-    if (target < 0 || target >= options.length) return;
+    if (target < 0 || target >= options.length) {return;}
     const updated = [...options];
     [updated[index], updated[target]] = [updated[target], updated[index]];
     onChange(updated);
@@ -99,21 +99,21 @@
         class="flex items-center gap-0.5 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100"
       >
         <button
-          class="rounded p-1 text-gray-500 hover:bg-gray-800 hover:text-gray-300 disabled:pointer-events-none disabled:opacity-0"
+          class="rounded-sm p-1 text-gray-500 hover:bg-gray-800 hover:text-gray-300 disabled:pointer-events-none disabled:opacity-0"
           disabled={i === 0}
           onclick={() => moveOption(i, 'up')}
         >
           <Icon icon={mdiArrowUp} size="14" />
         </button>
         <button
-          class="rounded p-1 text-gray-500 hover:bg-gray-800 hover:text-gray-300 disabled:pointer-events-none disabled:opacity-0"
+          class="rounded-sm p-1 text-gray-500 hover:bg-gray-800 hover:text-gray-300 disabled:pointer-events-none disabled:opacity-0"
           disabled={i === options.length - 1}
           onclick={() => moveOption(i, 'down')}
         >
           <Icon icon={mdiArrowDown} size="14" />
         </button>
         <button
-          class="rounded p-1 text-gray-500 hover:bg-red-500/10 hover:text-red-400 disabled:pointer-events-none disabled:opacity-0"
+          class="rounded-sm p-1 text-gray-500 hover:bg-red-500/10 hover:text-red-400 disabled:pointer-events-none disabled:opacity-0"
           disabled={options.length <= 2}
           onclick={() => removeOption(i)}
         >

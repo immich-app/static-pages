@@ -22,13 +22,13 @@
     <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">{survey.welcomeTitle ?? survey.title}</h1>
 
     {#if survey.welcomeDescription}
-      <p class="text-lg leading-relaxed text-gray-300">{survey.welcomeDescription}</p>
+      <p class="text-lg/relaxed text-gray-300">{survey.welcomeDescription}</p>
     {:else if survey.description}
-      <p class="text-lg leading-relaxed text-gray-300">{survey.description}</p>
+      <p class="text-lg/relaxed text-gray-300">{survey.description}</p>
     {/if}
 
     {#if sortedSections.length > 1}
-      <div class="mt-2 rounded-xl border border-gray-700/60 bg-white/[0.02] p-5">
+      <div class="mt-2 rounded-xl border border-gray-700/60 bg-white/2 p-5">
         <p class="mb-3 text-sm font-medium tracking-wider text-gray-500 uppercase">
           {sortedSections.length} sections
         </p>
@@ -36,7 +36,7 @@
           {#each sortedSections as section, i (section.id)}
             <li class="flex items-baseline gap-3">
               <span
-                class="bg-immich-primary-10 text-immich-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-medium"
+                class="bg-immich-primary-10 text-immich-primary flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-medium"
               >
                 {i + 1}
               </span>

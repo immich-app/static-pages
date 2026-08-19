@@ -1,4 +1,6 @@
-/** Table names must match the main Database interface so the shared Kysely queries work unchanged. */
+/**
+Table names must match the main Database interface so the shared Kysely queries work unchanged.
+*/
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS surveys (
@@ -76,7 +78,9 @@ CREATE TABLE IF NOT EXISTS answers (
 
 const initializedInstances = new WeakSet<SqlStorage>();
 
-/** Additive migrations, replayed on every boot — there is no version table, so each must be safe to re-run. */
+/**
+Additive migrations, replayed on every boot — there is no version table, so each must be safe to re-run.
+*/
 const MIGRATIONS: string[] = ['ALTER TABLE answers ADD COLUMN answer_ms INTEGER'];
 
 function isAlreadyAppliedError(e: unknown): boolean {
@@ -89,14 +93,14 @@ function applySchema(sql: SqlStorage): void {
   for (const stmt of MIGRATIONS) {
     try {
       sql.exec(stmt);
-    } catch (e) {
-      if (!isAlreadyAppliedError(e)) throw e;
+    } catch (error) {
+      if (!isAlreadyAppliedError(error)) {throw error;}
     }
   }
 }
 
 export function ensureSchema(sql: SqlStorage): void {
-  if (initializedInstances.has(sql)) return;
+  if (initializedInstances.has(sql)) {return;}
   applySchema(sql);
   initializedInstances.add(sql);
 }

@@ -168,7 +168,7 @@
         onclick={startBlank}
       >
         <div
-          class="group-hover:bg-immich-primary-10 group-hover:text-immich-primary flex h-12 w-12 items-center justify-center rounded-full bg-gray-800 text-gray-400 transition-colors"
+          class="group-hover:bg-immich-primary-10 group-hover:text-immich-primary flex size-12 items-center justify-center rounded-full bg-gray-800 text-gray-400 transition-colors"
         >
           <Icon icon={mdiPlus} size="24" />
         </div>
@@ -184,7 +184,7 @@
           onclick={() => startFromTemplate(template)}
         >
           <div
-            class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-800 text-gray-400 transition-colors group-hover:text-gray-200"
+            class="flex size-12 items-center justify-center rounded-full bg-gray-800 text-gray-400 transition-colors group-hover:text-gray-200"
           >
             <Icon icon={mdiFileDocumentOutline} size="24" />
           </div>

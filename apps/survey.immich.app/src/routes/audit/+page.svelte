@@ -19,8 +19,8 @@
       const data = await getAuditLog(offset, limit);
       entries = data.entries;
       total = data.total;
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Failed to load audit log';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Failed to load audit log';
     }
     loading = false;
   }
@@ -47,7 +47,7 @@
 
   {#if loading}
     <div class="flex flex-col items-center justify-center py-24">
-      <div class="border-t-immich-primary h-8 w-8 animate-spin rounded-full border-2 border-gray-600"></div>
+      <div class="border-t-immich-primary size-8 animate-spin rounded-full border-2 border-gray-600"></div>
       <p class="mt-4 text-sm text-gray-500">Loading audit log...</p>
     </div>
   {:else if entries.length === 0}

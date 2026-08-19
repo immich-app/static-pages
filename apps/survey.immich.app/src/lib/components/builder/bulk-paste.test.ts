@@ -7,7 +7,7 @@ function parseBulkPaste(text: string): { label: string; value: string }[] | null
     .split('\n')
     .map((l) => l.trim())
     .filter(Boolean);
-  if (lines.length < 2) return null;
+  if (lines.length < 2) {return null;}
   return lines.map((l) => ({ label: l, value: l }));
 }
 

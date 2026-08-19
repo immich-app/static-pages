@@ -29,7 +29,7 @@ export async function authedRequest(path: string, options?: RequestInit): Promis
 }
 
 export async function getAdminCookie(): Promise<string> {
-  if (adminCookie) return adminCookie;
+  if (adminCookie) {return adminCookie;}
 
   const meRes = await request('/api/auth/me');
   const me = (await meRes.json()) as { needsSetup?: boolean };
@@ -41,7 +41,7 @@ export async function getAdminCookie(): Promise<string> {
     });
     const setCookie = setupRes.headers.get('set-cookie');
     if (setCookie) {
-      adminCookie = setCookie.split(';')[0];
+      adminCookie = setCookie.split(';', 1)[0];
       return adminCookie;
     }
   }
@@ -52,10 +52,10 @@ export async function getAdminCookie(): Promise<string> {
   });
   const setCookie = loginRes.headers.get('set-cookie');
   if (setCookie) {
-    adminCookie = setCookie.split(';')[0];
+    adminCookie = setCookie.split(';', 1)[0];
   }
 
-  if (!adminCookie) throw new Error('Failed to authenticate for integration tests');
+  if (!adminCookie) {throw new Error('Failed to authenticate for integration tests');}
   return adminCookie;
 }
 
@@ -77,7 +77,7 @@ export async function createPublishedSurvey(options?: {
     method: 'PUT',
     body: JSON.stringify({
       slug,
-      ...(options?.password ? { password: options.password } : {}),
+      ...(options?.password && { password: options.password }),
     }),
   });
 
@@ -148,8 +148,8 @@ export async function createCookieForRole(role: 'admin' | 'editor' | 'viewer'): 
   );
   const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(`${header}.${payload}`));
   const signature = btoa(String.fromCharCode(...new Uint8Array(sig)))
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
+    .replaceAll('+', '-')
+    .replaceAll('/', '_')
     .replace(/=+$/, '');
 
   return `${SESSION_COOKIE_NAME}=${header}.${payload}.${signature}`;

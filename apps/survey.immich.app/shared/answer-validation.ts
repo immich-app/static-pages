@@ -4,7 +4,7 @@
  * otherwise a human-readable error string.
  */
 
-const LIKERT_VALUES = ['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree'];
+const LIKERT_VALUES = new Set(['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree']);
 
 /**
  * Hard cap independent of a question's configured maxLength: without it a
@@ -51,7 +51,7 @@ function wordCount(text: string): number {
 export function validateAnswer(question: QuestionSpec, value: string, otherText?: string): string | null {
   // The declared type doesn't stop a hand-crafted request sending a JSON
   // number, which would throw on .trim() and surface as a server 500.
-  if (typeof value !== 'string') value = value == null ? '' : String(value);
+  if (typeof value !== 'string') {value = value == null ? '' : value;}
 
   // Absolute length ceiling, enforced before any per-type logic so it applies
   // even to types/configs that would otherwise accept unbounded input.
@@ -65,39 +65,49 @@ export function validateAnswer(question: QuestionSpec, value: string, otherText?
   if (question.required && trimmed === '') {
     return 'This question is required';
   }
-  if (trimmed === '') return null;
+  if (trimmed === '') {return null;}
 
   switch (question.type) {
     case 'text':
-    case 'textarea':
+    case 'textarea': {
       return validateText(trimmed, question, cfg);
+    }
 
-    case 'email':
+    case 'email': {
       return validateEmail(trimmed, cfg);
+    }
 
-    case 'number':
+    case 'number': {
       return validateNumber(trimmed, cfg);
+    }
 
-    case 'rating':
+    case 'rating': {
       return validateRating(trimmed, cfg);
+    }
 
-    case 'nps':
+    case 'nps': {
       return validateNps(trimmed);
+    }
 
-    case 'likert':
-      return LIKERT_VALUES.includes(trimmed) ? null : 'Please select a valid option';
+    case 'likert': {
+      return LIKERT_VALUES.has(trimmed) ? null : 'Please select a valid option';
+    }
 
-    case 'radio':
+    case 'radio': {
       return validateRadio(trimmed, question, otherText);
+    }
 
-    case 'checkbox':
+    case 'checkbox': {
       return validateCheckbox(trimmed, question, otherText, cfg);
+    }
 
-    case 'dropdown':
+    case 'dropdown': {
       return validateDropdown(trimmed, question);
+    }
 
-    default:
+    default: {
       return null;
+    }
   }
 }
 
@@ -132,7 +142,7 @@ function validateEmail(value: string, cfg: NonNullable<QuestionSpec['config']>):
     return 'Please enter a valid email address';
   }
   if (cfg.allowedDomains && cfg.allowedDomains.length > 0) {
-    const domain = value.split('@')[1]?.toLowerCase();
+    const domain = value.split('@', 2)[1]?.toLowerCase();
     const allowed = cfg.allowedDomains.map((d) => d.toLowerCase());
     if (!allowed.includes(domain)) {
       return `Email must be from: ${cfg.allowedDomains.join(', ')}`;
@@ -184,7 +194,7 @@ function validateNps(value: string): string | null {
 
 function validateRadio(value: string, question: QuestionSpec, otherText?: string): string | null {
   const validValues = new Set((question.options ?? []).map((o) => o.value));
-  if (question.hasOther) validValues.add('Other');
+  if (question.hasOther) {validValues.add('Other');}
   if (!validValues.has(value)) {
     return 'Please select a valid option';
   }
@@ -212,7 +222,7 @@ function validateCheckbox(
   }
 
   const validValues = new Set((question.options ?? []).map((o) => o.value));
-  if (question.hasOther) validValues.add('Other');
+  if (question.hasOther) {validValues.add('Other');}
   for (const v of selected) {
     if (!validValues.has(v)) {
       return `Invalid selection: ${v}`;

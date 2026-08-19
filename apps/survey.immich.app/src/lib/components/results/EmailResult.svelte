@@ -25,11 +25,11 @@
   const filteredEntries = $derived.by<EmailEntry[]>(() => {
     const q = search.trim().toLowerCase();
     return summary.entries.filter((e) => {
-      if (filter === 'corporate' && e.kind !== 'corporate') return false;
-      if (filter === 'free' && e.kind !== 'free') return false;
-      if (filter === 'disposable' && e.kind !== 'disposable') return false;
-      if (filter === 'role' && !e.isRoleBased) return false;
-      if (q && !e.normalized.includes(q) && !e.raw.toLowerCase().includes(q)) return false;
+      if (filter === 'corporate' && e.kind !== 'corporate') {return false;}
+      if (filter === 'free' && e.kind !== 'free') {return false;}
+      if (filter === 'disposable' && e.kind !== 'disposable') {return false;}
+      if (filter === 'role' && !e.isRoleBased) {return false;}
+      if (q && !e.normalized.includes(q) && !e.raw.toLowerCase().includes(q)) {return false;}
       return true;
     });
   });
@@ -102,16 +102,16 @@
   const maxDomainCount = $derived(Math.max(1, ...summary.topDomains.map((d) => d.count)));
 
   function domainColor(kind: EmailKind): string {
-    if (kind === 'corporate') return 'bg-emerald-500/70';
-    if (kind === 'free') return 'bg-blue-500/70';
+    if (kind === 'corporate') {return 'bg-emerald-500/70';}
+    if (kind === 'free') {return 'bg-blue-500/70';}
     return 'bg-red-500/70';
   }
 
   function filterCount(kind: FilterKind): number {
-    if (kind === 'all') return summary.unique;
-    if (kind === 'corporate') return summary.entries.filter((e) => e.kind === 'corporate').length;
-    if (kind === 'free') return summary.entries.filter((e) => e.kind === 'free').length;
-    if (kind === 'disposable') return summary.entries.filter((e) => e.kind === 'disposable').length;
+    if (kind === 'all') {return summary.unique;}
+    if (kind === 'corporate') {return summary.entries.filter((e) => e.kind === 'corporate').length;}
+    if (kind === 'free') {return summary.entries.filter((e) => e.kind === 'free').length;}
+    if (kind === 'disposable') {return summary.entries.filter((e) => e.kind === 'disposable').length;}
     return summary.entries.filter((e) => e.isRoleBased).length;
   }
 
@@ -120,7 +120,7 @@
       await navigator.clipboard.writeText(text);
       copied = which;
       setTimeout(() => {
-        if (copied === which) copied = null;
+        if (copied === which) {copied = null;}
       }, 1500);
     } catch {
       // ignore clipboard errors — user can select manually
@@ -152,18 +152,23 @@
 
   function filterChipClass(key: FilterKind): string {
     const active = filter === key;
-    if (!active) return 'border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-300 dark:border-gray-700';
+    if (!active) {return 'border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-300 dark:border-gray-700';}
     switch (key) {
-      case 'corporate':
+      case 'corporate': {
         return 'border-emerald-500/60 bg-emerald-500/10 text-emerald-400';
-      case 'free':
+      }
+      case 'free': {
         return 'border-blue-500/60 bg-blue-500/10 text-blue-400';
-      case 'disposable':
+      }
+      case 'disposable': {
         return 'border-red-500/60 bg-red-500/10 text-red-400';
-      case 'role':
+      }
+      case 'role': {
         return 'border-amber-500/60 bg-amber-500/10 text-amber-400';
-      default:
+      }
+      default: {
         return 'border-gray-500 bg-gray-500/10 text-gray-200';
+      }
     }
   }
 </script>

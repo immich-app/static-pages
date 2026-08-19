@@ -12,7 +12,7 @@ function q(overrides: Partial<QuestionSpec> & { type: string }): QuestionSpec {
 describe('required check', () => {
   it('rejects empty value on required question', () => {
     expect(validateAnswer(q({ type: 'text', required: true }), '')).toBe('This question is required');
-    expect(validateAnswer(q({ type: 'text', required: true }), '   ')).toBe('This question is required');
+    expect(validateAnswer(q({ type: 'text', required: true }), ' '.repeat(3))).toBe('This question is required');
   });
 
   it('accepts empty value on optional question', () => {
@@ -58,8 +58,8 @@ describe('text validation', () => {
   });
 
   it('validates against custom pattern', () => {
-    expect(validateAnswer(q({ type: 'text', config: { pattern: '^\\d{3}-\\d{4}$' } }), '123-4567')).toBeNull();
-    expect(validateAnswer(q({ type: 'text', config: { pattern: '^\\d{3}-\\d{4}$' } }), 'abc')).toBe(
+    expect(validateAnswer(q({ type: 'text', config: { pattern: String.raw`^\d{3}-\d{4}$` } }), '123-4567')).toBeNull();
+    expect(validateAnswer(q({ type: 'text', config: { pattern: String.raw`^\d{3}-\d{4}$` } }), 'abc')).toBe(
       'Answer does not match the required format',
     );
   });

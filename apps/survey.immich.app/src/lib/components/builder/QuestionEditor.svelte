@@ -79,10 +79,10 @@
   type LogicConditionType = 'skipped' | 'equals' | 'notEquals' | 'anyOf';
   const initialLogicType: LogicConditionType = (() => {
     const saved = question.config?.skipConditionType;
-    if (saved === 'skipped' || saved === 'equals' || saved === 'notEquals' || saved === 'anyOf') return saved;
+    if (saved === 'skipped' || saved === 'equals' || saved === 'notEquals' || saved === 'anyOf') {return saved;}
     // Back-compat: infer from which value field is populated if an older
     // survey was saved before skipConditionType was persisted.
-    if (question.config?.skipConditionValues) return 'anyOf';
+    if (question.config?.skipConditionValues) {return 'anyOf';}
     return 'equals';
   })();
   let logicConditionType = $state<LogicConditionType>(initialLogicType);
@@ -105,27 +105,33 @@
       updated.hasOther = false;
     }
     switch (newType) {
-      case 'rating':
+      case 'rating': {
         updated.config = { scaleMax: 5 };
         updated.options = [];
         break;
-      case 'nps':
+      }
+      case 'nps': {
         updated.config = { scaleMax: 10 };
         updated.options = [];
         break;
-      case 'number':
+      }
+      case 'number': {
         updated.config = { min: 0, max: 100 };
         updated.options = [];
         break;
-      case 'likert':
+      }
+      case 'likert': {
         updated.config = {};
         updated.options = [];
         break;
-      case 'dropdown':
+      }
+      case 'dropdown': {
         // keep options
         break;
-      default:
+      }
+      default: {
         break;
+      }
     }
     onChange(updated);
   }
@@ -157,7 +163,7 @@
       </span>
       {#if question.required}
         <span
-          class="bg-immich-primary-10 text-immich-primary shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium tracking-wider uppercase"
+          class="bg-immich-primary-10 text-immich-primary shrink-0 rounded-sm px-1.5 py-0.5 text-[10px] font-medium tracking-wider uppercase"
         >
           Required
         </span>
@@ -171,12 +177,12 @@
   </div>
 
   {#if expanded}
-    <div class="border-t border-gray-200 px-4 pt-4 pb-4 dark:border-gray-700/60">
+    <div class="border-t border-gray-200 p-4 dark:border-gray-700/60">
       <div class="mb-4 flex items-center justify-between">
         <span class="text-xs font-medium text-gray-500">Question {index + 1}</span>
         <div class="flex items-center gap-0.5">
           <button
-            class="rounded p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200 disabled:opacity-30"
+            class="rounded-sm p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200 disabled:opacity-30"
             disabled={index === 0}
             onclick={() => onMove('up')}
             title="Move up"
@@ -184,7 +190,7 @@
             <Icon icon={mdiArrowUp} size="16" />
           </button>
           <button
-            class="rounded p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200 disabled:opacity-30"
+            class="rounded-sm p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200 disabled:opacity-30"
             disabled={index === total - 1}
             onclick={() => onMove('down')}
             title="Move down"
@@ -192,7 +198,7 @@
             <Icon icon={mdiArrowDown} size="16" />
           </button>
           <button
-            class="rounded p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200"
+            class="rounded-sm p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200"
             onclick={onDuplicate}
             title="Duplicate"
           >
@@ -214,7 +220,7 @@
             </div>
           {:else}
             <button
-              class="rounded p-1.5 text-gray-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
+              class="rounded-sm p-1.5 text-gray-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
               onclick={() => (question.text ? (confirmingDelete = true) : onDelete())}
               title="Delete"
             >
@@ -625,7 +631,7 @@
                         ...question.config,
                         integerOnly: (e.target as HTMLInputElement).checked || undefined,
                       })}
-                    class="rounded"
+                    class="rounded-sm"
                   />
                   Whole numbers only
                 </label>

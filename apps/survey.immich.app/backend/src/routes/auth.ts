@@ -53,7 +53,7 @@ export function registerAuthRoutes(router: AppRouter) {
     }
 
     const body = (await request.json()) as { password?: string };
-    if (!body.password) throw new ServiceError('Password is required', 400);
+    if (!body.password) {throw new ServiceError('Password is required', 400);}
 
     await authService.setupAdmin(body.password);
 
@@ -61,7 +61,7 @@ export function registerAuthRoutes(router: AppRouter) {
     const sessionToken = await authService.createSessionToken(user);
     const secure = ctx.config.cookieSecure ? 'Secure; ' : '';
 
-    return new Response(JSON.stringify({ success: true }), {
+    return Response.json({ success: true }, {
       status: 201,
       headers: {
         'Content-Type': 'application/json',
@@ -78,12 +78,12 @@ export function registerAuthRoutes(router: AppRouter) {
     }
 
     const body = (await request.json()) as { password?: string };
-    if (!body.password) throw new ServiceError('Password is required', 400);
+    if (!body.password) {throw new ServiceError('Password is required', 400);}
     const user = await authService.passwordLogin(body.password);
     const sessionToken = await authService.createSessionToken(user);
     const secure = ctx.config.cookieSecure ? 'Secure; ' : '';
 
-    return new Response(JSON.stringify({ success: true, user }), {
+    return Response.json({ success: true, user }, {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
@@ -135,11 +135,11 @@ export function registerAuthRoutes(router: AppRouter) {
     const returnedState = url.searchParams.get('state');
     const error = url.searchParams.get('error');
 
-    if (error) throw new ServiceError('Authentication failed', 400);
-    if (!code || !returnedState) throw new ServiceError('Missing code or state', 400);
+    if (error) {throw new ServiceError('Authentication failed', 400);}
+    if (!code || !returnedState) {throw new ServiceError('Missing code or state', 400);}
 
     const stateCookie = getCookie(request, AUTH_STATE_COOKIE_NAME);
-    if (!stateCookie) throw new ServiceError('Missing auth state cookie', 400);
+    if (!stateCookie) {throw new ServiceError('Missing auth state cookie', 400);}
 
     let stateData: { state: string; nonce: string; returnTo: string };
     try {
@@ -147,7 +147,7 @@ export function registerAuthRoutes(router: AppRouter) {
     } catch {
       throw new ServiceError('Invalid auth state', 400);
     }
-    if (stateData.state !== returnedState) throw new ServiceError('State mismatch', 400);
+    if (stateData.state !== returnedState) {throw new ServiceError('State mismatch', 400);}
 
     const ctx = getContext(request);
     const authService = new AuthService(ctx.config, ctx.db);

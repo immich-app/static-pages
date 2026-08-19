@@ -10,7 +10,7 @@ export interface SurveyTemplate {
 
 function templateQuestion(templateId: string, sortOrder: number, overrides?: { text?: string }) {
   const t = questionTemplates.find((q) => q.id === templateId);
-  if (!t) throw new Error(`Template ${templateId} not found`);
+  if (!t) {throw new Error(`Template ${templateId} not found`);}
   return { ...t.question, id: '', sortOrder, ...overrides };
 }
 

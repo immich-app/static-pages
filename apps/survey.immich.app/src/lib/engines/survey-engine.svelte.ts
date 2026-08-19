@@ -1,22 +1,27 @@
 import type { SurveyAnswer, SurveyQuestion, SurveySection } from '../types';
 
 export function shouldShowQuestion(q: SurveyQuestion, answers: Record<string, SurveyAnswer>): boolean {
-  if (!q.conditional) return true;
+  if (!q.conditional) {return true;}
 
   const { questionId, condition, value, values } = q.conditional.showIf;
   const answer = answers[questionId];
 
   switch (condition) {
-    case 'skipped':
+    case 'skipped': {
       return !(questionId in answers);
-    case 'equals':
+    }
+    case 'equals': {
       return answer !== undefined && answer.value === value;
-    case 'notEquals':
+    }
+    case 'notEquals': {
       return answer !== undefined && answer.value !== value;
-    case 'anyOf':
+    }
+    case 'anyOf': {
       return answer !== undefined && Array.isArray(values) && values.includes(answer.value);
-    default:
+    }
+    default: {
       return true;
+    }
   }
 }
 
@@ -69,7 +74,7 @@ export function randomizeQuestions(
 ): SurveyQuestion[] {
   const grouped: Record<string, SurveyQuestion[]> = {};
   for (const q of questions) {
-    if (!grouped[q.section_id]) grouped[q.section_id] = [];
+    if (!grouped[q.section_id]) {grouped[q.section_id] = [];}
     grouped[q.section_id].push(q);
   }
 
@@ -83,7 +88,7 @@ export function randomizeQuestions(
 
 export function randomizeOptionOrder(questions: SurveyQuestion[], seed: string): SurveyQuestion[] {
   return questions.map((q) => {
-    if (!q.options || q.options.length <= 1) return q;
+    if (!q.options || q.options.length <= 1) {return q;}
     return { ...q, options: seededShuffle(q.options, seed + q.id) };
   });
 }
@@ -124,13 +129,13 @@ export function createSurveyEngine(
 
   function goTo(questionId: string) {
     const idx = surveyQuestions.findIndex((q) => q.id === questionId);
-    if (idx >= 0) {
+    if (idx !== -1) {
       currentIndex = idx;
     }
   }
 
   function setAnswer(questionId: string, value: string, otherText?: string) {
-    answers[questionId] = { value, ...(otherText ? { otherText } : {}) };
+    answers[questionId] = { value, ...(otherText && { otherText }) };
   }
 
   function initialize(resumedAnswers: Record<string, SurveyAnswer>, resumeIndex: number) {

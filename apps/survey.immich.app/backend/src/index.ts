@@ -40,9 +40,9 @@ function registerAllRoutes(router: ReturnType<typeof AutoRouter>) {
 // checks in itty-router. This custom format handler detects Response-like objects by
 // checking for the `status` and `headers` properties instead of using instanceof.
 const nodeFormat = (value: unknown) => {
-  if (value === undefined || value === null) return value;
-  if (typeof value === 'object' && 'status' in (value as object) && 'headers' in (value as object)) return value;
-  return new Response(JSON.stringify(value), { headers: { 'content-type': 'application/json; charset=utf-8' } });
+  if (value === undefined || value === null) {return value;}
+  if (typeof value === 'object' && 'status' in (value as object) && 'headers' in (value as object)) {return value;}
+  return Response.json(value, { headers: { 'content-type': 'application/json; charset=utf-8' } });
 };
 
 export function createRouter(ctx: AppContext) {
@@ -118,7 +118,7 @@ const slugCache = new Map<string, CachedSlugEntry>();
 const INTERNAL_HEADERS = ['X-WS-Role', 'X-Respondent-Id', 'X-Authenticated', 'X-Survey-Pw-Fp'];
 
 function stripInternalHeaders(headers: Headers): void {
-  for (const h of INTERNAL_HEADERS) headers.delete(h);
+  for (const h of INTERNAL_HEADERS) {headers.delete(h);}
 }
 
 async function slugToRow(db: D1Database, slug: string): Promise<{ id: string } | null> {
@@ -133,7 +133,7 @@ async function slugToRow(db: D1Database, slug: string): Promise<{ id: string } |
     slugCache.set(slug, { id: row.id, cachedAt: Date.now() });
     if (slugCache.size > MAX_SLUG_CACHE_ENTRIES) {
       const oldestSlug = slugCache.keys().next().value;
-      if (oldestSlug) slugCache.delete(oldestSlug);
+      if (oldestSlug) {slugCache.delete(oldestSlug);}
     }
   }
   return row;
@@ -145,8 +145,8 @@ async function slugToRow(db: D1Database, slug: string): Promise<{ id: string } |
  * the TTL to expire.
  */
 function invalidateSlugCacheBySurveyId(surveyId: string): void {
-  for (const [slug, entry] of slugCache.entries()) {
-    if (entry.id === surveyId) slugCache.delete(slug);
+  for (const [slug, entry] of slugCache) {
+    if (entry.id === surveyId) {slugCache.delete(slug);}
   }
 }
 
@@ -175,11 +175,11 @@ const CATALOG_SYNC_COLUMNS = new Set([
 
 async function syncCatalog(response: Response, db: D1Database, surveyId: string): Promise<void> {
   const syncHeader = response.headers.get('X-Catalog-Sync');
-  if (!syncHeader) return;
+  if (!syncHeader) {return;}
   try {
     const fields = JSON.parse(syncHeader) as Record<string, unknown>;
     const keys = Object.keys(fields).filter((k) => CATALOG_SYNC_COLUMNS.has(k));
-    if (keys.length === 0) return;
+    if (keys.length === 0) {return;}
     const setClauses = keys.map((k) => `${k} = ?`).join(', ');
     const values = [...keys.map((k) => fields[k]), surveyId];
     await db
@@ -227,11 +227,11 @@ function matchDORoute(method: string, pathname: string): { surveyId?: string; sl
   const surveyMatch = pathname.match(SURVEY_ID_PATTERN);
   if (surveyMatch) {
     const id = surveyMatch[1];
-    if (id === 'import') return null; // POST /api/surveys/import
+    if (id === 'import') {return null;} // POST /api/surveys/import
     // Tags live in D1, not in the DO — let itty-router handle them
     const subPath = surveyMatch[2] || '';
-    if (subPath === '/tags') return null;
-    if (subPath === '/init') return null;
+    if (subPath === '/tags') {return null;}
+    if (subPath === '/init') {return null;}
     return { surveyId: id };
   }
 
@@ -239,7 +239,7 @@ function matchDORoute(method: string, pathname: string): { surveyId?: string; sl
   if (publicMatch) {
     const slug = publicMatch[1];
     const subPath = publicMatch[2] || '';
-    if (subPath === '/auth' || subPath === '/reset') return null;
+    if (subPath === '/auth' || subPath === '/reset') {return null;}
     return { slug };
   }
 
@@ -271,8 +271,8 @@ export default {
         if (surveyData?.id) {
           try {
             await initDO(env, surveyData.id, body.survey ? body : { survey: surveyData });
-          } catch (e) {
-            console.error('Rolling back survey creation after DO init failure:', e);
+          } catch (error) {
+            console.error('Rolling back survey creation after DO init failure:', error);
             await env.DB.prepare('DELETE FROM surveys WHERE id = ?').bind(surveyData.id).run();
             return Response.json({ error: 'Failed to initialize survey storage. Please try again.' }, { status: 503 });
           }
@@ -296,7 +296,7 @@ export default {
       surveyId = doMatch.surveyId;
     } else if (doMatch.slug) {
       const row = await slugToRow(env.DB, doMatch.slug);
-      if (!row) return Response.json({ error: 'Survey not found' }, { status: 404 });
+      if (!row) {return Response.json({ error: 'Survey not found' }, { status: 404 });}
       surveyId = row.id;
     } else {
       return router.fetch(request, env, ctx);
@@ -312,7 +312,7 @@ export default {
     // (always-current) survey.password_hash and rejects with 403 when needed.
     if (!isPublicRoute) {
       const authResult = await authenticateRequest(request, config);
-      if (authResult instanceof Response) return authResult;
+      if (authResult instanceof Response) {return authResult;}
 
       const subPath = pathname.match(SURVEY_ID_PATTERN)?.[2] || '/';
       const requiredRole = getRequiredDORole(method, subPath);
@@ -331,7 +331,7 @@ export default {
       let wsRole = 'public';
       if (wsType === 'viewer' || wsType === 'editor') {
         const authResult = await authenticateRequest(request, config);
-        if (authResult instanceof Response) return authResult;
+        if (authResult instanceof Response) {return authResult;}
         const minRole = wsType === 'editor' ? 'editor' : 'viewer';
         if (!checkRole(authResult, minRole)) {
           return Response.json({ error: 'Insufficient permissions' }, { status: 403 });
@@ -347,7 +347,7 @@ export default {
         // Set from the verified rid cookie only. Lets the DO tag the connection
         // so respondent messages don't each need re-authenticating.
         const respondentId = getRespondentId(request, doMatch.slug);
-        if (respondentId) wsHeaders.set('X-Respondent-Id', respondentId);
+        if (respondentId) {wsHeaders.set('X-Respondent-Id', respondentId);}
 
         // Verified unconditionally — the DO decides whether a password is
         // actually required, from its own current password_hash.
@@ -356,7 +356,7 @@ export default {
           ? await verifySurveyPasswordTokenSignature(token, surveyId, config.passwordSecret)
           : { valid: false as const };
         wsHeaders.set('X-Authenticated', pw.valid ? 'true' : 'false');
-        if (pw.valid && pw.fingerprint) wsHeaders.set('X-Survey-Pw-Fp', pw.fingerprint);
+        if (pw.valid && pw.fingerprint) {wsHeaders.set('X-Survey-Pw-Fp', pw.fingerprint);}
       }
 
       return stub.fetch(new Request(request.url, { method: request.method, headers: wsHeaders }));
@@ -393,14 +393,14 @@ export default {
       // Set from the verified rid cookie only, never from a client header.
       const slug = doMatch.slug!;
       const respondentId = getRespondentId(request, slug);
-      if (respondentId) doHeaders.set('X-Respondent-Id', respondentId);
+      if (respondentId) {doHeaders.set('X-Respondent-Id', respondentId);}
 
       const token = getCookie(request, `spw_${slug}`);
       const pw = token
         ? await verifySurveyPasswordTokenSignature(token, surveyId, config.passwordSecret)
         : { valid: false as const };
       doHeaders.set('X-Authenticated', pw.valid ? 'true' : 'false');
-      if (pw.valid && pw.fingerprint) doHeaders.set('X-Survey-Pw-Fp', pw.fingerprint);
+      if (pw.valid && pw.fingerprint) {doHeaders.set('X-Survey-Pw-Fp', pw.fingerprint);}
     }
 
     const doRequest = new Request(request.url, {
@@ -503,15 +503,15 @@ function checkRole(role: UserRole, minRole: UserRole): boolean {
 
 function allowedCredentialedOrigin(request: Request, config: import('./config').AppConfig): string | null {
   const origin = request.headers.get('Origin');
-  if (!origin) return null;
+  if (!origin) {return null;}
   try {
-    if (origin === new URL(request.url).origin) return origin;
+    if (origin === new URL(request.url).origin) {return origin;}
   } catch {
     // Unparseable request URL — fall through to the configured origin check.
   }
   if (config.oidc.redirectUri) {
     try {
-      if (origin === new URL(config.oidc.redirectUri).origin) return origin;
+      if (origin === new URL(config.oidc.redirectUri).origin) {return origin;}
     } catch {
       // Malformed redirect URI — treat as no configured origin.
     }
@@ -526,8 +526,8 @@ function getRequiredDORole(method: string, subPath: string): UserRole {
     }
     return 'editor';
   }
-  if (method !== 'GET' && method !== 'HEAD') return 'editor';
-  if (subPath === '/definition') return 'editor';
+  if (method !== 'GET' && method !== 'HEAD') {return 'editor';}
+  if (subPath === '/definition') {return 'editor';}
   return 'viewer';
 }
 

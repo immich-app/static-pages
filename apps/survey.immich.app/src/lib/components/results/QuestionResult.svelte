@@ -12,7 +12,9 @@
   interface Props {
     question: SurveyQuestion;
     answers: AnswerData[];
-    /** Total number of completed respondents for this survey (denominator for % calculations). */
+    /**
+    Total number of completed respondents for this survey (denominator for % calculations).
+    */
     totalResponses: number;
     onViewAllResponses?: () => void;
   }
@@ -44,7 +46,7 @@
 <div class="rounded-xl border border-gray-300 p-5 dark:border-gray-700">
   <div class="mb-4">
     <div class="mb-1 flex items-start justify-between gap-3">
-      <h3 class="text-base leading-snug font-semibold">{question.text}</h3>
+      <h3 class="text-base/snug font-semibold">{question.text}</h3>
       <span
         class="shrink-0 rounded-full border border-gray-700 px-2 py-0.5 text-[10px] tracking-wider text-gray-500 uppercase"
       >

@@ -5,7 +5,9 @@ export interface SurveyWsClient {
 
   on<K extends keyof WsPushEvents>(event: K, callback: (data: WsPushEvents[K]) => void): () => void;
 
-  /** Fires immediately with the current state on subscribe, then on each change. */
+  /**
+  Fires immediately with the current state on subscribe, then on each change.
+  */
   onConnectionChange(callback: (state: 'connecting' | 'open' | 'closed' | 'failed') => void): () => void;
 
   close(): void;
@@ -16,8 +18,8 @@ export interface SurveyWsClient {
 let requestCounter = 0;
 
 export function createSurveyWsClient(slug: string, type: 'viewer' | 'respondent' | 'editor'): SurveyWsClient {
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const url = `${protocol}//${window.location.host}/api/s/${slug}/ws?type=${type}`;
+  const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const url = `${protocol}//${location.host}/api/s/${slug}/ws?type=${type}`;
 
   let ws: WebSocket | null = null;
   let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
@@ -30,21 +32,21 @@ export function createSurveyWsClient(slug: string, type: 'viewer' | 'respondent'
   const stateListeners = new Set<(s: ConnState) => void>();
   function setState(next: ConnState) {
     state = next;
-    for (const cb of stateListeners) cb(next);
+    for (const cb of stateListeners) {cb(next);}
   }
 
   const pushListeners = new Map<string, Array<(data: unknown) => void>>();
   const pendingRequests = new Map<string, { resolve: (data: unknown) => void; reject: (error: Error) => void }>();
 
   function connect() {
-    if (closed) return;
+    if (closed) {return;}
     setState('connecting');
     ws = new WebSocket(url);
 
-    ws.onopen = () => {
+    ws.addEventListener('open', () => {
       failures = 0;
       setState('open');
-    };
+    });
 
     ws.onmessage = (event) => {
       try {
@@ -65,7 +67,7 @@ export function createSurveyWsClient(slug: string, type: 'viewer' | 'respondent'
 
         if (msg.type === 'push' && msg.event) {
           const cbs = pushListeners.get(msg.event);
-          if (cbs) for (const cb of cbs) cb(msg.data);
+          if (cbs) {for (const cb of cbs) {cb(msg.data);}}
           return;
         }
       } catch {
@@ -73,13 +75,13 @@ export function createSurveyWsClient(slug: string, type: 'viewer' | 'respondent'
       }
     };
 
-    ws.onclose = () => {
+    ws.addEventListener('close', () => {
       for (const [, pending] of pendingRequests) {
         pending.reject(new Error('WebSocket closed'));
       }
       pendingRequests.clear();
 
-      if (closed) return;
+      if (closed) {return;}
       failures++;
       if (failures < MAX_FAILURES) {
         setState('closed');
@@ -87,7 +89,7 @@ export function createSurveyWsClient(slug: string, type: 'viewer' | 'respondent'
       } else {
         setState('failed');
       }
-    };
+    });
 
     ws.onerror = () => {
       ws?.close();
@@ -157,14 +159,14 @@ export function createSurveyWsClient(slug: string, type: 'viewer' | 'respondent'
 
     on<K extends keyof WsPushEvents>(event: K, callback: (data: WsPushEvents[K]) => void): () => void {
       const key = event as string;
-      if (!pushListeners.has(key)) pushListeners.set(key, []);
+      if (!pushListeners.has(key)) {pushListeners.set(key, []);}
       const cb = callback as (data: unknown) => void;
       pushListeners.get(key)!.push(cb);
       return () => {
         const list = pushListeners.get(key);
         if (list) {
           const idx = list.indexOf(cb);
-          if (idx >= 0) list.splice(idx, 1);
+          if (idx !== -1) {list.splice(idx, 1);}
         }
       };
     },
@@ -196,11 +198,13 @@ type WsType = 'viewer' | 'respondent' | 'editor';
 const connectionsBySlug = new Map<string, SurveyWsClient>(); // key: `${slug}:${type}`
 const connectionsBySurveyId = new Map<string, SurveyWsClient>();
 
-/** Get or create a WS client for a survey */
+/**
+Get or create a WS client for a survey
+*/
 export function getSurveyWs(slug: string, type: WsType): SurveyWsClient {
   const key = `${slug}:${type}`;
   const existing = connectionsBySlug.get(key);
-  if (existing?.connected) return existing;
+  if (existing?.connected) {return existing;}
   existing?.close();
 
   const client = createSurveyWsClient(slug, type);
@@ -208,13 +212,17 @@ export function getSurveyWs(slug: string, type: WsType): SurveyWsClient {
   return client;
 }
 
-/** Get an existing WS client by survey ID (admin flows only) */
+/**
+Get an existing WS client by survey ID (admin flows only)
+*/
 export function getWsClientById(surveyId: string): SurveyWsClient | undefined {
   const conn = connectionsBySurveyId.get(surveyId);
   return conn?.connected ? conn : undefined;
 }
 
-/** Get an existing WS client by slug and type */
+/**
+Get an existing WS client by slug and type
+*/
 export function getWsClientBySlug(slug: string, type: WsType = 'respondent'): SurveyWsClient | undefined {
   const conn = connectionsBySlug.get(`${slug}:${type}`);
   return conn?.connected ? conn : undefined;

@@ -24,11 +24,11 @@
   }
 
   function handleKeydown(e: KeyboardEvent) {
-    if (!['ArrowUp', 'ArrowDown'].includes(e.key)) return;
+    if (!['ArrowUp', 'ArrowDown'].includes(e.key)) {return;}
     e.preventDefault();
 
     const allValues = visibleOptions.map((o) => o.value);
-    if (question.hasOther) allValues.push('Other');
+    if (question.hasOther) {allValues.push('Other');}
 
     const currentIdx = answer?.value ? allValues.indexOf(answer.value) : -1;
     let nextIdx: number;
@@ -59,7 +59,7 @@
         aria-checked={answer?.value === option.value}
       >
         <span
-          class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full {answer?.value === option.value
+          class="flex size-6 shrink-0 items-center justify-center rounded-full {answer?.value === option.value
             ? 'bg-immich-primary text-white'
             : 'border-2 border-gray-300 dark:border-gray-500'}"
         >
@@ -79,7 +79,7 @@
           : 'border-gray-200 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400'}"
       >
         <span
-          class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full {answer?.value === 'Other'
+          class="flex size-6 shrink-0 items-center justify-center rounded-full {answer?.value === 'Other'
             ? 'bg-immich-primary text-white'
             : 'border-2 border-gray-300 dark:border-gray-500'}"
         >

@@ -71,8 +71,9 @@ export async function execute(op: string, data: Record<string, unknown>, ctx: Co
       return undefined;
     }
 
-    case 'get-results':
+    case 'get-results': {
       return ctx.respondentService.getResults(surveyId);
+    }
 
     case 'get-timeline': {
       const raw = data.granularity;
@@ -80,14 +81,17 @@ export async function execute(op: string, data: Record<string, unknown>, ctx: Co
       return ctx.respondentService.getTimeline(surveyId, granularity);
     }
 
-    case 'get-completion-times':
+    case 'get-completion-times': {
       return ctx.respondentService.getCompletionTimes(surveyId);
+    }
 
-    case 'get-question-timings':
+    case 'get-question-timings': {
       return ctx.respondentService.getQuestionTimings(surveyId);
+    }
 
-    case 'get-dropoff':
+    case 'get-dropoff': {
       return ctx.respondentService.getDropoff(surveyId);
+    }
 
     case 'list-respondents': {
       const offset = Number(data.offset ?? 0);
@@ -95,8 +99,9 @@ export async function execute(op: string, data: Record<string, unknown>, ctx: Co
       return ctx.respondentService.listRespondents(surveyId, offset, limit);
     }
 
-    case 'get-respondent':
+    case 'get-respondent': {
       return ctx.respondentService.getRespondentDetail(surveyId, data.respondentId as string);
+    }
 
     case 'delete-respondent': {
       await ctx.respondentService.deleteRespondent(surveyId, data.respondentId as string);
@@ -117,10 +122,12 @@ export async function execute(op: string, data: Record<string, unknown>, ctx: Co
       });
     }
 
-    case 'export-definition':
+    case 'export-definition': {
       return ctx.surveyService.exportDefinition(surveyId);
+    }
 
-    default:
+    default: {
       return null;
+    }
   }
 }

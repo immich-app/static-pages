@@ -147,8 +147,8 @@ test.describe.serial('OIDC auth', () => {
       if (disco.ok) {
         oidcAvailable = true;
       }
-    } catch (err) {
-      console.log('Failed to start OIDC server:', err);
+    } catch (error) {
+      console.log('Failed to start OIDC server:', error);
     }
   });
 

@@ -156,30 +156,39 @@ function generateAnswer(
   fillLevel: 'short' | 'medium' | 'long',
 ): { value: string; otherText: string | null } {
   switch (question.type) {
-    case 'text':
+    case 'text': {
       return { value: 'John Doe', otherText: null };
-    case 'email':
+    }
+    case 'email': {
       return { value: 'user@example.com', otherText: null };
+    }
     case 'textarea': {
       const base = 'This is a response about my experience. ';
       const repeats = fillLevel === 'short' ? 1 : fillLevel === 'medium' ? 5 : 20;
       return { value: base.repeat(repeats), otherText: null };
     }
     case 'radio':
-    case 'dropdown':
+    case 'dropdown': {
       return { value: 'opt2', otherText: null };
-    case 'checkbox':
+    }
+    case 'checkbox': {
       return { value: 'opt1,opt3', otherText: null };
-    case 'rating':
+    }
+    case 'rating': {
       return { value: '4', otherText: null };
-    case 'nps':
+    }
+    case 'nps': {
       return { value: '8', otherText: null };
-    case 'number':
+    }
+    case 'number': {
       return { value: '42', otherText: null };
-    case 'likert':
+    }
+    case 'likert': {
       return { value: 'Agree', otherText: null };
-    default:
+    }
+    default: {
       return { value: 'test', otherText: null };
+    }
   }
 }
 
@@ -203,7 +212,7 @@ function generateTallies(questions: QuestionRow[], uniqueValuesPerQuestion: numb
   const tallies = new Map<string, AnswerTally[]>();
   const choiceTypes = new Set(['radio', 'checkbox', 'dropdown', 'rating', 'nps', 'likert']);
   for (const q of questions) {
-    if (!choiceTypes.has(q.type)) continue;
+    if (!choiceTypes.has(q.type)) {continue;}
     const tally: AnswerTally[] = [];
     for (let i = 0; i < uniqueValuesPerQuestion; i++) {
       tally.push({ value: `value_${i}`, otherText: null, count: Math.floor(Math.random() * 1000) });
@@ -214,20 +223,20 @@ function generateTallies(questions: QuestionRow[], uniqueValuesPerQuestion: numb
 }
 
 function measure<T>(label: string, setup: () => T): { label: string; result: T; bytes: number } {
-  if (global.gc) global.gc();
+  if (globalThis.gc) {globalThis.gc();}
   const before = process.memoryUsage().heapUsed;
 
   const result = setup();
 
-  if (global.gc) global.gc();
+  if (globalThis.gc) {globalThis.gc();}
   const after = process.memoryUsage().heapUsed;
 
   return { label, result, bytes: after - before };
 }
 
 function fmt(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  if (bytes < 1024) {return `${bytes} B`;}
+  if (bytes < 1024 * 1024) {return `${(bytes / 1024).toFixed(1)} KB`;}
   return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
 }
 
@@ -244,7 +253,7 @@ const SCENARIOS: Scenario[] = [
   { name: 'Large (50q, long textareas)', questionCount: 50, sectionCount: 10, fillLevel: 'long' },
 ];
 
-const CONCURRENT_COUNTS = [100, 1000, 5000, 10000];
+const CONCURRENT_COUNTS = [100, 1000, 5000, 10_000];
 
 function profileScenario(scenario: Scenario) {
   console.log(`\n${'='.repeat(70)}`);
@@ -276,7 +285,7 @@ function profileScenario(scenario: Scenario) {
   console.log(`    ${fmt(singleRespondent.bytes)}`);
 
   console.log(`\n  Concurrent respondent scaling:`);
-  console.log(`    ${'Users'.padEnd(10)} ${'Total cache'.padEnd(15)} ${'Per-user avg'.padEnd(15)} ${'% of 100MB'}`);
+  console.log(`    ${'Users'.padEnd(10)} ${'Total cache'.padEnd(15)} ${'Per-user avg'.padEnd(15)} % of 100MB`);
 
   for (const count of CONCURRENT_COUNTS) {
     const concurrent = measure(`${count} concurrent`, () => {
@@ -307,7 +316,7 @@ console.log('Survey DO Memory Profiler');
 console.log(`Node ${process.version} | V8 heap used: ${fmt(process.memoryUsage().heapUsed)}`);
 console.log(`Budget: 128 MB total DO memory (assume ~100 MB usable after runtime overhead)`);
 
-if (!global.gc) {
+if (!globalThis.gc) {
   console.log('\n⚠  For accurate measurements, run with: node --expose-gc --import tsx scripts/memory-profile.ts');
 }
 

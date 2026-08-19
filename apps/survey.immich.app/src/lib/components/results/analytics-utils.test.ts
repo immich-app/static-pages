@@ -259,7 +259,7 @@ describe('computeTextStats', () => {
 
   it('counts blank, short and long buckets', () => {
     const answers: AnswerData[] = [
-      { value: '   ', count: 2 }, // blank
+      { value: ' '.repeat(3), count: 2 }, // blank
       { value: 'hi', count: 1 }, // short (<10)
       { value: 'a'.repeat(50), count: 1 }, // medium (not counted)
       { value: 'a'.repeat(150), count: 3 }, // long (>100)
@@ -493,7 +493,7 @@ describe('bucketNumbers', () => {
   it('includes the maximum value in the last bucket', () => {
     const values = Array.from({ length: 100 }, (_, i) => i);
     const buckets = bucketNumbers(values);
-    const last = buckets[buckets.length - 1];
+    const last = buckets.at(-1);
     expect(last.rangeEnd).toBe(99);
     expect(last.count).toBeGreaterThan(0);
   });

@@ -8,8 +8,8 @@
   let { slug }: Props = $props();
 
   async function startOver() {
-    await fetch(`/api/s/${slug}/reset`, { method: 'POST', credentials: 'same-origin' });
-    window.location.reload();
+    await fetch(`/api/s/${slug}/reset`, { method: 'POST'});
+    location.reload();
   }
 </script>
 

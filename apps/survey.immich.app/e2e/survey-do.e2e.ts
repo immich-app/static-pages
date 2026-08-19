@@ -170,14 +170,14 @@ test.describe('Respondent flow', () => {
     await page.getByText('Blue', { exact: true }).click();
     await page.click('button:has-text("Submit")');
 
-    await expect(page.locator('h1')).toContainText('Thank you', { timeout: 10000 });
+    await expect(page.locator('h1')).toContainText('Thank you', { timeout: 10_000 });
 
     expect(errors).toEqual([]);
   });
 
   test('results show the respondent data', async () => {
     const resumeRes = await fetch(`${API}/api/s/${slug}/resume`);
-    const ridCookie = resumeRes.headers.get('set-cookie')?.split(';')[0];
+    const ridCookie = resumeRes.headers.get('set-cookie')?.split(';', 1)[0];
     expect(ridCookie).toBeTruthy();
 
     await fetch(`${API}/api/s/${slug}/answers/batch`, {
@@ -203,9 +203,9 @@ test.describe('Respondent flow', () => {
 
   test('a client-supplied X-Respondent-Id header is ignored (creates a new respondent)', async () => {
     const resumeRes = await fetch(`${API}/api/s/${slug}/resume`);
-    const ridCookie = resumeRes.headers.get('set-cookie')?.split(';')[0];
+    const ridCookie = resumeRes.headers.get('set-cookie')?.split(';', 1)[0];
     expect(ridCookie).toBeTruthy();
-    const legitId = ridCookie!.split('=')[1];
+    const legitId = ridCookie!.split('=', 2)[1];
 
     // The API worker must strip client-supplied X-Respondent-Id before forwarding
     // to the DO, so a forged header must yield a brand-new respondent id.
@@ -213,9 +213,9 @@ test.describe('Respondent flow', () => {
       headers: { 'X-Respondent-Id': legitId },
     });
     expect(forgedRes.ok).toBe(true);
-    const forgedCookie = forgedRes.headers.get('set-cookie')?.split(';')[0];
+    const forgedCookie = forgedRes.headers.get('set-cookie')?.split(';', 1)[0];
     expect(forgedCookie).toBeTruthy();
-    const forgedId = forgedCookie!.split('=')[1];
+    const forgedId = forgedCookie!.split('=', 2)[1];
     expect(forgedId).not.toBe(legitId);
   });
 });
@@ -231,13 +231,13 @@ test.describe('WebSocket protocol', () => {
 
   test('WebSocket connects and receives counts', async ({ page }) => {
     await page.addInitScript(() => {
-      const origWS = window.WebSocket;
-      window.WebSocket = class extends origWS {
+      const origWS = WebSocket;
+      globalThis.WebSocket = class extends origWS {
         constructor(url: string | URL, protocols?: string | string[]) {
           super(url, protocols);
           this.addEventListener('message', (e) => {
-            (window as any).__wsMessages = (window as any).__wsMessages || [];
-            (window as any).__wsMessages.push(e.data);
+            (globalThis as any).__wsMessages = (globalThis as any).__wsMessages || [];
+            (globalThis as any).__wsMessages.push(e.data);
           });
         }
       } as any;
@@ -247,7 +247,7 @@ test.describe('WebSocket protocol', () => {
     // Wait for a "counts" push to arrive instead of blindly sleeping 3s.
     await page.waitForFunction(
       () =>
-        ((window as any).__wsMessages || [])
+        ((globalThis as any).__wsMessages || [])
           .map((m: string) => {
             try {
               return JSON.parse(m);
@@ -259,7 +259,7 @@ test.describe('WebSocket protocol', () => {
       { timeout: 10_000 },
     );
 
-    const messages = await page.evaluate(() => (window as any).__wsMessages || []);
+    const messages = await page.evaluate(() => (globalThis as any).__wsMessages || []);
     const parsed = messages.map((m: string) => JSON.parse(m));
     const countsMsgs = parsed.filter((m: any) => m.type === 'push' && m.event === 'counts');
     expect(countsMsgs.length).toBeGreaterThan(0);
@@ -293,7 +293,7 @@ test.describe('Editor save flow', () => {
     await page.waitForTimeout(500);
 
     await page.click('button:has-text("Save")');
-    await page.waitForURL('**/edit/**', { timeout: 10000 });
+    await page.waitForURL('**/edit/**', { timeout: 10_000 });
 
     await expect(page.locator('h1')).toContainText('Edit Survey');
 
@@ -407,7 +407,7 @@ test.describe('Analytics endpoints', () => {
     surveyId = result.surveyId;
 
     const resumeRes = await fetch(`${API}/api/s/${slug}/resume`);
-    const ridCookie = resumeRes.headers.get('set-cookie')?.split(';')[0];
+    const ridCookie = resumeRes.headers.get('set-cookie')?.split(';', 1)[0];
     if (ridCookie) {
       await fetch(`${API}/api/s/${slug}/answers/batch`, {
         method: 'POST',
@@ -520,7 +520,7 @@ test.describe('Respondent reset', () => {
 
   test('reset clears respondent cookie', async () => {
     const resumeRes = await fetch(`${API}/api/s/${slug}/resume`);
-    const ridCookie = resumeRes.headers.get('set-cookie')?.split(';')[0];
+    const ridCookie = resumeRes.headers.get('set-cookie')?.split(';', 1)[0];
     expect(ridCookie).toBeTruthy();
 
     const resetRes = await fetch(`${API}/api/s/${slug}/reset`, {
@@ -548,9 +548,9 @@ test.describe('WebSocket typed operations', () => {
           const ws = new WebSocket(
             `${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}/api/s/${slug}/ws?type=editor`,
           );
-          ws.onopen = () => {
+          ws.addEventListener('open', () => {
             ws.send(JSON.stringify({ type: 'request', requestId: 'r1', op: 'get-survey', data: {} }));
-          };
+          });
           ws.onmessage = (e) => {
             const msg = JSON.parse(e.data);
             if (msg.type === 'response' && msg.requestId === 'r1') {
@@ -559,7 +559,7 @@ test.describe('WebSocket typed operations', () => {
             }
           };
           ws.onerror = () => reject(new Error('WS error'));
-          setTimeout(() => reject(new Error('timeout')), 10000);
+          setTimeout(() => reject(new Error('timeout')), 10_000);
         });
       },
       { slug },
@@ -583,7 +583,7 @@ test.describe('WebSocket typed operations', () => {
             `${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}/api/s/${slug}/ws?type=editor`,
           );
           const responses: Record<string, unknown> = {};
-          ws.onopen = () => {
+          ws.addEventListener('open', () => {
             ws.send(
               JSON.stringify({
                 type: 'request',
@@ -592,7 +592,7 @@ test.describe('WebSocket typed operations', () => {
                 data: { title: 'WS Created Section' },
               }),
             );
-          };
+          });
           ws.onmessage = (e) => {
             const msg = JSON.parse(e.data);
             if (msg.type === 'response') {
@@ -614,7 +614,7 @@ test.describe('WebSocket typed operations', () => {
             }
           };
           ws.onerror = () => reject(new Error('WS error'));
-          setTimeout(() => reject(new Error('timeout')), 10000);
+          setTimeout(() => reject(new Error('timeout')), 10_000);
         });
       },
       { slug },
@@ -632,9 +632,9 @@ test.describe('WebSocket typed operations', () => {
           const ws = new WebSocket(
             `${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}/api/s/${slug}/ws?type=viewer`,
           );
-          ws.onopen = () => {
+          ws.addEventListener('open', () => {
             ws.send(JSON.stringify({ type: 'request', requestId: 'r1', op: 'get-results', data: {} }));
-          };
+          });
           ws.onmessage = (e) => {
             const msg = JSON.parse(e.data);
             if (msg.type === 'response' && msg.requestId === 'r1') {
@@ -643,7 +643,7 @@ test.describe('WebSocket typed operations', () => {
             }
           };
           ws.onerror = () => reject(new Error('WS error'));
-          setTimeout(() => reject(new Error('timeout')), 10000);
+          setTimeout(() => reject(new Error('timeout')), 10_000);
         });
       },
       { slug },
@@ -665,7 +665,7 @@ test.describe('WebSocket typed operations', () => {
           );
           ws.onmessage = (e) => {
             const msg = JSON.parse(e.data);
-            if (msg.type === 'push') events.push(msg);
+            if (msg.type === 'push') {events.push(msg);}
           };
           ws.onerror = () => reject(new Error('WS error'));
           setTimeout(() => {

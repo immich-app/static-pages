@@ -27,7 +27,7 @@
       .split('\n')
       .map((l) => l.trim())
       .filter(Boolean);
-    if (lines.length < 2) return;
+    if (lines.length < 2) {return;}
     onSubmit(lines.map((l) => ({ label: l, value: l })));
   }
 </script>
@@ -54,7 +54,7 @@
 
     <div class="mt-4 flex items-center justify-between">
       <span class="text-xs text-gray-500">
-        {lineCount} option{lineCount !== 1 ? 's' : ''}
+        {lineCount} option{lineCount === 1 ? '' : 's'}
       </span>
       <div class="flex gap-2">
         <Button variant="outline" onclick={onClose}>Cancel</Button>

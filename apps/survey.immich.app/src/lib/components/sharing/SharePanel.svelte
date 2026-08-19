@@ -32,7 +32,7 @@
     href={twitterUrl}
     target="_blank"
     rel="noopener noreferrer"
-    class="rounded p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200"
+    class="rounded-sm p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200"
     title="Share on X / Twitter"
   >
     <Icon icon={mdiTwitter} size="16" />
@@ -41,20 +41,20 @@
     href={linkedinUrl}
     target="_blank"
     rel="noopener noreferrer"
-    class="rounded p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200"
+    class="rounded-sm p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200"
     title="Share on LinkedIn"
   >
     <Icon icon={mdiLinkedin} size="16" />
   </a>
   <a
     href={emailUrl}
-    class="rounded p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200"
+    class="rounded-sm p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200"
     title="Share via email"
   >
     <Icon icon={mdiEmail} size="16" />
   </a>
   <button
-    class="rounded p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200"
+    class="rounded-sm p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200"
     onclick={copyLink}
     title="Copy link"
   >

@@ -18,7 +18,7 @@ let oidcEnabled = $state(false);
 let passwordEnabled = $state(true);
 
 export async function initAuth(): Promise<void> {
-  if (checked) return;
+  if (checked) {return;}
   loading = true;
   try {
     const result = await getMe();
@@ -71,7 +71,7 @@ export function getAuth() {
       return user?.role ?? null;
     },
     hasRole(minRole: UserRole): boolean {
-      if (!user) return false;
+      if (!user) {return false;}
       const hierarchy: Record<UserRole, number> = { admin: 3, editor: 2, viewer: 1 };
       return hierarchy[user.role] >= hierarchy[minRole];
     },

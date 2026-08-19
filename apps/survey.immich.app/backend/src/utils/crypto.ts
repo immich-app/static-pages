@@ -1,7 +1,7 @@
 import { PBKDF2_ITERATIONS } from '../constants';
 
 export function constantTimeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
+  if (a.length !== b.length) {return false;}
   let result = 0;
   for (let i = 0; i < a.length; i++) {
     result |= a.charCodeAt(i) ^ b.charCodeAt(i);
@@ -10,7 +10,7 @@ export function constantTimeEqual(a: string, b: string): boolean {
 }
 
 export async function hashPassword(password: string): Promise<string> {
-  if (!password) throw new Error('Password cannot be empty');
+  if (!password) {throw new Error('Password cannot be empty');}
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
   const hash = await crypto.subtle.deriveBits(
@@ -24,8 +24,8 @@ export async function hashPassword(password: string): Promise<string> {
 }
 
 export async function verifyPassword(password: string, stored: string): Promise<boolean> {
-  const [saltB64, hashB64] = stored.split(':');
-  if (!saltB64 || !hashB64) return false;
+  const [saltB64, hashB64] = stored.split(':', 2);
+  if (!saltB64 || !hashB64) {return false;}
   const salt = Uint8Array.from(atob(saltB64), (c: string) => c.charCodeAt(0));
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
   const hash = await crypto.subtle.deriveBits(
@@ -38,7 +38,7 @@ export async function verifyPassword(password: string, stored: string): Promise<
 }
 
 export async function signToken(data: string, secret: string): Promise<string> {
-  if (!secret) throw new Error('Signing secret is not configured');
+  if (!secret) {throw new Error('Signing secret is not configured');}
   const key = await crypto.subtle.importKey(
     'raw',
     new TextEncoder().encode(secret),
@@ -56,13 +56,13 @@ export async function verifyToken(data: string, token: string, secret: string): 
 }
 
 export function passwordFingerprint(passwordHash: string | null | undefined): string {
-  if (!passwordHash) return 'none';
-  let h1 = 0x811c9dc5;
-  let h2 = 0x01000193;
+  if (!passwordHash) {return 'none';}
+  let h1 = 0x81_1C_9D_C5;
+  let h2 = 0x01_00_01_93;
   for (let i = 0; i < passwordHash.length; i++) {
     const c = passwordHash.charCodeAt(i);
-    h1 = Math.imul(h1 ^ c, 0x01000193) >>> 0;
-    h2 = Math.imul(h2 ^ c, 0x85ebca6b) >>> 0;
+    h1 = Math.imul(h1 ^ c, 0x01_00_01_93) >>> 0;
+    h2 = Math.imul(h2 ^ c, 0x85_EB_CA_6B) >>> 0;
   }
   return h1.toString(36) + h2.toString(36);
 }

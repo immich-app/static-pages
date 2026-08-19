@@ -43,16 +43,20 @@ export class SurveyCache {
    */
   private _respondentState = new Map<string, RespondentState>();
 
-  /** Debounce flag for scheduled broadcasts — shared between ws-handler and survey-do */
+  /**
+  Debounce flag for scheduled broadcasts — shared between ws-handler and survey-do
+  */
   readonly broadcastScheduled = { value: false };
 
-  /** Fast-tier alarm tick counter, held in memory rather than DO storage (see SLOW_TICKS_PER_CYCLE). */
+  /**
+  Fast-tier alarm tick counter, held in memory rather than DO storage (see SLOW_TICKS_PER_CYCLE).
+  */
   fastTick = 0;
 
   constructor(private sql: SqlStorage) {}
 
   hasRespondent(id: string): boolean {
-    if (this._respondentState.has(id)) return true;
+    if (this._respondentState.has(id)) {return true;}
     const row = this.sql.exec('SELECT 1 FROM respondents WHERE id = ? LIMIT 1', id).toArray()[0];
     return !!row;
   }
@@ -61,14 +65,16 @@ export class SurveyCache {
     this._respondentState.set(id, { isComplete: false, hasSubmitted: false, choiceAnswers: new Map() });
   }
 
-  /** Callers needing text answers must query SQL — only choice answers are cached. */
+  /**
+  Callers needing text answers must query SQL — only choice answers are cached.
+  */
   getCachedRespondent(id: string): RespondentState | undefined {
     return this._respondentState.get(id);
   }
 
   setAnswer(respondentId: string, questionId: string, value: string, otherText: string | null): void {
     const state = this._respondentState.get(respondentId);
-    if (!state) return;
+    if (!state) {return;}
     state.hasSubmitted = true;
     if (this.choiceQuestionIds.has(questionId)) {
       state.choiceAnswers.set(questionId, { value, otherText });
@@ -77,7 +83,7 @@ export class SurveyCache {
 
   markRespondentComplete(id: string): void {
     const state = this._respondentState.get(id);
-    if (state) state.isComplete = true;
+    if (state) {state.isComplete = true;}
   }
 
   removeRespondent(id: string): void {
@@ -85,15 +91,15 @@ export class SurveyCache {
   }
 
   get survey(): SurveyRow {
-    if (this._survey) return this._survey;
+    if (this._survey) {return this._survey;}
     const rows = this.sql.exec('SELECT * FROM surveys LIMIT 1').toArray();
-    if (rows.length === 0) throw new ServiceError('Survey not found', 404);
+    if (rows.length === 0) {throw new ServiceError('Survey not found', 404);}
     this._survey = rows[0] as unknown as SurveyRow;
     return this._survey;
   }
 
   get sections(): SectionRow[] {
-    if (this._sections) return this._sections;
+    if (this._sections) {return this._sections;}
     this._sections = this.sql
       .exec('SELECT * FROM survey_sections ORDER BY sort_order')
       .toArray() as unknown as SectionRow[];
@@ -101,7 +107,7 @@ export class SurveyCache {
   }
 
   get questions(): QuestionRow[] {
-    if (this._questions) return this._questions;
+    if (this._questions) {return this._questions;}
     this._questions = this.sql
       .exec('SELECT * FROM survey_questions ORDER BY sort_order')
       .toArray() as unknown as QuestionRow[];
@@ -109,13 +115,13 @@ export class SurveyCache {
   }
 
   get choiceQuestionIds(): Set<string> {
-    if (this._choiceQuestionIds) return this._choiceQuestionIds;
+    if (this._choiceQuestionIds) {return this._choiceQuestionIds;}
     this._choiceQuestionIds = new Set(this.questions.filter((q) => CHOICE_TYPES.has(q.type)).map((q) => q.id));
     return this._choiceQuestionIds;
   }
 
   get counters(): { total: number; completed: number } {
-    if (this._counters) return this._counters;
+    if (this._counters) {return this._counters;}
     const row = this.sql
       .exec(`SELECT COUNT(*) as total, SUM(CASE WHEN is_complete = 1 THEN 1 ELSE 0 END) as completed FROM respondents`)
       .toArray()[0];
@@ -124,10 +130,10 @@ export class SurveyCache {
   }
 
   get tallies(): Map<string, AnswerTally[]> {
-    if (this._tallies) return this._tallies;
+    if (this._tallies) {return this._tallies;}
     const choiceIds = this.questions.filter((q) => CHOICE_TYPES.has(q.type)).map((q) => q.id);
     this._tallies = new Map();
-    if (choiceIds.length === 0) return this._tallies;
+    if (choiceIds.length === 0) {return this._tallies;}
 
     const placeholders = choiceIds.map(() => '?').join(',');
     const rows = this.sql
@@ -142,7 +148,7 @@ export class SurveyCache {
 
     for (const row of rows) {
       const qId = row.question_id as string;
-      if (!this._tallies.has(qId)) this._tallies.set(qId, []);
+      if (!this._tallies.has(qId)) {this._tallies.set(qId, []);}
       this._tallies.get(qId)!.push({
         value: row.answer as string,
         otherText: (row.other_text as string) || null,
@@ -153,7 +159,7 @@ export class SurveyCache {
   }
 
   get hasSurvey(): boolean {
-    if (this._survey) return true;
+    if (this._survey) {return true;}
     const rows = this.sql.exec('SELECT id FROM surveys LIMIT 1').toArray();
     return rows.length > 0;
   }
@@ -172,11 +178,11 @@ export class SurveyCache {
   }
 
   incrementTotal(): void {
-    if (this._counters) this._counters.total++;
+    if (this._counters) {this._counters.total++;}
   }
 
   incrementCompleted(): void {
-    if (this._counters) this._counters.completed++;
+    if (this._counters) {this._counters.completed++;}
   }
 
   /**
@@ -187,7 +193,7 @@ export class SurveyCache {
    * and the live charts silently drift.
    */
   updateTalliesOnCompletion(respondentId: string): void {
-    if (!this._tallies) return;
+    if (!this._tallies) {return;}
     const state = this._respondentState.get(respondentId);
     if (!state) {
       this._tallies = null;
@@ -195,7 +201,7 @@ export class SurveyCache {
     }
 
     for (const [qId, ans] of state.choiceAnswers) {
-      if (!this._tallies.has(qId)) this._tallies.set(qId, []);
+      if (!this._tallies.has(qId)) {this._tallies.set(qId, []);}
       const qTallies = this._tallies.get(qId)!;
       const existing = qTallies.find((t) => t.value === ans.value && t.otherText === ans.otherText);
       if (existing) {

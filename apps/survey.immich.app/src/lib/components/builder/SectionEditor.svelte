@@ -70,14 +70,14 @@
     expandedQuestionIndex = newIndex;
     tick().then(() => {
       questionEditorRefs[newIndex]?.focusText();
-      const el = document.querySelector(`[data-question-index="${index}-${newIndex}"]`);
+      const el = document.querySelector(`[data-question-index="${CSS.escape(index)}-${CSS.escape(newIndex)}"]`);
       el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
   }
 
   function addFromTemplate(templateId: string) {
     const template = questionTemplates.find((t) => t.id === templateId);
-    if (!template) return;
+    if (!template) {return;}
     const newQ: BuilderQuestion = {
       ...template.question,
       id: '',
@@ -89,7 +89,7 @@
     showTemplates = false;
     tick().then(() => {
       questionEditorRefs[newIndex]?.focusText();
-      const el = document.querySelector(`[data-question-index="${index}-${newIndex}"]`);
+      const el = document.querySelector(`[data-question-index="${CSS.escape(index)}-${CSS.escape(newIndex)}"]`);
       el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
   }
@@ -111,8 +111,8 @@
 
   function deleteQuestion(qIndex: number) {
     onChange({ ...section, questions: section.questions.filter((_, i) => i !== qIndex) });
-    if (expandedQuestionIndex === qIndex) expandedQuestionIndex = null;
-    else if (expandedQuestionIndex !== null && expandedQuestionIndex > qIndex) expandedQuestionIndex--;
+    if (expandedQuestionIndex === qIndex) {expandedQuestionIndex = null;}
+    else if (expandedQuestionIndex !== null && expandedQuestionIndex > qIndex) {expandedQuestionIndex--;}
   }
 
   function moveQuestion(qIndex: number, direction: 'up' | 'down') {
@@ -156,26 +156,26 @@
       </div>
       <span class="text-sm font-semibold text-gray-400">Section {index + 1}</span>
       <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500 dark:bg-gray-800">
-        {section.questions.length} question{section.questions.length !== 1 ? 's' : ''}
+        {section.questions.length} question{section.questions.length === 1 ? '' : 's'}
       </span>
     </div>
     <div class="flex items-center gap-0.5">
       <button
-        class="rounded p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200 disabled:opacity-30"
+        class="rounded-sm p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200 disabled:opacity-30"
         disabled={index === 0}
         onclick={() => onMove('up')}
       >
         <Icon icon={mdiArrowUp} size="16" />
       </button>
       <button
-        class="rounded p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200 disabled:opacity-30"
+        class="rounded-sm p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200 disabled:opacity-30"
         disabled={index === total - 1}
         onclick={() => onMove('down')}
       >
         <Icon icon={mdiArrowDown} size="16" />
       </button>
       <button
-        class="rounded p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200"
+        class="rounded-sm p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200"
         onclick={onDuplicate}
         title="Duplicate section"
       >
@@ -184,7 +184,7 @@
       {#if confirmingDelete}
         <div class="ml-2 flex items-center gap-2 rounded-md bg-red-500/10 px-3 py-1.5">
           <span class="text-xs text-red-400"
-            >Delete section & {section.questions.length} question{section.questions.length !== 1 ? 's' : ''}?</span
+            >Delete section & {section.questions.length} question{section.questions.length === 1 ? '' : 's'}?</span
           >
           <button
             class="text-xs font-medium text-red-400 hover:text-red-300"
@@ -199,7 +199,7 @@
         </div>
       {:else}
         <button
-          class="rounded p-1.5 text-gray-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
+          class="rounded-sm p-1.5 text-gray-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
           onclick={handleDeleteSection}
         >
           <Icon icon={mdiDelete} size="16" />
@@ -299,7 +299,7 @@
             <div
               class="absolute top-full left-0 z-30 mt-1 w-56 rounded-lg border border-gray-600 bg-gray-900 py-1 shadow-xl"
             >
-              {#each [...templatesByCategory.entries()] as [category, templates] (category)}
+              {#each [...templatesByCategory] as [category, templates] (category)}
                 <div class="px-3 pt-2 pb-1 text-[10px] font-semibold tracking-wider text-gray-500 uppercase">
                   {category}
                 </div>

@@ -38,28 +38,34 @@ export function createQuestionOfType(type: QuestionType, sortOrder: number): Bui
   switch (type) {
     case 'radio':
     case 'checkbox':
-    case 'dropdown':
+    case 'dropdown': {
       // keep the default options from createDefaultQuestion
       break;
-    case 'rating':
+    }
+    case 'rating': {
       base.options = [];
       base.config = { scaleMax: 5 };
       break;
-    case 'nps':
+    }
+    case 'nps': {
       base.options = [];
       base.config = { scaleMax: 10 };
       break;
-    case 'number':
+    }
+    case 'number': {
       base.options = [];
       base.config = { min: 0, max: 100 };
       break;
-    case 'likert':
+    }
+    case 'likert': {
       base.options = [];
       base.config = { scaleMax: 5 };
       break;
-    default:
+    }
+    default: {
       base.options = [];
       break;
+    }
   }
 
   return base;
@@ -70,7 +76,7 @@ export function duplicateQuestion(question: BuilderQuestion, sortOrder: number):
     ...question,
     id: '',
     sortOrder,
-    options: [...question.options.map((o) => ({ ...o }))],
+    options: question.options.map((o) => ({ ...o })),
     config: { ...question.config },
   };
 }

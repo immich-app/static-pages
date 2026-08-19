@@ -24,7 +24,9 @@ export interface SurveyQuestionConfig {
   // Rating / Likert
   lowLabel?: string;
   highLabel?: string;
-  /** Legacy shape — some older surveys persisted labels as an object. */
+  /**
+  Legacy shape — some older surveys persisted labels as an object.
+  */
   scaleLabels?: { low: string; high: string };
 
   // Text / textarea

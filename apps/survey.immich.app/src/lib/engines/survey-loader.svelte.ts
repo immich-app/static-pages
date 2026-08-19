@@ -49,7 +49,7 @@ export function createSurveyLoader(slug: string) {
    * what was just typed, not the stale pre-debounce (often empty) answer.
    */
   function flushPending() {
-    for (const hook of preFlushHooks) hook();
+    for (const hook of preFlushHooks) {hook();}
   }
 
   setContext('survey-pre-flush', { registerPreFlush, unregisterPreFlush, flushPending });
@@ -85,14 +85,14 @@ export function createSurveyLoader(slug: string) {
     (async () => {
       try {
         await loadAndInit();
-      } catch (e) {
-        error = e instanceof Error ? e.message : 'Failed to load survey';
+      } catch (error_) {
+        error = error_ instanceof Error ? error_.message : 'Failed to load survey';
       }
       loading = false;
     })();
 
     const handleUnload = () => {
-      for (const hook of preFlushHooks) hook();
+      for (const hook of preFlushHooks) {hook();}
       client?.flushBufferSync();
     };
     window.addEventListener('beforeunload', handleUnload);
@@ -126,9 +126,9 @@ export function createSurveyLoader(slug: string) {
       error = msg;
     });
     client.onSaveSuccess(() => {
-      if (error) error = null;
+      if (error) {error = null;}
     });
-    if (wsClient) client.setWsClient(wsClient);
+    if (wsClient) {client.setWsClient(wsClient);}
 
     const resume = await client.fetchResume();
     if (resume.isComplete) {
@@ -142,7 +142,7 @@ export function createSurveyLoader(slug: string) {
       const answered = resume.answers;
       let lastAnsweredIdx = -1;
       for (let i = 0; i < questions.length; i++) {
-        if (questions[i].id in answered) lastAnsweredIdx = i;
+        if (questions[i].id in answered) {lastAnsweredIdx = i;}
       }
       if (lastAnsweredIdx >= 0) {
         engine.initialize(resume.answers, lastAnsweredIdx);
@@ -161,17 +161,17 @@ export function createSurveyLoader(slug: string) {
   function handleAnswer(questionId: string, value: string, otherText?: string) {
     engine?.setAnswer(questionId, value, otherText);
     const shownAt = questionShownAt[questionId];
-    const answerMs = shownAt !== undefined ? Date.now() - shownAt : undefined;
+    const answerMs = shownAt === undefined ? undefined : Date.now() - shownAt;
     client?.bufferAnswer({ questionId, value, otherText, answerMs });
   }
 
   async function handleComplete() {
-    if (!client) return;
+    if (!client) {return;}
     try {
       // Run the debounce hooks before flushing: submit is invoked synchronously
       // from handleNext, before Svelte tears the active component down, so its
       // onDestroy flush hasn't run and a just-typed answer would be lost.
-      for (const hook of preFlushHooks) hook();
+      for (const hook of preFlushHooks) {hook();}
       const flushed = await client.flushBuffer();
       if (!flushed) {
         error = 'Failed to save your answers. Please try again.';
@@ -179,8 +179,8 @@ export function createSurveyLoader(slug: string) {
       }
       await client.postComplete();
       surveyFinished = true;
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Failed to submit survey. Please try again.';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Failed to submit survey. Please try again.';
     }
   }
 
@@ -191,8 +191,8 @@ export function createSurveyLoader(slug: string) {
     error = null;
     try {
       await loadAndInit();
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Failed to load survey';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Failed to load survey';
     }
     loading = false;
   }

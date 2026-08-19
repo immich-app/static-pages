@@ -21,8 +21,8 @@
    * how SQLite stored them.
    */
   function parsePeriod(period: string, g: Granularity): Date {
-    if (g === 'day') return new Date(`${period}T00:00:00Z`);
-    if (g === 'hour') return new Date(`${period}:00:00Z`);
+    if (g === 'day') {return new Date(`${period}T00:00:00Z`);}
+    if (g === 'hour') {return new Date(`${period}:00:00Z`);}
     return new Date(`${period}:00Z`);
   }
 
@@ -33,14 +33,14 @@
     const day = pad(d.getUTCDate());
     const h = pad(d.getUTCHours());
     const min = pad(d.getUTCMinutes());
-    if (g === 'day') return `${y}-${m}-${day}`;
-    if (g === 'hour') return `${y}-${m}-${day}T${h}`;
+    if (g === 'day') {return `${y}-${m}-${day}`;}
+    if (g === 'hour') {return `${y}-${m}-${day}T${h}`;}
     return `${y}-${m}-${day}T${h}:${min}`;
   }
 
   function stepMs(g: Granularity): number {
-    if (g === 'day') return 24 * 60 * 60 * 1000;
-    if (g === 'hour') return 60 * 60 * 1000;
+    if (g === 'day') {return 24 * 60 * 60 * 1000;}
+    if (g === 'hour') {return 60 * 60 * 1000;}
     return 60 * 1000;
   }
 
@@ -50,10 +50,10 @@
    * runs up to the present.
    */
   function fillGaps(points: TimelineDataPoint[], g: Granularity): TimelineDataPoint[] {
-    if (points.length === 0) return [];
+    if (points.length === 0) {return [];}
     const step = stepMs(g);
     const firstReal = parsePeriod(points[0].period, g).getTime();
-    const lastReal = parsePeriod(points[points.length - 1].period, g).getTime();
+    const lastReal = parsePeriod(points.at(-1).period, g).getTime();
 
     // Round "now" down to the current bucket boundary, UTC-aligned to the UNIX
     // epoch — matches how SQLite groups periods via substr on the ISO timestamp.
@@ -67,7 +67,7 @@
     const head = span > maxPoints ? tail - (maxPoints - 1) * step : firstReal;
 
     const byKey: Record<string, TimelineDataPoint> = {};
-    for (const p of points) byKey[p.period] = p;
+    for (const p of points) {byKey[p.period] = p;}
 
     const filled: TimelineDataPoint[] = [];
     for (let t = head; t <= tail; t += step) {
@@ -83,13 +83,13 @@
   function tickLabel(period: string, g: Granularity): string {
     const d = parsePeriod(period, g);
     const pad = (n: number) => n.toString().padStart(2, '0');
-    if (g === 'minute') return `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
-    if (g === 'hour') return `${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}h`;
+    if (g === 'minute') {return `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;}
+    if (g === 'hour') {return `${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}h`;}
     return `${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
   }
 
   $effect(() => {
-    if (!canvas || filledData.length === 0) return;
+    if (!canvas || filledData.length === 0) {return;}
 
     const { isDark, textColor, gridColor } = getChartColors();
     const startedColor = isDark ? 'rgb(96, 165, 250)' : 'rgb(59, 130, 246)';

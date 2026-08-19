@@ -33,7 +33,7 @@ export function getPresenceCounts(ctx: DurableObjectState): {
 
 export function broadcastToViewers(ctx: DurableObjectState, cache: SurveyCache): void {
   const viewers = ctx.getWebSockets('viewer');
-  if (viewers.length === 0) return;
+  if (viewers.length === 0) {return;}
 
   const counts = getPresenceCounts(ctx);
   const counters = cache.counters;
@@ -67,7 +67,7 @@ export function broadcastToViewers(ctx: DurableObjectState, cache: SurveyCache):
 }
 
 export function scheduleBroadcast(ctx: DurableObjectState, scheduled: { value: boolean }): void {
-  if (scheduled.value) return;
+  if (scheduled.value) {return;}
   scheduled.value = true;
   ctx.storage.setAlarm(Date.now() + BROADCAST_INTERVAL_MS);
 }
@@ -78,7 +78,7 @@ export async function broadcastSlowAnalytics(
   respondents: RespondentService,
 ): Promise<void> {
   const viewers = ctx.getWebSockets('viewer');
-  if (viewers.length === 0) return;
+  if (viewers.length === 0) {return;}
 
   const [timeline, dropoff, completionTimes, questionTimings] = await Promise.all([
     respondents.getTimeline(surveyId, 'minute'),

@@ -1,5 +1,5 @@
 export function getChartColors() {
-  const isDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = typeof window !== 'undefined' && globalThis.matchMedia('(prefers-color-scheme: dark)').matches;
   return {
     textColor: isDark ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)',
     gridColor: isDark ? 'rgb(55, 65, 81)' : 'rgb(229, 231, 235)',

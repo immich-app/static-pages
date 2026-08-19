@@ -16,16 +16,16 @@
   const maxBucket = $derived(Math.max(1, ...dist.map((d) => d.count)));
 
   function scoreColour(score: number | null): string {
-    if (score === null) return 'text-gray-400';
-    if (score >= 50) return 'text-green-400';
-    if (score >= 0) return 'text-emerald-400';
-    if (score >= -50) return 'text-amber-400';
+    if (score === null) {return 'text-gray-400';}
+    if (score >= 50) {return 'text-green-400';}
+    if (score >= 0) {return 'text-emerald-400';}
+    if (score >= -50) {return 'text-amber-400';}
     return 'text-red-400';
   }
 
   function bucketColour(score: number): string {
-    if (score <= 6) return 'bg-red-500/70';
-    if (score <= 8) return 'bg-amber-500/70';
+    if (score <= 6) {return 'bg-red-500/70';}
+    if (score <= 8) {return 'bg-amber-500/70';}
     return 'bg-green-500/70';
   }
 </script>

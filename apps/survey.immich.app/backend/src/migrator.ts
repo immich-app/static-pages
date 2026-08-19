@@ -37,20 +37,20 @@ function splitSqlStatements(script: string): string[] {
 
     if (ch === '-' && next === '-') {
       // Stop at the newline, don't consume it — line numbers must stay right.
-      while (i < script.length && script[i] !== '\n') i++;
+      while (i < script.length && script[i] !== '\n') {i++;}
       continue;
     }
 
     if (ch === '/' && next === '*') {
       i += 2;
-      while (i < script.length && !(script[i] === '*' && script[i + 1] === '/')) i++;
+      while (i < script.length && !(script[i] === '*' && script[i + 1] === '/')) {i++;}
       i += 2;
       continue;
     }
 
     if (ch === ';') {
       const trimmed = current.trim();
-      if (trimmed) statements.push(trimmed);
+      if (trimmed) {statements.push(trimmed);}
       current = '';
       i++;
       continue;
@@ -61,7 +61,7 @@ function splitSqlStatements(script: string): string[] {
   }
 
   const trailing = current.trim();
-  if (trailing) statements.push(trailing);
+  if (trailing) {statements.push(trailing);}
   return statements;
 }
 

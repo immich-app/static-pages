@@ -28,9 +28,9 @@ interface ParsedToken {
 
 function parse(token: string): ParsedToken | null {
   const parts = token.split('.');
-  if (parts.length !== 3) return null;
+  if (parts.length !== 3) {return null;}
   const exp = Number(parts[0]);
-  if (!Number.isInteger(exp) || !parts[1] || !parts[2]) return null;
+  if (!Number.isInteger(exp) || !parts[1] || !parts[2]) {return null;}
   return { exp, fp: parts[1], sig: parts[2] };
 }
 
@@ -40,8 +40,8 @@ export async function verifySurveyPasswordTokenSignature(
   secret: string,
 ): Promise<{ valid: boolean; fingerprint?: string }> {
   const parsed = parse(token);
-  if (!parsed) return { valid: false };
-  if (parsed.exp <= nowSeconds()) return { valid: false };
+  if (!parsed) {return { valid: false };}
+  if (parsed.exp <= nowSeconds()) {return { valid: false };}
   const ok = await verifyToken(signedPayload(surveyId, parsed.exp, parsed.fp), parsed.sig, secret);
   return ok ? { valid: true, fingerprint: parsed.fp } : { valid: false };
 }

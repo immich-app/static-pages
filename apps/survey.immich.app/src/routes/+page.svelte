@@ -51,8 +51,8 @@
       });
       surveys = result.surveys;
       totalSurveys = result.total;
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Failed to load surveys';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Failed to load surveys';
     }
     loading = false;
   }
@@ -72,12 +72,12 @@
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Delete this survey? This cannot be undone.')) return;
+    if (!confirm('Delete this survey? This cannot be undone.')) {return;}
     try {
       await deleteSurvey(id);
       await loadSurveys();
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Failed to delete survey';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Failed to delete survey';
     }
   }
 
@@ -86,8 +86,8 @@
       await duplicateSurvey(id);
       page = 0;
       await loadSurveys();
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Failed to duplicate survey';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Failed to duplicate survey';
     }
   }
 
@@ -95,8 +95,8 @@
     try {
       await archiveSurvey(id);
       await loadSurveys();
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Failed to archive survey';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Failed to archive survey';
     }
   }
 
@@ -104,8 +104,8 @@
     try {
       await unarchiveSurvey(id);
       await loadSurveys();
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Failed to unarchive survey';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Failed to unarchive survey';
     }
   }
 
@@ -118,11 +118,11 @@
       const a = document.createElement('a');
       a.href = url;
       const survey = surveys.find((s) => s.id === id);
-      a.download = `${survey?.slug ?? survey?.title.toLowerCase().replace(/\s+/g, '-') ?? id}-definition.json`;
+      a.download = `${survey?.slug ?? survey?.title.toLowerCase().replaceAll(/\s+/g, '-') ?? id}-definition.json`;
       a.click();
       URL.revokeObjectURL(url);
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Failed to export survey';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Failed to export survey';
     }
   }
 
@@ -132,8 +132,8 @@
       showImportModal = false;
       page = 0;
       await loadSurveys();
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Failed to import survey';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Failed to import survey';
     }
   }
 </script>
@@ -187,7 +187,7 @@
       />
     </div>
     <label class="flex cursor-pointer items-center gap-2 text-sm text-gray-400">
-      <input type="checkbox" bind:checked={showArchived} class="rounded" />
+      <input type="checkbox" bind:checked={showArchived} class="rounded-sm" />
       <Icon icon={mdiArchive} size="16" />
       Show archived
     </label>
@@ -195,7 +195,7 @@
 
   {#if loading}
     <div class="animate-in flex flex-col items-center justify-center py-24">
-      <div class="border-t-immich-primary h-8 w-8 animate-spin rounded-full border-2 border-gray-600"></div>
+      <div class="border-t-immich-primary size-8 animate-spin rounded-full border-2 border-gray-600"></div>
       <p class="mt-4 text-sm text-gray-500">Loading surveys...</p>
     </div>
   {:else if surveys.length === 0}
@@ -217,7 +217,7 @@
           Clear search
         </button>
       {:else}
-        <div class="bg-immich-primary-10 mb-4 flex h-16 w-16 items-center justify-center rounded-2xl">
+        <div class="bg-immich-primary-10 mb-4 flex size-16 items-center justify-center rounded-2xl">
           <Icon icon={mdiPlus} size="28" class="text-immich-primary" />
         </div>
         <p class="text-lg font-medium text-gray-300">No surveys yet</p>
@@ -234,7 +234,7 @@
     <div class="space-y-3">
       {#each surveys as survey, i (survey.id)}
         <div
-          class="card-hover animate-in rounded-xl border border-gray-200 bg-white/[0.02] p-5 dark:border-gray-700/80 {survey.archivedAt
+          class="card-hover animate-in rounded-xl border border-gray-200 bg-white/2 p-5 dark:border-gray-700/80 {survey.archivedAt
             ? 'opacity-60'
             : ''}"
           style="animation-delay: {60 + i * 50}ms"
@@ -272,7 +272,7 @@
                   })}</span
                 >
                 {#if survey.slug}
-                  <span class="rounded bg-gray-800 px-1.5 py-0.5 font-mono text-gray-400">/s/{survey.slug}</span>
+                  <span class="rounded-sm bg-gray-800 px-1.5 py-0.5 font-mono text-gray-400">/s/{survey.slug}</span>
                 {/if}
               </div>
             </div>

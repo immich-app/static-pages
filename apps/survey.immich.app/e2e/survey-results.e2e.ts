@@ -109,12 +109,12 @@ test.describe.serial('Results page features', () => {
   test('overview tab shows stats cards and question results', async ({ page }) => {
     await page.goto(`/results/${setup.surveyId}`);
 
-    await expect(page.getByText('Total')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Total')).toBeVisible({ timeout: 10_000 });
     await expect(page.getByText('Completed')).toBeVisible();
     await expect(page.getByText('Completion')).toBeVisible();
 
     await expect(page.getByRole('heading', { name: 'Favorite color' })).toBeVisible({
-      timeout: 10000,
+      timeout: 10_000,
     });
     await expect(page.getByRole('heading', { name: 'Your name' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Rate our service' })).toBeVisible();
@@ -125,7 +125,7 @@ test.describe.serial('Results page features', () => {
 
   test('responses tab shows respondent list', async ({ page }) => {
     await page.goto(`/results/${setup.surveyId}`);
-    await expect(page.getByText('Total')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Total')).toBeVisible({ timeout: 10_000 });
 
     await page.getByRole('button', { name: 'Responses' }).click();
 
@@ -140,7 +140,7 @@ test.describe.serial('Results page features', () => {
 
   test('search tab finds text answers', async ({ page }) => {
     await page.goto(`/results/${setup.surveyId}`);
-    await expect(page.getByText('Total')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Total')).toBeVisible({ timeout: 10_000 });
 
     await page.getByRole('button', { name: 'Search' }).click();
 
@@ -158,7 +158,7 @@ test.describe.serial('Results page features', () => {
 
   test('clicking a search result expands the full respondent detail with match highlight', async ({ page }) => {
     await page.goto(`/results/${setup.surveyId}`);
-    await expect(page.getByText('Total')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Total')).toBeVisible({ timeout: 10_000 });
     await page.getByRole('button', { name: 'Search' }).click();
     await page.getByPlaceholder('Search answers...').fill('Alice');
     await expect(page.getByText('Alice Johnson')).toBeVisible({ timeout: 5000 });
@@ -180,7 +180,7 @@ test.describe.serial('Results page features', () => {
 
   test('completion-time and question-timing charts appear on overview', async ({ page }) => {
     await page.goto(`/results/${setup.surveyId}`);
-    await expect(page.getByText('Total')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Total')).toBeVisible({ timeout: 10_000 });
 
     await expect(page.getByRole('heading', { name: 'Time to Complete' })).toBeVisible({ timeout: 5000 });
     await expect(page.getByRole('heading', { name: 'Time per Question' })).toBeVisible();
@@ -188,10 +188,10 @@ test.describe.serial('Results page features', () => {
 
   test('CSV export triggers download', async ({ page }) => {
     await page.goto(`/results/${setup.surveyId}`);
-    await expect(page.getByText('Total')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Total')).toBeVisible({ timeout: 10_000 });
 
     // Set up download listener before clicking
-    const downloadPromise = page.waitForEvent('download', { timeout: 10000 });
+    const downloadPromise = page.waitForEvent('download', { timeout: 10_000 });
 
     await page.getByRole('button', { name: 'CSV' }).click();
 

@@ -31,7 +31,7 @@ function countsMessage(room: SurveyRoom): string {
 }
 
 function scheduleBroadcast(room: SurveyRoom) {
-  if (room.broadcastTimer) return;
+  if (room.broadcastTimer) {return;}
   room.broadcastTimer = setTimeout(() => {
     room.broadcastTimer = undefined;
     const msg = countsMessage(room);
@@ -46,10 +46,12 @@ function scheduleBroadcast(room: SurveyRoom) {
 }
 
 function cleanupRoom(slug: string, room: SurveyRoom) {
-  if (room.viewers.size === 0 && room.respondents.size === 0) {
-    clearTimeout(room.broadcastTimer);
-    rooms.delete(slug);
+  if (!(room.viewers.size === 0 && room.respondents.size === 0)) {
+  	return;
   }
+
+  clearTimeout(room.broadcastTimer);
+  rooms.delete(slug);
 }
 
 export function handlePresenceUpgrade(ws: WebSocket, slug: string, type: 'viewer' | 'respondent'): void {

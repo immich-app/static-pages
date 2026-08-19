@@ -22,7 +22,7 @@
 
   const optionLabels = $derived.by(() => {
     const map: Record<string, string> = {};
-    for (const opt of question.options ?? []) map[opt.value] = opt.label;
+    for (const opt of question.options ?? []) {map[opt.value] = opt.label;}
     return map;
   });
 

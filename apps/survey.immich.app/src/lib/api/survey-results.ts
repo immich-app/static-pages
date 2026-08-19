@@ -118,9 +118,9 @@ export async function searchAnswers(
       }),
     () => {
       const params = new URLSearchParams({ q: query });
-      if (questionId) params.set('questionId', questionId);
-      if (pagination?.offset) params.set('offset', String(pagination.offset));
-      if (pagination?.limit) params.set('limit', String(pagination.limit));
+      if (questionId) {params.set('questionId', questionId);}
+      if (pagination?.offset) {params.set('offset', String(pagination.offset));}
+      if (pagination?.limit) {params.set('limit', String(pagination.limit));}
       return request(`/api/surveys/${id}/results/search?${params}`);
     },
   );
@@ -164,7 +164,7 @@ export async function getLiveResults(id: string): Promise<LiveResults | null> {
 
   if (!res.ok) {
     if (res.status === 401) {
-      window.location.reload();
+      location.reload();
       throw new Error('Authentication required');
     }
     const body = await res.json().catch(() => ({ error: res.statusText }));
@@ -197,7 +197,7 @@ export async function deleteRespondent(surveyId: string, respondentId: string): 
 // Export stays HTTP — binary file download
 export async function exportResults(id: string, format: 'csv' | 'json'): Promise<void> {
   const res = await fetch(`/api/surveys/${id}/results/export?format=${format}`);
-  if (!res.ok) throw new Error('Export failed');
+  if (!res.ok) {throw new Error('Export failed');}
   const blob = await res.blob();
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

@@ -60,7 +60,7 @@ export function createResultsLoader(surveyId: string) {
     const sectionOrder = new SvelteMap(sections.map((s) => [s.id, s.sortOrder]));
     return [...questions].sort((a, b) => {
       const sectionDiff = (sectionOrder.get(a.section_id) ?? 0) - (sectionOrder.get(b.section_id) ?? 0);
-      if (sectionDiff !== 0) return sectionDiff;
+      if (sectionDiff !== 0) {return sectionDiff;}
       return a.sortOrder - b.sortOrder;
     });
   });
@@ -95,16 +95,18 @@ export function createResultsLoader(surveyId: string) {
     }
   }
 
-  /** Coarsen the bucket size with the timestamp span so the chart isn't drowned in buckets. */
+  /**
+  Coarsen the bucket size with the timestamp span so the chart isn't drowned in buckets.
+  */
   function pickGranularity(data: TimelineDataPoint[]): Granularity {
-    if (data.length <= 1) return 'minute';
+    if (data.length <= 1) {return 'minute';}
     // Server returns minute-granularity periods as "YYYY-MM-DDTHH:MM".
     const first = Date.parse(`${data[0].period}:00Z`);
-    const last = Date.parse(`${data[data.length - 1].period}:00Z`);
+    const last = Date.parse(`${data.at(-1).period}:00Z`);
     const spanMs = last - first;
     const hours = spanMs / (1000 * 60 * 60);
-    if (hours <= 2) return 'minute';
-    if (hours <= 72) return 'hour';
+    if (hours <= 2) {return 'minute';}
+    if (hours <= 72) {return 'hour';}
     return 'day';
   }
 
@@ -117,8 +119,8 @@ export function createResultsLoader(surveyId: string) {
     exporting = true;
     try {
       await exportResults(surveyId, format);
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Export failed';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Export failed';
     }
     exporting = false;
   }
@@ -144,16 +146,12 @@ export function createResultsLoader(surveyId: string) {
           liveCounts = resultsData.liveCounts;
         }
         granularity = pickGranularity(initialTimeline);
-        if (granularity === 'minute') {
-          timelineData = initialTimeline;
-        } else {
-          timelineData = await getSurveyTimeline(surveyId, granularity);
-        }
+        timelineData = granularity === 'minute' ? initialTimeline : (await getSurveyTimeline(surveyId, granularity));
         dropoffData = dropoff;
         completionTimes = ctimes;
         questionTimings = qtimings;
-      } catch (e) {
-        error = e instanceof Error ? e.message : 'Failed to load results';
+      } catch (error_) {
+        error = error_ instanceof Error ? error_.message : 'Failed to load results';
       }
       loading = false;
 
@@ -174,7 +172,7 @@ export function createResultsLoader(surveyId: string) {
           // Pushes carry only choice-question results — merge rather than
           // replace so text/email/number answers from the initial load survive.
           const updates: Record<string, (typeof data.results)[number]> = {};
-          for (const r of data.results) updates[r.questionId] = r;
+          for (const r of data.results) {updates[r.questionId] = r;}
           results = results.map((r) => updates[r.questionId] ?? r);
         });
 

@@ -57,7 +57,7 @@
       totalResults = data.total;
       currentOffset = offset;
     } catch {
-      if (offset === 0) results = [];
+      if (offset === 0) {results = [];}
     }
     loading = false;
   }
@@ -87,7 +87,7 @@
     selectedMatchQuestionId = result.questionId;
     detailError = null;
     // If we already have this respondent loaded, just update the highlight
-    if (selectedDetail?.id === result.respondentId) return;
+    if (selectedDetail?.id === result.respondentId) {return;}
     selectedDetail = null;
     loadingDetail = true;
     try {
@@ -160,7 +160,7 @@
             <Icon icon={expanded ? mdiChevronUp : mdiChevronDown} size="16" class="mt-0.5 shrink-0 text-gray-500" />
           </button>
           {#if expanded}
-            <div class="border-t border-gray-200 px-3 pt-3 pb-3 dark:border-gray-700">
+            <div class="border-t border-gray-200 p-3 dark:border-gray-700">
               {#if loadingDetail}
                 <p class="py-4 text-center text-xs text-gray-500">Loading full response…</p>
               {:else if detailError}

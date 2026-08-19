@@ -88,7 +88,7 @@
     </div>
 
     <div
-      class="relative h-[667px] w-[375px] [transform:translateZ(0)] overflow-hidden rounded-[2.5rem] border-4 border-gray-600 bg-gray-950 shadow-2xl"
+      class="relative h-[667px] w-[375px] transform-[translateZ(0)] overflow-hidden rounded-[2.5rem] border-4 border-gray-600 bg-gray-950 shadow-2xl"
     >
       <div class="flex h-full flex-col overflow-y-auto">
         {#if phase === 'welcome'}

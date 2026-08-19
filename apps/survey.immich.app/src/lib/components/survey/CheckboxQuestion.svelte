@@ -48,7 +48,7 @@
       aria-checked={selectedValues.has(option.value)}
     >
       <span
-        class="flex h-6 w-6 shrink-0 items-center justify-center rounded-md {selectedValues.has(option.value)
+        class="flex size-6 shrink-0 items-center justify-center rounded-md {selectedValues.has(option.value)
           ? 'bg-immich-primary text-white'
           : 'border-2 border-gray-300 dark:border-gray-500'}"
       >
@@ -68,7 +68,7 @@
         : 'border-gray-200 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400'}"
     >
       <button
-        class="flex h-6 w-6 shrink-0 items-center justify-center rounded-md {selectedValues.has('Other')
+        class="flex size-6 shrink-0 items-center justify-center rounded-md {selectedValues.has('Other')
           ? 'bg-immich-primary text-white'
           : 'border-2 border-gray-300 dark:border-gray-500'}"
         onclick={() => toggle('Other')}
@@ -83,11 +83,11 @@
         placeholder={question.otherPrompt ?? 'Other...'}
         bind:value={otherText}
         onfocus={() => {
-          if (!selectedValues.has('Other')) toggle('Other');
+          if (!selectedValues.has('Other')) {toggle('Other');}
         }}
         oninput={() => {
           const vals = [...selectedValues];
-          if (!vals.includes('Other')) vals.push('Other');
+          if (!vals.includes('Other')) {vals.push('Other');}
           onAnswer(vals.join(','), otherText);
         }}
       />

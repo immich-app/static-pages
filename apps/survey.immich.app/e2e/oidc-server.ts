@@ -44,7 +44,7 @@ const TEST_USERS: Record<string, TestUser> = {
 
 const findAccount: FindAccount = async (_ctx, id) => {
   const entry = Object.entries(TEST_USERS).find(([, u]) => u.claims.sub === id);
-  if (!entry) return undefined;
+  if (!entry) {return undefined;}
   const [, user] = entry;
   return {
     accountId: user.claims.sub,
@@ -56,7 +56,7 @@ const findAccount: FindAccount = async (_ctx, id) => {
 
 function authenticateUser(login: string, password: string) {
   const user = TEST_USERS[login];
-  if (!user || user.password !== password) return undefined;
+  if (!user || user.password !== password) {return undefined;}
   return { accountId: user.claims.sub };
 }
 
@@ -146,8 +146,8 @@ export async function startOidcServer(): Promise<{
       }
     }
 
-    if (ctx.method === 'POST' && url.pathname.match(/^\/interaction\/[^/]+\/login$/)) {
-      const uid = url.pathname.split('/')[2];
+    if (ctx.method === 'POST' && /^\/interaction\/[^/]+\/login$/.test(url.pathname)) {
+      const uid = url.pathname.split('/', 3)[2];
       const body = await readBody(ctx.req);
       const params = new URLSearchParams(body);
       const login = params.get('login') ?? '';
@@ -177,7 +177,7 @@ export async function startOidcServer(): Promise<{
       return;
     }
 
-    if (ctx.method === 'POST' && url.pathname.match(/^\/interaction\/[^/]+\/confirm$/)) {
+    if (ctx.method === 'POST' && /^\/interaction\/[^/]+\/confirm$/.test(url.pathname)) {
       try {
         const interactionDetails = await provider.interactionDetails(ctx.req, ctx.res);
         const {
@@ -262,7 +262,7 @@ function readBody(req: import('node:http').IncomingMessage): Promise<string> {
 }
 
 // Allow running standalone: `npx tsx e2e/oidc-server.ts`
-if (process.argv[1] && import.meta.url.endsWith(process.argv[1].replace(/\\/g, '/'))) {
+if (process.argv[1] && import.meta.url.endsWith(process.argv[1].replaceAll('\\', '/'))) {
   startOidcServer().then(() => console.log('OIDC server started, press Ctrl+C to stop'));
 }
 

@@ -74,7 +74,7 @@ function createExportDefinition(
 }
 
 function validateImportDefinition(def: unknown): { valid: boolean; error?: string } {
-  if (!def || typeof def !== 'object') return { valid: false, error: 'Invalid definition' };
+  if (!def || typeof def !== 'object') {return { valid: false, error: 'Invalid definition' };}
   const d = def as Record<string, unknown>;
   if (!d.title || typeof d.title !== 'string' || !d.title.trim()) {
     return { valid: false, error: 'Title is required' };
@@ -201,7 +201,7 @@ describe('Tag data', () => {
   });
 
   it('whitespace-only tag name should be invalid', () => {
-    const name = '   ';
+    const name = ' '.repeat(3);
     expect(name.trim().length).toBe(0);
   });
 
@@ -297,7 +297,7 @@ describe('Import/export definition', () => {
   });
 
   it('import with whitespace-only title should fail', () => {
-    const result = validateImportDefinition({ title: '   ', sections: [{ title: 'S' }] });
+    const result = validateImportDefinition({ title: ' '.repeat(3), sections: [{ title: 'S' }] });
     expect(result.valid).toBe(false);
   });
 

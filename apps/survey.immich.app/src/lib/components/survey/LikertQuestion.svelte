@@ -22,7 +22,7 @@
   <div class="flex flex-col gap-2 sm:flex-row sm:gap-1.5">
     {#each labels as label (label)}
       <button
-        class="flex-1 rounded-lg border-2 px-3 py-3 text-sm font-medium transition-all duration-150
+        class="flex-1 rounded-lg border-2 p-3 text-sm font-medium transition-all duration-150
           {answer?.value === label
           ? 'border-immich-primary bg-immich-primary-10 text-immich-primary'
           : 'border-gray-200 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400'}"

@@ -25,7 +25,7 @@
     </span>
     <span class="text-sm text-gray-300">{auth.user.name || auth.user.email}</span>
     <button
-      class="rounded p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200"
+      class="rounded-sm p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200"
       onclick={() => logout()}
       title="Log out"
     >

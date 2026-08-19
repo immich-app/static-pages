@@ -27,27 +27,27 @@
   // Resuming mid-survey: every section up to the current question counts as
   // already seen, so its header isn't re-shown. A fresh start yields an empty set.
   function buildInitialSeenSections(): string[] {
-    if (engine.currentIndex === 0 && Object.keys(engine.answers).length === 0) return [];
+    if (engine.currentIndex === 0 && Object.keys(engine.answers).length === 0) {return [];}
     const currentQ = engine.currentQuestion;
-    if (!currentQ) return [];
+    if (!currentQ) {return [];}
     const sorted = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
     const currentSection = sorted.find((s) => s.id === currentQ.section_id);
-    if (!currentSection) return [];
+    if (!currentSection) {return [];}
     return sorted.filter((s) => s.sortOrder <= currentSection.sortOrder).map((s) => s.id);
   }
   let seenSectionIds = new SvelteSet<string>(buildInitialSeenSections());
 
-  const reducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reducedMotion = typeof window !== 'undefined' && globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const flyDuration = reducedMotion ? 0 : 300;
 
   const sortedSections = $derived([...sections].sort((a, b) => a.sortOrder - b.sortOrder));
 
   const currentSectionHeader = $derived.by(() => {
     const q = engine.currentQuestion;
-    if (!q) return null;
+    if (!q) {return null;}
     const section = sortedSections.find((s) => s.id === q.section_id);
-    if (!section) return null;
-    if (seenSectionIds.has(section.id) || dismissedSections.has(section.id)) return null;
+    if (!section) {return null;}
+    if (seenSectionIds.has(section.id) || dismissedSections.has(section.id)) {return null;}
     return section;
   });
 
@@ -63,7 +63,7 @@
   }
 
   function handleNext() {
-    if (transitioning) return;
+    if (transitioning) {return;}
     transitioning = true;
     direction = 1;
 
@@ -88,7 +88,7 @@
   }
 
   function handleBack() {
-    if (transitioning) return;
+    if (transitioning) {return;}
     transitioning = true;
     direction = -1;
 
@@ -96,7 +96,6 @@
     if (showingSectionHeader && backHeader) {
       dismissedSections.delete(backHeader.id);
       seenSectionIds.delete(backHeader.id);
-      engine.previous();
     } else {
       const currentQ = engine.currentQuestion;
       if (currentQ) {
@@ -105,8 +104,8 @@
           seenSectionIds.delete(section.id);
         }
       }
-      engine.previous();
     }
+    engine.previous();
 
     announce(`Question ${engine.currentIndex + 1} of ${engine.totalQuestions}`);
     window.scrollTo(0, 0);

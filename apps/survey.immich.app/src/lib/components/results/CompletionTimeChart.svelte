@@ -14,11 +14,11 @@
   let chart: ChartType | undefined;
 
   function formatDuration(seconds: number | null): string {
-    if (seconds === null || !Number.isFinite(seconds)) return '–';
-    if (seconds < 60) return `${seconds}s`;
+    if (seconds === null || !Number.isFinite(seconds)) {return '–';}
+    if (seconds < 60) {return `${seconds}s`;}
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    if (mins < 60) return secs === 0 ? `${mins}m` : `${mins}m ${secs}s`;
+    if (mins < 60) {return secs === 0 ? `${mins}m` : `${mins}m ${secs}s`;}
     const hours = Math.floor(mins / 60);
     const remMin = mins % 60;
     return remMin === 0 ? `${hours}h` : `${hours}h ${remMin}m`;
@@ -32,7 +32,7 @@
   }
 
   const stats = $derived.by<StatEntry[]>(() => {
-    if (data.count === 0) return [{ label: 'Sample', value: '0' }];
+    if (data.count === 0) {return [{ label: 'Sample', value: '0' }];}
     return [
       { label: 'Sample', value: String(data.count), hint: 'Number of completed responses in the distribution' },
       {
@@ -48,10 +48,10 @@
   });
 
   const medianBucketIndex = $derived.by(() => {
-    if (data.median === null) return -1;
+    if (data.median === null) {return -1;}
     for (let i = 0; i < data.buckets.length; i++) {
       const b = data.buckets[i];
-      if (data.median >= b.minSeconds && (b.maxSeconds === null || data.median < b.maxSeconds)) return i;
+      if (data.median >= b.minSeconds && (b.maxSeconds === null || data.median < b.maxSeconds)) {return i;}
     }
     return -1;
   });

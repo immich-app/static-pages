@@ -71,7 +71,7 @@ const OP_ROLES: Record<string, MinRole> = {
 
 function getWsRole(ws: WebSocket, ctx: DurableObjectState): string {
   for (const tag of ctx.getTags(ws)) {
-    if (tag.startsWith('role:')) return tag.slice(5);
+    if (tag.startsWith('role:')) {return tag.slice(5);}
   }
   return 'public';
 }
@@ -82,7 +82,7 @@ function hasMinRole(ws: WebSocket, ctx: DurableObjectState, minRole: string): bo
 
 function getWsRespondentId(ws: WebSocket, ctx: DurableObjectState): string | null {
   for (const tag of ctx.getTags(ws)) {
-    if (tag.startsWith('rid:')) return tag.slice(4);
+    if (tag.startsWith('rid:')) {return tag.slice(4);}
   }
   return null;
 }
@@ -128,8 +128,8 @@ export async function dispatch(
   try {
     const result = await handleOp(ws, op as keyof WsOperations, d, services, cache, ctx);
     respond(ws, requestId, op, result);
-  } catch (e) {
-    const message = e instanceof ServiceError ? e.message : e instanceof Error ? e.message : 'Internal error';
+  } catch (error) {
+    const message = (error instanceof ServiceError) || (error instanceof Error) ? error.message : 'Internal error';
     respondError(ws, requestId, op, message);
   }
 }
@@ -150,22 +150,24 @@ async function handleOp(
       return { ...detail, survey: toClientSurvey(detail.survey) };
     }
 
-    case 'get-results':
+    case 'get-results': {
       return {
         respondentCounts: cache.counters,
         results: cache.buildAggregatedResults(),
       };
+    }
 
-    case 'get-live-results':
+    case 'get-live-results': {
       return {
         respondentCounts: cache.counters,
         results: cache.buildAggregatedResults(),
         liveCounts: getPresenceCounts(ctx).data,
       };
+    }
 
     case 'get-public-survey': {
       const survey = cache.survey;
-      if (survey.status !== 'published') throw new ServiceError('Survey not found', 404);
+      if (survey.status !== 'published') {throw new ServiceError('Survey not found', 404);}
       const { password_hash: _, ...safeSurvey } = survey;
       return { survey: safeSurvey, sections: cache.sections, questions: cache.questions };
     }
@@ -174,7 +176,7 @@ async function handleOp(
       // A cached respondent with hasSubmitted=false provably has zero answers, so we
       // can skip SQL; anything else must read SQL (only choice answers are cached).
       const respondentId = getWsRespondentId(ws, ctx);
-      if (!respondentId) throw new ServiceError('Not a respondent connection', 401);
+      if (!respondentId) {throw new ServiceError('Not a respondent connection', 401);}
 
       const cachedState = cache.getCachedRespondent(respondentId);
       if (cachedState && !cachedState.hasSubmitted) {
@@ -189,7 +191,7 @@ async function handleOp(
       for (const row of answerRows) {
         answers[row.question_id] = {
           value: row.answer,
-          ...(row.other_text ? { otherText: row.other_text } : {}),
+          ...(row.other_text && { otherText: row.other_text }),
         };
       }
 
@@ -207,7 +209,7 @@ async function handleOp(
       const questions = cache.questions;
       let lastAnsweredIndex = -1;
       for (let i = 0; i < questions.length; i++) {
-        if (questions[i].id in answers) lastAnsweredIndex = i;
+        if (questions[i].id in answers) {lastAnsweredIndex = i;}
       }
       const nextQuestionIndex = Math.max(0, lastAnsweredIndex);
 
@@ -216,7 +218,7 @@ async function handleOp(
 
     case 'submit-answers': {
       const respondentId = getWsRespondentId(ws, ctx);
-      if (!respondentId) throw new ServiceError('Not a respondent connection', 401);
+      if (!respondentId) {throw new ServiceError('Not a respondent connection', 401);}
 
       const survey = cache.survey;
       if (survey.closes_at && new Date(survey.closes_at) < new Date()) {
@@ -232,10 +234,10 @@ async function handleOp(
         const row = ctx.storage.sql
           .exec('SELECT is_complete FROM respondents WHERE id = ? LIMIT 1', respondentId)
           .toArray()[0] as { is_complete: number } | undefined;
-        if (!row) throw new ServiceError('Respondent not found', 404);
+        if (!row) {throw new ServiceError('Respondent not found', 404);}
         isComplete = row.is_complete === 1;
       }
-      if (isComplete) throw new ServiceError('Survey already completed', 409);
+      if (isComplete) {throw new ServiceError('Survey already completed', 409);}
 
       const answers = (
         data as {
@@ -249,7 +251,7 @@ async function handleOp(
       const questionMap = new Map(cache.questions.map((cq) => [cq.id, cq]));
       for (const a of answers) {
         const cq = questionMap.get(a.questionId);
-        if (!cq) throw new ServiceError(`Invalid question ID: ${a.questionId}`, 400);
+        if (!cq) {throw new ServiceError(`Invalid question ID: ${a.questionId}`, 400);}
         const spec: QuestionSpec = {
           type: cq.type,
           required: cq.required === 1,
@@ -259,7 +261,7 @@ async function handleOp(
           config: cq.config ? JSON.parse(cq.config) : undefined,
         };
         const error = validateAnswer(spec, a.value, a.otherText);
-        if (error) throw new ServiceError(error, 400);
+        if (error) {throw new ServiceError(error, 400);}
       }
 
       // answer_ms is clamped via the shared helper so it stays in lockstep with the
@@ -289,7 +291,7 @@ async function handleOp(
       // bump counters or rewrite completed_at — hence the 0→1 gated UPDATE and the
       // `transitioned` check around every cache mutation.
       const respondentId = getWsRespondentId(ws, ctx);
-      if (!respondentId) throw new ServiceError('Not a respondent connection', 401);
+      if (!respondentId) {throw new ServiceError('Not a respondent connection', 401);}
 
       const cursor = ctx.storage.sql.exec(
         'UPDATE respondents SET is_complete = 1, completed_at = ? WHERE id = ? AND is_complete = 0',
@@ -308,9 +310,9 @@ async function handleOp(
     }
 
     default: {
-      const opStr = String(op);
+      const opStr = op;
       const result = await execute(opStr, data, cmdCtx);
-      if (result === null) throw new ServiceError(`Unknown operation: ${opStr}`, 400);
+      if (result === null) {throw new ServiceError(`Unknown operation: ${opStr}`, 400);}
       return result ?? {};
     }
   }

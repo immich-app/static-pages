@@ -57,7 +57,7 @@
   let localThankYouTitle = $state(survey.thankYouTitle ?? '');
   let localThankYouDescription = $state(survey.thankYouDescription ?? '');
   let localClosesAt = $state(survey.closesAt ?? '');
-  let localMaxResponses = $state(survey.maxResponses != null ? String(survey.maxResponses) : '');
+  let localMaxResponses = $state(survey.maxResponses == null ? '' : String(survey.maxResponses));
   let localRandomizeQuestions = $state(survey.randomizeQuestions ?? false);
   let localRandomizeOptions = $state(survey.randomizeOptions ?? false);
   let localPasswordEnabled = $state(survey.hasPassword ?? false);
@@ -96,7 +96,7 @@
   }
 
   function pushSnapshot() {
-    if (isRestoring) return;
+    if (isRestoring) {return;}
     clearTimeout(snapshotTimer);
     snapshotTimer = setTimeout(() => {
       const snap = takeSnapshot();
@@ -106,11 +106,11 @@
   }
 
   function undo() {
-    if (undoStack.length === 0) return;
+    if (undoStack.length === 0) {return;}
     isRestoring = true;
     const current = takeSnapshot();
     redoStack = [...redoStack, current];
-    const snap = undoStack[undoStack.length - 1];
+    const snap = undoStack.at(-1);
     undoStack = undoStack.slice(0, -1);
     localTitle = snap.title;
     localDescription = snap.description;
@@ -122,11 +122,11 @@
   }
 
   function redo() {
-    if (redoStack.length === 0) return;
+    if (redoStack.length === 0) {return;}
     isRestoring = true;
     const current = takeSnapshot();
     undoStack = [...undoStack, current];
-    const snap = redoStack[redoStack.length - 1];
+    const snap = redoStack.at(-1);
     redoStack = redoStack.slice(0, -1);
     localTitle = snap.title;
     localDescription = snap.description;
@@ -200,7 +200,7 @@
     const newSection = createDefaultSection(localSections.length);
     localSections = [...localSections, newSection];
     tick().then(() => {
-      const el = document.querySelector(`[data-section-index="${localSections.length - 1}"]`);
+      const el = document.querySelector(`[data-section-index="${CSS.escape(localSections.length - 1)}"]`);
       el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
   }
@@ -270,8 +270,8 @@
       setTimeout(() => {
         success = false;
       }, 2500);
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Failed to save';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Failed to save';
     }
   }
 
@@ -284,8 +284,8 @@
     try {
       await handleSave();
       await onPublish();
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Failed to publish';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Failed to publish';
     }
   }
 
@@ -293,8 +293,8 @@
     error = null;
     try {
       await onUnpublish();
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Failed to unpublish';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Failed to unpublish';
     }
   }
 
@@ -335,7 +335,7 @@
   </div>
 {/if}
 
-<div class="bg-light/80 sticky top-0 z-20 border-b border-gray-200 backdrop-blur-md dark:border-gray-800">
+<div class="sticky top-0 z-20 border-b border-gray-200 bg-light/80 backdrop-blur-md dark:border-gray-800">
   <div class="mx-auto flex max-w-3xl items-center justify-between px-6 py-3">
     <div class="flex items-center gap-3">
       <h1 class="text-lg font-semibold tracking-tight">
@@ -346,13 +346,13 @@
           <Icon icon={mdiClockOutline} size="13" />
           {estimatedTime}
           <Icon icon={mdiCircleSmall} size="12" />
-          {totalQuestions} question{totalQuestions !== 1 ? 's' : ''}
+          {totalQuestions} question{totalQuestions === 1 ? '' : 's'}
         </span>
       {/if}
     </div>
     <div class="flex items-center gap-2">
       <button
-        class="rounded p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200 disabled:opacity-30"
+        class="rounded-sm p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200 disabled:opacity-30"
         disabled={undoStack.length === 0}
         onclick={undo}
         title="Undo (Ctrl+Z)"
@@ -360,7 +360,7 @@
         <Icon icon={mdiUndo} size="18" />
       </button>
       <button
-        class="rounded p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200 disabled:opacity-30"
+        class="rounded-sm p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200 disabled:opacity-30"
         disabled={redoStack.length === 0}
         onclick={redo}
         title="Redo (Ctrl+Shift+Z)"

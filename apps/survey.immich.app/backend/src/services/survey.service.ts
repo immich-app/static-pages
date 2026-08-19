@@ -182,7 +182,7 @@ export class SurveyService {
   async updateSurvey(id: string, input: UpdateSurveyInput, existing?: SurveyRow): Promise<SurveyRow> {
     if (!existing) {
       existing = (await this.surveys.getById(id)) ?? undefined;
-      if (!existing) throw new ServiceError('Survey not found', 404);
+      if (!existing) {throw new ServiceError('Survey not found', 404);}
     }
 
     const fields: Record<string, unknown> = { updated_at: new Date().toISOString() };
@@ -209,16 +209,16 @@ export class SurveyService {
       }
     }
 
-    if (input.description !== undefined) fields.description = input.description?.trim() ?? null;
-    if (input.welcome_title !== undefined) fields.welcome_title = input.welcome_title?.trim() ?? null;
-    if (input.welcome_description !== undefined) fields.welcome_description = input.welcome_description?.trim() ?? null;
-    if (input.thank_you_title !== undefined) fields.thank_you_title = input.thank_you_title?.trim() ?? null;
+    if (input.description !== undefined) {fields.description = input.description?.trim() ?? null;}
+    if (input.welcome_title !== undefined) {fields.welcome_title = input.welcome_title?.trim() ?? null;}
+    if (input.welcome_description !== undefined) {fields.welcome_description = input.welcome_description?.trim() ?? null;}
+    if (input.thank_you_title !== undefined) {fields.thank_you_title = input.thank_you_title?.trim() ?? null;}
     if (input.thank_you_description !== undefined)
-      fields.thank_you_description = input.thank_you_description?.trim() ?? null;
-    if (input.closes_at !== undefined) fields.closes_at = input.closes_at ?? null;
-    if (input.max_responses !== undefined) fields.max_responses = input.max_responses ?? null;
-    if (input.randomize_questions !== undefined) fields.randomize_questions = input.randomize_questions ? 1 : 0;
-    if (input.randomize_options !== undefined) fields.randomize_options = input.randomize_options ? 1 : 0;
+      {fields.thank_you_description = input.thank_you_description?.trim() ?? null;}
+    if (input.closes_at !== undefined) {fields.closes_at = input.closes_at ?? null;}
+    if (input.max_responses !== undefined) {fields.max_responses = input.max_responses ?? null;}
+    if (input.randomize_questions !== undefined) {fields.randomize_questions = input.randomize_questions ? 1 : 0;}
+    if (input.randomize_options !== undefined) {fields.randomize_options = input.randomize_options ? 1 : 0;}
 
     if (input.password !== undefined) {
       if (input.password && input.password.length > 0) {
@@ -237,12 +237,12 @@ export class SurveyService {
 
   async deleteSurvey(id: string): Promise<void> {
     const existing = await this.surveys.getById(id);
-    if (!existing) throw new ServiceError('Survey not found', 404);
+    if (!existing) {throw new ServiceError('Survey not found', 404);}
     await this.surveys.delete(id);
   }
 
   async publishSurvey(id: string, details?: SurveyWithDetails): Promise<SurveyRow> {
-    if (!details) details = await this.getSurvey(id);
+    if (!details) {details = await this.getSurvey(id);}
     const { survey, sections, questions } = details;
 
     if (!survey.slug) {
@@ -267,7 +267,7 @@ export class SurveyService {
   async unpublishSurvey(id: string, existing?: SurveyRow): Promise<SurveyRow> {
     if (!existing) {
       existing = (await this.surveys.getById(id)) ?? undefined;
-      if (!existing) throw new ServiceError('Survey not found', 404);
+      if (!existing) {throw new ServiceError('Survey not found', 404);}
     }
 
     await this.surveys.update(id, {
@@ -298,7 +298,7 @@ export class SurveyService {
   async updateSection(id: string, input: UpdateSectionInput, existing?: SectionRow): Promise<SectionRow> {
     if (!existing) {
       existing = (await this.sections.getById(id)) ?? undefined;
-      if (!existing) throw new ServiceError('Section not found', 404);
+      if (!existing) {throw new ServiceError('Section not found', 404);}
     }
 
     const fields: Record<string, unknown> = {};
@@ -308,9 +308,9 @@ export class SurveyService {
       }
       fields.title = input.title.trim();
     }
-    if (input.description !== undefined) fields.description = input.description?.trim() ?? null;
+    if (input.description !== undefined) {fields.description = input.description?.trim() ?? null;}
 
-    if (Object.keys(fields).length === 0) return existing;
+    if (Object.keys(fields).length === 0) {return existing;}
 
     await this.sections.update(id, fields);
     return { ...existing, ...fields } as SectionRow;
@@ -328,7 +328,7 @@ export class SurveyService {
   async createQuestion(sectionId: string, input: CreateQuestionInput, section?: SectionRow): Promise<QuestionRow> {
     if (!section) {
       section = (await this.sections.getById(sectionId)) ?? undefined;
-      if (!section) throw new ServiceError('Section not found', 404);
+      if (!section) {throw new ServiceError('Section not found', 404);}
     }
 
     if (!input.text?.trim()) {
@@ -352,7 +352,7 @@ export class SurveyService {
       description: input.description?.trim() ?? null,
       type: input.type,
       options: input.options ? JSON.stringify(input.options) : null,
-      required: input.required !== false ? 1 : 0,
+      required: input.required === false ? 0 : 1,
       has_other: input.has_other ? 1 : 0,
       other_prompt: input.other_prompt?.trim() ?? null,
       max_length: input.max_length ?? null,
@@ -369,7 +369,7 @@ export class SurveyService {
   async updateQuestion(id: string, input: UpdateQuestionInput, existing?: QuestionRow): Promise<QuestionRow> {
     if (!existing) {
       existing = (await this.questions.getById(id)) ?? undefined;
-      if (!existing) throw new ServiceError('Question not found', 404);
+      if (!existing) {throw new ServiceError('Question not found', 404);}
     }
 
     const fields: Record<string, unknown> = {};
@@ -396,13 +396,13 @@ export class SurveyService {
       fields.type = input.type;
     }
 
-    if (input.options !== undefined) fields.options = input.options ? JSON.stringify(input.options) : null;
-    if (input.description !== undefined) fields.description = input.description?.trim() ?? null;
-    if (input.required !== undefined) fields.required = input.required ? 1 : 0;
-    if (input.has_other !== undefined) fields.has_other = input.has_other ? 1 : 0;
-    if (input.other_prompt !== undefined) fields.other_prompt = input.other_prompt?.trim() ?? null;
-    if (input.max_length !== undefined) fields.max_length = input.max_length;
-    if (input.placeholder !== undefined) fields.placeholder = input.placeholder?.trim() ?? null;
+    if (input.options !== undefined) {fields.options = input.options ? JSON.stringify(input.options) : null;}
+    if (input.description !== undefined) {fields.description = input.description?.trim() ?? null;}
+    if (input.required !== undefined) {fields.required = input.required ? 1 : 0;}
+    if (input.has_other !== undefined) {fields.has_other = input.has_other ? 1 : 0;}
+    if (input.other_prompt !== undefined) {fields.other_prompt = input.other_prompt?.trim() ?? null;}
+    if (input.max_length !== undefined) {fields.max_length = input.max_length;}
+    if (input.placeholder !== undefined) {fields.placeholder = input.placeholder?.trim() ?? null;}
     if (input.conditional !== undefined) {
       fields.conditional = input.conditional ? JSON.stringify(input.conditional) : null;
     }
@@ -410,7 +410,7 @@ export class SurveyService {
       fields.config = input.config ? JSON.stringify(input.config) : null;
     }
 
-    if (Object.keys(fields).length === 0) return existing;
+    if (Object.keys(fields).length === 0) {return existing;}
 
     await this.questions.update(id, fields);
     return { ...existing, ...fields } as QuestionRow;
@@ -495,7 +495,7 @@ export class SurveyService {
   async archiveSurvey(id: string, existing?: SurveyRow): Promise<SurveyRow> {
     if (!existing) {
       existing = (await this.surveys.getById(id)) ?? undefined;
-      if (!existing) throw new ServiceError('Survey not found', 404);
+      if (!existing) {throw new ServiceError('Survey not found', 404);}
     }
     const now = new Date().toISOString();
     await this.surveys.update(id, { archived_at: now, updated_at: now });
@@ -505,7 +505,7 @@ export class SurveyService {
   async unarchiveSurvey(id: string, existing?: SurveyRow): Promise<SurveyRow> {
     if (!existing) {
       existing = (await this.surveys.getById(id)) ?? undefined;
-      if (!existing) throw new ServiceError('Survey not found', 404);
+      if (!existing) {throw new ServiceError('Survey not found', 404);}
     }
     const now = new Date().toISOString();
     await this.surveys.update(id, { archived_at: null, updated_at: now });
@@ -513,7 +513,7 @@ export class SurveyService {
   }
 
   async exportDefinition(id: string, details?: SurveyWithDetails): Promise<SurveyDefinition> {
-    if (!details) details = await this.getSurvey(id);
+    if (!details) {details = await this.getSurvey(id);}
     const { survey, sections, questions } = details;
     return {
       version: 1,

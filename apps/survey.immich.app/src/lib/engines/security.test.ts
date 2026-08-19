@@ -6,7 +6,7 @@ import { describe, it, expect } from 'vitest';
  * Mirrors `constantTimeEqual` from backend/src/utils/crypto.ts
  */
 function constantTimeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
+  if (a.length !== b.length) {return false;}
   let result = 0;
   for (let i = 0; i < a.length; i++) {
     result |= a.charCodeAt(i) ^ b.charCodeAt(i);
@@ -60,10 +60,10 @@ function isValidSurveyPassword(password: string): boolean {
  */
 function isValidJwtStructure(token: string): boolean {
   const parts = token.split('.');
-  if (parts.length !== 3) return false;
+  if (parts.length !== 3) {return false;}
   try {
     for (const part of parts.slice(0, 2)) {
-      JSON.parse(atob(part.replace(/-/g, '+').replace(/_/g, '/')));
+      JSON.parse(atob(part.replaceAll('-', '+').replaceAll('_', '/')));
     }
     return true;
   } catch {
@@ -80,22 +80,22 @@ function createTestJwt(header: Record<string, unknown>, payload: Record<string, 
 
 function decodeJwtPayload(token: string): Record<string, unknown> | null {
   const parts = token.split('.');
-  if (parts.length !== 3) return null;
+  if (parts.length !== 3) {return null;}
   try {
-    return JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+    return JSON.parse(atob(parts[1].replaceAll('-', '+').replaceAll('_', '/')));
   } catch {
     return null;
   }
 }
 
 function sanitizeForDisplay(input: string | null | undefined): string {
-  if (input == null) return '';
+  if (input == null) {return '';}
   return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;');
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll('\'', '&#x27;');
 }
 
 describe('Constant-time comparison — constantTimeEqual', () => {
@@ -142,7 +142,7 @@ describe('Constant-time comparison — constantTimeEqual', () => {
   });
 
   it('returns true for long identical strings', () => {
-    const long = 'a'.repeat(10000);
+    const long = 'a'.repeat(10_000);
     expect(constantTimeEqual(long, long)).toBe(true);
   });
 
@@ -455,7 +455,7 @@ describe('OIDC state validation', () => {
     expect(AUTH_STATE_COOKIE_NAME).toBe('auth_state');
     // State cookies should expire — max-age must be finite and positive
     expect(SESSION_MAX_AGE).toBeGreaterThan(0);
-    expect(SESSION_MAX_AGE).toBeLessThanOrEqual(86400); // should not exceed 24 hours
+    expect(SESSION_MAX_AGE).toBeLessThanOrEqual(86_400); // should not exceed 24 hours
   });
 });
 
@@ -472,9 +472,9 @@ describe('Survey password gate', () => {
   }
 
   function checkPassword(input: string): { status: number } {
-    if (!isValidSurveyPassword(input)) return { status: 400 };
+    if (!isValidSurveyPassword(input)) {return { status: 400 };}
     // Simulate hash comparison (in real code this uses PBKDF2 + constantTimeEqual)
-    if (input !== 'correct-password') return { status: 403 };
+    if (input !== 'correct-password') {return { status: 403 };}
     return { status: 200 };
   }
 

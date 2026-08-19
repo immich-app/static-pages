@@ -14,7 +14,7 @@ async function validatePasswordSession(
   survey: SurveyRow,
   ctx: AppContext,
 ): Promise<void> {
-  if (!survey.password_hash) return;
+  if (!survey.password_hash) {return;}
 
   const token = getCookie(request, `spw_${slug}`);
   if (!token || !(await verifySurveyPasswordToken(token, survey.id, survey.password_hash, ctx.config.passwordSecret))) {

@@ -112,8 +112,8 @@ export class RespondentRepository {
       ])
       .execute();
     return rows.map((r) => ({
-      question_id: String(r.question_id),
-      question_text: String(r.question_text),
+      question_id: r.question_id,
+      question_text: r.question_text,
       question_sort: Number(r.question_sort),
       answer_ms: Number(r.answer_ms),
     }));
@@ -200,7 +200,7 @@ export class AnswerRepository {
       answer_ms: number | null;
     }>,
   ): Promise<void> {
-    if (answers.length === 0) return;
+    if (answers.length === 0) {return;}
 
     // Hand-written multi-row INSERT ... ON CONFLICT: one round-trip regardless
     // of batch size, where a per-answer upsert would cost N round-trips.
@@ -210,10 +210,12 @@ export class AnswerRepository {
           sql`(${a.respondent_id}, ${a.question_id}, ${a.answer}, ${a.other_text}, ${a.answered_at}, ${a.answer_ms})`,
       ),
     );
-    await sql`INSERT INTO answers (respondent_id, question_id, answer, other_text, answered_at, answer_ms)
-      VALUES ${values}
-      ON CONFLICT (respondent_id, question_id)
-      DO UPDATE SET answer = excluded.answer, other_text = excluded.other_text, answered_at = excluded.answered_at, answer_ms = excluded.answer_ms`.execute(
+    await sql`
+      INSERT INTO answers (respondent_id, question_id, answer, other_text, answered_at, answer_ms)
+            VALUES ${values}
+            ON CONFLICT (respondent_id, question_id)
+            DO UPDATE SET answer = excluded.answer, other_text = excluded.other_text, answered_at = excluded.answered_at, answer_ms = excluded.answer_ms
+    `.execute(
       this.db,
     );
   }
@@ -322,7 +324,7 @@ export class AnswerRepository {
     results: Array<{ respondent_id: string; question_id: string; question_text: string; answer: string }>;
     total: number;
   }> {
-    const escaped = query.replace(/[%_]/g, (ch) => `\\${ch}`);
+    const escaped = query.replaceAll(/[%_]/g, (ch) => `\\${ch}`);
     const likeQuery = `%${escaped}%`;
 
     let baseQb = this.db

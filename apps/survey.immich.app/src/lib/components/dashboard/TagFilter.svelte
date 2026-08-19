@@ -28,7 +28,7 @@
         onclick={() => onSelect(tag.id)}
       >
         {#if tag.color}
-          <span class="mr-1 inline-block h-2 w-2 rounded-full" style="background-color: {tag.color}"></span>
+          <span class="mr-1 inline-block size-2 rounded-full" style="background-color: {tag.color}"></span>
         {/if}
         {tag.name}
       </button>

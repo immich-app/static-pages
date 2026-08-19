@@ -18,14 +18,14 @@
 
   async function handlePasswordLogin(e: Event) {
     e.preventDefault();
-    if (!password.trim()) return;
+    if (!password.trim()) {return;}
     submitting = true;
     error = null;
     try {
       await passwordLogin(password);
       await refreshAuth();
-    } catch (err) {
-      error = err instanceof Error ? err.message : 'Login failed';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Login failed';
     }
     submitting = false;
   }
@@ -34,7 +34,7 @@
 <div class="flex min-h-screen flex-col items-center justify-center p-6">
   <div class="w-full max-w-sm">
     <div class="mb-8 flex flex-col items-center gap-3 text-center">
-      <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-800">
+      <div class="flex size-14 items-center justify-center rounded-full bg-gray-800">
         <Icon icon={mdiLock} size="28" class="text-gray-400" />
       </div>
       <h1 class="text-xl font-bold">Sign in to FUTO Surveys</h1>
@@ -73,7 +73,7 @@
         </div>
       {/if}
 
-      <Button variant="outline" onclick={() => oidcLogin(window.location.pathname)}>
+      <Button variant="outline" onclick={() => oidcLogin(location.pathname)}>
         <Icon icon={mdiOpenInNew} size="16" />
         Sign in with SSO
       </Button>

@@ -20,7 +20,7 @@ export class TagRepository {
   }
 
   async update(id: string, fields: Partial<Omit<import('../db').TagRow, 'id' | 'created_at'>>): Promise<void> {
-    if (Object.keys(fields).length === 0) return;
+    if (Object.keys(fields).length === 0) {return;}
     await this.db.updateTable('tags').set(fields).where('id', '=', id).execute();
   }
 

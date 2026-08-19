@@ -4,7 +4,7 @@ const TEST_PASSWORD = process.env.TEST_PASSWORD || 'e2e-test-password-12345';
 let sessionCookie: string | null = null;
 
 export async function ensureAuth(): Promise<string> {
-  if (sessionCookie) return sessionCookie;
+  if (sessionCookie) {return sessionCookie;}
 
   const meRes = await fetch(`${API}/api/auth/me`);
   const me = (await meRes.json()) as { authenticated: boolean; needsSetup?: boolean };
@@ -17,7 +17,7 @@ export async function ensureAuth(): Promise<string> {
     });
     const cookie = setupRes.headers.get('set-cookie');
     if (cookie) {
-      sessionCookie = cookie.split(';')[0];
+      sessionCookie = cookie.split(';', 1)[0];
       return sessionCookie;
     }
   }
@@ -29,7 +29,7 @@ export async function ensureAuth(): Promise<string> {
   });
   const cookie = loginRes.headers.get('set-cookie');
   if (cookie) {
-    sessionCookie = cookie.split(';')[0];
+    sessionCookie = cookie.split(';', 1)[0];
   }
 
   if (!sessionCookie) {
@@ -52,7 +52,7 @@ export async function apiPost(path: string, body?: unknown, retries = 3) {
     const res = await fetch(`${API}${path}`, {
       method: 'POST',
       headers: getAuthHeaders(),
-      ...(body ? { body: JSON.stringify(body) } : {}),
+      ...(body && { body: JSON.stringify(body) }),
     });
     if (res.status === 503 && attempt < retries - 1) {
       // Retry on 503 (transient DO initialization failure)
@@ -63,7 +63,7 @@ export async function apiPost(path: string, body?: unknown, retries = 3) {
       const text = await res.text();
       throw new Error(`POST ${path} failed (${res.status}): ${text}`);
     }
-    if (res.status === 204) return undefined;
+    if (res.status === 204) {return undefined;}
     return res.json();
   }
 }
@@ -73,13 +73,13 @@ export async function apiPut(path: string, body?: unknown) {
   const res = await fetch(`${API}${path}`, {
     method: 'PUT',
     headers: getAuthHeaders(),
-    ...(body ? { body: JSON.stringify(body) } : {}),
+    ...(body && { body: JSON.stringify(body) }),
   });
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`PUT ${path} failed (${res.status}): ${text}`);
   }
-  if (res.status === 204) return undefined;
+  if (res.status === 204) {return undefined;}
   return res.json();
 }
 

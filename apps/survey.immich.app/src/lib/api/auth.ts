@@ -17,7 +17,7 @@ interface AuthState {
 export async function getMe(): Promise<AuthState> {
   try {
     const res = await fetch('/api/auth/me', { credentials: 'include' });
-    if (!res.ok) return { authenticated: false };
+    if (!res.ok) {return { authenticated: false };}
     return res.json() as Promise<AuthState>;
   } catch {
     return { authenticated: false };
@@ -29,7 +29,7 @@ export async function setup(password: string, setupToken?: string): Promise<void
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...(setupToken ? { 'X-Setup-Token': setupToken } : {}),
+      ...(setupToken && { 'X-Setup-Token': setupToken }),
     },
     body: JSON.stringify({ password }),
     credentials: 'include',
@@ -54,12 +54,12 @@ export async function passwordLogin(password: string): Promise<void> {
 }
 
 export function oidcLogin(returnTo?: string): void {
-  const url = new URL('/api/auth/login', window.location.origin);
-  if (returnTo) url.searchParams.set('returnTo', returnTo);
-  window.location.href = url.toString();
+  const url = new URL('/api/auth/login', location.origin);
+  if (returnTo) {url.searchParams.set('returnTo', returnTo);}
+  location.assign(url.toString());
 }
 
 export async function logout(): Promise<void> {
   await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-  window.location.href = '/';
+  location.assign('/');
 }

@@ -24,7 +24,7 @@
   });
 
   function handleDownload() {
-    if (!dataUrl) return;
+    if (!dataUrl) {return;}
     const a = document.createElement('a');
     a.href = dataUrl;
     a.download = 'survey-qr-code.png';
@@ -32,7 +32,7 @@
   }
 
   function handleBackdropClick(e: MouseEvent) {
-    if (e.target === e.currentTarget) onClose();
+    if (e.target === e.currentTarget) {onClose();}
   }
 </script>
 

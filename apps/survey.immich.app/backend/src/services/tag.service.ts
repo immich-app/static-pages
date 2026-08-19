@@ -9,7 +9,7 @@ export class TagService {
   }
 
   async createTag(input: { name: string; color?: string }): Promise<TagRow> {
-    if (!input.name?.trim()) throw new ServiceError('Tag name is required', 400);
+    if (!input.name?.trim()) {throw new ServiceError('Tag name is required', 400);}
     const tag: TagRow = {
       id: crypto.randomUUID(),
       name: input.name.trim(),
@@ -22,20 +22,20 @@ export class TagService {
 
   async updateTag(id: string, input: { name?: string; color?: string | null }): Promise<TagRow> {
     const existing = await this.tags.getById(id);
-    if (!existing) throw new ServiceError('Tag not found', 404);
+    if (!existing) {throw new ServiceError('Tag not found', 404);}
     const fields: Partial<Omit<TagRow, 'id' | 'created_at'>> = {};
     if (input.name !== undefined) {
-      if (!input.name.trim()) throw new ServiceError('Tag name cannot be empty', 400);
+      if (!input.name.trim()) {throw new ServiceError('Tag name cannot be empty', 400);}
       fields.name = input.name.trim();
     }
-    if (input.color !== undefined) fields.color = input.color;
+    if (input.color !== undefined) {fields.color = input.color;}
     await this.tags.update(id, fields);
     return { ...existing, ...fields };
   }
 
   async deleteTag(id: string): Promise<void> {
     const existing = await this.tags.getById(id);
-    if (!existing) throw new ServiceError('Tag not found', 404);
+    if (!existing) {throw new ServiceError('Tag not found', 404);}
     await this.tags.delete(id);
   }
 

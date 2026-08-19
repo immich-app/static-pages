@@ -14,14 +14,18 @@
 
   function toneClass(tone?: Stat['tone']): string {
     switch (tone) {
-      case 'positive':
+      case 'positive': {
         return 'text-green-400';
-      case 'negative':
+      }
+      case 'negative': {
         return 'text-red-400';
-      case 'warning':
+      }
+      case 'warning': {
         return 'text-amber-400';
-      default:
+      }
+      default: {
         return 'text-gray-200';
+      }
     }
   }
 </script>

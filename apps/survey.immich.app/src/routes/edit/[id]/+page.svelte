@@ -28,8 +28,8 @@
         wsClient = createSurveyWsClient(survey.slug, 'editor');
         registerWsClient(surveyId, wsClient);
       }
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'Failed to load survey';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Failed to load survey';
     }
     loading = false;
   });
@@ -39,21 +39,21 @@
   });
 
   async function handleSaveSurvey(updates: Partial<Survey> & { password?: string | null }) {
-    if (!survey) return;
+    if (!survey) {return;}
     saving = true;
     try {
       survey = await updateSurvey(survey.id, {
         title: updates.title ?? undefined,
-        description: updates.description !== undefined ? updates.description : undefined,
-        slug: updates.slug !== undefined ? updates.slug : undefined,
-        welcome_title: updates.welcomeTitle !== undefined ? updates.welcomeTitle : undefined,
-        welcome_description: updates.welcomeDescription !== undefined ? updates.welcomeDescription : undefined,
-        thank_you_title: updates.thankYouTitle !== undefined ? updates.thankYouTitle : undefined,
-        thank_you_description: updates.thankYouDescription !== undefined ? updates.thankYouDescription : undefined,
-        closes_at: updates.closesAt !== undefined ? updates.closesAt : undefined,
-        max_responses: updates.maxResponses !== undefined ? updates.maxResponses : undefined,
-        randomize_questions: updates.randomizeQuestions !== undefined ? updates.randomizeQuestions : undefined,
-        randomize_options: updates.randomizeOptions !== undefined ? updates.randomizeOptions : undefined,
+        description: updates.description === undefined ? undefined : updates.description,
+        slug: updates.slug === undefined ? undefined : updates.slug,
+        welcome_title: updates.welcomeTitle === undefined ? undefined : updates.welcomeTitle,
+        welcome_description: updates.welcomeDescription === undefined ? undefined : updates.welcomeDescription,
+        thank_you_title: updates.thankYouTitle === undefined ? undefined : updates.thankYouTitle,
+        thank_you_description: updates.thankYouDescription === undefined ? undefined : updates.thankYouDescription,
+        closes_at: updates.closesAt === undefined ? undefined : updates.closesAt,
+        max_responses: updates.maxResponses === undefined ? undefined : updates.maxResponses,
+        randomize_questions: updates.randomizeQuestions === undefined ? undefined : updates.randomizeQuestions,
+        randomize_options: updates.randomizeOptions === undefined ? undefined : updates.randomizeOptions,
         password: updates.password,
       });
     } finally {
@@ -62,7 +62,7 @@
   }
 
   async function handleSaveSections(newSections: BuilderSection[]) {
-    if (!survey) return;
+    if (!survey) {return;}
     saving = true;
     try {
       await saveSections(survey.id, sections, newSections, allQuestions);
@@ -77,12 +77,12 @@
   }
 
   async function handlePublish() {
-    if (!survey) return;
+    if (!survey) {return;}
     survey = await publishSurvey(survey.id);
   }
 
   async function handleUnpublish() {
-    if (!survey) return;
+    if (!survey) {return;}
     survey = await unpublishSurvey(survey.id);
   }
 </script>

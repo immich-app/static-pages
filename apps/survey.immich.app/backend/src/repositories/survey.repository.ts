@@ -52,7 +52,7 @@ export class SurveyRepository {
   }
 
   async update(id: string, fields: Partial<Omit<import('../db').SurveyRow, 'id' | 'created_at'>>): Promise<void> {
-    if (Object.keys(fields).length === 0) return;
+    if (Object.keys(fields).length === 0) {return;}
     await this.db.updateTable('surveys').set(fields).where('id', '=', id).execute();
   }
 
@@ -83,7 +83,7 @@ export class SectionRepository {
   }
 
   async update(id: string, fields: Partial<Omit<import('../db').SectionRow, 'id' | 'survey_id'>>): Promise<void> {
-    if (Object.keys(fields).length === 0) return;
+    if (Object.keys(fields).length === 0) {return;}
     await this.db.updateTable('survey_sections').set(fields).where('id', '=', id).execute();
   }
 
@@ -135,7 +135,7 @@ export class QuestionRepository {
   }
 
   async update(id: string, fields: Partial<Omit<import('../db').QuestionRow, 'id' | 'survey_id'>>): Promise<void> {
-    if (Object.keys(fields).length === 0) return;
+    if (Object.keys(fields).length === 0) {return;}
     await this.db.updateTable('survey_questions').set(fields).where('id', '=', id).execute();
   }
 

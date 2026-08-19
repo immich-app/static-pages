@@ -68,7 +68,7 @@
     <div>
       <div class="text-[10px] font-medium tracking-wider text-gray-500 uppercase">Mean</div>
       <div class="mt-0.5 text-2xl font-bold text-gray-200 tabular-nums">
-        {stats.mean !== null ? stats.mean.toFixed(2) : '–'}
+        {stats.mean === null ? '–' : stats.mean.toFixed(2)}
       </div>
       <div class="text-[11px] text-gray-500">1–5 scale</div>
     </div>
@@ -84,7 +84,7 @@
 
   {#if stats.total > 0}
     <div class="relative">
-      <div class="pointer-events-none absolute top-0 bottom-0 left-1/2 z-10 w-px bg-gray-500/50"></div>
+      <div class="pointer-events-none absolute inset-y-0 left-1/2 z-10 w-px bg-gray-500/50"></div>
 
       <div class="flex h-8 w-full overflow-hidden rounded-md bg-gray-200/30 dark:bg-gray-800/40">
         <div style="width: {leftPad}%" class="shrink-0"></div>
@@ -139,13 +139,13 @@
 
       <div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-gray-400">
         <span class="flex items-center gap-1.5"
-          ><span class="h-2 w-2 rounded-sm bg-red-600/85"></span>Strongly Disagree</span
+          ><span class="size-2 rounded-sm bg-red-600/85"></span>Strongly Disagree</span
         >
-        <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-sm bg-red-400/85"></span>Disagree</span>
-        <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-sm bg-gray-400/60"></span>Neutral</span>
-        <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-sm bg-green-400/85"></span>Agree</span>
+        <span class="flex items-center gap-1.5"><span class="size-2 rounded-sm bg-red-400/85"></span>Disagree</span>
+        <span class="flex items-center gap-1.5"><span class="size-2 rounded-sm bg-gray-400/60"></span>Neutral</span>
+        <span class="flex items-center gap-1.5"><span class="size-2 rounded-sm bg-green-400/85"></span>Agree</span>
         <span class="flex items-center gap-1.5"
-          ><span class="h-2 w-2 rounded-sm bg-green-600/85"></span>Strongly Agree</span
+          ><span class="size-2 rounded-sm bg-green-600/85"></span>Strongly Agree</span
         >
       </div>
     </div>

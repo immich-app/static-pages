@@ -25,13 +25,13 @@
 
   async function handleSubmit(e: Event) {
     e.preventDefault();
-    if (!password.trim()) return;
+    if (!password.trim()) {return;}
     submitting = true;
     error = null;
     try {
       await onSubmit(password);
-    } catch (err) {
-      error = err instanceof Error ? err.message : 'Incorrect password';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'Incorrect password';
     }
     submitting = false;
   }
@@ -46,7 +46,7 @@
 >
   <div class="w-full max-w-sm">
     <div class="mb-6 flex flex-col items-center gap-3 text-center">
-      <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-800">
+      <div class="flex size-14 items-center justify-center rounded-full bg-gray-800">
         <Icon icon={mdiLock} size="28" class="text-gray-400" />
       </div>
       {#if surveyTitle}

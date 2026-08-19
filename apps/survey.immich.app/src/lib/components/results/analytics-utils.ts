@@ -22,11 +22,11 @@ export function computeNps(answers: AnswerData[]): NpsStats {
     detractors = 0;
   for (const a of answers) {
     const score = Number(a.value);
-    if (Number.isNaN(score)) continue;
+    if (Number.isNaN(score)) {continue;}
     total += a.count;
-    if (score >= 9) promoters += a.count;
-    else if (score >= 7) passives += a.count;
-    else detractors += a.count;
+    if (score >= 9) {promoters += a.count;}
+    else if (score >= 7) {passives += a.count;}
+    else {detractors += a.count;}
   }
   const npsScore = total > 0 ? Math.round(((promoters - detractors) / total) * 100) : null;
   const pPct = total > 0 ? (promoters / total) * 100 : 0;
@@ -36,10 +36,10 @@ export function computeNps(answers: AnswerData[]): NpsStats {
 }
 
 export function npsLabel(npsScore: number | null): string {
-  if (npsScore === null) return '';
-  if (npsScore >= 50) return 'Excellent';
-  if (npsScore >= 0) return 'Good';
-  if (npsScore >= -50) return 'Needs improvement';
+  if (npsScore === null) {return '';}
+  if (npsScore >= 50) {return 'Excellent';}
+  if (npsScore >= 0) {return 'Good';}
+  if (npsScore >= -50) {return 'Needs improvement';}
   return 'Critical';
 }
 
@@ -47,7 +47,7 @@ export function npsDistribution(answers: AnswerData[]): Array<{ score: number; c
   const dist = Array.from({ length: 11 }, (_, i) => ({ score: i, count: 0 }));
   for (const a of answers) {
     const n = Number(a.value);
-    if (Number.isInteger(n) && n >= 0 && n <= 10) dist[n].count += a.count;
+    if (Number.isInteger(n) && n >= 0 && n <= 10) {dist[n].count += a.count;}
   }
   return dist;
 }
@@ -96,13 +96,13 @@ export interface LikertStats {
 
 export function computeLikert(answers: AnswerData[]): LikertStats {
   const counts: Record<string, number> = {};
-  for (const v of LIKERT_VALUES) counts[v] = 0;
+  for (const v of LIKERT_VALUES) {counts[v] = 0;}
 
   let total = 0;
   let sum = 0;
   for (const a of answers) {
     const idx = LIKERT_VALUES.indexOf(a.value as (typeof LIKERT_VALUES)[number]);
-    if (idx >= 0) {
+    if (idx !== -1) {
       counts[a.value] += a.count;
       total += a.count;
       sum += (idx + 1) * a.count;
@@ -139,7 +139,7 @@ export function computeNumber(answers: AnswerData[]): NumberStats {
   for (const a of answers) {
     const n = Number(a.value);
     if (Number.isFinite(n)) {
-      for (let i = 0; i < a.count; i++) values.push(n);
+      for (let i = 0; i < a.count; i++) {values.push(n);}
     }
   }
   values.sort((a, b) => a - b);
@@ -160,7 +160,9 @@ export function computeNumber(answers: AnswerData[]): NumberStats {
   };
 }
 
-/** Auto-bucket numeric values into ~10 bins using Sturges-like rules. */
+/**
+Auto-bucket numeric values into ~10 bins using Sturges-like rules.
+*/
 export interface NumberBucket {
   label: string;
   rangeStart: number;
@@ -169,9 +171,9 @@ export interface NumberBucket {
 }
 
 export function bucketNumbers(values: number[], maxBuckets = 10): NumberBucket[] {
-  if (values.length === 0) return [];
+  if (values.length === 0) {return [];}
   const min = values[0];
-  const max = values[values.length - 1];
+  const max = values.at(-1);
   if (min === max) {
     return [{ label: `${min}`, rangeStart: min, rangeEnd: min, count: values.length }];
   }
@@ -199,18 +201,14 @@ export function bucketNumbers(values: number[], maxBuckets = 10): NumberBucket[]
   for (const v of values) {
     // last bucket is inclusive on both ends
     let idx: number;
-    if (v === max) {
-      idx = bucketCount - 1;
-    } else {
-      idx = Math.min(bucketCount - 1, Math.floor((v - min) / bucketSize));
-    }
+    idx = v === max ? bucketCount - 1 : Math.min(bucketCount - 1, Math.floor((v - min) / bucketSize));
     buckets[idx].count++;
   }
   return buckets;
 }
 
 function formatNumber(n: number): string {
-  if (Number.isInteger(n)) return String(n);
+  if (Number.isInteger(n)) {return String(n);}
   return n.toFixed(1);
 }
 
@@ -319,7 +317,7 @@ const STOPWORDS = new Set([
 function tokenize(text: string): string[] {
   return text
     .toLowerCase()
-    .replace(/[^\w\s'-]/g, ' ')
+    .replaceAll(/[^\w\s'-]/g, ' ')
     .split(/\s+/)
     .filter((w) => w.length > 1 && !STOPWORDS.has(w));
 }
@@ -329,7 +327,9 @@ export interface NgramEntry {
   count: number;
 }
 
-/** N-grams rather than a word cloud: counts stay explicit and phrases are preserved. */
+/**
+N-grams rather than a word cloud: counts stay explicit and phrases are preserved.
+*/
 export function computeNgrams(answers: AnswerData[], limit = 20): NgramEntry[] {
   const phrases = new Map<string, number>();
 
@@ -351,7 +351,7 @@ export function computeNgrams(answers: AnswerData[], limit = 20): NgramEntry[] {
     }
   }
 
-  return [...phrases.entries()]
+  return [...phrases]
     .map(([phrase, count]) => ({ phrase, count }))
     .filter((e) => e.count >= 2 || e.phrase.split(' ').length === 1)
     .sort((a, b) => b.count - a.count)
@@ -377,9 +377,9 @@ export function computeTextStats(answers: AnswerData[]): TextStats {
     const trimmed = a.value.trim();
     total += a.count;
     totalChars += trimmed.length * a.count;
-    if (trimmed.length === 0) blankCount += a.count;
-    else if (trimmed.length < 10) shortCount += a.count;
-    else if (trimmed.length > 100) longCount += a.count;
+    if (trimmed.length === 0) {blankCount += a.count;}
+    else if (trimmed.length < 10) {shortCount += a.count;}
+    else if (trimmed.length > 100) {longCount += a.count;}
   }
   return {
     total,
@@ -497,33 +497,37 @@ export type EmailKind = 'corporate' | 'free' | 'disposable';
 export function normalizeEmail(raw: string): { normalized: string; local: string; domain: string } | null {
   const trimmed = raw.trim().toLowerCase();
   const at = trimmed.lastIndexOf('@');
-  if (at <= 0 || at >= trimmed.length - 1) return null;
+  if (at <= 0 || at >= trimmed.length - 1) {return null;}
   let local = trimmed.slice(0, at);
   const domain = trimmed.slice(at + 1);
-  if (!/^[a-z0-9.-]+\.[a-z]{2,}$/.test(domain)) return null;
+  if (!/^[a-z0-9.-]+\.[a-z]{2,}$/.test(domain)) {return null;}
   if (domain === 'gmail.com' || domain === 'googlemail.com') {
     const plus = local.indexOf('+');
-    if (plus >= 0) local = local.slice(0, plus);
+    if (plus !== -1) {local = local.slice(0, plus);}
     local = local.replaceAll('.', '');
   }
   return { normalized: `${local}@${domain}`, local, domain };
 }
 
 export function classifyDomain(domain: string): EmailKind {
-  if (DISPOSABLE_EMAIL_DOMAINS.has(domain)) return 'disposable';
-  if (FREE_EMAIL_DOMAINS.has(domain)) return 'free';
+  if (DISPOSABLE_EMAIL_DOMAINS.has(domain)) {return 'disposable';}
+  if (FREE_EMAIL_DOMAINS.has(domain)) {return 'free';}
   return 'corporate';
 }
 
 export interface EmailEntry {
-  /** Original casing as submitted (first seen). */
+  /**
+  Original casing as submitted (first seen).
+  */
   raw: string;
   normalized: string;
   local: string;
   domain: string;
   kind: EmailKind;
   isRoleBased: boolean;
-  /** How many respondents submitted this (deduped) address. */
+  /**
+  How many respondents submitted this (deduped) address.
+  */
   count: number;
 }
 
@@ -580,13 +584,13 @@ export function computeEmailSummary(answers: AnswerData[]): EmailSummary {
   let corporateCount = 0;
   let roleBasedCount = 0;
   for (const e of entries) {
-    if (e.kind === 'disposable') disposableCount += e.count;
-    else if (e.kind === 'free') freeCount += e.count;
-    else corporateCount += e.count;
-    if (e.isRoleBased) roleBasedCount += e.count;
+    if (e.kind === 'disposable') {disposableCount += e.count;}
+    else if (e.kind === 'free') {freeCount += e.count;}
+    else {corporateCount += e.count;}
+    if (e.isRoleBased) {roleBasedCount += e.count;}
   }
 
-  const topDomains = [...domains.entries()]
+  const topDomains = [...domains]
     .sort((a, b) => b[1] - a[1])
     .slice(0, 8)
     .map(([domain, count]) => ({ domain, count, kind: classifyDomain(domain) }));
@@ -658,7 +662,7 @@ export function computeCheckboxStats(answers: AnswerData[]): CheckboxStats {
     }
   }
 
-  const perOptionArr = [...perOption.entries()]
+  const perOptionArr = [...perOption]
     .map(([value, count]) => ({
       value,
       count,
@@ -675,7 +679,7 @@ export function computeCheckboxStats(answers: AnswerData[]): CheckboxStats {
 }
 
 export function computeDropoffRate(reached: number, answered: number): number {
-  if (reached === 0) return 0;
+  if (reached === 0) {return 0;}
   return Math.round(((reached - answered) / reached) * 100);
 }
 

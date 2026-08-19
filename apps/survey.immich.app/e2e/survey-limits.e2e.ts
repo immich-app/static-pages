@@ -39,8 +39,8 @@ async function createSurveyWithQuestion(opts: {
 
   await apiPut(`/api/surveys/${survey.id}`, {
     slug: opts.slug,
-    ...(opts.maxResponses !== undefined ? { max_responses: opts.maxResponses } : {}),
-    ...(opts.closesAt ? { closes_at: opts.closesAt } : {}),
+    ...((opts.maxResponses !== undefined) && { max_responses: opts.maxResponses }),
+    ...(opts.closesAt && { closes_at: opts.closesAt }),
   });
   await apiPut(`/api/surveys/${survey.id}/publish`);
 
@@ -92,7 +92,7 @@ test.describe('Survey with max_responses limit', () => {
     await expect(
       page.locator('text=maximum').or(page.locator('text=closed')).or(page.locator('text=Failed to load survey')),
     ).toBeVisible({
-      timeout: 10000,
+      timeout: 10_000,
     });
   });
 });
@@ -121,7 +121,7 @@ test.describe.serial('Survey with past closes_at date', () => {
     await page.goto(`/s/${setup.slug}`);
 
     await expect(page.locator('text=closed').or(page.locator('text=Failed to load survey'))).toBeVisible({
-      timeout: 10000,
+      timeout: 10_000,
     });
   });
 });

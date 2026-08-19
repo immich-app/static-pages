@@ -9,7 +9,7 @@
 </script>
 
 <div class="flex items-center gap-2 rounded-full border border-gray-300 px-3 py-1.5 text-xs dark:border-gray-600">
-  <span class="pulse-dot inline-block h-2 w-2 rounded-full bg-green-500"></span>
+  <span class="pulse-dot inline-block size-2 rounded-full bg-green-500"></span>
   {#if counts.activeRespondents > 0}
     <span class="text-gray-400">
       <span class="font-medium text-green-400">{counts.activeRespondents}</span> responding

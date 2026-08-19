@@ -18,7 +18,7 @@ const ROLE_HIERARCHY: Record<UserRole, number> = { admin: 3, editor: 2, viewer: 
  * Mirrors `requireRole` from backend/src/middleware/auth.ts
  */
 function requireRole(user: UserInfo | undefined, minRole: UserRole): void {
-  if (!user) throw new Error('Authentication required');
+  if (!user) {throw new Error('Authentication required');}
   if (ROLE_HIERARCHY[user.role] < ROLE_HIERARCHY[minRole]) {
     throw new Error('Insufficient permissions');
   }
@@ -44,14 +44,14 @@ function extractRole(
   }
 
   if (Array.isArray(value)) {
-    if (value.includes(adminValue)) return 'admin';
-    if (value.includes(editorValue)) return 'editor';
+    if (value.includes(adminValue)) {return 'admin';}
+    if (value.includes(editorValue)) {return 'editor';}
     return 'viewer';
   }
 
   if (typeof value === 'string') {
-    if (value === adminValue) return 'admin';
-    if (value === editorValue) return 'editor';
+    if (value === adminValue) {return 'admin';}
+    if (value === editorValue) {return 'editor';}
   }
 
   return 'viewer';
@@ -61,16 +61,16 @@ function extractRole(
  * Mirrors `getAuth().hasRole()` from stores/auth.svelte.ts
  */
 function hasRole(user: AuthUser | null, minRole: UserRole): boolean {
-  if (!user) return false;
+  if (!user) {return false;}
   return ROLE_HIERARCHY[user.role] >= ROLE_HIERARCHY[minRole];
 }
 
 function isValidJwtStructure(token: string): boolean {
   const parts = token.split('.');
-  if (parts.length !== 3) return false;
+  if (parts.length !== 3) {return false;}
   try {
     for (const part of parts.slice(0, 2)) {
-      JSON.parse(atob(part.replace(/-/g, '+').replace(/_/g, '/')));
+      JSON.parse(atob(part.replaceAll('-', '+').replaceAll('_', '/')));
     }
     return true;
   } catch {
@@ -91,9 +91,9 @@ function createTestJwt(payload: Record<string, unknown>): string {
 
 function decodeJwtPayload(token: string): Record<string, unknown> | null {
   const parts = token.split('.');
-  if (parts.length !== 3) return null;
+  if (parts.length !== 3) {return null;}
   try {
-    return JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+    return JSON.parse(atob(parts[1].replaceAll('-', '+').replaceAll('_', '/')));
   } catch {
     return null;
   }
@@ -339,7 +339,7 @@ describe('Session JWT structure', () => {
 
   it('JWT header contains alg and typ', () => {
     const token = createTestJwt({ sub: 'u1' });
-    const headerPart = token.split('.')[0];
+    const headerPart = token.split('.', 1)[0];
     const header = JSON.parse(atob(headerPart));
     expect(header.alg).toBe('HS256');
     expect(header.typ).toBe('JWT');

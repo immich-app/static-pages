@@ -33,7 +33,7 @@
     {@render children?.()}
   {:else if auth.loading}
     <div class="flex min-h-screen items-center justify-center">
-      <div class="border-t-immich-primary h-8 w-8 animate-spin rounded-full border-2 border-gray-600"></div>
+      <div class="border-t-immich-primary size-8 animate-spin rounded-full border-2 border-gray-600"></div>
     </div>
   {:else if auth.needsSetup}
     <SetupScreen />

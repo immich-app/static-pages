@@ -68,7 +68,7 @@ function validateRow(table: string, row: unknown, index: number): Record<string,
     throw new Error(`Backup ${table}[${index}]: row must be an object`);
   }
   const record = row as Record<string, unknown>;
-  const allowed = new Set(TABLE_COLUMNS[table] ?? []);
+  const allowed = new Set(TABLE_COLUMNS[table]);
   for (const key of Object.keys(record)) {
     if (!allowed.has(key)) {
       throw new Error(`Backup ${table}[${index}]: unknown column '${key}'`);
@@ -140,7 +140,7 @@ export class BackupService {
 
     for (const table of REQUIRED_TABLES) {
       if (!Array.isArray(backup.data[table])) {
-        throw new Error(`Backup is missing required table: ${table}`);
+        throw new TypeError(`Backup is missing required table: ${table}`);
       }
     }
 

@@ -24,23 +24,23 @@ function buildConditional(
 ): Conditional | undefined {
   const cfg = (config ?? {}) as SurveyQuestionConfig;
   const source = cfg.skipSourceQuestion;
-  if (!source) return undefined;
+  if (!source) {return undefined;}
 
   // Resolve the source reference to a real question id. Rules created before
   // the source question was persisted store a positional index instead of an id.
   let questionId = sectionQuestions.find((q) => q.id === source)?.id;
   if (!questionId) {
     const idx = Number(source);
-    if (Number.isInteger(idx)) questionId = sectionQuestions[idx]?.id;
+    if (Number.isInteger(idx)) {questionId = sectionQuestions[idx]?.id;}
   }
-  if (!questionId) return undefined;
+  if (!questionId) {return undefined;}
 
   const condition = cfg.skipConditionType ?? 'skipped';
   const showIf: Conditional['showIf'] = { questionId, condition };
   if (condition === 'equals' || condition === 'notEquals') {
-    showIf.value = String(cfg.skipConditionValue ?? '');
+    showIf.value = (cfg.skipConditionValue ?? '');
   } else if (condition === 'anyOf') {
-    showIf.values = String(cfg.skipConditionValues ?? '')
+    showIf.values = (cfg.skipConditionValues ?? '')
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean);
@@ -63,17 +63,17 @@ export async function saveSections(
   }
 
   for (const section of newSections) {
-    if (!section.id) {
+    if (section.id) {
+      await apiUpdateSection(surveyId, section.id, {
+        title: section.title,
+        description: section.description ?? undefined,
+      });
+    } else {
       const created = await apiCreateSection(surveyId, {
         title: section.title,
         description: section.description ?? undefined,
       });
       section.id = created.id;
-    } else {
-      await apiUpdateSection(surveyId, section.id, {
-        title: section.title,
-        description: section.description ?? undefined,
-      });
     }
   }
 
@@ -98,22 +98,7 @@ export async function saveSections(
 
     const hasOptions = (type: string) => ['radio', 'checkbox', 'dropdown'].includes(type);
     for (const q of section.questions) {
-      if (!q.id) {
-        const created = await apiCreateQuestion(surveyId, sectionId, {
-          text: q.text,
-          description: q.description || undefined,
-          type: q.type,
-          options: hasOptions(q.type) ? q.options : undefined,
-          required: q.required,
-          has_other: q.hasOther,
-          other_prompt: q.otherPrompt || undefined,
-          max_length: q.maxLength ?? undefined,
-          placeholder: q.placeholder || undefined,
-          config: q.config ?? undefined,
-          conditional: buildConditional(q.config, section.questions),
-        });
-        q.id = created.id;
-      } else {
+      if (q.id) {
         await apiUpdateQuestion(surveyId, q.id, {
           section_id: sectionId,
           text: q.text,
@@ -128,6 +113,21 @@ export async function saveSections(
           config: q.config ?? null,
           conditional: buildConditional(q.config, section.questions) ?? null,
         });
+      } else {
+        const created = await apiCreateQuestion(surveyId, sectionId, {
+          text: q.text,
+          description: q.description || undefined,
+          type: q.type,
+          options: hasOptions(q.type) ? q.options : undefined,
+          required: q.required,
+          has_other: q.hasOther,
+          other_prompt: q.otherPrompt || undefined,
+          max_length: q.maxLength ?? undefined,
+          placeholder: q.placeholder || undefined,
+          config: q.config ?? undefined,
+          conditional: buildConditional(q.config, section.questions),
+        });
+        q.id = created.id;
       }
     }
 

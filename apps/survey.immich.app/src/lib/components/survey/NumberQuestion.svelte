@@ -17,14 +17,14 @@
   const max = $derived(question.config?.max);
   const hasHint = $derived(min !== undefined || max !== undefined);
   const hintText = $derived(
-    [min !== undefined ? `Min: ${min}` : '', max !== undefined ? `Max: ${max}` : ''].filter(Boolean).join(', '),
+    [min === undefined ? '' : `Min: ${min}`, max === undefined ? '' : `Max: ${max}`].filter(Boolean).join(', '),
   );
 
   // `bind:value` on a type="number" input yields a number, but answers are
   // strings end to end (validateAnswer/server call value.trim()). Coerce here so
   // a number never leaks into the answer pipeline.
   const { handleInput } = useDebouncedAnswer(
-    () => String(numberValue ?? ''),
+    () => (numberValue ?? ''),
     (v) => onAnswer(v),
   );
 </script>

@@ -24,13 +24,15 @@
     count: number;
   }
 
-  /** Deduped so the sample below never shows the same answer twice. */
+  /**
+  Deduped so the sample below never shows the same answer twice.
+  */
   const uniqueResponses = $derived.by<SampleEntry[]>(() => {
     const counts: Record<string, number> = {};
     const order: string[] = [];
     for (const a of answers) {
       const text = a.value.trim();
-      if (!text) continue;
+      if (!text) {continue;}
       if (counts[text] === undefined) {
         counts[text] = 0;
         order.push(text);

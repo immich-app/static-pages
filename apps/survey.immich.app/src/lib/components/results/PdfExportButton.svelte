@@ -67,7 +67,7 @@
         for (const card of statCards) {
           const label = card.querySelector('.uppercase')?.textContent?.trim() ?? '';
           const value = card.querySelector('.text-2xl')?.textContent?.trim() ?? '';
-          if (label && value) stats.push(`${label}: ${value}`);
+          if (label && value) {stats.push(`${label}: ${value}`);}
         }
         if (stats.length > 0) {
           addText(stats.join('  •  '), 11, false, [156, 163, 175]);
@@ -78,7 +78,7 @@
       const chartContainers = element.querySelectorAll('.rounded-xl');
       for (const container of chartContainers) {
         const heading = container.querySelector('h3')?.textContent?.trim();
-        if (!heading) continue;
+        if (!heading) {continue;}
 
         addSpace(3);
         addText(heading, 13, true);
@@ -113,7 +113,7 @@
         }
 
         // Text answers (non-chart questions)
-        const answerCards = container.querySelectorAll('.bg-gray-100, .dark\\:bg-gray-800');
+        const answerCards = container.querySelectorAll(String.raw`.bg-gray-100, .dark\:bg-gray-800`);
         if (answerCards.length > 0 && !canvas) {
           for (const card of Array.from(answerCards).slice(0, 15)) {
             const text = card.querySelector('p')?.textContent?.trim();
@@ -128,8 +128,8 @@
       }
 
       pdf.save(filename);
-    } catch (e) {
-      error = e instanceof Error ? e.message : 'PDF export failed';
+    } catch (error_) {
+      error = error_ instanceof Error ? error_.message : 'PDF export failed';
       setTimeout(() => (error = null), 4000);
     }
     exporting = false;
@@ -147,7 +147,7 @@
   </button>
   {#if error}
     <span
-      class="absolute top-full right-0 mt-1 rounded bg-red-600 px-2 py-1 text-xs whitespace-nowrap text-white shadow-lg"
+      class="absolute top-full right-0 mt-1 rounded-sm bg-red-600 px-2 py-1 text-xs whitespace-nowrap text-white shadow-lg"
       >{error}</span
     >
   {/if}

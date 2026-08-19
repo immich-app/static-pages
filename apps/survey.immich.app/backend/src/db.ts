@@ -63,7 +63,9 @@ export interface AnswersTable {
   answer: string;
   other_text: string | null;
   answered_at: string;
-  /** Milliseconds the respondent spent on this question before committing. */
+  /**
+  Milliseconds the respondent spent on this question before committing.
+  */
   answer_ms: number | null;
 }
 
@@ -126,8 +128,8 @@ export interface DbConfig {
 }
 
 export function detectDbType(url?: string): DbType {
-  if (!url) return 'sqlite';
-  if (url.startsWith('postgres://') || url.startsWith('postgresql://')) return 'postgres';
+  if (!url) {return 'sqlite';}
+  if (url.startsWith('postgres://') || url.startsWith('postgresql://')) {return 'postgres';}
   return 'sqlite';
 }
 

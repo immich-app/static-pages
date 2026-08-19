@@ -18,7 +18,7 @@ export function authMiddleware(ctx: AppContext): (request: AuthenticatedRequest)
       return;
     }
 
-    if (!path.startsWith('/api/')) return;
+    if (!path.startsWith('/api/')) {return;}
 
     const token = getCookie(request, SESSION_COOKIE_NAME);
     if (!token) {
@@ -36,7 +36,7 @@ export function authMiddleware(ctx: AppContext): (request: AuthenticatedRequest)
 }
 
 export function requireRole(user: UserInfo | undefined, minRole: UserRole): void {
-  if (!user) throw new ServiceError('Authentication required', 401);
+  if (!user) {throw new ServiceError('Authentication required', 401);}
 
   if ((ROLE_HIERARCHY[user.role] ?? 0) < (ROLE_HIERARCHY[minRole] ?? 0)) {
     throw new ServiceError('Insufficient permissions', 403);

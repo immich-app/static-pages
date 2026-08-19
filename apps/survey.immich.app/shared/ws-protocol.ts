@@ -88,7 +88,9 @@ export interface CreateQuestionInput {
   config?: Record<string, unknown>;
 }
 
-/** Server rejects a larger submit-answers batch with a 400, so the client chunks its flush to match. */
+/**
+Server rejects a larger submit-answers batch with a 400, so the client chunks its flush to match.
+*/
 export const BATCH_ANSWER_LIMIT = 20;
 
 export interface UpdateQuestionInput {
@@ -115,7 +117,9 @@ export interface AnswerInput {
   questionId: string;
   value: string;
   otherText?: string;
-  /** Client-measured ms spent on this question before committing. */
+  /**
+  Client-measured ms spent on this question before committing.
+  */
   answerMs?: number;
 }
 
@@ -320,7 +324,9 @@ export interface WsPushEvents {
   analytics: SlowAnalyticsPayload;
 }
 
-/** Client → Server */
+/**
+Client → Server
+*/
 export type WsRequestMessage = {
   [K in keyof WsOperations]: {
     type: 'request';
@@ -330,7 +336,9 @@ export type WsRequestMessage = {
   };
 }[keyof WsOperations];
 
-/** Server → Client (response to a request) */
+/**
+Server → Client (response to a request)
+*/
 export type WsResponseMessage =
   | {
       [K in keyof WsOperations]: {
@@ -347,7 +355,9 @@ export type WsResponseMessage =
       error: string;
     };
 
-/** Server → Client (unsolicited push) */
+/**
+Server → Client (unsolicited push)
+*/
 export type WsPushMessage = {
   [K in keyof WsPushEvents]: {
     type: 'push';

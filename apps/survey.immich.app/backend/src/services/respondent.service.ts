@@ -44,11 +44,13 @@ export class RespondentService {
   }
 
   private async checkResponseLimit(survey: SurveyRow): Promise<void> {
-    if (survey.max_responses) {
-      const counts = await this.respondents.countBySurveyId(survey.id);
-      if (counts.completed >= survey.max_responses) {
-        throw new ServiceError('This survey has reached its maximum number of responses', 403);
-      }
+    if (!survey.max_responses) {
+    	return;
+    }
+
+    const counts = await this.respondents.countBySurveyId(survey.id);
+    if (counts.completed >= survey.max_responses) {
+      throw new ServiceError('This survey has reached its maximum number of responses', 403);
     }
   }
 
@@ -90,7 +92,7 @@ export class RespondentService {
     for (const row of answerRows) {
       answersMap[row.question_id] = {
         value: row.answer,
-        ...(row.other_text ? { otherText: row.other_text } : {}),
+        ...(row.other_text && { otherText: row.other_text }),
       };
     }
 
@@ -138,7 +140,7 @@ export class RespondentService {
     const questionMap = new Map(surveyQuestions.map((sq) => [sq.id, sq]));
     for (const input of inputs) {
       const sq = questionMap.get(input.questionId);
-      if (!sq) throw new ServiceError(`Invalid question ID: ${input.questionId}`, 400);
+      if (!sq) {throw new ServiceError(`Invalid question ID: ${input.questionId}`, 400);}
       const spec: QuestionSpec = {
         type: sq.type,
         required: sq.required === 1,
@@ -148,7 +150,7 @@ export class RespondentService {
         config: sq.config ? JSON.parse(sq.config) : undefined,
       };
       const error = validateAnswer(spec, input.value, input.otherText);
-      if (error) throw new ServiceError(error, 400);
+      if (error) {throw new ServiceError(error, 400);}
     }
 
     const now = new Date().toISOString();
@@ -277,7 +279,7 @@ export class RespondentService {
     const headers = ['respondent_id', 'completed_at'];
     for (const col of questionColumns) {
       headers.push(this.csvSafe(col.text));
-      if (col.hasOther) headers.push(this.csvSafe(col.text) + '_other');
+      if (col.hasOther) {headers.push(this.csvSafe(col.text) + '_other');}
     }
 
     const stream = new ReadableStream<Uint8Array>({
@@ -288,7 +290,7 @@ export class RespondentService {
           for (const col of questionColumns) {
             const answer = entry.answers.get(col.id);
             row.push(`"${this.csvSafe(answer?.value ?? '')}"`);
-            if (col.hasOther) row.push(`"${this.csvSafe(answer?.otherText ?? '')}"`);
+            if (col.hasOther) {row.push(`"${this.csvSafe(answer?.otherText ?? '')}"`);}
           }
           controller.enqueue(encoder.encode(row.join(',') + '\n'));
         }
@@ -304,7 +306,7 @@ export class RespondentService {
     granularity: 'minute' | 'hour' | 'day',
   ): Promise<Array<{ period: string; started: number; completed: number }>> {
     const survey = await this.surveys.getById(surveyId);
-    if (!survey) throw new ServiceError('Survey not found', 404);
+    if (!survey) {throw new ServiceError('Survey not found', 404);}
     return this.respondents.getTimelineData(surveyId, granularity);
   }
 
@@ -324,10 +326,10 @@ export class RespondentService {
     }>
   > {
     const survey = await this.surveys.getById(surveyId);
-    if (!survey) throw new ServiceError('Survey not found', 404);
+    if (!survey) {throw new ServiceError('Survey not found', 404);}
 
     const rows = await this.respondents.getAnswerDurationsByQuestion(surveyId);
-    if (rows.length === 0) return [];
+    if (rows.length === 0) {return [];}
 
     const byQ = new Map<string, { questionId: string; questionText: string; sort: number; durations: number[] }>();
     for (const r of rows) {
@@ -372,7 +374,7 @@ export class RespondentService {
     buckets: Array<{ label: string; minSeconds: number; maxSeconds: number | null; count: number }>;
   }> {
     const survey = await this.surveys.getById(surveyId);
-    if (!survey) throw new ServiceError('Survey not found', 404);
+    if (!survey) {throw new ServiceError('Survey not found', 404);}
     const durations = await this.respondents.getCompletionDurationsSeconds(surveyId);
     const count = durations.length;
 
@@ -400,7 +402,7 @@ export class RespondentService {
       p25: percentile(sorted, 25),
       p75: percentile(sorted, 75),
       min: sorted[0],
-      max: sorted[sorted.length - 1],
+      max: sorted.at(-1),
       buckets,
     };
   }
@@ -415,7 +417,7 @@ export class RespondentService {
     }>
   > {
     const survey = await this.surveys.getById(surveyId);
-    if (!survey) throw new ServiceError('Survey not found', 404);
+    if (!survey) {throw new ServiceError('Survey not found', 404);}
 
     const counts = await this.respondents.countBySurveyId(surveyId);
     const dropoffData = await this.answers.getDropoffData(surveyId);
@@ -447,7 +449,7 @@ export class RespondentService {
     total: number;
   }> {
     const survey = await this.surveys.getById(surveyId);
-    if (!survey) throw new ServiceError('Survey not found', 404);
+    if (!survey) {throw new ServiceError('Survey not found', 404);}
 
     const data = await this.respondents.listBySurveyId(surveyId, offset, limit);
     return {
@@ -508,7 +510,7 @@ export class RespondentService {
     limit: number;
   }> {
     const survey = await this.surveys.getById(surveyId);
-    if (!survey) throw new ServiceError('Survey not found', 404);
+    if (!survey) {throw new ServiceError('Survey not found', 404);}
 
     if (!query || query.trim().length < 2) {
       throw new ServiceError('Search query must be at least 2 characters', 400);
@@ -560,7 +562,7 @@ export class RespondentService {
     // exfiltrates adjacent rows when an admin opens the export. The leading
     // apostrophe defangs it (OWASP) and is stripped from the rendered cell.
     const safe = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
-    return safe.replace(/"/g, '""');
+    return safe.replaceAll('"', '""');
   }
 
   private async createNewRespondent(surveyId: string, ipAddress: string): Promise<ResumeResult> {

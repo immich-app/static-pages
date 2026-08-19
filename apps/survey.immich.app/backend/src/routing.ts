@@ -3,8 +3,12 @@
  * strips the same prefixes — one module so the two can't drift.
  */
 
-/** /api/surveys/:surveyId(/...)? */
+/**
+/api/surveys/:surveyId(/...)?
+*/
 export const SURVEY_ID_PATTERN = /^\/api\/surveys\/([^/]+)(\/.*)?$/;
 
-/** /api/s/:slug(/...)? */
+/**
+/api/s/:slug(/...)?
+*/
 export const PUBLIC_PATTERN = /^\/api\/s\/([^/]+)(\/.*)?$/;
