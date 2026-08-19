@@ -10,6 +10,7 @@ export type DatabasePostgresOptions = {
   connection?: DatabaseConnectionParams;
   maxConnections?: number;
   timeZone?: string;
+  dateStyle?: string;
   convertToJsDate?: boolean;
   convertBigIntToNumber?: boolean;
   onNotice?: (notice: Notice) => void;
