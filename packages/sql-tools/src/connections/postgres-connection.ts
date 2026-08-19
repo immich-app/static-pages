@@ -38,6 +38,7 @@ export const createPostgres = (options: DatabasePostgresOptions = {}) => {
     connection = { connectionType: 'url', url: 'postgres://postgres:postgres@localhost:5432/postgres' },
     maxConnections = 10,
     timeZone = 'UTC',
+    dateStyle = 'ISO',
     convertToJsDate = true,
     convertBigIntToNumber = true,
     onNotice,
@@ -76,6 +77,7 @@ export const createPostgres = (options: DatabasePostgresOptions = {}) => {
     max: maxConnections,
     connection: {
       TimeZone: timeZone,
+      DateStyle: dateStyle,
     },
     types,
     onnotice: onNotice,
