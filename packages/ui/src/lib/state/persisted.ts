@@ -1,12 +1,12 @@
 import { browser } from '$app/environment';
 import { createSubscriber } from 'svelte/reactivity';
 
-type PersistedBaseOptions<T> = {
+export type PersistedBaseOptions<T> = {
   read: (key: string) => T | undefined;
   write: (key: string, value: T) => void;
 };
 
-class PersistedBase<T> {
+export class PersistedBase<T> {
   #value: T;
   #subscribe: () => void;
   #update = () => {};
@@ -40,7 +40,7 @@ class PersistedBase<T> {
   }
 }
 
-type PersistedLocalStorageOptions<T> = {
+export type PersistedLocalStorageOptions<T> = {
   serializer?: {
     stringify(value: T): string;
     parse(text: string): T;
