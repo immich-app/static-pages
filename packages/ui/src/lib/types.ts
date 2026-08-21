@@ -424,6 +424,8 @@ export type CarouselImageItem = {
   src: string;
   alt?: string;
   id?: string;
+  leftIcons?: IconLike[];
+  rightIcons?: IconLike[];
 };
 
 export type ControlBarProps = {
