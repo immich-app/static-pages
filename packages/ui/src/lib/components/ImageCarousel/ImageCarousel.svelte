@@ -1,5 +1,6 @@
 <script lang="ts">
   import IconButton from '$lib/components/IconButton/IconButton.svelte';
+  import ImageCard from '$lib/components/ImageCard/ImageCard.svelte';
   import { zIndex } from '$lib/constants.js';
   import { t } from '$lib/services/translation.svelte.js';
   import type { CarouselImageItem, TranslationProps } from '$lib/types.js';
@@ -37,18 +38,7 @@
 </script>
 
 {#snippet defaultChild(item: CarouselImageItem)}
-  <a
-    class="item-card relative me-2 inline-block aspect-3/4 h-54 rounded-xl last:me-0 max-md:h-37.5 md:me-4 md:aspect-4/3 xl:aspect-video"
-    href={item.href}
-  >
-    <img class="h-full w-full rounded-xl object-cover" src={item.src} alt={item.alt ?? item.title} draggable="false" />
-    <div
-      class="absolute start-0 top-0 h-full w-full rounded-xl bg-linear-to-t from-black/40 via-transparent to-transparent transition-all hover:bg-black/20"
-    ></div>
-    <p class="absolute start-4 bottom-2 text-lg text-white max-md:text-sm">
-      {item.title}
-    </p>
-  </a>
+  <ImageCard {item} />
 {/snippet}
 
 {#if shouldRender}
@@ -101,11 +91,3 @@
     </div>
   </section>
 {/if}
-
-<style>
-  .item-card {
-    box-shadow:
-      rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-      rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-  }
-</style>

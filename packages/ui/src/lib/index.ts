@@ -57,6 +57,7 @@ export { default as Heading } from '$lib/components/Heading/Heading.svelte';
 export { default as HelperText } from '$lib/components/HelperText/HelperText.svelte';
 export { default as Icon } from '$lib/components/Icon/Icon.svelte';
 export { default as IconButton } from '$lib/components/IconButton/IconButton.svelte';
+export { default as ImageCard } from '$lib/components/ImageCard/ImageCard.svelte';
 export { default as ImageCarousel } from '$lib/components/ImageCarousel/ImageCarousel.svelte';
 export { default as Input } from '$lib/components/Input/Input.svelte';
 export { default as Kbd } from '$lib/components/Kbd/Kbd.svelte';
