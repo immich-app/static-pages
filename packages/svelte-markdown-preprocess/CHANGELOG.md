@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/immich-app/static-pages/compare/svelte-markdown-preprocess-v0.6.0...svelte-markdown-preprocess-v0.7.0) (2026-08-21)
+
+
+### Features
+
+* markdown images ([#673](https://github.com/immich-app/static-pages/issues/673)) ([b4f7a3d](https://github.com/immich-app/static-pages/commit/b4f7a3d98cea2f94bfa96e3d1f64fb73cb325c8f))
+
 ## [0.6.0](https://github.com/immich-app/static-pages/compare/svelte-markdown-preprocess-v0.5.1...svelte-markdown-preprocess-v0.6.0) (2026-07-15)
 
 
