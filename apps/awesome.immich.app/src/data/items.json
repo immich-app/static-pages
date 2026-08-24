@@ -238,6 +238,11 @@
         "title": "Immich Dark Theme Generator",
         "description": "Generate a custom dark theme for Immich.",
         "href": "https://github.com/damongolding/immich-theme-generator"
+      },
+      {
+        "title": "Immich Compressor",
+        "description": "Recompress both new uploads and the originals already in your library to HEVC and JPEG, via a workflow webhook or a backfill scan, verifying each replacement before any original is removed.",
+        "href": "https://github.com/Navilois/immich-compressor"
       }
     ]
   },
