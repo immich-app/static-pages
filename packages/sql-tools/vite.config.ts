@@ -48,5 +48,5 @@ export default defineConfig({
       TZ: 'UTC',
     },
   },
-  plugins: [dts({ rollupTypes: true, tsconfigPath: './tsconfig.json' })],
+  plugins: [dts({ entryRoot: 'src', tsconfigPath: './tsconfig.json' })],
 });
