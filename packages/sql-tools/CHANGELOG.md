@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.3](https://github.com/immich-app/static-pages/compare/sql-tools-v0.6.2...sql-tools-v0.6.3) (2026-08-25)
+
+
+### Bug Fixes
+
+* build ([#733](https://github.com/immich-app/static-pages/issues/733)) ([561ca1f](https://github.com/immich-app/static-pages/commit/561ca1f76980edfe3d9a13888560eb1e405faff4))
+
 ## [0.6.2](https://github.com/immich-app/static-pages/compare/sql-tools-v0.6.1...sql-tools-v0.6.2) (2026-08-25)
 
 
