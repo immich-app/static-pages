@@ -9,7 +9,7 @@
     "directory": "packages/sql-tools"
   },
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && publint",
     "test": "vitest --project unit",
     "test:medium": "vitest --project medium"
   },
@@ -35,6 +35,7 @@
     "postgres": "^3.4.8"
   },
   "devDependencies": {
+    "publint": "^0.3.0",
     "testcontainers": "^12.0.0"
   }
 }
