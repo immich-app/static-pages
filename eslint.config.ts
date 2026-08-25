@@ -96,6 +96,17 @@ export default defineConfig([
       'unicorn/no-declarations-before-early-exit': 'off',
       'prettier/prettier': 0,
       'object-shorthand': ['error', 'always'],
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: String.raw`^(src|test)(/.*)?(?<!\.js)$`,
+              message: 'Project-internal imports need an explicit .js extension.',
+            },
+          ],
+        },
+      ],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -118,6 +129,7 @@ export default defineConfig([
       '**/svelte.config.js',
       '**/postcss.config.js',
       'common/',
+      'deployment/',
     ],
   },
 ]);
