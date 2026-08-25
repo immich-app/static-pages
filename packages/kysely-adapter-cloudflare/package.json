@@ -9,7 +9,7 @@
     "directory": "packages/kysely-adapter-cloudflare"
   },
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && publint",
     "test": "vitest"
   },
   "type": "module",
@@ -27,6 +27,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^5.0.0",
     "kysely": "^0.29.0",
+    "publint": "^0.3.0",
     "vitest": "^4.1.0"
   },
   "peerDependencies": {
