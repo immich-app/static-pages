@@ -1,4 +1,4 @@
-import { Comparer, DatabaseParameter, Reason } from 'src/types';
+import { Comparer, DatabaseParameter, Reason } from 'src/types.js';
 
 export const compareParameters = (): Comparer<DatabaseParameter> => ({
   onMissing: (source) => [{ type: 'ParameterSet', object: source, reason: Reason.MissingInTarget }],

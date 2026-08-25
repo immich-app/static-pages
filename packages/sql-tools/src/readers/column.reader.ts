@@ -1,6 +1,6 @@
 import { sql } from 'kysely';
 import { jsonArrayFrom } from 'kysely/helpers/postgres';
-import { ColumnType, DatabaseColumn, Reader } from 'src/types';
+import { ColumnType, DatabaseColumn, Reader } from 'src/types.js';
 
 export const readColumns: Reader = async (ctx, db) => {
   const columns = await db

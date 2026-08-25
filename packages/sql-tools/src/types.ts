@@ -1,10 +1,10 @@
 import { Kysely, ColumnType as KyselyColumnType } from 'kysely';
 import { SSLConfig } from 'pg-connection-string';
 import { Notice } from 'postgres';
-import { ProcessorContext } from 'src/contexts/processor-context';
-import { ReaderContext } from 'src/contexts/reader-context';
-import { NamingInterface } from 'src/naming/naming.interface';
-import { RegisterItem } from 'src/register-item';
+import { ProcessorContext } from 'src/contexts/processor-context.js';
+import { ReaderContext } from 'src/contexts/reader-context.js';
+import { NamingInterface } from 'src/naming/naming.interface.js';
+import { RegisterItem } from 'src/register-item.js';
 
 export type DatabasePostgresOptions = {
   connection?: DatabaseConnectionParams;

@@ -1,4 +1,4 @@
-import { Column, registerEnum, Table } from 'src';
+import { Column, registerEnum, Table } from 'src/index.js';
 
 enum Test {
   Foo = 'foo',

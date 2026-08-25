@@ -1,7 +1,7 @@
-import { asFunctionCreate } from 'src/transformers/function.transformer';
-import { asIndexCreate } from 'src/transformers/index.transformer';
-import { asTriggerCreate } from 'src/transformers/trigger.transformer';
-import { Processor } from 'src/types';
+import { asFunctionCreate } from 'src/transformers/function.transformer.js';
+import { asIndexCreate } from 'src/transformers/index.transformer.js';
+import { asTriggerCreate } from 'src/transformers/trigger.transformer.js';
+import { Processor } from 'src/types.js';
 
 export const processOverrides: Processor = (ctx) => {
   if (ctx.options.overrides === false) {

@@ -1,5 +1,5 @@
-import { register } from 'src/register';
-import { DatabaseEnum } from 'src/types';
+import { register } from 'src/register.js';
+import { DatabaseEnum } from 'src/types.js';
 
 export type EnumOptions = {
   name: string;

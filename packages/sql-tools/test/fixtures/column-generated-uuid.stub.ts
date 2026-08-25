@@ -1,4 +1,4 @@
-import { PrimaryGeneratedColumn, Table } from 'src';
+import { PrimaryGeneratedColumn, Table } from 'src/index.js';
 
 @Table()
 export class Table1 {

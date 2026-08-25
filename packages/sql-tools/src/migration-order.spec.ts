@@ -1,4 +1,4 @@
-import { computeOrder, ORDER_FILENAME, parseOrder, verifyOrderContent } from 'src/migration-order';
+import { computeOrder, ORDER_FILENAME, parseOrder, verifyOrderContent } from 'src/migration-order.js';
 import { describe, expect, it } from 'vitest';
 
 describe(ORDER_FILENAME, () => {

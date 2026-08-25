@@ -1,6 +1,6 @@
-import { ColumnValue } from 'src/decorators/column.decorator';
-import { register } from 'src/register';
-import { ParameterScope } from 'src/types';
+import { ColumnValue } from 'src/decorators/column.decorator.js';
+import { register } from 'src/register.js';
+import { ParameterScope } from 'src/types.js';
 
 export type ConfigurationParameterOptions = {
   name: string;

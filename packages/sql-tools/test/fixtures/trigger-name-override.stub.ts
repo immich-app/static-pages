@@ -1,4 +1,4 @@
-import { registerFunction, Table, Trigger } from 'src';
+import { registerFunction, Table, Trigger } from 'src/index.js';
 
 const test_fn = registerFunction({
   name: 'test_fn',

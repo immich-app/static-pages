@@ -3,8 +3,8 @@ import { Command } from 'commander';
 import { sql } from 'kysely';
 import { readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { ORDER_FILENAME, parseOrder, readOrder, syncOrder, verifyOrder } from 'src/migration-order';
-import { Migrator } from 'src/migration';
+import { ORDER_FILENAME, parseOrder, readOrder, syncOrder, verifyOrder } from 'src/migration-order.js';
+import { Migrator } from 'src/migration.js';
 
 const withMigrator =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

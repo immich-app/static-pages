@@ -1,5 +1,5 @@
-import { asRenameKey, getColumnType, isDefaultEqual } from 'src/helpers';
-import { Comparer, DatabaseColumn, Reason, SchemaDiff } from 'src/types';
+import { asRenameKey, getColumnType, isDefaultEqual } from 'src/helpers.js';
+import { Comparer, DatabaseColumn, Reason, SchemaDiff } from 'src/types.js';
 
 export const compareColumns = () =>
   ({

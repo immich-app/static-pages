@@ -1,5 +1,5 @@
-import { compareExtensions } from 'src/comparers/extension.comparer';
-import { Reason } from 'src/types';
+import { compareExtensions } from 'src/comparers/extension.comparer.js';
+import { Reason } from 'src/types.js';
 import { describe, expect, it } from 'vitest';
 
 const testExtension = { name: 'test', synchronize: true };

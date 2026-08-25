@@ -1,4 +1,4 @@
-import { SqlTransformer } from 'src/transformers/types';
+import { SqlTransformer } from 'src/transformers/types.js';
 
 export const transformEnums: SqlTransformer = (ctx, { object, type }) => {
   switch (type) {

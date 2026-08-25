@@ -1,4 +1,4 @@
-import { Column, Index, Table } from 'src';
+import { Column, Index, Table } from 'src/index.js';
 
 @Table()
 @Index({ name: 'IDX_test', columns: ['id'] })

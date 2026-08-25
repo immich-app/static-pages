@@ -1,4 +1,4 @@
-import { asPostgresConfig } from 'src/connections/postgres-connection';
+import { asPostgresConfig } from 'src/connections/postgres-connection.js';
 import { describe, expect, it } from 'vitest';
 
 describe('database  utils', () => {

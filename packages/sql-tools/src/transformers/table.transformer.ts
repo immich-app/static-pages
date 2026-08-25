@@ -1,8 +1,8 @@
-import { asColumnComment, getColumnModifiers, getColumnType } from 'src/helpers';
-import { asColumnAlter } from 'src/transformers/column.transformer';
-import { asConstraintBody } from 'src/transformers/constraint.transformer';
-import { SqlTransformer } from 'src/transformers/types';
-import { ConstraintType } from 'src/types';
+import { asColumnComment, getColumnModifiers, getColumnType } from 'src/helpers.js';
+import { asColumnAlter } from 'src/transformers/column.transformer.js';
+import { asConstraintBody } from 'src/transformers/constraint.transformer.js';
+import { SqlTransformer } from 'src/transformers/types.js';
+import { ConstraintType } from 'src/types.js';
 
 export const transformTables: SqlTransformer = (ctx, { object, type }) => {
   switch (type) {

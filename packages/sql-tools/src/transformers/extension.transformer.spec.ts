@@ -1,5 +1,5 @@
-import { BaseContext } from 'src/contexts/base-context';
-import { transformExtensions } from 'src/transformers/extension.transformer';
+import { BaseContext } from 'src/contexts/base-context.js';
+import { transformExtensions } from 'src/transformers/extension.transformer.js';
 import { describe, expect, it } from 'vitest';
 
 const ctx = new BaseContext({});

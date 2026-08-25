@@ -1,4 +1,4 @@
-import { RegisterItem } from 'src/register-item';
+import { RegisterItem } from 'src/register-item.js';
 
 const items: RegisterItem[] = [];
 

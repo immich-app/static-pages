@@ -1,4 +1,4 @@
-import { Comparer, DatabaseExtension, Reason } from 'src/types';
+import { Comparer, DatabaseExtension, Reason } from 'src/types.js';
 
 export const compareExtensions = (): Comparer<DatabaseExtension> => ({
   onMissing: (source) => [{ type: 'ExtensionCreate', object: source, reason: Reason.MissingInTarget }],

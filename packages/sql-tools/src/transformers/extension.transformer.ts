@@ -1,5 +1,5 @@
-import { SqlTransformer } from 'src/transformers/types';
-import { DatabaseExtension } from 'src/types';
+import { SqlTransformer } from 'src/transformers/types.js';
+import { DatabaseExtension } from 'src/types.js';
 
 export const transformExtensions: SqlTransformer = (ctx, { object, type }) => {
   switch (type) {

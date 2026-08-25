@@ -1,5 +1,5 @@
-import { asOptions } from 'src/helpers';
-import { register } from 'src/register';
+import { asOptions } from 'src/helpers.js';
+import { register } from 'src/register.js';
 
 export type IndexOptions = {
   name?: string;

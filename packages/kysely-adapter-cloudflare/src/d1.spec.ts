@@ -1,6 +1,6 @@
 import { D1Database } from '@cloudflare/workers-types';
 import { Kysely, sql } from 'kysely';
-import { CloudflareD1Dialect } from 'src/d1';
+import { CloudflareD1Dialect } from 'src/d1.js';
 import { describe, expect, it, vi } from 'vitest';
 
 type Schema = {

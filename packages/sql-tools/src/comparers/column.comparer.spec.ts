@@ -1,5 +1,5 @@
-import { compareColumns } from 'src/comparers/column.comparer';
-import { DatabaseColumn, Reason } from 'src/types';
+import { compareColumns } from 'src/comparers/column.comparer.js';
+import { DatabaseColumn, Reason } from 'src/types.js';
 import { describe, expect, it } from 'vitest';
 
 const testColumn: DatabaseColumn = {

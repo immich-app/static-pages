@@ -1,7 +1,7 @@
 import { sql } from 'kysely';
 import { readFile } from 'node:fs/promises';
-import { TestDatabase } from 'test/medium/test-database';
-import { getDirectoryFiles } from 'test/utils';
+import { TestDatabase } from 'test/medium/test-database.js';
+import { getDirectoryFiles } from 'test/utils.js';
 import { afterEach, beforeEach, describe, expect, it, onTestFailed } from 'vitest';
 
 const queries = getDirectoryFiles('test/medium/queries');

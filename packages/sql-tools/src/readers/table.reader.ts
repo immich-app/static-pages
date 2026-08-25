@@ -1,5 +1,5 @@
 import { sql } from 'kysely';
-import { Reader } from 'src/types';
+import { Reader } from 'src/types.js';
 
 export const readTables: Reader = async (ctx, db) => {
   const tables = await db

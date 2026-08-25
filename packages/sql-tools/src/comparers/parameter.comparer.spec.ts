@@ -1,5 +1,5 @@
-import { compareParameters } from 'src/comparers/parameter.comparer';
-import { DatabaseParameter, Reason } from 'src/types';
+import { compareParameters } from 'src/comparers/parameter.comparer.js';
+import { DatabaseParameter, Reason } from 'src/types.js';
 import { describe, expect, it } from 'vitest';
 
 const testParameter: DatabaseParameter = {

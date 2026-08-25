@@ -1,4 +1,4 @@
-import { Table, UpdateDateColumn } from 'src';
+import { Table, UpdateDateColumn } from 'src/index.js';
 
 @Table()
 export class Table1 {

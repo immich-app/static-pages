@@ -1,4 +1,4 @@
-import { TriggerAction, TriggerScope, TriggerTiming } from 'src/types';
+import { TriggerAction, TriggerScope, TriggerTiming } from 'src/types.js';
 
 export type NamingItem =
   | {

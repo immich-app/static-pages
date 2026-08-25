@@ -1,5 +1,5 @@
 import { sql } from 'kysely';
-import { ParameterScope, Reader } from 'src/types';
+import { ParameterScope, Reader } from 'src/types.js';
 
 export const readParameters: Reader = async (ctx, db) => {
   const parameters = await db

@@ -11,8 +11,8 @@ import {
   schemaDiff,
   schemaFromCode,
   schemaFromDatabase,
-} from 'src';
-import { ORDER_FILENAME, maybeSyncOrder } from 'src/migration-order';
+} from 'src/index.js';
+import { ORDER_FILENAME, maybeSyncOrder } from 'src/migration-order.js';
 
 type MigrationProps = {
   up: string[];

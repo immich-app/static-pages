@@ -1,6 +1,6 @@
-import { BaseContext } from 'src/contexts/base-context';
-import { transformTables } from 'src/transformers/table.transformer';
-import { ConstraintType, DatabaseTable } from 'src/types';
+import { BaseContext } from 'src/contexts/base-context.js';
+import { transformTables } from 'src/transformers/table.transformer.js';
+import { ConstraintType, DatabaseTable } from 'src/types.js';
 import { describe, expect, it } from 'vitest';
 
 const ctx = new BaseContext({});

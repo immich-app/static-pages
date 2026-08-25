@@ -1,6 +1,6 @@
-import { BaseContext } from 'src/contexts/base-context';
-import { transformFunctions } from 'src/transformers/function.transformer';
-import { DatabaseFunction } from 'src/types';
+import { BaseContext } from 'src/contexts/base-context.js';
+import { transformFunctions } from 'src/transformers/function.transformer.js';
+import { DatabaseFunction } from 'src/types.js';
 import { describe, expect, it } from 'vitest';
 
 const ctx = new BaseContext({});

@@ -1,4 +1,4 @@
-import { TriggerFunction, TriggerFunctionOptions } from 'src/decorators/trigger-function.decorator';
+import { TriggerFunction, TriggerFunctionOptions } from 'src/decorators/trigger-function.decorator.js';
 
 export const BeforeUpdateTrigger = (options: Omit<TriggerFunctionOptions, 'timing' | 'actions'>) =>
   TriggerFunction({

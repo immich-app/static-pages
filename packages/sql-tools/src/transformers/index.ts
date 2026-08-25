@@ -1,14 +1,14 @@
-import { transformColumns } from 'src/transformers/column.transformer';
-import { transformConstraints } from 'src/transformers/constraint.transformer';
-import { transformEnums } from 'src/transformers/enum.transformer';
-import { transformExtensions } from 'src/transformers/extension.transformer';
-import { transformFunctions } from 'src/transformers/function.transformer';
-import { transformIndexes } from 'src/transformers/index.transformer';
-import { transformOverrides } from 'src/transformers/override.transformer';
-import { transformParameters } from 'src/transformers/parameter.transformer';
-import { transformTables } from 'src/transformers/table.transformer';
-import { transformTriggers } from 'src/transformers/trigger.transformer';
-import { SqlTransformer } from 'src/transformers/types';
+import { transformColumns } from 'src/transformers/column.transformer.js';
+import { transformConstraints } from 'src/transformers/constraint.transformer.js';
+import { transformEnums } from 'src/transformers/enum.transformer.js';
+import { transformExtensions } from 'src/transformers/extension.transformer.js';
+import { transformFunctions } from 'src/transformers/function.transformer.js';
+import { transformIndexes } from 'src/transformers/index.transformer.js';
+import { transformOverrides } from 'src/transformers/override.transformer.js';
+import { transformParameters } from 'src/transformers/parameter.transformer.js';
+import { transformTables } from 'src/transformers/table.transformer.js';
+import { transformTriggers } from 'src/transformers/trigger.transformer.js';
+import { SqlTransformer } from 'src/transformers/types.js';
 
 export const transformers: SqlTransformer[] = [
   transformColumns,

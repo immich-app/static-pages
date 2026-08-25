@@ -1,5 +1,5 @@
-import { compareEnums } from 'src/comparers/enum.comparer';
-import { DatabaseEnum, Reason } from 'src/types';
+import { compareEnums } from 'src/comparers/enum.comparer.js';
+import { DatabaseEnum, Reason } from 'src/types.js';
 import { describe, expect, it } from 'vitest';
 
 const testEnum: DatabaseEnum = { name: 'test', values: ['foo', 'bar'], synchronize: true };

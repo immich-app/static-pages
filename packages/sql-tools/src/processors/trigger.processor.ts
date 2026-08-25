@@ -1,4 +1,4 @@
-import { Processor } from 'src/types';
+import { Processor } from 'src/types.js';
 
 export const processTriggers: Processor = (ctx, items) => {
   for (const item of items) {

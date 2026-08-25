@@ -1,5 +1,5 @@
-import { InternalColumn } from 'src/internal';
-import { ColumnStorage, ColumnType, DatabaseEnum } from 'src/types';
+import { InternalColumn } from 'src/internal.js';
+import { ColumnStorage, ColumnType, DatabaseEnum } from 'src/types.js';
 
 export type ColumnValue = null | boolean | string | number | Array<unknown> | object | Date | (() => string);
 

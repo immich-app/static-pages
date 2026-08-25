@@ -1,5 +1,5 @@
 import { sql } from 'kysely';
-import { Reader } from 'src/types';
+import { Reader } from 'src/types.js';
 
 export const readIndexes: Reader = async (ctx, db) => {
   const indexes = await db

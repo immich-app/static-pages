@@ -1,6 +1,6 @@
-import { asColumnComment, getColumnModifiers, getColumnType } from 'src/helpers';
-import { SqlTransformer } from 'src/transformers/types';
-import { ColumnChanges, DatabaseColumn } from 'src/types';
+import { asColumnComment, getColumnModifiers, getColumnType } from 'src/helpers.js';
+import { SqlTransformer } from 'src/transformers/types.js';
+import { ColumnChanges, DatabaseColumn } from 'src/types.js';
 
 export const transformColumns: SqlTransformer = (ctx, { type, object }) => {
   switch (type) {

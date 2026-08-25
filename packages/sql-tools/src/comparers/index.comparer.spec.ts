@@ -1,5 +1,5 @@
-import { compareIndexes } from 'src/comparers/index.comparer';
-import { DatabaseIndex, Reason } from 'src/types';
+import { compareIndexes } from 'src/comparers/index.comparer.js';
+import { DatabaseIndex, Reason } from 'src/types.js';
 import { describe, expect, it } from 'vitest';
 
 const testIndex: DatabaseIndex = {

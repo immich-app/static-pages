@@ -1,4 +1,4 @@
-import { Column, Index, Table } from 'src';
+import { Column, Index, Table } from 'src/index.js';
 
 @Table()
 @Index({ expression: `(("column1" at time zone 'UTC')::date)` })

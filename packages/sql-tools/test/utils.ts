@@ -2,8 +2,8 @@ import { Kysely } from 'kysely';
 import { PostgresJSDialect } from 'kysely-postgres-js';
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { createPostgres } from 'src/connections/postgres-connection';
-import { DatabaseConnectionParams } from 'src/types';
+import { createPostgres } from 'src/connections/postgres-connection.js';
+import { DatabaseConnectionParams } from 'src/types.js';
 
 export const getDirectoryFiles = (directory: string) => {
   const fixtures: Array<[string, string]> = [];

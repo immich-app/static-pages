@@ -1,4 +1,4 @@
-import { Column, Table, Unique } from 'src';
+import { Column, Table, Unique } from 'src/index.js';
 
 @Table()
 @Unique({ columns: ['id'] })

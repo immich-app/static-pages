@@ -1,5 +1,5 @@
 import { sql } from 'kysely';
-import { ActionType, ConstraintType, Reader } from 'src/types';
+import { ActionType, ConstraintType, Reader } from 'src/types.js';
 
 export const readConstraints: Reader = async (ctx, db) => {
   const constraints = await db

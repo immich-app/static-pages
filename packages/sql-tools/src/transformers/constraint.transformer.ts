@@ -1,6 +1,6 @@
-import { asColumnList } from 'src/helpers';
-import { SqlTransformer } from 'src/transformers/types';
-import { ActionType, ConstraintType, DatabaseConstraint } from 'src/types';
+import { asColumnList } from 'src/helpers.js';
+import { SqlTransformer } from 'src/transformers/types.js';
+import { ActionType, ConstraintType, DatabaseConstraint } from 'src/types.js';
 
 export const transformConstraints: SqlTransformer = (ctx, { object, type }) => {
   switch (type) {

@@ -1,4 +1,4 @@
-import { Reader } from 'src/types';
+import { Reader } from 'src/types.js';
 
 export const readComments: Reader = async (ctx, db) => {
   const comments = await db

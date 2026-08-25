@@ -1,4 +1,4 @@
-import { schemaDiff } from 'src/schema-diff';
+import { schemaDiff } from 'src/schema-diff.js';
 import {
   ActionType,
   ColumnType,
@@ -8,7 +8,7 @@ import {
   DatabaseIndex,
   DatabaseSchema,
   DatabaseTable,
-} from 'src/types';
+} from 'src/types.js';
 import { describe, expect, it } from 'vitest';
 
 const fromColumn = (column: Partial<Omit<DatabaseColumn, 'tableName'>>): DatabaseSchema => {

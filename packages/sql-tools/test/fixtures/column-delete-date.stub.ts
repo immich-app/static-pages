@@ -1,4 +1,4 @@
-import { DeleteDateColumn, Table } from 'src';
+import { DeleteDateColumn, Table } from 'src/index.js';
 
 @Table()
 export class Table1 {

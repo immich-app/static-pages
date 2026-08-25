@@ -1,8 +1,8 @@
-import { compareColumns } from 'src/comparers/column.comparer';
-import { compareConstraints } from 'src/comparers/constraint.comparer';
-import { compareIndexes } from 'src/comparers/index.comparer';
-import { compareTriggers } from 'src/comparers/trigger.comparer';
-import { compare } from 'src/helpers';
+import { compareColumns } from 'src/comparers/column.comparer.js';
+import { compareConstraints } from 'src/comparers/constraint.comparer.js';
+import { compareIndexes } from 'src/comparers/index.comparer.js';
+import { compareTriggers } from 'src/comparers/trigger.comparer.js';
+import { compare } from 'src/helpers.js';
 import {
   Comparer,
   ConstraintType,
@@ -10,7 +10,7 @@ import {
   DatabaseTable,
   Reason,
   SchemaDiffOptions,
-} from 'src/types';
+} from 'src/types.js';
 
 const getDeferredForeignKeys = (table: DatabaseTable) =>
   table.constraints.filter(

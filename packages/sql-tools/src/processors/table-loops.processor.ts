@@ -1,5 +1,5 @@
 import { depthFirstSearch, Graph } from 'graph-data-structure';
-import { ConstraintType, DatabaseForeignKeyConstraint, Processor } from 'src/types';
+import { ConstraintType, DatabaseForeignKeyConstraint, Processor } from 'src/types.js';
 
 export const processTableLoops: Processor = (ctx) => {
   const tables = ctx.tables.filter((table) => table.synchronize);

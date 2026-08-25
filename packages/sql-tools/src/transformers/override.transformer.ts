@@ -1,5 +1,5 @@
-import { asJsonString } from 'src/helpers';
-import { SqlTransformer } from 'src/transformers/types';
+import { asJsonString } from 'src/helpers.js';
+import { SqlTransformer } from 'src/transformers/types.js';
 
 export const transformOverrides: SqlTransformer = (ctx, { object, type }) => {
   const tableName = ctx.overrideTableName;

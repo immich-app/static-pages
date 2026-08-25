@@ -1,4 +1,4 @@
-import { Column, ColumnOptions } from 'src/decorators/column.decorator';
+import { Column, ColumnOptions } from 'src/decorators/column.decorator.js';
 
 export const CreateDateColumn = (options: ColumnOptions = {}): PropertyDecorator => {
   return Column({

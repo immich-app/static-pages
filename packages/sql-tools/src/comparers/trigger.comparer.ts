@@ -1,4 +1,4 @@
-import { Comparer, DatabaseTrigger, Reason } from 'src/types';
+import { Comparer, DatabaseTrigger, Reason } from 'src/types.js';
 
 export const compareTriggers = (): Comparer<DatabaseTrigger> => ({
   onMissing: (source) => [{ type: 'TriggerCreate', object: source, reason: Reason.MissingInTarget }],
