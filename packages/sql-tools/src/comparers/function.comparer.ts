@@ -1,4 +1,4 @@
-import { Comparer, DatabaseFunction, Reason } from 'src/types';
+import { Comparer, DatabaseFunction, Reason } from 'src/types.js';
 
 export const compareFunctions = (): Comparer<DatabaseFunction> => ({
   onMissing: (source) => [{ type: 'FunctionCreate', object: source, reason: Reason.MissingInTarget }],

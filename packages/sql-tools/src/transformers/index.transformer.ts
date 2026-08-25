@@ -1,6 +1,6 @@
-import { asColumnList } from 'src/helpers';
-import { SqlTransformer } from 'src/transformers/types';
-import { DatabaseIndex } from 'src/types';
+import { asColumnList } from 'src/helpers.js';
+import { SqlTransformer } from 'src/transformers/types.js';
+import { DatabaseIndex } from 'src/types.js';
 
 export const transformIndexes: SqlTransformer = (ctx, { object, type }) => {
   switch (type) {

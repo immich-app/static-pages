@@ -1,5 +1,5 @@
-import { compareFunctions } from 'src/comparers/function.comparer';
-import { DatabaseFunction, Reason } from 'src/types';
+import { compareFunctions } from 'src/comparers/function.comparer.js';
+import { DatabaseFunction, Reason } from 'src/types.js';
 import { describe, expect, it } from 'vitest';
 
 const testFunction: DatabaseFunction = {

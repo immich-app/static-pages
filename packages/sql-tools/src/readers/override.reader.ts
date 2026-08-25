@@ -1,5 +1,5 @@
 import { sql } from 'kysely';
-import { OverrideType, Reader } from 'src/types';
+import { OverrideType, Reader } from 'src/types.js';
 
 export const readOverrides: Reader = async (ctx, db) => {
   try {

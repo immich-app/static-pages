@@ -1,4 +1,4 @@
-import { Check, Column, Table } from 'src';
+import { Check, Column, Table } from 'src/index.js';
 
 @Table()
 @Check({ name: 'CHK_test', expression: '1=1' })

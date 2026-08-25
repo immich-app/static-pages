@@ -1,4 +1,4 @@
-import { Column, Index, Table } from 'src';
+import { Column, Index, Table } from 'src/index.js';
 
 @Table()
 @Index({ columns: ['column1'], where: '"column1" IS NOT NULL' })

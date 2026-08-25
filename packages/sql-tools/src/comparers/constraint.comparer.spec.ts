@@ -1,5 +1,5 @@
-import { compareConstraints } from 'src/comparers/constraint.comparer';
-import { ConstraintType, DatabaseConstraint, Reason } from 'src/types';
+import { compareConstraints } from 'src/comparers/constraint.comparer.js';
+import { ConstraintType, DatabaseConstraint, Reason } from 'src/types.js';
 import { describe, expect, it } from 'vitest';
 
 const testConstraint: DatabaseConstraint = {

@@ -1,5 +1,5 @@
-import { DefaultNamingStrategy } from 'src/naming/default.naming';
-import { NamingInterface, NamingItem } from 'src/naming/naming.interface';
+import { DefaultNamingStrategy } from 'src/naming/default.naming.js';
+import { NamingInterface, NamingItem } from 'src/naming/naming.interface.js';
 import {
   BaseContextOptions,
   DatabaseEnum,
@@ -11,7 +11,7 @@ import {
   DatabaseTable,
   OutputTarget,
   UuidFunctionFactory,
-} from 'src/types';
+} from 'src/types.js';
 
 const asOverrideKey = (type: string, name: string) => `${type}:${name}`;
 

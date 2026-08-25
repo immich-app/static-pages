@@ -1,9 +1,9 @@
 import { Kysely } from 'kysely';
 import { PostgresJSDialect } from 'kysely-postgres-js';
-import { createPostgres } from 'src/connections/postgres-connection';
-import { ReaderContext } from 'src/contexts/reader-context';
-import { readers } from 'src/readers';
-import { DatabaseSchema, PostgresDB, SchemaFromDatabaseOptions } from 'src/types';
+import { createPostgres } from 'src/connections/postgres-connection.js';
+import { ReaderContext } from 'src/contexts/reader-context.js';
+import { readers } from 'src/readers/index.js';
+import { DatabaseSchema, PostgresDB, SchemaFromDatabaseOptions } from 'src/types.js';
 
 /**
  * Load schema from a database url

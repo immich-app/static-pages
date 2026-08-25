@@ -1,5 +1,5 @@
-import { schemaFromCode } from 'src/schema-from-code';
-import { importFixture, getDirectoryFiles } from 'test/utils';
+import { schemaFromCode } from 'src/schema-from-code.js';
+import { importFixture, getDirectoryFiles } from 'test/utils.js';
 import { describe, expect, it } from 'vitest';
 
 const fixtures = getDirectoryFiles('test/fixtures');

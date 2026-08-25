@@ -1,5 +1,5 @@
-import { compareTables } from 'src/comparers/table.comparer';
-import { DatabaseTable, Reason } from 'src/types';
+import { compareTables } from 'src/comparers/table.comparer.js';
+import { DatabaseTable, Reason } from 'src/types.js';
 import { describe, expect, it } from 'vitest';
 
 const testTable: DatabaseTable = {

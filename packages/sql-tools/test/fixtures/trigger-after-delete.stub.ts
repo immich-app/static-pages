@@ -1,4 +1,4 @@
-import { AfterDeleteTrigger, registerFunction, Table } from 'src';
+import { AfterDeleteTrigger, registerFunction, Table } from 'src/index.js';
 
 const test_fn = registerFunction({
   name: 'test_fn',

@@ -1,6 +1,6 @@
-import { BaseContext } from 'src/contexts/base-context';
-import { transformColumns } from 'src/transformers/column.transformer';
-import { DatabaseColumn } from 'src/types';
+import { BaseContext } from 'src/contexts/base-context.js';
+import { transformColumns } from 'src/transformers/column.transformer.js';
+import { DatabaseColumn } from 'src/types.js';
 import { describe, expect, it } from 'vitest';
 
 const ctx = new BaseContext({});

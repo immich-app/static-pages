@@ -1,4 +1,4 @@
-import { ConstraintType, Processor } from 'src/types';
+import { ConstraintType, Processor } from 'src/types.js';
 
 export const processPrimaryKeyConstraints: Processor = (ctx) => {
   for (const table of ctx.tables) {

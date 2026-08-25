@@ -1,6 +1,6 @@
-import { BaseContext } from 'src/contexts/base-context';
-import { transformConstraints } from 'src/transformers/constraint.transformer';
-import { ConstraintType, DatabasePrimaryKeyConstraint } from 'src/types';
+import { BaseContext } from 'src/contexts/base-context.js';
+import { transformConstraints } from 'src/transformers/constraint.transformer.js';
+import { ConstraintType, DatabasePrimaryKeyConstraint } from 'src/types.js';
 import { describe, expect, it } from 'vitest';
 
 const ctx = new BaseContext({});

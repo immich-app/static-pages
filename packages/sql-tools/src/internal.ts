@@ -1,7 +1,7 @@
-import { ColumnOptions } from 'src/decorators/column.decorator';
-import { GeneratedColumnStrategy } from 'src/decorators/generated-column.decorator';
-import { asOptions } from 'src/helpers';
-import { register } from 'src/register';
+import { ColumnOptions } from 'src/decorators/column.decorator.js';
+import { GeneratedColumnStrategy } from 'src/decorators/generated-column.decorator.js';
+import { asOptions } from 'src/helpers.js';
+import { register } from 'src/register.js';
 
 export type InternalColumnOptions = ColumnOptions & {
   strategy?: GeneratedColumnStrategy;

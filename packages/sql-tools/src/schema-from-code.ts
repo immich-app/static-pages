@@ -1,7 +1,7 @@
-import { ProcessorContext } from 'src/contexts/processor-context';
-import { processors } from 'src/processors';
-import { getRegisteredItems, resetRegisteredItems } from 'src/register';
-import { ConstraintType, SchemaFromCodeOptions } from 'src/types';
+import { ProcessorContext } from 'src/contexts/processor-context.js';
+import { processors } from 'src/processors/index.js';
+import { getRegisteredItems, resetRegisteredItems } from 'src/register.js';
+import { ConstraintType, SchemaFromCodeOptions } from 'src/types.js';
 
 /**
  * Load schema from code (decorators, etc)

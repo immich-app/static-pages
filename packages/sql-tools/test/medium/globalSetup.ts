@@ -1,7 +1,7 @@
 import { Kysely, sql } from 'kysely';
 import { PostgresJSDialect } from 'kysely-postgres-js';
-import { createPostgres } from 'src/connections/postgres-connection';
-import { DatabaseConnectionParams } from 'src/types';
+import { createPostgres } from 'src/connections/postgres-connection.js';
+import { DatabaseConnectionParams } from 'src/types.js';
 import { GenericContainer, Wait } from 'testcontainers';
 
 const globalSetup = async () => {

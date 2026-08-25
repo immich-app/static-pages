@@ -1,6 +1,6 @@
 import { parse } from 'pg-connection-string';
 import postgres from 'postgres';
-import { DatabaseConnectionParams, DatabasePostgresOptions, DatabaseSslMode, PostgresSsl } from 'src/types';
+import { DatabaseConnectionParams, DatabasePostgresOptions, DatabaseSslMode, PostgresSsl } from 'src/types.js';
 
 export const isPostgresSsl = (ssl?: string | boolean | object): ssl is PostgresSsl =>
   typeof ssl !== 'string' || ssl === 'require' || ssl === 'allow' || ssl === 'prefer' || ssl === 'verify-full';

@@ -1,4 +1,4 @@
-import { Comparer, DatabaseOverride, Reason } from 'src/types';
+import { Comparer, DatabaseOverride, Reason } from 'src/types.js';
 
 export const compareOverrides = (): Comparer<DatabaseOverride> => ({
   onMissing: (source) => [{ type: 'OverrideCreate', object: source, reason: Reason.MissingInTarget }],

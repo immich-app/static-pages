@@ -1,4 +1,4 @@
-import { ActionType, ConstraintType, Processor } from 'src/types';
+import { ActionType, ConstraintType, Processor } from 'src/types.js';
 
 export const processForeignKeyColumns: Processor = (ctx, items) => {
   for (const item of items) {

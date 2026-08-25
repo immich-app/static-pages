@@ -1,4 +1,4 @@
-import { Reader } from 'src/types';
+import { Reader } from 'src/types.js';
 
 export const readExtensions: Reader = async (ctx, db) => {
   const extensions = await db

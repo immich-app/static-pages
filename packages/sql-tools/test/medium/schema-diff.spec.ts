@@ -1,6 +1,6 @@
-import { schemaFromCode } from 'src/schema-from-code';
-import { TestDatabase } from 'test/medium/test-database';
-import { getDirectoryFiles, importFixture } from 'test/utils';
+import { schemaFromCode } from 'src/schema-from-code.js';
+import { TestDatabase } from 'test/medium/test-database.js';
+import { getDirectoryFiles, importFixture } from 'test/utils.js';
 import { afterEach, beforeEach, describe, expect, it, onTestFailed } from 'vitest';
 
 const DEBUG_NAME = '';

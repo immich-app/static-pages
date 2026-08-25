@@ -1,5 +1,5 @@
-import { SqlTransformer } from 'src/transformers/types';
-import { DatabaseTrigger } from 'src/types';
+import { SqlTransformer } from 'src/transformers/types.js';
+import { DatabaseTrigger } from 'src/types.js';
 
 export const transformTriggers: SqlTransformer = (ctx, { object, type }) => {
   switch (type) {

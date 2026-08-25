@@ -1,4 +1,4 @@
-import { Column, Table } from 'src';
+import { Column, Table } from 'src/index.js';
 
 const date = new Date(2023, 0, 1);
 

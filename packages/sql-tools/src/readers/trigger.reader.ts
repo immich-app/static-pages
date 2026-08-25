@@ -1,4 +1,4 @@
-import { Reader, TriggerAction, TriggerScope, TriggerTiming } from 'src/types';
+import { Reader, TriggerAction, TriggerScope, TriggerTiming } from 'src/types.js';
 
 export const readTriggers: Reader = async (ctx, db) => {
   const triggers = await db

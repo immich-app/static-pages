@@ -1,5 +1,5 @@
-import { compareTriggers } from 'src/comparers/trigger.comparer';
-import { DatabaseTrigger, Reason } from 'src/types';
+import { compareTriggers } from 'src/comparers/trigger.comparer.js';
+import { DatabaseTrigger, Reason } from 'src/types.js';
 import { describe, expect, it } from 'vitest';
 
 const testTrigger: DatabaseTrigger = {

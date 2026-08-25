@@ -1,6 +1,6 @@
-import { BaseContext } from 'src/contexts/base-context';
-import { transformTriggers } from 'src/transformers/trigger.transformer';
-import { DatabaseTrigger } from 'src/types';
+import { BaseContext } from 'src/contexts/base-context.js';
+import { transformTriggers } from 'src/transformers/trigger.transformer.js';
+import { DatabaseTrigger } from 'src/types.js';
 import { describe, expect, it } from 'vitest';
 
 const ctx = new BaseContext({});

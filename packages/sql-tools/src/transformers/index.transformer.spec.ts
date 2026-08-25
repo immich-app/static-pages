@@ -1,6 +1,6 @@
-import { BaseContext } from 'src/contexts/base-context';
-import { transformIndexes } from 'src/transformers/index.transformer';
-import { DatabaseIndex } from 'src/types';
+import { BaseContext } from 'src/contexts/base-context.js';
+import { transformIndexes } from 'src/transformers/index.transformer.js';
+import { DatabaseIndex } from 'src/types.js';
 import { describe, expect, it } from 'vitest';
 
 const ctx = new BaseContext({});

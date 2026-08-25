@@ -1,5 +1,5 @@
-import { register } from 'src/register';
-import { TriggerAction, TriggerScope, TriggerTiming } from 'src/types';
+import { register } from 'src/register.js';
+import { TriggerAction, TriggerScope, TriggerTiming } from 'src/types.js';
 
 export type TriggerOptions = {
   name?: string;

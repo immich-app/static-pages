@@ -1,5 +1,5 @@
-import { fromColumnValue } from 'src/helpers';
-import { Processor } from 'src/types';
+import { fromColumnValue } from 'src/helpers.js';
+import { Processor } from 'src/types.js';
 
 export const processConfigurationParameters: Processor = (ctx, items) => {
   for (const item of items) {

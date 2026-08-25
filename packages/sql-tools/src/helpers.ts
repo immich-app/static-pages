@@ -1,7 +1,7 @@
 import { depthFirstSearch, Graph, hasCycle } from 'graph-data-structure';
 import { createHash } from 'node:crypto';
-import { BaseContext } from 'src/contexts/base-context';
-import { ColumnValue } from 'src/decorators/column.decorator';
+import { BaseContext } from 'src/contexts/base-context.js';
+import { ColumnValue } from 'src/decorators/column.decorator.js';
 import {
   Comparer,
   ConstraintType,
@@ -18,7 +18,7 @@ import {
   OutputTarget,
   SchemaDiff,
   SchemaItem,
-} from 'src/types';
+} from 'src/types.js';
 
 export const asOptions = <T extends { name?: string }>(options: string | T): T => {
   if (typeof options === 'string') {

@@ -1,5 +1,5 @@
-import { register } from 'src/register';
-import { ColumnType, DatabaseFunction } from 'src/types';
+import { register } from 'src/register.js';
+import { ColumnType, DatabaseFunction } from 'src/types.js';
 
 export type FunctionOptions = {
   name: string;

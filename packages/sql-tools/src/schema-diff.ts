@@ -1,13 +1,13 @@
-import { compareEnums } from 'src/comparers/enum.comparer';
-import { compareExtensions } from 'src/comparers/extension.comparer';
-import { compareFunctions } from 'src/comparers/function.comparer';
-import { compareOverrides } from 'src/comparers/override.comparer';
-import { compareParameters } from 'src/comparers/parameter.comparer';
-import { compareTables } from 'src/comparers/table.comparer';
-import { BaseContext } from 'src/contexts/base-context';
-import { compare, getSchemaItemChildrenIds, getSchemaItemId, topologicalSort } from 'src/helpers';
-import { transformers } from 'src/transformers';
-import { DatabaseSchema, SchemaDiff, SchemaDiffOptions, SchemaDiffResult, SchemaDiffToSqlOptions } from 'src/types';
+import { compareEnums } from 'src/comparers/enum.comparer.js';
+import { compareExtensions } from 'src/comparers/extension.comparer.js';
+import { compareFunctions } from 'src/comparers/function.comparer.js';
+import { compareOverrides } from 'src/comparers/override.comparer.js';
+import { compareParameters } from 'src/comparers/parameter.comparer.js';
+import { compareTables } from 'src/comparers/table.comparer.js';
+import { BaseContext } from 'src/contexts/base-context.js';
+import { compare, getSchemaItemChildrenIds, getSchemaItemId, topologicalSort } from 'src/helpers.js';
+import { transformers } from 'src/transformers/index.js';
+import { DatabaseSchema, SchemaDiff, SchemaDiffOptions, SchemaDiffResult, SchemaDiffToSqlOptions } from 'src/types.js';
 
 /**
  * Compute the difference between two database schemas

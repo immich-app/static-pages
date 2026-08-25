@@ -1,15 +1,15 @@
 import { sql } from 'kysely';
-import { schemaDiff } from 'src/schema-diff';
-import { schemaFromCode } from 'src/schema-from-code';
-import { schemaFromDatabase } from 'src/schema-from-database';
+import { schemaDiff } from 'src/schema-diff.js';
+import { schemaFromCode } from 'src/schema-from-code.js';
+import { schemaFromDatabase } from 'src/schema-from-database.js';
 import {
   DatabaseClient,
   DatabaseConnectionParams,
   PostgresDB,
   SchemaDiffResult,
   SchemaFromCodeOptions,
-} from 'src/types';
-import { getKyselyDB } from 'test/utils';
+} from 'src/types.js';
+import { getKyselyDB } from 'test/utils.js';
 import { assert, expect } from 'vitest';
 
 export class TestDatabase {

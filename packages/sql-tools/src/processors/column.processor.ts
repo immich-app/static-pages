@@ -1,6 +1,6 @@
-import { ColumnOptions } from 'src/decorators/column.decorator';
-import { fromColumnValue } from 'src/helpers';
-import { Processor } from 'src/types';
+import { ColumnOptions } from 'src/decorators/column.decorator.js';
+import { fromColumnValue } from 'src/helpers.js';
+import { Processor } from 'src/types.js';
 
 export const processColumns: Processor = (ctx, items) => {
   for (const item of items) {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
-import { BaseContext } from 'src/contexts/base-context';
-import { TableOptions } from 'src/decorators/table.decorator';
-import { DatabaseColumn, DatabaseTable, SchemaFromCodeOptions } from 'src/types';
+import { BaseContext } from 'src/contexts/base-context.js';
+import { TableOptions } from 'src/decorators/table.decorator.js';
+import { DatabaseColumn, DatabaseTable, SchemaFromCodeOptions } from 'src/types.js';
 
 type TableMetadata = { options: TableOptions; object: Function; methodToColumn: Map<string | symbol, DatabaseColumn> };
 

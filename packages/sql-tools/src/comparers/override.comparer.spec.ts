@@ -1,5 +1,5 @@
-import { compareOverrides } from 'src/comparers/override.comparer';
-import { DatabaseOverride, Reason } from 'src/types';
+import { compareOverrides } from 'src/comparers/override.comparer.js';
+import { DatabaseOverride, Reason } from 'src/types.js';
 import { describe, expect, it } from 'vitest';
 
 const testOverride: DatabaseOverride = {

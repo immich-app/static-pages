@@ -1,4 +1,4 @@
-import { Table } from 'src';
+import { Table } from 'src/index.js';
 
 @Table({ name: 'table-1' })
 export class Table1 {}

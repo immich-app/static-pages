@@ -1,4 +1,4 @@
-import { ConstraintType, Processor } from 'src/types';
+import { ConstraintType, Processor } from 'src/types.js';
 
 export const processUniqueConstraints: Processor = (ctx, items) => {
   for (const item of items) {

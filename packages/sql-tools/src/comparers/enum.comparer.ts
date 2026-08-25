@@ -1,4 +1,4 @@
-import { Comparer, DatabaseEnum, Reason } from 'src/types';
+import { Comparer, DatabaseEnum, Reason } from 'src/types.js';
 
 export const compareEnums = (): Comparer<DatabaseEnum> => ({
   onMissing: (source) => [{ type: 'EnumCreate', object: source, reason: Reason.MissingInTarget }],

@@ -1,4 +1,4 @@
-import { asRenameKey, haveEqualColumns } from 'src/helpers';
+import { asRenameKey, haveEqualColumns } from 'src/helpers.js';
 import {
   CompareFunction,
   Comparer,
@@ -10,7 +10,7 @@ import {
   DatabaseUniqueConstraint,
   Reason,
   SchemaDiff,
-} from 'src/types';
+} from 'src/types.js';
 
 export const compareConstraints = (): Comparer<DatabaseConstraint> => ({
   getRenameKey: (constraint) => {

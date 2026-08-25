@@ -1,4 +1,4 @@
-import { Processor } from 'src/types';
+import { Processor } from 'src/types.js';
 
 export const processFunctions: Processor = (ctx, items) => {
   if (ctx.options.functions === false) {

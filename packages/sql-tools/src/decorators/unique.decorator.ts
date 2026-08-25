@@ -1,4 +1,4 @@
-import { register } from 'src/register';
+import { register } from 'src/register.js';
 
 export type UniqueOptions = {
   name?: string;

@@ -1,5 +1,5 @@
-import { BaseContext } from 'src/contexts/base-context';
-import { SchemaFromDatabaseOptions } from 'src/types';
+import { BaseContext } from 'src/contexts/base-context.js';
+import { SchemaFromDatabaseOptions } from 'src/types.js';
 
 export class ReaderContext extends BaseContext {
   constructor(public options: SchemaFromDatabaseOptions) {

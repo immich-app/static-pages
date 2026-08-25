@@ -1,5 +1,5 @@
-import { sha1 } from 'src/helpers';
-import { NamingItem } from 'src/naming/naming.interface';
+import { sha1 } from 'src/helpers.js';
+import { NamingItem } from 'src/naming/naming.interface.js';
 
 const asSnakeCase = (name: string): string => name.replaceAll(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
 

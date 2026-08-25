@@ -1,4 +1,4 @@
-import { ForeignKeyColumn, Index, PrimaryColumn, Table } from 'src';
+import { ForeignKeyColumn, Index, PrimaryColumn, Table } from 'src/index.js';
 
 @Table()
 export class Table1 {

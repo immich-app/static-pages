@@ -1,5 +1,5 @@
-import { asRenameKey, haveEqualColumns } from 'src/helpers';
-import { Comparer, DatabaseIndex, Reason } from 'src/types';
+import { asRenameKey, haveEqualColumns } from 'src/helpers.js';
+import { Comparer, DatabaseIndex, Reason } from 'src/types.js';
 
 export const compareIndexes = (): Comparer<DatabaseIndex> => ({
   getRenameKey: (index) => {

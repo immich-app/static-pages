@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
-import { CheckOptions } from 'src/decorators/check.decorator';
-import { ConfigurationParameterOptions } from 'src/decorators/configuration-parameter.decorator';
-import { DatabaseOptions } from 'src/decorators/database.decorator';
-import { ExtensionOptions } from 'src/decorators/extension.decorator';
-import { ForeignKeyColumnOptions } from 'src/decorators/foreign-key-column.decorator';
-import { ForeignKeyConstraintOptions } from 'src/decorators/foreign-key-constraint.decorator';
-import { IndexOptions } from 'src/decorators/index.decorator';
-import { TableOptions } from 'src/decorators/table.decorator';
-import { TriggerOptions } from 'src/decorators/trigger.decorator';
-import { UniqueOptions } from 'src/decorators/unique.decorator';
-import { InternalColumnOptions } from 'src/internal';
-import { DatabaseEnum, DatabaseFunction } from 'src/types';
+import { CheckOptions } from 'src/decorators/check.decorator.js';
+import { ConfigurationParameterOptions } from 'src/decorators/configuration-parameter.decorator.js';
+import { DatabaseOptions } from 'src/decorators/database.decorator.js';
+import { ExtensionOptions } from 'src/decorators/extension.decorator.js';
+import { ForeignKeyColumnOptions } from 'src/decorators/foreign-key-column.decorator.js';
+import { ForeignKeyConstraintOptions } from 'src/decorators/foreign-key-constraint.decorator.js';
+import { IndexOptions } from 'src/decorators/index.decorator.js';
+import { TableOptions } from 'src/decorators/table.decorator.js';
+import { TriggerOptions } from 'src/decorators/trigger.decorator.js';
+import { UniqueOptions } from 'src/decorators/unique.decorator.js';
+import { InternalColumnOptions } from 'src/internal.js';
+import { DatabaseEnum, DatabaseFunction } from 'src/types.js';
 
 export type ClassBased<T> = { object: Function } & T;
 export type PropertyBased<T> = { object: object; propertyName: string | symbol } & T;
