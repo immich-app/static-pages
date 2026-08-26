@@ -2,10 +2,7 @@
   {
     "name": "Client apps",
     "id": "client-apps",
-    "types": [
-      "client",
-      "clients"
-    ],
+    "types": ["client", "clients"],
     "projects": [
       {
         "title": "ImmichFrame",
@@ -83,11 +80,7 @@
   {
     "id": "cli-tools",
     "name": "Command-line tools",
-    "types": [
-      "cli",
-      "command-line",
-      "command-line-interface"
-    ],
+    "types": ["cli", "command-line", "command-line-interface"],
     "projects": [
       {
         "title": "immich-go",
@@ -179,10 +172,7 @@
   {
     "id": "integrations",
     "name": "Integrations",
-    "types": [
-      "integration",
-      "integrations"
-    ],
+    "types": ["integration", "integrations"],
     "projects": [
       {
         "title": "Immich Kodi",
@@ -206,10 +196,7 @@
   {
     "id": "tools",
     "name": "Tools",
-    "types": [
-      "tool",
-      "tools"
-    ],
+    "types": ["tool", "tools"],
     "projects": [
       {
         "title": "Immich-Tiktok-Remover",
@@ -262,10 +249,7 @@
   {
     "id": "distributions",
     "name": "Distributions",
-    "types": [
-      "distribution",
-      "distributions"
-    ],
+    "types": ["distribution", "distributions"],
     "projects": [
       {
         "title": "Immich Distribution",
@@ -282,10 +266,7 @@
   {
     "id": "guides",
     "name": "Guides",
-    "types": [
-      "guide",
-      "guides"
-    ],
+    "types": ["guide", "guides"],
     "projects": [
       {
         "title": "Cloudflare Tunnels with SSO/OAuth",
