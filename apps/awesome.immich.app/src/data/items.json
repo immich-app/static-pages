@@ -2,7 +2,10 @@
   {
     "name": "Client apps",
     "id": "client-apps",
-    "types": ["client", "clients"],
+    "types": [
+      "client",
+      "clients"
+    ],
     "projects": [
       {
         "title": "ImmichFrame",
@@ -80,7 +83,11 @@
   {
     "id": "cli-tools",
     "name": "Command-line tools",
-    "types": ["cli", "command-line", "command-line-interface"],
+    "types": [
+      "cli",
+      "command-line",
+      "command-line-interface"
+    ],
     "projects": [
       {
         "title": "immich-go",
@@ -172,7 +179,10 @@
   {
     "id": "integrations",
     "name": "Integrations",
-    "types": ["integration", "integrations"],
+    "types": [
+      "integration",
+      "integrations"
+    ],
     "projects": [
       {
         "title": "Immich Kodi",
@@ -196,7 +206,10 @@
   {
     "id": "tools",
     "name": "Tools",
-    "types": ["tool", "tools"],
+    "types": [
+      "tool",
+      "tools"
+    ],
     "projects": [
       {
         "title": "Immich-Tiktok-Remover",
@@ -238,13 +251,21 @@
         "title": "Immich Dark Theme Generator",
         "description": "Generate a custom dark theme for Immich.",
         "href": "https://github.com/damongolding/immich-theme-generator"
+      },
+      {
+        "title": "Media Backup Manager",
+        "description": "Windows desktop app for downloading original photos and videos from Immich by album or year for local backups. Uses only the Immich API without direct database access.",
+        "href": "https://github.com/olmos-cmd/Media-Backup-Manager-for-immich"
       }
     ]
   },
   {
     "id": "distributions",
     "name": "Distributions",
-    "types": ["distribution", "distributions"],
+    "types": [
+      "distribution",
+      "distributions"
+    ],
     "projects": [
       {
         "title": "Immich Distribution",
@@ -261,7 +282,10 @@
   {
     "id": "guides",
     "name": "Guides",
-    "types": ["guide", "guides"],
+    "types": [
+      "guide",
+      "guides"
+    ],
     "projects": [
       {
         "title": "Cloudflare Tunnels with SSO/OAuth",
