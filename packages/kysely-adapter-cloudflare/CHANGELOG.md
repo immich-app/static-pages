@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2](https://github.com/immich-app/static-pages/compare/kysely-adapter-cloudflare-v0.1.1...kysely-adapter-cloudflare-v0.1.2) (2026-08-27)
+
+
+### Bug Fixes
+
+* build ([#727](https://github.com/immich-app/static-pages/issues/727)) ([fa2e800](https://github.com/immich-app/static-pages/commit/fa2e800f6e12b19dc059037f184894dd0ff47eb0))
+* build ([#733](https://github.com/immich-app/static-pages/issues/733)) ([561ca1f](https://github.com/immich-app/static-pages/commit/561ca1f76980edfe3d9a13888560eb1e405faff4))
+
 ## [0.1.1](https://github.com/immich-app/static-pages/compare/kysely-adapter-cloudflare-v0.1.0...kysely-adapter-cloudflare-v0.1.1) (2026-08-19)
 
 
