@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.86.0](https://github.com/immich-app/static-pages/compare/ui-v0.85.0...ui-v0.86.0) (2026-08-27)
+
+
+### Features
+
+* carousel card icons ([#722](https://github.com/immich-app/static-pages/issues/722)) ([b940c9b](https://github.com/immich-app/static-pages/commit/b940c9b2def4758324ec4aee0b09ac60a21b47c3))
+* features section ([#681](https://github.com/immich-app/static-pages/issues/681)) ([e98d680](https://github.com/immich-app/static-pages/commit/e98d6806423351d6e120732d38e44e747a290473))
+
+
+### Bug Fixes
+
+* export persisted state ([#721](https://github.com/immich-app/static-pages/issues/721)) ([b5735a7](https://github.com/immich-app/static-pages/commit/b5735a7c327a0035718e5fce79dccb0df2d29ee1))
+* prevent logo from being draggable ([#724](https://github.com/immich-app/static-pages/issues/724)) ([2e6f44d](https://github.com/immich-app/static-pages/commit/2e6f44d71a33a9299e0afeec8336fd285073ca09))
+
 ## [0.85.0](https://github.com/immich-app/static-pages/compare/ui-v0.84.1...ui-v0.85.0) (2026-07-27)
 
 
