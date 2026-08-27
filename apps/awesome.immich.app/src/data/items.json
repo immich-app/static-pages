@@ -238,6 +238,11 @@
         "title": "Immich Dark Theme Generator",
         "description": "Generate a custom dark theme for Immich.",
         "href": "https://github.com/damongolding/immich-theme-generator"
+      },
+      {
+        "title": "Media Backup Manager",
+        "description": "Windows desktop app for downloading original photos and videos from Immich by album or year for local backups. Uses only the Immich API without direct database access.",
+        "href": "https://github.com/olmos-cmd/Media-Backup-Manager-for-immich"
       }
     ]
   },
