@@ -123,6 +123,7 @@ export * from '$lib/state/persisted.js';
 export * from '$lib/types.js';
 export * from '$lib/utilities/byte-units.js';
 export * from '$lib/utilities/common.js';
+export * from '$lib/utilities/image-sizes.js';
 
 // site
 export * from '$lib/site/constants.js';

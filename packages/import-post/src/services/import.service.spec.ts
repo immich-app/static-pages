@@ -4,9 +4,27 @@ import type { MediaRepository } from '../repositories/media.repository.js';
 import type { OutlineRepository } from '../repositories/outline.repository.js';
 import type { R2Repository } from '../repositories/r2.repository.js';
 import type { SystemRepository } from '../repositories/system.repository.js';
+import { PIPELINE_VERSION } from '../constants.js';
 import { ImportService } from './import.service.js';
 
 const POST_URL = 'https://outline.immich/doc/abc';
+const SOURCE_BUFFER = Buffer.from('image');
+
+const RUNGS = [
+  [720, 480],
+  [1080, 720],
+  [1440, 960],
+  [2160, 1440],
+] as const;
+
+const IMAGE_VARIANTS = RUNGS.map(([width, height]) => ({
+  buffer: Buffer.from('avif'),
+  width,
+  height,
+  extension: 'avif',
+}));
+
+const variantKeys = (hash: string) => RUNGS.map(([width]) => `blog/post-id-1/${hash}-${width}.avif`);
 
 type Mock<T extends object> = Mocked<Pick<T, keyof T>>;
 type Real<T> = T extends Mock<infer U> ? U : never;
@@ -38,7 +56,7 @@ describe(ImportService.name, () => {
 
     outlineMock = {
       getDocument: vi.fn(),
-      download: vi.fn().mockResolvedValue({ buffer: Buffer.from('image'), contentType: 'image/png' }),
+      download: vi.fn().mockResolvedValue({ buffer: SOURCE_BUFFER, contentType: 'image/png' }),
       getAttachmentId: vi.fn().mockReturnValue('attachment-id'),
     };
 
@@ -51,9 +69,7 @@ describe(ImportService.name, () => {
     };
 
     mediaMock = {
-      optimizeImage: vi
-        .fn()
-        .mockResolvedValue({ buffer: Buffer.from('webp'), extension: 'webp', contentType: 'image/webp' }),
+      optimizeImage: vi.fn().mockResolvedValue(IMAGE_VARIANTS),
       optimizeVideo: vi
         .fn()
         .mockResolvedValue({ buffer: Buffer.from('mp4'), extension: 'mp4', contentType: 'video/mp4' }),
@@ -62,7 +78,6 @@ describe(ImportService.name, () => {
     r2Mock = {
       listKeys: vi.fn().mockResolvedValue([]),
       upload: vi.fn(),
-      deleteKeys: vi.fn(),
     };
 
     sut = new ImportService(
@@ -90,8 +105,9 @@ slug: test
 
       await sut.run(POST_URL);
 
-      expect(r2Mock.upload).toHaveBeenCalledTimes(1);
-      expect(r2Mock.upload).toHaveBeenCalledWith('blog/post-id-1/file-hash-1.webp', expect.any(Buffer), 'image/webp');
+      expect(r2Mock.upload.mock.calls).toEqual(
+        variantKeys('file-hash-1').map((key) => [key, expect.any(Buffer), 'image/avif']),
+      );
     });
 
     it('should not re-upload an image already present in the bucket', async () => {
@@ -106,7 +122,7 @@ slug: test
 ![alt](https://outline.immich/a.png)`,
       });
       systemMock.md5.mockReturnValue('file-hash-1');
-      r2Mock.listKeys.mockResolvedValue(['blog/post-id-1/file-hash-1.webp']);
+      r2Mock.listKeys.mockResolvedValue(variantKeys('file-hash-1'));
 
       await sut.run(POST_URL);
 
@@ -130,10 +146,10 @@ slug: test
 
       await sut.run(POST_URL);
 
-      expect(r2Mock.upload).toHaveBeenCalledTimes(1);
+      expect(r2Mock.upload).toHaveBeenCalledTimes(RUNGS.length);
     });
 
-    it('should delete orphaned attachments that are no longer referenced', async () => {
+    it('should hash the source rather than the encoder output', async () => {
       outlineMock.getDocument.mockResolvedValue({
         id: 'post-id-1',
         title: 'Test',
@@ -145,11 +161,11 @@ slug: test
 ![alt](https://outline.immich/a.png)`,
       });
       systemMock.md5.mockReturnValue('file-hash-1');
-      r2Mock.listKeys.mockResolvedValue(['blog/post-id-1/file-hash-1.webp', 'blog/post-id-1/orphan.webp']);
 
       await sut.run(POST_URL);
 
-      expect(r2Mock.deleteKeys).toHaveBeenCalledWith(['blog/post-id-1/orphan.webp']);
+      expect(systemMock.md5).toHaveBeenCalledTimes(1);
+      expect(systemMock.md5).toHaveBeenCalledWith(Buffer.concat([Buffer.from(PIPELINE_VERSION), SOURCE_BUFFER]));
     });
   });
 
@@ -319,11 +335,13 @@ type: post
 
       await sut.run(POST_URL);
 
-      expect(systemMock.write).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.stringContaining('coverUrl: https://static.immich.cloud/blog/post-id-1/file-hash-1.webp'),
+      const frontMatter = systemMock.write.mock.calls[0][1];
+      expect(frontMatter).toContain(
+        'coverAlt: Cover alt\ncoverHeight: 1440\ncoverSrcset: https://static.immich.cloud/blog/post-id-1/file-hash-1-720.avif',
       );
-      expect(systemMock.write).toHaveBeenCalledWith(expect.any(String), expect.stringContaining('coverAlt: Cover alt'));
+      expect(frontMatter).toContain(
+        'coverUrl: https://static.immich.cloud/blog/post-id-1/file-hash-1-2160.avif\ncoverWidth: 2160',
+      );
     });
 
     it('should remove the cover image from the body', async () => {
@@ -383,6 +401,68 @@ type: release
       await sut.run(POST_URL);
 
       expect(systemMock.write).toHaveBeenCalledWith(expect.any(String), expect.not.stringContaining('coverUrl'));
+    });
+  });
+
+  describe('rendered markup', () => {
+    const withBody = (text: string) => {
+      outlineMock.getDocument.mockResolvedValue({
+        id: 'post-id-1',
+        title: 'Test',
+        text: `---\ntitle: Test\nslug: test\ntype: release\n---\n\n${text}`,
+      });
+      systemMock.md5.mockReturnValue('file-hash-1');
+    };
+
+    const body = () => systemMock.write.mock.calls.at(-1)![1];
+
+    it('should ship the whole srcset, so a later ladder change cannot orphan the post', async () => {
+      withBody('![A bird](https://outline.immich/a.png)');
+
+      await sut.run(POST_URL);
+
+      const stem = 'https://static.immich.cloud/blog/post-id-1/file-hash-1';
+      expect(body()).toContain(
+        `<Markdown.Image src="${stem}-2160.avif" srcset="${RUNGS.map(([width]) => `${stem}-${width}.avif ${width}w`).join(', ')}" width="2160" height="1440" alt="A bird" />`,
+      );
+    });
+
+    it('should leave the srcset off an image with a single rung', async () => {
+      withBody('![A bird](https://outline.immich/a.gif)');
+      mediaMock.optimizeImage.mockResolvedValue([
+        { buffer: Buffer.from('webp'), width: 600, height: 400, extension: 'webp' },
+      ]);
+
+      await sut.run(POST_URL);
+
+      expect(r2Mock.upload).toHaveBeenCalledWith(
+        'blog/post-id-1/file-hash-1-600.webp',
+        expect.any(Buffer),
+        'image/webp',
+      );
+      expect(body()).toContain(
+        '<Markdown.Image src="https://static.immich.cloud/blog/post-id-1/file-hash-1-600.webp" width="600" height="400" alt="A bird" />',
+      );
+    });
+
+    it('should escape braces, which would otherwise open a svelte expression', async () => {
+      withBody('![The {count} badge](https://outline.immich/a.png)');
+
+      await sut.run(POST_URL);
+
+      expect(body()).toContain('alt="The &lbrace;count&rbrace; badge"');
+    });
+
+    it('should keep the video markup', async () => {
+      withBody('[clip](/api/attachments.redirect?id=1)');
+      outlineMock.download.mockResolvedValue({ buffer: SOURCE_BUFFER, contentType: 'video/mp4' });
+      systemMock.md5.mockReturnValue('video-hash');
+
+      await sut.run(POST_URL);
+
+      expect(body()).toContain(
+        '<video autoplay src="https://static.immich.cloud/blog/post-id-1/video-hash.mp4" controls>Your browser does not support the video tag.</video>',
+      );
     });
   });
 

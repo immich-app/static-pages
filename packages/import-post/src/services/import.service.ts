@@ -1,4 +1,4 @@
-import type { Html, Image, Link, Parent } from 'mdast';
+import type { Image, Link, Parent } from 'mdast';
 import { join } from 'node:path';
 import remarkGfm from 'remark-gfm';
 import remarkParse from 'remark-parse';
@@ -6,7 +6,7 @@ import remarkStringify from 'remark-stringify';
 import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
 import { Document, isSeq, parse, Scalar, visit as visitYaml } from 'yaml';
-import { ATTACHMENT_PREFIX, DATE_ONLY } from '../constants.js';
+import { ATTACHMENT_PREFIX, DATE_ONLY, PIPELINE_VERSION } from '../constants.js';
 import type { ConfigRepository } from '../repositories/config.repository.js';
 import type { MediaRepository } from '../repositories/media.repository.js';
 import type { OutlineRepository } from '../repositories/outline.repository.js';
@@ -14,13 +14,27 @@ import type { R2Repository } from '../repositories/r2.repository.js';
 import type { SystemRepository } from '../repositories/system.repository.js';
 import type { MarkdownDocument, OutlineAttachment, ParsedDocument } from '../types.js';
 
-type Cover = {
-  url: string;
-  alt: string;
-};
-
 const cleanTitle = (title: string | null | undefined): string | undefined =>
   title && !title.startsWith(' =') ? title : undefined;
+
+// The markup lands in a Svelte template, where a bare brace would open an expression.
+const ATTRIBUTE_ESCAPES: Record<string, string> = {
+  '&': '&amp;',
+  '"': '&quot;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '{': '&lbrace;',
+  '}': '&rbrace;',
+};
+
+const attributes = (values: Record<string, string | number | undefined>): string =>
+  Object.entries(values)
+    .filter(([, value]) => value !== undefined)
+    .map(
+      ([key, value]) =>
+        ` ${key}="${String(value).replaceAll(/[&"<>{}]/g, (character) => ATTRIBUTE_ESCAPES[character])}"`,
+    )
+    .join('');
 
 const slugify = (text: string): string =>
   text
@@ -102,10 +116,20 @@ export class ImportService {
     const existingKeys = new Set(await this.r2Repository.listKeys(bucketFolder));
     const referencedKeys = new Set<string>();
 
+    const upload = async (filename: string, body: Buffer, contentType: string): Promise<string> => {
+      const key = `${bucketFolder}/${filename}`;
+      if (!existingKeys.has(key) && !referencedKeys.has(key)) {
+        await this.r2Repository.upload(key, body, contentType);
+        console.log(`Uploaded: ${key}`);
+      }
+      referencedKeys.add(key);
+      return `${r2.publicUrl}/${key}`;
+    };
+
     const document = markdown.parse(content);
     const firstAsCover = postType !== 'release';
 
-    let cover: Cover | undefined;
+    let cover: Record<string, unknown> | undefined;
     for (const attachment of this.getAttachments(document)) {
       const url = new URL(attachment.url, postUrl).href;
       const { buffer, contentType: originalContentType } = await this.outlineRepository.download(url);
@@ -118,38 +142,53 @@ export class ImportService {
 
       console.log(`Processing attachment: ${attachmentId} (${originalContentType})`);
 
-      const {
-        buffer: body,
-        extension,
-        contentType,
-      } = await (attachment.type === 'video'
-        ? this.mediaRepository.optimizeVideo(buffer)
-        : this.mediaRepository.optimizeImage(buffer));
-
-      const hash = this.systemRepository.md5(body);
-
-      const filename = `${hash}.${extension}`;
-
-      const key = `${bucketFolder}/${filename}`;
-      if (!existingKeys.has(key) && !referencedKeys.has(key)) {
-        await this.r2Repository.upload(key, body, contentType);
-        console.log(`Uploaded: ${key}`);
+      if (attachment.type === 'video') {
+        const { buffer: body, extension, contentType } = await this.mediaRepository.optimizeVideo(buffer);
+        const src = await upload(`${this.systemRepository.md5(body)}.${extension}`, body, contentType);
+        const markup = `<video autoplay${attributes({ src, title: cleanTitle(attachment.title) })} controls>Your browser does not support the video tag.</video>`;
+        attachment.update(markup);
+        continue;
       }
-      referencedKeys.add(key);
-      const newUrl = `${r2.publicUrl}/${key}`;
+
+      const variants = await this.mediaRepository.optimizeImage(buffer);
+      const widest = variants.at(-1)!;
+      // An image has no single output to hash, and libaom is not byte-stable across thread counts.
+      const hash = this.systemRepository.md5(Buffer.concat([Buffer.from(PIPELINE_VERSION), buffer]));
+
+      const candidates: { url: string; width: number }[] = [];
+      for (const { buffer: body, width, extension } of variants) {
+        const url = await upload(`${hash}-${width}.${extension}`, body, `image/${extension}`);
+        candidates.push({ url, width });
+      }
+
+      const image = {
+        src: candidates.at(-1)!.url,
+        // A lone candidate would still take its intrinsic width from `sizes` and upscale.
+        srcset: candidates.length > 1 ? candidates.map(({ url, width }) => `${url} ${width}w`).join(', ') : undefined,
+        width: widest.width,
+        height: widest.height,
+      };
 
       if (firstAsCover && !cover) {
-        cover = { url: newUrl, alt: attachment.alt };
+        cover = {
+          coverUrl: image.src,
+          coverSrcset: image.srcset,
+          coverWidth: image.width,
+          coverHeight: image.height,
+          coverAlt: attachment.alt,
+        };
         attachment.remove();
       } else {
-        attachment.update(newUrl, cleanTitle(attachment.title));
+        attachment.update(
+          `<Markdown.Image${attributes({ ...image, alt: attachment.alt, title: cleanTitle(attachment.title) })} />`,
+        );
       }
     }
 
     // remark escapes `<` in text as `\<`; keep it bare to match the source
     const rendered = markdown.stringify(document).replaceAll(String.raw`\<`, '<');
 
-    const metadata: Record<string, unknown> = { ...data, id: uuid, title, slug, authors: ['Immich Team'] };
+    const metadata: Record<string, unknown> = { ...data, id: uuid, title, slug, authors: ['Immich Team'], ...cover };
     if (metadata.publishedAt instanceof Date) {
       metadata.publishedAt = metadata.publishedAt.toISOString().slice(0, 10);
     }
@@ -158,16 +197,9 @@ export class ImportService {
       metadata.publishedAt = new Date().toISOString().slice(0, 10);
     }
 
-    if (cover) {
-      metadata.coverUrl = cover.url;
-      metadata.coverAlt = cover.alt;
-    }
-
-    const staleKeys = existingKeys.difference(referencedKeys);
+    // Nothing is deleted: the deployed markdown points at the old keys until this import ships.
     const uploadedKeys = referencedKeys.difference(existingKeys);
-    const unchanged = referencedKeys.size - uploadedKeys.size;
-    console.log(`\nBucket stats (uploaded=${uploadedKeys.size}, unchanged=${unchanged}, deleted=${staleKeys.size})`);
-    await this.r2Repository.deleteKeys([...staleKeys]);
+    console.log(`\nBucket stats (uploaded=${uploadedKeys.size}, unchanged=${referencedKeys.size - uploadedKeys.size})`);
 
     const outputFile = join(repoRoot, 'apps/root.immich.app/src/routes/blog', folder, '+page.md');
     this.systemRepository.write(outputFile, serializeYml(metadata, rendered));
@@ -193,10 +225,7 @@ export class ImportService {
         type: 'image',
         alt: node.alt ?? '',
         title: node.title,
-        update: (url, title) => {
-          node.title = title;
-          node.url = url;
-        },
+        update: (markup) => this.replaceNode(parent, node, markup),
         remove: () => this.removeNode(document, parent, node),
       });
     });
@@ -211,22 +240,16 @@ export class ImportService {
         type: 'video',
         alt: '',
         title: node.title,
-        update: (src, title) => {
-          const titleAttr = title ? ` title="${title}"` : '';
-          const html: Html = {
-            type: 'html',
-            value: `<video autoplay src="${src}"${titleAttr} controls>Your browser does not support the video tag.</video>`,
-          };
-          const at = parent.children.indexOf(node);
-          if (at !== -1) {
-            parent.children[at] = html;
-          }
-        },
+        update: (markup) => this.replaceNode(parent, node, markup),
         remove: () => this.removeNode(document, parent, node),
       });
     });
 
     return attachments;
+  }
+
+  private replaceNode(parent: Parent, node: Image | Link, markup: string): void {
+    parent.children[parent.children.indexOf(node)] = { type: 'html', value: markup };
   }
 
   private removeNode(document: MarkdownDocument, parent: Parent, node: Image | Link): void {

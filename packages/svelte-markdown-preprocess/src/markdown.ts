@@ -26,6 +26,9 @@ const renderAlert = (
   tokens: Token[],
 ) => `<Markdown.Alert${createAttributes({ variant, title })}>${parser.parse(tokens)}</Markdown.Alert>\n`;
 
+// Marked reads a dotted tag as text, so a component like `<Markdown.Image />` needs its own rule.
+const SVELTE_COMPONENT_REGEX = /^<[A-Z]\w*\.\w+\b[^>]*\/>[ \t]*(?:\n+|$)/;
+
 const normalizeText = (text: string) => escapeHtml(emojify(text));
 
 export const markedSvelte = (): MarkedExtension => ({
@@ -69,6 +72,11 @@ export const markedSvelte = (): MarkedExtension => ({
       if (src.startsWith(' '.repeat(4))) {
         return false;
       }
+    },
+
+    html(src) {
+      const match = SVELTE_COMPONENT_REGEX.exec(src);
+      return match ? { type: 'html', raw: match[0], text: `${match[0].trim()}\n`, pre: false, block: true } : false;
     },
   },
 

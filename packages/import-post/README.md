@@ -4,15 +4,18 @@ Imports an [Outline](https://www.getoutline.com/) document into the blog. It:
 
 1. Fetches the document from the Outline API.
 2. Downloads every referenced image/video attachment.
-3. Optimizes and uploads them to and R2 bucket using md5 hash as filename
-4. Updates the markdown link to use static.immich.cloud
+3. Optimizes each image into a responsive ladder, capped at the source width, and uploads every
+   rung to R2 as `<hash>-<rung>.<ext>`. The hash covers the source bytes and the pipeline version,
+   so an encoder change invalidates what is already in the bucket.
+4. Replaces the markdown image with `<Markdown.Image src srcset width height alt />`, so a post
+   keeps the variants it was built with and a later ladder change cannot orphan it.
 5. Writes the updated markdown to disk
 6. Runs `prettier --write` on the file
 
 ## Usage
 
 ```bash
-pnpm --filter @immich/import-post run import "<outline-post-url>"
+mise import-post "<outline-post-url>"
 ```
 
 Required environment variables:

@@ -1,23 +1,34 @@
 <script lang="ts">
+  import { IMAGE_SIZES } from '$lib/utilities/image-sizes.js';
   import { cleanClass } from '$lib/utilities/internal.js';
   import type { Snippet } from 'svelte';
 
   type Props = {
     src: string;
+    srcset?: string;
+    width?: number | string;
+    height?: number | string;
     alt?: string;
     caption?: Snippet;
     title?: string;
     class?: string;
+    priority?: boolean;
   };
 
-  const { src, alt, caption, title, class: className }: Props = $props();
+  const { src, srcset, width, height, alt, caption, title, class: className, priority }: Props = $props();
 </script>
 
 <figure class="my-3">
   <img
     {src}
+    {srcset}
+    sizes={srcset ? IMAGE_SIZES : undefined}
+    {width}
+    {height}
     {alt}
     {title}
+    loading={priority ? 'eager' : 'lazy'}
+    fetchpriority={priority ? 'high' : undefined}
     class={cleanClass('rounded-lg object-cover block max-w-full max-h-[80vh] w-auto h-auto mx-auto', className)}
   />
   {#if caption || alt}
