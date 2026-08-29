@@ -74,6 +74,11 @@
         "title": "Immich Screensaver",
         "description": "Native Windows screensaver that shows photos from your Immich server, with a different photo on each monitor, album selection, configurable crossfades and a clock overlay.",
         "href": "https://github.com/xchimx/ImmichScreensaver"
+      },
+      {
+        "title": "Imora",
+        "description": "Unofficial native Immich client for iOS, written in Swift.",
+        "href": "https://imora.vexcited.com"
       }
     ]
   },
