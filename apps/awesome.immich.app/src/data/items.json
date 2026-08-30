@@ -204,6 +204,11 @@
     "types": ["tool", "tools"],
     "projects": [
       {
+        "title": "Pictaria Server",
+        "description": "Self-hosted server to understand, enrich, curate your collection, create smart albums and remote control Pictaria Frame apps.",
+        "href": "https://github.com/pictaria-ai/pictaria-server"
+      },
+      {
         "title": "Immich-Tiktok-Remover",
         "description": "Script to search for and remove TikTok videos from your Immich library.",
         "href": "https://github.com/mxc2/immich-tiktok-remover"
