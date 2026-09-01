@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { YamlPath } from './spec';
 import { ML_BACKENDS, TRANSCODE_BACKENDS, type MlAccel, type TranscodeAccel } from './hwaccel';
 
 const databaseMountSchema = z.discriminatedUnion('type', [
@@ -82,21 +83,116 @@ const immichConfigSchema = z.object({
 
 export type ImmichConfig = z.infer<typeof immichConfigSchema>;
 
-const ADVANCED_RESETS: ((config: ImmichConfig) => void)[] = [
-  (config) => (config.port = DEFAULT_CONFIG.port),
-  (config) => (config.storage.customFolders = DEFAULT_CONFIG.storage.customFolders),
-  (config) => (config.database.external = DEFAULT_CONFIG.database.external),
-  (config) => (config.redis.external = DEFAULT_CONFIG.redis.external),
-  (config) => (config.containerNames = DEFAULT_CONFIG.containerNames),
-  (config) => (config.storage.externalLibraries = structuredClone(DEFAULT_CONFIG.storage.externalLibraries)),
-  (config) => (config.network.external = DEFAULT_CONFIG.network.external),
-];
+export type OutputContext = {
+  config: ImmichConfig;
+  server: YamlPath;
+  ml: YamlPath;
+  services: string[];
+  env: (key: string) => YamlPath[];
+  bundledDatabase: boolean;
+  databaseVolume: YamlPath[];
+  network: YamlPath[];
+  rootless: YamlPath[];
+  rootlessUser: YamlPath[];
+  overrides: YamlPath[];
+  libraries: YamlPath[];
+  fragment: (of: 'transcoding' | 'ml') => YamlPath[];
+};
+
+type FieldSpec = {
+  config: string[];
+  advanced?: true;
+  output?: (context: OutputContext) => YamlPath[];
+};
+
+const DATABASE = ['services', 'database'];
+
+export const FIELDS = {
+  version: {
+    config: [],
+    output: ({ server, ml }) => [
+      [...server, 'image'],
+      [...ml, 'image'],
+    ],
+  },
+  timezone: { config: ['timezone'], output: ({ env }) => env('TZ') },
+  port: { config: ['port'], advanced: true, output: ({ server }) => [[...server, 'ports', 0]] },
+  containerNames: {
+    config: ['containerNames'],
+    advanced: true,
+    output: ({ config, services }) =>
+      config.containerNames ? services.map((name) => ['services', name, 'container_name']) : [],
+  },
+  rootless: { config: ['rootless.enabled'], output: ({ rootless }) => rootless },
+  rootlessUser: { config: ['rootless.uid', 'rootless.gid'], output: ({ rootlessUser }) => rootlessUser },
+  uploadLocation: { config: ['storage.uploadLocation'], output: ({ server }) => [[...server, 'volumes', 0]] },
+  customFolders: { config: ['storage.customFolders'], advanced: true, output: ({ overrides }) => overrides },
+  externalLibraries: { config: ['storage.externalLibraries'], advanced: true, output: ({ libraries }) => libraries },
+  transcoding: { config: ['hwaccel.transcoding'], output: ({ fragment }) => fragment('transcoding') },
+  ml: { config: ['hwaccel.ml'], output: ({ ml, fragment }) => [[...ml, 'image'], ...fragment('ml')] },
+  databaseExternal: {
+    config: ['database.external'],
+    advanced: true,
+    output: ({ bundledDatabase, env }) => (bundledDatabase ? [DATABASE] : env('DB_URL')),
+  },
+  databaseMount: { config: ['database.mount'], output: ({ databaseVolume }) => databaseVolume },
+  databaseLocation: { config: ['database.mount.location'], output: ({ databaseVolume }) => databaseVolume },
+  databaseStorageType: {
+    config: ['database.storageType'],
+    output: ({ bundledDatabase }) => (bundledDatabase ? [[...DATABASE, 'environment', 'DB_STORAGE_TYPE']] : []),
+  },
+  databasePassword: {
+    config: ['database.password'],
+    output: ({ bundledDatabase, env }) => [
+      ...(bundledDatabase ? [[...DATABASE, 'environment', 'POSTGRES_PASSWORD']] : []),
+      ...env('DB_PASSWORD'),
+    ],
+  },
+  externalUrl: { config: ['database.externalUrl'], output: ({ env }) => env('DB_URL') },
+  redisExternal: {
+    config: ['redis.external'],
+    advanced: true,
+    output: ({ env, services }) =>
+      services.includes('redis')
+        ? [['services', 'redis']]
+        : [...env('REDIS_HOSTNAME'), ...env('REDIS_PORT'), ...env('REDIS_PASSWORD')],
+  },
+  redisHost: { config: ['redis.host'], output: ({ env }) => env('REDIS_HOSTNAME') },
+  redisPort: { config: ['redis.port'], output: ({ env }) => env('REDIS_PORT') },
+  redisPassword: { config: ['redis.password'], output: ({ env }) => env('REDIS_PASSWORD') },
+  networkExternal: { config: ['network.external'], advanced: true, output: ({ network }) => network },
+  networkName: { config: ['network.name'], output: ({ network }) => network },
+} satisfies Record<string, FieldSpec>;
+
+export type FieldId = keyof typeof FIELDS;
+
+const valueAt = (source: unknown, path: string[]): unknown => {
+  let value = source;
+  for (const key of path) {
+    value = (value as Record<string, unknown> | undefined)?.[key];
+  }
+  return value;
+};
+
+const assignAt = (target: ImmichConfig, path: string, value: unknown) => {
+  const keys = path.split('.');
+  const parent = valueAt(target, keys.slice(0, -1)) as Record<string, unknown>;
+  parent[keys.at(-1) as string] = value;
+};
 
 export const withoutAdvanced = (config: ImmichConfig): ImmichConfig => {
   const basic = structuredClone(config);
-  for (const reset of ADVANCED_RESETS) {
-    reset(basic);
+
+  for (const field of Object.values(FIELDS)) {
+    if (!('advanced' in field)) {
+      continue;
+    }
+    for (const path of field.config) {
+      const fallback = valueAt(DEFAULT_CONFIG, path.split('.'));
+      assignAt(basic, path, structuredClone(fallback));
+    }
   }
+
   return basic;
 };
 

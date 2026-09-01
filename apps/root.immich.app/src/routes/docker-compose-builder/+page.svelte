@@ -2,9 +2,10 @@
   import { goto } from '$app/navigation';
   import { siteMetadata } from '$lib';
   import PageContent from '$lib/components/PageContent.svelte';
-  import { buildCompose } from '$lib/compose/build';
+  import { buildCompose, buildComposeFields } from '$lib/compose/build';
   import { DEFAULT_CONFIG, FOLDER_OVERRIDES, StorageType, validate, withoutAdvanced } from '$lib/compose/config';
   import { ML_ACCELS, TRANSCODE_ACCELS } from '$lib/compose/hwaccel';
+  import { highlightedLines } from '$lib/compose/highlight';
   import {
     ActionBar,
     ActionButton,
@@ -72,6 +73,23 @@
   const compose = $derived(buildCompose(effectiveConfig, version));
   const errors = $derived(validate(effectiveConfig));
   const hasErrors = $derived(Object.keys(errors).length > 0);
+  const fields = $derived(buildComposeFields(effectiveConfig, version));
+
+  let focusedField = $state<string | undefined>();
+
+  const onFocusIn = (event: FocusEvent) => {
+    const target = (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-field]');
+    focusedField = target?.dataset.field;
+  };
+
+  const onFocusOut = (event: FocusEvent) => {
+    const next = (event.relatedTarget as HTMLElement | null)?.closest('[data-field]');
+    if (!next) {
+      focusedField = undefined;
+    }
+  };
+
+  const focusedLines = $derived(focusedField ? highlightedLines(compose, fields[focusedField] ?? []) : []);
 
   const timezones = Intl.supportedValuesOf('timeZone');
 
@@ -208,7 +226,12 @@
           <ActionButton action={Download} type="button" variant="filled" size="medium" shape="round" color="primary" />
         </div>
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-[clamp(20rem,34%,31.25rem)_1fr]">
-          <form autocomplete="off" onsubmit={(event) => event.preventDefault()}>
+          <form
+            autocomplete="off"
+            onsubmit={(event) => event.preventDefault()}
+            onfocusin={onFocusIn}
+            onfocusout={onFocusOut}
+          >
             <Stack gap={6}>
               <Card color="secondary">
                 <CardHeader>
@@ -225,6 +248,7 @@
                             fullWidth
                             variant={versionPinned ? 'ghost' : 'filled'}
                             color={versionPinned ? 'secondary' : 'primary'}
+                            data-field="version"
                             onclick={() => (versionPinned = false)}
                           >
                             Rolling
@@ -234,6 +258,7 @@
                             fullWidth
                             variant={versionPinned ? 'filled' : 'ghost'}
                             color={versionPinned ? 'primary' : 'secondary'}
+                            data-field="version"
                             onclick={() => (versionPinned = true)}
                           >
                             Pinned
@@ -242,6 +267,7 @@
                         {#if versionPinned}
                           <Input
                             bind:value={pinnedVersion}
+                            data-field="version"
                             placeholder={latestVersion}
                             aria-label="Pinned Immich version tag"
                           />
@@ -263,13 +289,18 @@
                     </Field>
 
                     <Field label="Rootless mode">
-                      <Switch bind:checked={config.rootless.enabled} class="flex justify-between gap-4" />
+                      <Switch
+                        bind:checked={config.rootless.enabled}
+                        data-field="rootless"
+                        class="flex justify-between gap-4"
+                      />
                     </Field>
                     {#if config.rootless.enabled}
                       <div class="grid grid-cols-2 gap-4">
                         <Field label="UID" invalid={!!errors['rootless.uid']}>
                           <NumberInput
                             bind:value={config.rootless.uid}
+                            data-field="rootlessUser"
                             min={0}
                             placeholder={String(DEFAULT_CONFIG.rootless.uid)}
                           />
@@ -278,6 +309,7 @@
                         <Field label="GID" invalid={!!errors['rootless.gid']}>
                           <NumberInput
                             bind:value={config.rootless.gid}
+                            data-field="rootlessUser"
                             min={0}
                             placeholder={String(DEFAULT_CONFIG.rootless.gid)}
                           />
@@ -291,7 +323,11 @@
                         label="Container names"
                         description="Turn off to run more than one Immich stack on the same host."
                       >
-                        <Switch bind:checked={config.containerNames} class="flex justify-between gap-4" />
+                        <Switch
+                          bind:checked={config.containerNames}
+                          data-field="containerNames"
+                          class="flex justify-between gap-4"
+                        />
                       </Field>
                     {/if}
                   </Stack>
@@ -305,7 +341,12 @@
                 <CardBody>
                   <Stack gap={4}>
                     <Field label="Server Timezone">
-                      <Input bind:value={config.timezone} list="timezones" placeholder="Etc/UTC" />
+                      <Input
+                        bind:value={config.timezone}
+                        data-field="timezone"
+                        list="timezones"
+                        placeholder="Etc/UTC"
+                      />
                       <!-- TODO: Combobox in @immich/ui -->
                       <datalist id="timezones">
                         {#each timezones as timezone (timezone)}
@@ -317,6 +358,7 @@
                     <Field label="Upload Location" invalid={!!errors['storage.uploadLocation']}>
                       <Input
                         bind:value={config.storage.uploadLocation}
+                        data-field="uploadLocation"
                         placeholder={DEFAULT_CONFIG.storage.uploadLocation}
                       />
                       {@render fieldError(errors['storage.uploadLocation'])}
@@ -327,7 +369,11 @@
                         label="Custom folder locations"
                         description="Mount individual subfolders on separate storage."
                       >
-                        <Switch bind:checked={config.storage.customFolders} class="flex justify-between gap-4" />
+                        <Switch
+                          bind:checked={config.storage.customFolders}
+                          data-field="customFolders"
+                          class="flex justify-between gap-4"
+                        />
                       </Field>
                       {#if config.storage.customFolders}
                         <Text size="small" color="muted">Leave a field blank to keep it under the upload location.</Text
@@ -335,7 +381,11 @@
                         {#each FOLDER_OVERRIDES as folder (folder.key)}
                           {@const error = errors[`storage.overrides.${folder.key}`]}
                           <Field label={folder.label} invalid={!!error}>
-                            <Input bind:value={config.storage.overrides[folder.key]} placeholder="Optional host path" />
+                            <Input
+                              bind:value={config.storage.overrides[folder.key]}
+                              data-field={`override:${folder.key}`}
+                              placeholder="Optional host path"
+                            />
                             {@render fieldError(error)}
                           </Field>
                         {/each}
@@ -354,6 +404,7 @@
                               <div class="grow">
                                 <Input
                                   bind:value={library.path}
+                                  data-field={`library:${index}`}
                                   placeholder="/mnt/media/photos"
                                   aria-label={`External library path ${index + 1}`}
                                 />
@@ -393,6 +444,7 @@
                       <Field label="Host Port" invalid={!!errors.port}>
                         <NumberInput
                           bind:value={config.port}
+                          data-field="port"
                           min={1}
                           max={65_535}
                           placeholder={String(DEFAULT_CONFIG.port)}
@@ -401,18 +453,24 @@
                       </Field>
 
                       <Field label="External network" description="Attach the server to a network you already created.">
-                        <Switch bind:checked={config.network.external} class="flex justify-between gap-4" />
+                        <Switch
+                          bind:checked={config.network.external}
+                          data-field="networkExternal"
+                          class="flex justify-between gap-4"
+                        />
                       </Field>
                       {#if config.network.external}
                         <Field label="Network name" invalid={!!errors['network.name']}>
-                          <Input bind:value={config.network.name} placeholder="proxy" />
+                          <Input bind:value={config.network.name} data-field="networkName" placeholder="proxy" />
                           {@render fieldError(errors['network.name'])}
                         </Field>
                       {/if}
                     {/if}
 
                     <Field label="Transcoding Hardware Acceleration">
-                      <Select bind:value={config.hwaccel.transcoding} options={TRANSCODE_ACCELS} />
+                      <div data-field="transcoding">
+                        <Select bind:value={config.hwaccel.transcoding} options={TRANSCODE_ACCELS} />
+                      </div>
                     </Field>
                   </Stack>
                 </CardBody>
@@ -424,7 +482,9 @@
                 </CardHeader>
                 <CardBody>
                   <Field label="Hardware Acceleration">
-                    <Select bind:value={config.hwaccel.ml} options={ML_ACCELS} />
+                    <div data-field="ml">
+                      <Select bind:value={config.hwaccel.ml} options={ML_ACCELS} />
+                    </div>
                   </Field>
                 </CardBody>
               </Card>
@@ -437,7 +497,11 @@
                   <Stack gap={4}>
                     {#if advanced}
                       <Field label="External Postgres">
-                        <Switch bind:checked={config.database.external} class="flex justify-between gap-4" />
+                        <Switch
+                          bind:checked={config.database.external}
+                          data-field="databaseExternal"
+                          class="flex justify-between gap-4"
+                        />
                       </Field>
                     {/if}
                     {#if advanced && config.database.external}
@@ -450,6 +514,7 @@
                       <Field label="Connection URL" invalid={!!errors['database.externalUrl']}>
                         <Input
                           bind:value={config.database.externalUrl}
+                          data-field="externalUrl"
                           placeholder="postgresql://user:password@host:5432/immich"
                         />
                         {@render fieldError(errors['database.externalUrl'])}
@@ -460,6 +525,7 @@
                         description="Docker manages the storage location. Recommended on Windows and macOS."
                       >
                         <Switch
+                          data-field="databaseMount"
                           checked={config.database.mount.type === 'volume'}
                           onCheckedChange={(value) =>
                             (config.database.mount = value
@@ -470,19 +536,26 @@
                       </Field>
                       {#if config.database.mount.type === 'bind'}
                         <Field label="Database Location" invalid={!!errors['database.mount.location']}>
-                          <Input bind:value={config.database.mount.location} placeholder={defaultDatabaseLocation} />
+                          <Input
+                            bind:value={config.database.mount.location}
+                            data-field="databaseLocation"
+                            placeholder={defaultDatabaseLocation}
+                          />
                           {@render fieldError(errors['database.mount.location'])}
                         </Field>
                       {/if}
                       <Field label="Database storage type">
-                        <Select bind:value={config.database.storageType} options={Object.values(StorageType)} />
+                        <div data-field="databaseStorageType">
+                          <Select bind:value={config.database.storageType} options={Object.values(StorageType)} />
+                        </div>
                       </Field>
                       <Field label="Database Password" invalid={!!errors['database.password']}>
                         <div class="flex items-end gap-2">
                           <div class="grow">
-                            <Input bind:value={config.database.password} />
+                            <Input bind:value={config.database.password} data-field="databasePassword" />
                           </div>
                           <IconButton
+                            data-field="databasePassword"
                             icon={mdiDiceMultiple}
                             onclick={generatePassword}
                             aria-label="Generate a random password"
@@ -505,19 +578,33 @@
                   <CardBody>
                     <Stack gap={4}>
                       <Field label="External Redis">
-                        <Switch bind:checked={config.redis.external} class="flex justify-between gap-4" />
+                        <Switch
+                          bind:checked={config.redis.external}
+                          data-field="redisExternal"
+                          class="flex justify-between gap-4"
+                        />
                       </Field>
                       {#if config.redis.external}
                         <Field label="Host" invalid={!!errors['redis.host']}>
-                          <Input bind:value={config.redis.host} placeholder="redis.example.com" />
+                          <Input
+                            bind:value={config.redis.host}
+                            data-field="redisHost"
+                            placeholder="redis.example.com"
+                          />
                           {@render fieldError(errors['redis.host'])}
                         </Field>
                         <Field label="Port" invalid={!!errors['redis.port']}>
-                          <NumberInput bind:value={config.redis.port} min={1} max={65_535} placeholder="6379" />
+                          <NumberInput
+                            bind:value={config.redis.port}
+                            data-field="redisPort"
+                            min={1}
+                            max={65_535}
+                            placeholder="6379"
+                          />
                           {@render fieldError(errors['redis.port'])}
                         </Field>
                         <Field label="Password">
-                          <Input bind:value={config.redis.password} placeholder="Optional" />
+                          <Input bind:value={config.redis.password} data-field="redisPassword" placeholder="Optional" />
                         </Field>
                       {/if}
                     </Stack>
@@ -531,7 +618,13 @@
             {#if versionFailed}
               <Text color="danger">Could not reach the Immich version service. Reload the page to try again.</Text>
             {:else if version}
-              <CodeBlock code={compose} language={yamlLanguage} lineNumbers copy={!hasErrors} />
+              <CodeBlock
+                code={compose}
+                language={yamlLanguage}
+                lineNumbers
+                highlightedLines={focusedLines}
+                copy={!hasErrors}
+              />
             {:else}
               <LoadingSpinner />
             {/if}
