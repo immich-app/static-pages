@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@immich/kysely-adapter-cloudflare": "^0.1.0",
-    "@immich/ui": "^0.85.0",
+    "@immich/ui": "^0.86.0",
     "@mdi/js": "^7.4.47",
     "@types/qrcode": "^1.5.6",
     "chart.js": "^4.5.1",
