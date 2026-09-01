@@ -86,7 +86,7 @@ export class ImportService {
     const slug = data.slug || slugify(title);
     const folder = `(${postType}s)/${slug}`;
     const bucketFolder = `blog/${uuid}`;
-    const outputRelative = `src/routes/blog/${folder}/+page.md`;
+    const outputRelative = `src/routes/(shell)/blog/${folder}/+page.md`;
 
     console.log(`Importing:
   ID:    ${uuid}

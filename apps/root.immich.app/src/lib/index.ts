@@ -82,24 +82,27 @@ const getFrontMatterExample = (missingAttributes: string[]) => {
   ].join('\n');
 };
 
+const POST_PATH = /\/blog\/\((?<group>[^)]+)\)\/(?<slug>[^/]+)\/\+page\.md$/;
+
 const asPost = (path: string, content: string): BlogPost => {
   const attributes = fm<PostFrontMatter>(content).attributes;
-  const parts = path.split('/');
-  const filename = parts.at(-2)!;
-  const folder = parts.at(-3)!;
-  const type = folder.slice(1, -2); // strip parens and trailing s
+  const match = POST_PATH.exec(path);
+  if (!match?.groups) {
+    throw new Error(`${path} is not a valid blog post path - expected blog/(types)/slug/+page.md`);
+  }
+
+  const { slug, group } = match.groups;
+  const type = group.replace(/s$/, '');
 
   const requiredAttributes = ['id', 'title', 'description', 'publishedAt', 'authors'];
   const missingAttributes = requiredAttributes.filter((attribute) => !Object.hasOwn(attributes, attribute));
   if (missingAttributes.length > 0) {
-    throw new Error(
-      `${filename} is missing ${missingAttributes.join(', ')}.\n${getFrontMatterExample(missingAttributes)}`,
-    );
+    throw new Error(`${slug} is missing ${missingAttributes.join(', ')}.\n${getFrontMatterExample(missingAttributes)}`);
   }
 
   if (!isBlogType(type)) {
     throw new Error(
-      `${filename} has incorrect blog type - found ${type}, but expected one of ${Object.values(BlogType).join(', ')}`,
+      `${slug} has incorrect blog type - found ${type}, but expected one of ${Object.values(BlogType).join(', ')}`,
     );
   }
 
@@ -113,7 +116,7 @@ const asPost = (path: string, content: string): BlogPost => {
       ? (DateTime.fromJSDate(attributes.modifiedAt, { zone: 'UTC' }) as DateTime<true>)
       : undefined,
     authors: attributes.authors,
-    url: `/blog/${filename}`,
+    url: `/blog/${slug}`,
     featured: attributes.featured,
     coverUrl: attributes.coverUrl,
     coverAlt: attributes.coverAlt,
@@ -124,7 +127,10 @@ const asPost = (path: string, content: string): BlogPost => {
 
 const getPosts = () => {
   const idMap = new Map<string, string>();
-  const modules = import.meta.glob<{ default: string }>('../routes/blog/**/*.md', { query: '?raw', eager: true });
+  const modules = import.meta.glob<{ default: string }>('../routes/**/blog/**/*.md', {
+    query: '?raw',
+    eager: true,
+  });
   const posts: BlogPost[] = [];
   for (const [path, { default: content }] of Object.entries(modules)) {
     const post = asPost(path, content);
