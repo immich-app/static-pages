@@ -30,7 +30,7 @@
     "commander": "^15.0.0",
     "graph-data-structure": "^4.5.0",
     "kysely": "^0.29.0",
-    "kysely-postgres-js": "^3.0.0",
+    "kysely-postgres-js": "^4.0.0",
     "pg-connection-string": "^2.11.0",
     "postgres": "^3.4.8"
   },
