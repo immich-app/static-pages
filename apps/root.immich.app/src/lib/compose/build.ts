@@ -71,6 +71,8 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
     .filter(({ path }) => path.trim())
     .map(({ path, readOnly }) => `${path.trim()}:${path.trim()}${readOnly ? ':ro' : ''}`);
 
+  const rootlessVolumes = (name: string) => (rootless.enabled ? ROOTLESS_VOLUMES.get(name) : undefined);
+
   const backingServices: Record<string, ComposeService> = {};
 
   if (!config.redis.external) {
@@ -78,6 +80,7 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
       container_name: containerName('immich_redis'),
       image: IMAGES.redis,
       healthcheck: { test: 'redis-cli ping || exit 1' },
+      volumes: rootlessVolumes('redis') ?? [],
       restart: 'always',
     };
   }
@@ -132,7 +135,7 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
       {
         container_name: containerName('immich_machine_learning'),
         image: IMAGES.machineLearning(version + ML_BACKENDS[config.hwaccel.ml].tag),
-        volumes: [`${NamedVolume.ModelCache}:/cache`],
+        volumes: rootlessVolumes('immich-machine-learning') ?? [`${NamedVolume.ModelCache}:/cache`],
         restart: 'always',
         healthcheck: { disable: false },
       },
@@ -143,12 +146,7 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
 
   if (rootless.enabled) {
     for (const [name, service] of Object.entries(services)) {
-      const hardened = deepmerge(service, rootlessHardening(rootless));
-      const rootlessVolumes = ROOTLESS_VOLUMES.get(name);
-      if (rootlessVolumes) {
-        hardened.volumes = rootlessVolumes;
-      }
-      services[name] = hardened;
+      services[name] = deepmerge(service, rootlessHardening(rootless));
     }
   }
 
