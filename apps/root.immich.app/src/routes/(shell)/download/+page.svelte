@@ -33,6 +33,7 @@
 </script>
 
 <SiteMetadata site={siteMetadata} page={pageMetadata} />
+
 <PageContent>
   <Container size="large" center>
     <Heading size="title" class="mb-4" tag="h1">{pageMetadata.title}</Heading>
@@ -97,6 +98,7 @@
         </CardBody>
         <CardFooter class="flex flex-col gap-2">
           <Button fullWidth href="https://immich.app/docs/install/docker-compose">View Instructions</Button>
+          <Button fullWidth color="secondary" href="/docker-compose-builder">Build a Compose File</Button>
         </CardFooter>
       </Card>
 
