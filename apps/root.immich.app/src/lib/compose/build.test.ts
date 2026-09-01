@@ -209,6 +209,23 @@ describe('buildCompose', () => {
     expect(spec.networks).toBeUndefined();
   });
 
+  it('keeps hardware acceleration mounts in rootless mode', () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+    config.hwaccel.ml = 'openvino';
+    config.rootless = { enabled: true, uid: 1000, gid: 1000 };
+    const spec = parse(buildCompose(config, VERSION));
+
+    expect(spec.services['immich-machine-learning'].volumes).toEqual([
+      './ml-model-cache:/cache',
+      './ml-dotcache:/.cache',
+      './ml-config:/.config',
+      '/dev/bus/usb:/dev/bus/usb',
+    ]);
+    expect(spec.services.redis.volumes).toEqual(['./redis:/data']);
+    // the named cache volume is no longer mounted, so it is not declared
+    expect(spec.volumes).toBeUndefined();
+  });
+
   it('applies a custom uid and gid to every service', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.rootless = { enabled: true, uid: 99, gid: 100 };
