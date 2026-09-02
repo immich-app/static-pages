@@ -3,6 +3,7 @@
   import Icon from '$lib/components/Icon/Icon.svelte';
   import Label from '$lib/components/Label/Label.svelte';
   import Text from '$lib/components/Text/Text.svelte';
+  import Tooltip from '$lib/components/Tooltip/Tooltip.svelte';
   import { zIndex } from '$lib/constants.js';
   import { styleVariants } from '$lib/styles.js';
   import type { SelectCommonProps, SelectOption } from '$lib/types.js';
@@ -30,6 +31,7 @@
     asLabel = (options: SelectOption<T>[]) => options.map(({ label }) => label).join(', '),
     placeholder,
     class: className,
+    title,
   }: Props = $props();
 
   const asOptions = (items: string[] | SelectOption<T>[]) => {
@@ -185,44 +187,49 @@
     items={options.map(({ value, label, disabled }) => ({ value, label: label ?? value, disabled }))}
     {onValueChange}
   >
-    <Select.Trigger
-      bind:ref={triggerRef}
-      {disabled}
-      id={triggerId}
-      class={triggerStyles({
-        disabled,
-        invalid,
-        shape,
-        roundedSize,
-      })}
-      aria-describedby={descriptionId}
-      aria-label={label ? undefined : placeholder}
-    >
-      <div
-        class={containerStyles({
-          disabled,
-          shape,
-          roundedSize,
-        })}
-      >
-        <span
-          class={cleanClass(
-            valueStyles({
-              textSize: size,
-              height: size,
-              leadingPadding: 'base',
-              trailingPadding: 'icon',
-              roundedSize,
-            }),
-            !selectedLabel && placeholder && 'text-gray-600 dark:text-gray-400',
-          )}
+    <Tooltip text={title}>
+      {#snippet child({ props })}
+        <Select.Trigger
+          bind:ref={triggerRef}
+          {...props}
+          {disabled}
+          id={triggerId}
+          class={triggerStyles({
+            disabled,
+            invalid,
+            shape,
+            roundedSize,
+          })}
+          aria-describedby={descriptionId}
+          aria-label={label ? undefined : placeholder}
         >
-          {selectedLabel || placeholder}
-        </span>
+          <div
+            class={containerStyles({
+              disabled,
+              shape,
+              roundedSize,
+            })}
+          >
+            <span
+              class={cleanClass(
+                valueStyles({
+                  textSize: size,
+                  height: size,
+                  leadingPadding: 'base',
+                  trailingPadding: 'icon',
+                  roundedSize,
+                }),
+                !selectedLabel && placeholder && 'text-gray-600 dark:text-gray-400',
+              )}
+            >
+              {selectedLabel || placeholder}
+            </span>
 
-        <Icon icon={mdiChevronDown} class={cleanClass('mx-3 shrink-0')} aria-hidden />
-      </div>
-    </Select.Trigger>
+            <Icon icon={mdiChevronDown} class={cleanClass('mx-3 shrink-0')} aria-hidden />
+          </div>
+        </Select.Trigger>
+      {/snippet}
+    </Tooltip>
     <Select.Portal>
       <Select.Content class={contentStyles({ shape, roundedSize })} sideOffset={4}>
         <Select.ScrollUpButton class="flex w-full items-center justify-center">
