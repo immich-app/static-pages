@@ -7,8 +7,8 @@
   import { ML_ACCELS, TRANSCODE_ACCELS } from '$lib/compose/hwaccel';
   import {
     ActionBar,
-    AnnouncementBanner,
     ActionButton,
+    Alert,
     AppShell,
     AppShellBar,
     Button,
@@ -46,6 +46,7 @@
     mdiDownload,
     mdiEyeOffOutline,
     mdiEyeOutline,
+    mdiPartyPopper,
     mdiPlus,
   } from '@mdi/js';
   import { onMount } from 'svelte';
@@ -132,7 +133,7 @@
     setTimeout(() => URL.revokeObjectURL(url), 0);
   };
 
-  const FEEDBACK_URL = 'https://github.com/immich-app/immich/discussions';
+  const FEEDBACK_URL = 'ttps://github.com/immich-app/immich/discussions';
 
   const pageMetadata = {
     title: 'Docker Compose Builder',
@@ -177,10 +178,6 @@
 <SiteMetadata site={siteMetadata} page={pageMetadata} />
 
 <div class="flex h-dvh flex-col">
-  <AnnouncementBanner center>
-    <Link href={FEEDBACK_URL}>The compose builder is new. Please give us your feedback!</Link>
-  </AnnouncementBanner>
-
   <AppShell class="h-auto min-h-0 grow">
     <AppShellBar>
       <ActionBar
@@ -199,6 +196,12 @@
     </AppShellBar>
     <PageContent>
       <Container size="giant" center>
+        <Alert color="primary" icon={mdiPartyPopper} title="New feature" shape="rectangle" class="my-3">
+          <div>
+            The compose builder is new. Please give us <Link href={FEEDBACK_URL}>your feedback</Link>!
+          </div>
+        </Alert>
+
         <div class="my-4 flex justify-end gap-2">
           <ActionButton action={Advanced} />
           <ActionButton action={Copy} />
