@@ -38,9 +38,11 @@
     Text,
     toastManager,
     type ActionItem,
+    type ActionLink,
   } from '@immich/ui';
   import {
     mdiArrowLeft,
+    mdiBugOutline,
     mdiClose,
     mdiContentCopy,
     mdiDiceMultiple,
@@ -50,6 +52,7 @@
     mdiPartyPopper,
     mdiPlus,
   } from '@mdi/js';
+  import { siGithub } from 'simple-icons';
   import { onMount } from 'svelte';
   import { yaml as yamlLanguage } from 'svelte-highlight/languages';
 
@@ -152,6 +155,20 @@
   };
 
   const FEEDBACK_URL = 'https://github.com/immich-app/immich/discussions/31232';
+  const SOURCE_URL = 'https://github.com/immich-app/static-pages/tree/main/apps/root.immich.app/src/lib/compose';
+  const ISSUE_URL = 'https://github.com/immich-app/static-pages/issues/new';
+
+  const Source: ActionLink = {
+    title: 'View source',
+    icon: siGithub,
+    href: SOURCE_URL,
+  };
+
+  const ReportIssue: ActionLink = {
+    title: 'Report a problem',
+    icon: mdiBugOutline,
+    href: ISSUE_URL,
+  };
 
   const pageMetadata = {
     title: 'Docker Compose Builder',
@@ -199,6 +216,7 @@
   <AppShell class="h-auto min-h-0 grow">
     <AppShellBar>
       <ActionBar
+        overflowActions={[Source, ReportIssue]}
         closeIcon={mdiArrowLeft}
         translations={{ close: 'Back' }}
         closeOnEsc={false}
