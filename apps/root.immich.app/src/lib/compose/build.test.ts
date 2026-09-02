@@ -159,8 +159,6 @@ describe('buildCompose', () => {
     }
     expect(spec.services['immich-machine-learning'].volumes).toEqual([
       './ml-model-cache:/cache',
-      './ml-dotcache:/.cache',
-      './ml-config:/.config',
     ]);
     expect(spec.services.redis.volumes).toEqual(['./redis:/data']);
     expect(spec.volumes).toBeUndefined();
@@ -217,8 +215,6 @@ describe('buildCompose', () => {
 
     expect(spec.services['immich-machine-learning'].volumes).toEqual([
       './ml-model-cache:/cache',
-      './ml-dotcache:/.cache',
-      './ml-config:/.config',
       '/dev/bus/usb:/dev/bus/usb',
     ]);
     expect(spec.services.redis.volumes).toEqual(['./redis:/data']);
