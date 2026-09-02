@@ -30,6 +30,7 @@
     mdiScriptTextOutline,
     mdiShoppingOutline,
   } from '@mdi/js';
+  import { DateTime } from 'luxon';
   import { siGithub } from 'simple-icons';
   import { type Snippet } from 'svelte';
   import { MediaQuery } from 'svelte/reactivity';
@@ -61,7 +62,10 @@
 
 <TooltipProvider>
   <AppShell>
-    <AppShellHeader>
+    <AppShellHeader class="block">
+      <AnnouncementBanner center size="small" until={DateTime.fromObject({ year: 2026, month: 9, day: 30 })}>
+        Try our new tool: <Link href="/docker-compose-builder">Docker Compose Builder</Link>
+      </AnnouncementBanner>
       <div class="w-full">
         {#if !page.url.pathname.startsWith('/blog') && featuredPost}
           <AnnouncementBanner until={featuredPost.publishedAt.plus({ week: 1 })}>
