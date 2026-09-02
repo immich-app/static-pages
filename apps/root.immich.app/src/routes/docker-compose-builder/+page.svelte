@@ -133,7 +133,7 @@
     setTimeout(() => URL.revokeObjectURL(url), 0);
   };
 
-  const FEEDBACK_URL = 'ttps://github.com/immich-app/immich/discussions';
+  const FEEDBACK_URL = 'https://github.com/immich-app/immich/discussions/31232';
 
   const pageMetadata = {
     title: 'Docker Compose Builder',
@@ -198,7 +198,7 @@
       <Container size="giant" center>
         <Alert color="primary" icon={mdiPartyPopper} title="New feature" shape="rectangle" class="my-3">
           <div>
-            The compose builder is new. Please give us <Link href={FEEDBACK_URL}>your feedback</Link>!
+            This tool is new. Please give us <Link href={FEEDBACK_URL}>your feedback</Link>!
           </div>
         </Alert>
 
