@@ -246,6 +246,7 @@ export type SelectCommonProps<T extends string> = {
   shape?: Shape;
   placeholder?: string;
   class?: string;
+  title?: string;
 };
 
 export type SelectProps<T extends string> = SelectCommonProps<T> & {
