@@ -330,7 +330,8 @@ export enum MenuItemType {
   Divider = 'divider',
 }
 
-export type MenuItems = Array<ActionItem | MenuItemType | undefined>;
+export type MenuItem = ActionItem | ActionLink | MenuItemType | undefined;
+export type MenuItems = MenuItem[];
 
 export type MenuProps = {
   items: MenuItems;
@@ -376,13 +377,23 @@ export type ActionItemTag = {
   class?: string;
 };
 
-export type ActionItem = {
+type ActionBase = IfLike & {
   title: string;
+  description?: string;
+  color?: Color;
+  icon?: IconLike;
+  iconClass?: string;
+};
+
+export type ActionLink = ActionBase & {
+  href: string;
+};
+
+export type ActionItem = ActionBase & {
   /**
   renders as badges on the item
   */
   tags?: Array<string | ActionItemTag>;
-  description?: string;
   /**
   searchable text in addition to title, tags, and description
   */
@@ -391,13 +402,10 @@ export type ActionItem = {
   text that should be highlighted as a match
   */
   highlights?: string[];
-  icon?: IconLike;
-  iconClass?: string;
-  color?: Color;
   onAction: ActionItemHandler;
   shortcuts?: MaybeArray<Shortcut>;
   shortcutOptions?: { ignoreInputFields?: boolean; preventDefault?: boolean };
-} & IfLike;
+};
 
 export type BreadcrumbsProps = {
   separator?: IconLike | { text: string };

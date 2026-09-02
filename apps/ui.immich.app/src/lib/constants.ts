@@ -7,6 +7,7 @@ import {
   toastManager,
   type ActionItem,
   type ActionItemHandler,
+  type ActionLink,
   type CarouselImageItem,
   type IconLike,
   type MenuItems,
@@ -64,6 +65,7 @@ import {
   mdiMessageAlert,
   mdiMessageAlertOutline,
   mdiNumeric,
+  mdiOpenInNew,
   mdiPalette,
   mdiPanVertical,
   mdiPartyPopper,
@@ -215,7 +217,8 @@ export const ExampleActions = {
   Edit: { title: 'Edit album', icon: mdiPencilOutline, onAction },
   Download: { title: 'Download', icon: mdiDownload, onAction },
   Delete: { title: 'Delete', icon: mdiTrashCanOutline, color: 'danger', onAction },
-} satisfies Record<string, ActionItem>;
+  Link: { title: 'Link', icon: mdiOpenInNew, href: 'https://immich.app/' },
+} satisfies Record<string, ActionItem | ActionLink>;
 
 export const exampleActions: ActionItem[] = [
   ExampleActions.Share,
@@ -230,6 +233,7 @@ export const exampleMenuItems: MenuItems = [
   ExampleActions.Copy,
   ExampleActions.Edit,
   ExampleActions.Download,
+  ExampleActions.Link,
   MenuItemType.Divider,
   ExampleActions.Delete,
 ];
