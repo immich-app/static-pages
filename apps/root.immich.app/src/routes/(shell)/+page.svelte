@@ -86,16 +86,18 @@
         and share your precious memories on both Apple and Android.
       </Text>
 
-      <div class="my-8 flex h-full justify-around gap-4 sm:justify-start lg:my-4">
-        <div class="flex flex-col items-start justify-around gap-4">
-          <a href={Constants.Get.Android}>
-            <img src={playStoreBadge} alt="Playstore Badge" class="w-48" />
-          </a>
-          <a href={Constants.Get.iOS}>
-            <img src={appStoreBadge} alt="AppStore Badge" class="w-48" />
-          </a>
+      <div class="my-8 h-full lg:my-4">
+        <div class="my-8 flex h-full gap-4 sm:justify-start lg:my-4">
+          <div class="flex flex-col items-start gap-4">
+            <a href={Constants.Get.Android}>
+              <img src={playStoreBadge} alt="Playstore Badge" class="w-48" />
+            </a>
+            <a href={Constants.Get.iOS}>
+              <img src={appStoreBadge} alt="AppStore Badge" class="w-48" />
+            </a>
+          </div>
+          <img src={themeManager.value === 'dark' ? qrCodeDark : qrCodeLight} alt="QRCode" class="h-36 rounded-xl" />
         </div>
-        <img src={themeManager.value === 'dark' ? qrCodeDark : qrCodeLight} alt="QRCode" class="h-36 rounded-xl" />
       </div>
     {/snippet}
     {#snippet media()}
