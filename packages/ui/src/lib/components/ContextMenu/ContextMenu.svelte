@@ -1,10 +1,11 @@
 <script lang="ts">
   import Icon from '$lib/components/Icon/Icon.svelte';
+  import Link from '$lib/components/Link/Link.svelte';
   import Text from '$lib/components/Text/Text.svelte';
   import { zIndex } from '$lib/constants.js';
   import { styleVariants } from '$lib/styles.js';
-  import { type ActionItem, type ContextMenuProps, type MenuItems } from '$lib/types.js';
-  import { isEnabled, isMenuItemType } from '$lib/utilities/common.js';
+  import { type ActionItem, type ActionLink, type ContextMenuProps, type MenuItems } from '$lib/types.js';
+  import { isActionLink, isEnabled, isMenuItemType } from '$lib/utilities/common.js';
   import { cleanClass } from '$lib/utilities/internal.js';
   import { DropdownMenu } from 'bits-ui';
   import { fly } from 'svelte/transition';
@@ -117,6 +118,13 @@
   const { side, align } = $derived(getAlignment(position));
 </script>
 
+{#snippet itemText(item: ActionItem | ActionLink)}
+  {#if item.icon}
+    <Icon icon={item.icon} class="m-2 shrink-0" />
+  {/if}
+  <Text class="grow text-start font-medium select-none" size="medium">{item.title}</Text>
+{/snippet}
+
 <DropdownMenu.Root open={true} onOpenChange={() => onClose()}>
   <DropdownMenu.Portal>
     <DropdownMenu.Content forceMount customAnchor={target} {side} {align} {alignOffset} {sideOffset}>
@@ -127,6 +135,19 @@
               {#each filteredItems as item, i (isMenuItemType(item) ? i : item.title)}
                 {#if isMenuItemType(item)}
                   <DropdownMenu.Separator class="dark:border-light-300 my-0.5 border-t" />
+                {:else if isActionLink(item)}
+                  <DropdownMenu.Item>
+                    {#snippet child({ props })}
+                      <Link
+                        underline={false}
+                        {...props}
+                        href={item.href}
+                        class={itemStyles({ color: item.color, inset: true })}
+                      >
+                        {@render itemText(item)}
+                      </Link>
+                    {/snippet}
+                  </DropdownMenu.Item>
                 {:else}
                   <DropdownMenu.Item
                     textValue={item.title}
@@ -134,10 +155,7 @@
                     onSelect={() => item.onAction(item)}
                     class={itemStyles({ color: item.color, inset: true })}
                   >
-                    {#if item.icon}
-                      <Icon icon={item.icon} class="m-2 shrink-0" />
-                    {/if}
-                    <Text class="grow text-start font-medium select-none" size="medium">{item.title}</Text>
+                    {@render itemText(item)}
                   </DropdownMenu.Item>
                 {/if}
               {/each}

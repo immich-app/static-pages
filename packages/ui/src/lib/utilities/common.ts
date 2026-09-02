@@ -1,5 +1,12 @@
 import { goto } from '$app/navigation';
-import { MenuItemType, type ActionItem, type GithubLinkProps, type GithubLinkType, type IfLike } from '$lib/types.js';
+import {
+  MenuItemType,
+  type ActionLink,
+  type GithubLinkProps,
+  type GithubLinkType,
+  type IfLike,
+  type MenuItem,
+} from '$lib/types.js';
 import type { DateTime } from 'luxon';
 
 export type QueryValue = number | string;
@@ -118,9 +125,11 @@ export type ArticleMetadata = {
   tags?: string[];
 };
 
-export const isMenuItemType = (item: ActionItem | MenuItemType): item is MenuItemType => {
+export const isMenuItemType = (item: MenuItem): item is MenuItemType => {
   return item === MenuItemType.Divider;
 };
+
+export const isActionLink = (item: MenuItem): item is ActionLink => typeof item === 'object' && 'href' in item;
 
 export const resolveMetadata = (site: Metadata, page?: Metadata, article?: ArticleMetadata) => {
   const title = page ? `${page.title} | ${site.title}` : site.title;
