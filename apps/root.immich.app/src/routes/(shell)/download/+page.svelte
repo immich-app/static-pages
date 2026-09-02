@@ -1,4 +1,6 @@
 <script lang="ts">
+  import qrCodeDark from '$common/img/app-qr-code-dark.svg';
+  import qrCodeLight from '$common/img/app-qr-code-light.svg';
   import kubernetesIcon from '$common/img/kubernetes.webp';
   import portainerIcon from '$common/img/portainer.svg';
   import truenasIcon from '$common/img/truenas-scale.svg';
@@ -18,6 +20,7 @@
     playStoreBadge,
     SiteMetadata,
     Text,
+    themeManager,
   } from '@immich/ui';
   import { mdiOpenInNew } from '@mdi/js';
   import { siDocker } from 'simple-icons';
@@ -43,15 +46,21 @@
     <Heading size="large" tag="h3" class="mb-2">Download for Mobile</Heading>
     <Text size="large">Use Immich to backup your photos and videos from your Android and iOS devices.</Text>
 
-    <div class="my-8 flex h-full justify-around gap-4 sm:justify-start lg:my-4">
-      <div class="flex flex-col items-start justify-around gap-4">
-        <Button href={Constants.Get.FDroid} color="primary" trailingIcon={mdiOpenInNew}>View on FUTO F-Droid</Button>
-        <a href={Constants.Get.Android}>
-          <img src={playStoreBadge} alt="Playstore Badge" class="w-48" />
-        </a>
-        <a href={Constants.Get.iOS}>
-          <img src={appStoreBadge} alt="AppStore Badge" class="w-48" />
-        </a>
+    <div class="my-8 h-full lg:my-4">
+      <div class="flex flex-wrap gap-4 sm:justify-start">
+        <Button href={Constants.Get.FDroid} color="primary" trailingIcon={mdiOpenInNew}>FUTO F-Droid</Button>
+        <Button href={Constants.Get.GithubRelease} color="primary" trailingIcon={mdiOpenInNew}>Download APK</Button>
+      </div>
+      <div class="my-8 flex h-full gap-4 sm:justify-start lg:my-4">
+        <div class="flex flex-col items-start gap-4">
+          <a href={Constants.Get.Android}>
+            <img src={playStoreBadge} alt="Playstore Badge" class="w-48" />
+          </a>
+          <a href={Constants.Get.iOS}>
+            <img src={appStoreBadge} alt="AppStore Badge" class="w-48" />
+          </a>
+        </div>
+        <img src={themeManager.value === 'dark' ? qrCodeDark : qrCodeLight} alt="QRCode" class="h-36 rounded-xl" />
       </div>
     </div>
   {/snippet}
