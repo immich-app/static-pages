@@ -15,6 +15,7 @@
     code: string;
     language?: LanguageType<string>;
     lineNumbers?: boolean;
+    highlightedLines?: number[];
     lightTheme?: string;
     darkTheme?: string;
     copy?: boolean;
@@ -26,6 +27,7 @@
     copy = true,
     language = typescript,
     lineNumbers,
+    highlightedLines,
     lightTheme = vsLight,
     darkTheme = vsDark,
     translations,
@@ -66,7 +68,7 @@
     {/if}
     {#if lineNumbers}
       <Highlight {language} {code} let:highlighted>
-        <LineNumbers {highlighted} hideBorder wrapLines />
+        <LineNumbers {highlighted} {highlightedLines} hideBorder wrapLines />
       </Highlight>
     {:else}
       <Highlight {language} {code} />
