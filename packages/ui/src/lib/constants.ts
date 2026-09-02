@@ -3,6 +3,7 @@ export enum ChildKey {
   HelperText = 'helped-text',
   AppShell = 'app-shell',
   AppShellHeader = 'app-shell-header',
+  AppShellAnnouncement = 'app-shell-announcement',
   AppShellBar = 'app-shell-bar',
   AppShellSidebar = 'app-shell-sidebar',
   Card = 'card',

@@ -13,12 +13,18 @@
   const { class: className, children }: Props = $props();
 
   const { getByKey } = setChildContext(ChildKey.AppShell);
+  const announcement = $derived(getByKey(ChildKey.AppShellAnnouncement));
   const bar = $derived(getByKey(ChildKey.AppShellBar));
   const header = $derived(getByKey(ChildKey.AppShellHeader));
   const sidebar = $derived(getByKey(ChildKey.AppShellSidebar));
 </script>
 
 <div class={cleanClass('flex h-dvh flex-col overflow-hidden', className)}>
+  {#if announcement}
+    <div class={cleanClass('shrink-0', announcement.class)}>
+      {@render announcement.children?.()}
+    </div>
+  {/if}
   {#if bar}
     <div class={cleanClass('min-h-control-bar-container px-2 pt-2', zIndex.AppShellBar, bar.class)}>
       {@render bar.children?.()}

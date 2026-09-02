@@ -18,6 +18,7 @@ export { default as ActionButton } from '$lib/components/ActionButton/ActionButt
 export { default as Alert } from '$lib/components/Alert/Alert.svelte';
 export { default as AnnouncementBanner } from '$lib/components/AnnouncementBanner/AnnouncementBanner.svelte';
 export { default as AppShell } from '$lib/components/AppShell/AppShell.svelte';
+export { default as AppShellAnnouncement } from '$lib/components/AppShell/AppShellAnnouncement.svelte';
 export { default as AppShellBar } from '$lib/components/AppShell/AppShellBar.svelte';
 export { default as AppShellHeader } from '$lib/components/AppShell/AppShellHeader.svelte';
 export { default as AppShellSidebar } from '$lib/components/AppShell/AppShellSidebar.svelte';
