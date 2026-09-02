@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.87.0](https://github.com/immich-app/static-pages/compare/ui-v0.86.0...ui-v0.87.0) (2026-09-02)
+
+
+### Features
+
+* action link ([#769](https://github.com/immich-app/static-pages/issues/769)) ([91114a8](https://github.com/immich-app/static-pages/commit/91114a8a118dc2109933ebf03c1194ca23c77982))
+* revive compose file builder ([#660](https://github.com/immich-app/static-pages/issues/660)) ([abdd8f4](https://github.com/immich-app/static-pages/commit/abdd8f458f753bf6d5ae1d6b93c0be3ca9550627))
+* **ui:** allow highlighting lines in CodeBlock ([#763](https://github.com/immich-app/static-pages/issues/763)) ([0fe36de](https://github.com/immich-app/static-pages/commit/0fe36de70041846e2c935abd2f3cc06fc9ff81de))
+* **ui:** support tooltip for Select components ([#767](https://github.com/immich-app/static-pages/issues/767)) ([d8e0de4](https://github.com/immich-app/static-pages/commit/d8e0de4b48b8dc40ccda3f2f1d16129d3dbacc80))
+
 ## [0.86.0](https://github.com/immich-app/static-pages/compare/ui-v0.85.0...ui-v0.86.0) (2026-08-27)
 
 
