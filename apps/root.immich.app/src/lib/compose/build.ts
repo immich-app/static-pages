@@ -2,16 +2,16 @@ import deepmerge from 'deepmerge';
 import { stringify } from 'yaml';
 import { ML_BACKENDS, TRANSCODE_BACKENDS } from './hwaccel';
 import { IMAGES } from './images';
-import { FOLDER_OVERRIDES, type ImmichConfig } from './config';
-import type { ComposeFile, ComposeService } from './spec';
+import { FIELDS, FOLDER_OVERRIDES, type ImmichConfig, type OutputContext } from './config';
+import type { ComposeFile, ComposeService, FieldPaths, YamlPath } from './spec';
 
-const rootlessHardening = ({ uid, gid }: ImmichConfig['rootless']): ComposeService => ({
+export const rootlessHardening = ({ uid, gid }: ImmichConfig['rootless']): ComposeService => ({
   user: `${uid ?? ''}:${gid ?? ''}`,
   security_opt: ['no-new-privileges:true'],
   cap_drop: ['NET_RAW'],
 });
 
-const ROOTLESS_VOLUMES = new Map<string, string[]>([
+export const ROOTLESS_VOLUMES = new Map<string, string[]>([
   ['immich-machine-learning', ['./ml-model-cache:/cache', './ml-dotcache:/.cache', './ml-config:/.config']],
   ['redis', ['./redis:/data']],
 ]);
@@ -60,16 +60,18 @@ const buildServerEnvironment = ({ timezone, database, redis }: ImmichConfig) => 
   return environment;
 };
 
-export const buildComposeSpec = (config: ImmichConfig, version: string): ComposeFile => {
+const build = (config: ImmichConfig, version: string): { spec: ComposeFile; fields: FieldPaths } => {
   const { rootless, network } = config;
   const serverEnvironment = buildServerEnvironment(config);
   const containerName = (name: string) => (config.containerNames ? name : '');
 
   const externalNetwork = network.external ? network.name.trim() : '';
 
-  const libraryMounts = config.storage.externalLibraries
-    .filter(({ path }) => path.trim())
-    .map(({ path, readOnly }) => `${path.trim()}:${path.trim()}${readOnly ? ':ro' : ''}`);
+  const libraries = config.storage.externalLibraries
+    .map(({ path, readOnly }, index) => ({ path: path.trim(), readOnly, index }))
+    .filter(({ path }) => path);
+  const libraryMounts = libraries.map(({ path, readOnly }) => `${path}:${path}${readOnly ? ':ro' : ''}`);
+  const libraryIndices = libraries.map(({ index }) => index);
 
   const rootlessVolumes = (name: string) => (rootless.enabled ? ROOTLESS_VOLUMES.get(name) : undefined);
 
@@ -84,6 +86,13 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
       restart: 'always',
     };
   }
+
+  const databaseVolume: YamlPath[] = config.database.external
+    ? []
+    : [
+        ['services', 'database', 'volumes', 0],
+        ...(config.database.mount.type === 'volume' ? [['volumes', NamedVolume.PostgresData]] : []),
+      ];
 
   if (!config.database.external) {
     backingServices.database = {
@@ -105,11 +114,13 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
     };
   }
 
-  const overrideMounts = config.storage.customFolders
-    ? FOLDER_OVERRIDES.filter(({ key }) => config.storage.overrides[key].trim()).map(
-        ({ key, subfolder }) => `${config.storage.overrides[key].trim()}:/data/${subfolder}`,
-      )
+  const overrides = config.storage.customFolders
+    ? FOLDER_OVERRIDES.filter(({ key }) => config.storage.overrides[key].trim())
     : [];
+  const overrideMounts = overrides.map(
+    ({ key, subfolder }) => `${config.storage.overrides[key].trim()}:/data/${subfolder}`,
+  );
+  const overrideKeys = overrides.map(({ key }) => key);
 
   const services: Record<string, ComposeService> = {
     'immich-server': deepmerge<ComposeService>(
@@ -144,9 +155,19 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
     ...backingServices,
   };
 
+  const rootlessPaths: YamlPath[] = [];
+  const rootlessUserPaths: YamlPath[] = [];
+
   if (rootless.enabled) {
     for (const [name, service] of Object.entries(services)) {
-      services[name] = deepmerge(service, rootlessHardening(rootless));
+      const hardening = rootlessHardening(rootless);
+      services[name] = deepmerge(service, hardening);
+
+      rootlessUserPaths.push(['services', name, 'user']);
+      rootlessPaths.push(
+        ...Object.keys(hardening).map((key) => ['services', name, key]),
+        ...(rootlessVolumes(name) ? [['services', name, 'volumes']] : []),
+      );
     }
   }
 
@@ -163,8 +184,63 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
 
   const spec: ComposeFile = { name: 'immich', services, volumes, networks };
 
-  return pruneEmpty(spec);
+  const context: OutputContext = {
+    config,
+    server: ['services', 'immich-server'],
+    ml: ['services', 'immich-machine-learning'],
+    services: Object.keys(services),
+    env: (key) => {
+      const value = serverEnvironment[key];
+      return value === undefined || value === '' ? [] : [['services', 'immich-server', 'environment', key]];
+    },
+    bundledDatabase: !config.database.external,
+    databaseVolume,
+    network: externalNetwork
+      ? [
+          ['services', 'immich-server', 'networks'],
+          ['networks', externalNetwork],
+        ]
+      : [],
+    rootless: rootlessPaths,
+    rootlessUser: rootlessUserPaths,
+    overrides: overrideKeys.map((_, position) => ['services', 'immich-server', 'volumes', 1 + position]),
+    libraries: libraryIndices.map((_, position) => [
+      'services',
+      'immich-server',
+      'volumes',
+      1 + overrideMounts.length + position,
+    ]),
+    fragment: (of) =>
+      of === 'transcoding'
+        ? Object.keys(TRANSCODE_BACKENDS[config.hwaccel.transcoding].fragment).map((key) => [
+            'services',
+            'immich-server',
+            key,
+          ])
+        : Object.keys(ML_BACKENDS[config.hwaccel.ml].fragment).map((key) => [
+            'services',
+            'immich-machine-learning',
+            key,
+          ]),
+  };
+
+  const fields: FieldPaths = Object.fromEntries(
+    Object.entries(FIELDS).map(([id, field]) => [id, 'output' in field ? field.output(context) : []]),
+  );
+
+  for (const [position, key] of overrideKeys.entries()) {
+    fields[`override:${key}`] = [context.overrides[position]];
+  }
+  for (const [position, index] of libraryIndices.entries()) {
+    fields[`library:${index}`] = [context.libraries[position]];
+  }
+
+  return { spec: pruneEmpty(spec), fields };
 };
+
+export const buildComposeSpec = (config: ImmichConfig, version: string): ComposeFile => build(config, version).spec;
+
+export const buildComposeFields = (config: ImmichConfig, version: string): FieldPaths => build(config, version).fields;
 
 export const buildCompose = (config: ImmichConfig, version: string): string =>
   stringify(buildComposeSpec(config, version), { lineWidth: 0, nullStr: '' });
