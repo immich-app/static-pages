@@ -63,7 +63,7 @@
 <TooltipProvider>
   <AppShell>
     <AppShellHeader class="block">
-      <AnnouncementBanner center size="small" until={DateTime.fromObject({ year: 2026, month: 9, day: 10 })}>
+      <AnnouncementBanner center size="small" until={DateTime.fromObject({ year: 2026, month: 9, day: 30 })}>
         Try our new tool: <Link href="/docker-compose-builder">Docker Compose Builder</Link>
       </AnnouncementBanner>
       <div class="w-full">
