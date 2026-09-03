@@ -10,21 +10,21 @@
 
   let { children }: Props = $props();
 
-  const isReleaseNotePage = $derived(!!page.route.id?.includes('releases'));
+  const isIndexPage = $derived(page.route.id === '/(shell)/blog');
 
   const styles = tv({
-    base: 'mx-auto',
+    base: 'mx-auto w-full',
     variants: {
-      releaseNotes: {
-        true: 'max-w-3xl',
-        false: 'max-w-2xl',
+      index: {
+        true: 'max-w-2xl',
+        false: '',
       },
     },
   });
 </script>
 
 <PageContent>
-  <div class={styles({ releaseNotes: isReleaseNotePage })}>
+  <div class={styles({ index: isIndexPage })}>
     {@render children?.()}
   </div>
 </PageContent>

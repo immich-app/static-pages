@@ -1,6 +1,6 @@
 import { posts, typeToLabel, type BlogPost } from '$lib';
 import type { SearchDoc } from '$lib/search';
-import { markedText } from '@immich/svelte-markdown-preprocess';
+import { getPostText } from '$lib/server/posts';
 import { json } from '@sveltejs/kit';
 
 export const prerender = true;
@@ -11,7 +11,7 @@ const fromBlogPost = (post: BlogPost): SearchDoc => {
     description: post.description,
     url: post.url,
     tags: [typeToLabel(post.type)],
-    text: markedText(post.markdown),
+    text: getPostText(post.url),
   };
 };
 

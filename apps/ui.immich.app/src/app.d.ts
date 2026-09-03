@@ -1,3 +1,4 @@
+/// <reference types="@immich/svelte-markdown-preprocess/virtual" />
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 declare global {

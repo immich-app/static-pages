@@ -14,4 +14,4 @@
   const { size, name, localeSensitive = false, description, children }: Props = $props();
 </script>
 
-<MarkdownPage attributes={{ title: name, description }} {localeSensitive} {size} {children} />
+<MarkdownPage doc={{ attributes: { title: name, description } }} {localeSensitive} {size} {children} />

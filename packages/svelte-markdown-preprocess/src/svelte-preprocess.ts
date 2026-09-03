@@ -1,8 +1,9 @@
 /* eslint-disable unicorn/prefer-await */
-import fm from 'front-matter';
 import { Marked } from 'marked';
 import type { PreprocessorGroup } from 'svelte/compiler';
 import { markedSvelte } from './markdown.js';
+import { DOCS_DIR, VIRTUAL_ID } from './vite.js';
+import { parseFrontMatter, type FrontMatterAttributes } from './utility.js';
 
 type MaybePromise<T> = Promise<T> | T;
 
@@ -13,13 +14,8 @@ export type FileWithFrontMatter = { filename: string; attributes: FrontMatterAtt
 export type FileWithScriptBody = FileWithFrontMatter & { scriptBody: string };
 export type FileWithMarkup = FileWithScriptBody & { markup: string };
 export type FileWithImages = FileWithMarkup & { images: MarkdownImage[] };
-export type FileWithLayout = FileWithImages & { layout?: string };
+export type FileWithLayout = FileWithImages & { layout?: string; path?: string };
 export type FileWithSvelte = FileWithLayout & { svelte: string };
-
-export type FrontMatterAttributes = {
-  layout?: string;
-  [key: string]: unknown;
-};
 
 export type SvelteMarkdownPreprocessLayouts = {
   _?: string;
@@ -80,9 +76,7 @@ export class SvelteMarkdownPreprocess {
   }
 
   parseFrontMatter({ filename, content }: FileWithContent): MaybePromise<FileWithFrontMatter> {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    const { attributes, body } = fm(content) as { attributes: FrontMatterAttributes; body: string };
+    const { attributes, body } = parseFrontMatter(content);
     return { filename, body, attributes };
   }
 
@@ -131,7 +125,17 @@ export class SvelteMarkdownPreprocess {
   parseLayout(file: FileWithImages): MaybePromise<FileWithLayout> {
     const layoutKey = file.attributes.layout;
     const layout = layoutKey ? this.#layouts[layoutKey] : (this.#layouts.default ?? this.#layouts._);
-    return { ...file, layout };
+    return { ...file, layout, path: this.parsePath(file.filename) };
+  }
+
+  parsePath(filename: string): string | undefined {
+    const path = filename.replaceAll('\\', '/');
+    const index = path.lastIndexOf(`/${DOCS_DIR}/`);
+    if (index === -1) {
+      return;
+    }
+
+    return path.slice(index + DOCS_DIR.length + 2);
   }
 
   parseSvelte(file: FileWithLayout): MaybePromise<FileWithSvelte> {
@@ -145,12 +149,17 @@ export class SvelteMarkdownPreprocess {
     return [
       `  import { Markdown } from '@immich/ui';`,
       file.layout ? `  import Layout from '${file.layout}';` : undefined,
+      this.hasDoc(file) ? `  import { getDoc } from '${VIRTUAL_ID}';` : undefined,
       ...file.images.map((image) => `  import ${image.name} from '${image.path}';`),
     ];
   }
 
+  hasDoc(file: FileWithLayout): boolean {
+    return !!(file.layout && file.path);
+  }
+
   scriptExtras(file: FileWithLayout): Array<string | undefined> {
-    return file.layout ? [`  const attributes = ${JSON.stringify(file.attributes)};`] : [];
+    return this.hasDoc(file) ? [`  const doc = getDoc('${file.path}');`] : [];
   }
 
   createSvelteScript(file: FileWithLayout): string {
@@ -167,7 +176,8 @@ export class SvelteMarkdownPreprocess {
 
   createSvelteTemplate(file: FileWithLayout): string {
     // eslint-disable-next-line unicorn/no-incorrect-template-string-interpolation
-    return (file.layout ? [`<Layout {attributes}>`, file.markup, '</Layout>'] : [file.markup]).join('\n');
+    const open = this.hasDoc(file) ? `<Layout {doc}>` : `<Layout>`;
+    return (file.layout ? [open, file.markup, '</Layout>'] : [file.markup]).join('\n');
   }
 }
 
