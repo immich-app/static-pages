@@ -84,15 +84,14 @@ export const ML_BACKENDS = {
     fragment: {
       device_cgroup_rules: ['c 189:* rmw'],
       devices: ['/dev/dri:/dev/dri'],
-      volumes: ['/dev/bus/usb:/dev/bus/usb'],
     },
   },
   'openvino-wsl': {
     label: 'Intel OpenVINO (WSL2)',
     tag: '-openvino',
     fragment: {
-      devices: ['/dev/dri:/dev/dri', '/dev/dxg:/dev/dxg'],
-      volumes: ['/dev/bus/usb:/dev/bus/usb', '/usr/lib/wsl:/usr/lib/wsl'],
+      devices: ['/dev/dxg:/dev/dxg'],
+      volumes: ['/usr/lib/wsl:/usr/lib/wsl'],
     },
   },
   rknn: {
