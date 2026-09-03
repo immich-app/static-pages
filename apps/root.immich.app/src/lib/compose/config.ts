@@ -54,6 +54,9 @@ const immichConfigSchema = z.object({
     transcoding: transcodeAccelSchema,
     ml: mlAccelSchema,
   }),
+  machineLearning: z.object({
+    external: z.boolean(),
+  }),
   storage: z.object({
     uploadLocation: required('Upload location is required.'),
     customFolders: z.boolean(),
@@ -90,6 +93,7 @@ export type OutputContext = {
   services: string[];
   env: (key: string) => YamlPath[];
   bundledDatabase: boolean;
+  bundledMl: boolean;
   databaseVolume: YamlPath[];
   network: YamlPath[];
   rootless: YamlPath[];
@@ -110,10 +114,7 @@ const DATABASE = ['services', 'database'];
 export const FIELDS = {
   version: {
     config: [],
-    output: ({ server, ml }) => [
-      [...server, 'image'],
-      [...ml, 'image'],
-    ],
+    output: ({ server, ml, bundledMl }) => [[...server, 'image'], ...(bundledMl ? [[...ml, 'image']] : [])],
   },
   timezone: { config: ['timezone'], output: ({ env }) => env('TZ') },
   port: { config: ['port'], advanced: true, output: ({ server }) => [[...server, 'ports', 0]] },
@@ -129,7 +130,15 @@ export const FIELDS = {
   customFolders: { config: ['storage.customFolders'], advanced: true, output: ({ overrides }) => overrides },
   externalLibraries: { config: ['storage.externalLibraries'], advanced: true, output: ({ libraries }) => libraries },
   transcoding: { config: ['hwaccel.transcoding'], output: ({ fragment }) => fragment('transcoding') },
-  ml: { config: ['hwaccel.ml'], output: ({ ml, fragment }) => [[...ml, 'image'], ...fragment('ml')] },
+  ml: {
+    config: ['hwaccel.ml'],
+    output: ({ ml, fragment, bundledMl }) => (bundledMl ? [[...ml, 'image'], ...fragment('ml')] : []),
+  },
+  mlExternal: {
+    config: ['machineLearning.external'],
+    advanced: true,
+    output: ({ ml, bundledMl }) => (bundledMl ? [ml] : []),
+  },
   databaseExternal: {
     config: ['database.external'],
     advanced: true,
@@ -215,6 +224,9 @@ export const DEFAULT_CONFIG: ImmichConfig = {
   hwaccel: {
     transcoding: 'cpu',
     ml: 'cpu',
+  },
+  machineLearning: {
+    external: false,
   },
   storage: {
     uploadLocation: './library',

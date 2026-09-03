@@ -245,6 +245,16 @@ describe('buildCompose', () => {
     expect(spec.services['immich-server'].depends_on).toEqual(['redis']);
   });
 
+  it('remote machine learning drops the service, its model cache, and any hwaccel fragment', () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+    config.machineLearning.external = true;
+    config.hwaccel.ml = 'cuda';
+    const spec = parse(buildCompose(config, VERSION));
+    expect(spec.services['immich-machine-learning']).toBeUndefined();
+    expect(spec.volumes).toBeUndefined();
+    expect(buildCompose(config, VERSION)).not.toContain('driver: nvidia');
+  });
+
   it('external Redis drops the redis service and sets non-default REDIS_ vars', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.redis.external = true;

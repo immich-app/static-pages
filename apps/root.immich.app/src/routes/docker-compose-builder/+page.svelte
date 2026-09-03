@@ -499,11 +499,32 @@
                   <CardTitle>Machine Learning</CardTitle>
                 </CardHeader>
                 <CardBody>
-                  <Field label="Hardware Acceleration">
-                    <div data-field="ml">
-                      <Select bind:value={config.hwaccel.ml} options={ML_ACCELS} />
-                    </div>
-                  </Field>
+                  <Stack gap={4}>
+                    {#if advanced}
+                      <Field label="Remote machine learning">
+                        <Switch
+                          bind:checked={config.machineLearning.external}
+                          data-field="mlExternal"
+                          class="flex justify-between gap-4"
+                        />
+                      </Field>
+                    {/if}
+                    {#if advanced && config.machineLearning.external}
+                      <Text size="small" color="muted">
+                        Point your server at the remote instance in the admin settings. See the
+                        <Link href="https://docs.immich.app/guides/remote-machine-learning"
+                          >remote machine learning guide</Link
+                        >.
+                      </Text>
+                    {/if}
+                    {#if !config.machineLearning.external}
+                      <Field label="Hardware Acceleration">
+                        <div data-field="ml">
+                          <Select bind:value={config.hwaccel.ml} options={ML_ACCELS} />
+                        </div>
+                      </Field>
+                    {/if}
+                  </Stack>
                 </CardBody>
               </Card>
 
