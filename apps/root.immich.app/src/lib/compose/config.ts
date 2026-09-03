@@ -264,6 +264,8 @@ type ValidationErrors = Record<string, string>;
 
 const normalizePath = (path: string) => path.trim().replace(/\/+$/, '');
 
+const UPLOAD_TARGET = '/data';
+
 type Mount = { path: string[]; location: string };
 
 const collectMounts = (config: ImmichConfig): Mount[] => {
@@ -301,11 +303,18 @@ const validationSchema = immichConfigSchema.superRefine((config, ctx) => {
   }
 
   for (const [index, { path }] of config.storage.externalLibraries.entries()) {
-    const location = path.trim();
-    if (!location) {
-      fail(['storage', 'externalLibraries', String(index), 'path'], 'A path is required.');
+    const field = ['storage', 'externalLibraries', String(index), 'path'];
+    const trimmed = path.trim();
+    const location = normalizePath(path);
+
+    if (!trimmed) {
+      fail(field, 'A path is required.');
+    } else if (!location) {
+      fail(field, 'The filesystem root cannot be mounted as a library.');
     } else if (!location.startsWith('/')) {
-      fail(['storage', 'externalLibraries', String(index), 'path'], 'Enter an absolute path, e.g. /mnt/media/photos.');
+      fail(field, 'Enter an absolute path, e.g. /mnt/media/photos.');
+    } else if (location === UPLOAD_TARGET || location.startsWith(`${UPLOAD_TARGET}/`)) {
+      fail(field, `Immich manages ${UPLOAD_TARGET} inside the container, so a library cannot live there.`);
     }
   }
 

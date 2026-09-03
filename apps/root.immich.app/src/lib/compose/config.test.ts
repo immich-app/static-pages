@@ -152,6 +152,42 @@ describe('validate', () => {
     }
   });
 
+  it('refuses an external library that lands inside the container upload directory', () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+
+    for (const path of ['/data', '/data/library', '/data/upload', '/data/thumbs', '/data/anything']) {
+      config.storage.externalLibraries = [{ path, readOnly: true }];
+      expect(validate(config)['storage.externalLibraries.0.path'], path).toContain('/data');
+    }
+  });
+
+  it('refuses the filesystem root as an external library', () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+
+    for (const path of ['/', '//']) {
+      config.storage.externalLibraries = [{ path, readOnly: true }];
+      expect(validate(config)['storage.externalLibraries.0.path'], path).toContain('root');
+    }
+  });
+
+  it('flags an external library that reuses an override host path', () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+    config.storage.customFolders = true;
+    config.storage.overrides.thumbs = '/mnt/thumbs';
+    config.storage.externalLibraries = [{ path: '/mnt/thumbs', readOnly: true }];
+    const errors = validate(config);
+    expect(errors['storage.overrides.thumbs']).toBeTruthy();
+    expect(errors['storage.externalLibraries.0.path']).toBeTruthy();
+  });
+
+  it('still accepts an ordinary external library alongside overrides', () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+    config.storage.customFolders = true;
+    config.storage.overrides.thumbs = '/mnt/fast/thumbs';
+    config.storage.externalLibraries = [{ path: '/mnt/media/photos', readOnly: true }];
+    expect(validate(config)).toEqual({});
+  });
+
   it('flags an external library that overlaps another mount', () => {
     const config = structuredClone(DEFAULT_CONFIG);
     config.storage.uploadLocation = '/mnt/media';
