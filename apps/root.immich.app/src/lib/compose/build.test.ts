@@ -129,6 +129,15 @@ describe('buildCompose', () => {
     expect(buildCompose(withoutAdvanced(config), VERSION)).toBe(buildCompose(DEFAULT_CONFIG, VERSION));
   });
 
+  it('separates top-level keys and services with a blank line, but not keys within a service', () => {
+    const text = buildCompose(DEFAULT_CONFIG, VERSION);
+    expect(text).toContain('name: immich\n\nservices:\n');
+    expect(text).toContain('\n\n  immich-machine-learning:\n');
+    expect(text).toContain('\n\nvolumes:\n');
+    expect(text).toContain('    container_name: immich_server\n    image:');
+    expect(text.startsWith('\n')).toBe(false);
+  });
+
   it('keeps null and false values while pruning empty containers', () => {
     const spec = parse(buildCompose(DEFAULT_CONFIG, VERSION));
     expect(spec.volumes['model-cache']).toBeNull();
