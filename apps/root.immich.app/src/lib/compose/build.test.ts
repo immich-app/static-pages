@@ -157,9 +157,7 @@ describe('buildCompose', () => {
       expect(spec.services[name].security_opt).toEqual(['no-new-privileges:true']);
       expect(spec.services[name].cap_drop).toEqual(['NET_RAW']);
     }
-    expect(spec.services['immich-machine-learning'].volumes).toEqual([
-      './ml-model-cache:/cache',
-    ]);
+    expect(spec.services['immich-machine-learning'].volumes).toEqual(['./ml-model-cache:/cache']);
     expect(spec.services.redis.volumes).toEqual(['./redis:/data']);
     expect(spec.volumes).toBeUndefined();
   });
