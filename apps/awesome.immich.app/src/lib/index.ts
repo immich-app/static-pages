@@ -1,4 +1,6 @@
 import { defaultProvider, linkCommands, type ActionProvider } from '@immich/ui';
+import { orderBy } from 'lodash-es';
+import { z } from 'zod';
 import items from '../data/items.json';
 
 export const siteMetadata = {
@@ -14,21 +16,38 @@ export type Category = {
   projects: Project[];
 };
 
-export type Project = {
-  title: string;
-  description: string;
-  href: string;
-  maintained: boolean;
-};
+export enum ProjectTag {
+  Official = 'Official',
+  Unmaintained = 'Unmaintained',
+  VibeCoded = 'Vibe-Coded',
+}
+
+export const projectSchema = z
+  .object({
+    title: z.string(),
+    description: z.string(),
+    websiteUrl: z.string().optional(),
+    sourceCodeUrl: z.string().optional(),
+    tags: z.array(z.enum(ProjectTag)).default([]),
+  })
+  .refine(({ websiteUrl, sourceCodeUrl }) => !!(websiteUrl ?? sourceCodeUrl), {
+    error: 'A project requires a websiteUrl, a sourceCodeUrl, or both',
+  });
+
+export type Project = z.infer<typeof projectSchema>;
+
+export const getProjectUrl = ({ websiteUrl, sourceCodeUrl }: Project) => websiteUrl ?? sourceCodeUrl!;
 
 export const categories = items.map((category) => ({
   ...category,
-  projects: category.projects
-    .map((project) => ({
-      ...project,
-      maintained: project.maintained ?? true,
-    }))
-    .toSorted((a, b) => (a.maintained === b.maintained ? 0 : a.maintained ? -1 : 1)),
+  projects: orderBy(
+    category.projects.map((project) => projectSchema.parse(project)),
+    [
+      (project) => project.tags.includes(ProjectTag.Official),
+      (project) => !project.tags.includes(ProjectTag.Unmaintained),
+    ],
+    ['desc', 'desc'],
+  ),
 }));
 
 export const getCategoryProviders = () => {
@@ -36,7 +55,13 @@ export const getCategoryProviders = () => {
     defaultProvider({
       name: category.name,
       types: category.types,
-      actions: linkCommands(category.projects),
+      actions: linkCommands(
+        category.projects.map((project) => ({
+          title: project.title,
+          description: project.description,
+          href: getProjectUrl(project),
+        })),
+      ),
     }),
   );
 
