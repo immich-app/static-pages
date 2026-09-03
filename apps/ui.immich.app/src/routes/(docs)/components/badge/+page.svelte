@@ -5,6 +5,8 @@
   import closeExample from './CloseExample.svelte?raw';
   import ColorExample from './ColorExample.svelte';
   import colorExample from './ColorExample.svelte?raw';
+  import IconExample from './IconExample.svelte';
+  import iconExample from './IconExample.svelte?raw';
   import ShapeExample from './ShapeExample.svelte';
   import shapeExample from './ShapeExample.svelte?raw';
   import SizeExample from './SizeExample.svelte';
@@ -17,6 +19,7 @@
       { title: 'Size', code: sizeExample, component: SizeExample },
       { title: 'Color', code: colorExample, component: ColorExample },
       { title: 'Shape', code: shapeExample, component: ShapeExample },
+      { title: 'Icon', code: iconExample, component: IconExample },
       { title: 'Close', code: closeExample, component: CloseExample },
     ]}
   />
