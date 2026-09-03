@@ -202,7 +202,7 @@ export class ImportService {
     const uploadedKeys = referencedKeys.difference(existingKeys);
     console.log(`\nBucket stats (uploaded=${uploadedKeys.size}, unchanged=${referencedKeys.size - uploadedKeys.size})`);
 
-    const outputFile = join(repoRoot, 'apps/root.immich.app/src/routes/blog', folder, '+page.md');
+    const outputFile = join(repoRoot, 'apps/root.immich.app', outputRelative);
     this.systemRepository.write(outputFile, serializeYml(metadata, rendered));
     this.systemRepository.format(repoRoot, outputFile);
 
