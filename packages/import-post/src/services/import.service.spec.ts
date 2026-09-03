@@ -76,8 +76,9 @@ describe(ImportService.name, () => {
     };
 
     r2Mock = {
-      listKeys: vi.fn().mockResolvedValue([]),
+      listObjects: vi.fn().mockResolvedValue([]),
       upload: vi.fn(),
+      deleteKeys: vi.fn(),
     };
 
     sut = new ImportService(
@@ -122,7 +123,9 @@ slug: test
 ![alt](https://outline.immich/a.png)`,
       });
       systemMock.md5.mockReturnValue('file-hash-1');
-      r2Mock.listKeys.mockResolvedValue(variantKeys('file-hash-1'));
+      r2Mock.listObjects.mockResolvedValue(
+        variantKeys('file-hash-1').map((key) => ({ key, lastModified: new Date() })),
+      );
 
       await sut.run(POST_URL);
 

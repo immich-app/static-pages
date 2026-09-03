@@ -25,6 +25,8 @@ export type ParsedDocument = {
   content: string;
 };
 
+export type BucketObject = { key: string; lastModified: Date };
+
 export type OptimizeResult = { buffer: Buffer; extension: string; contentType: string };
 
 export type ImageVariant = { buffer: Buffer; width: number; height: number; extension: 'avif' | 'webp' };

@@ -41,7 +41,7 @@ export class SystemRepository {
     }
   }
 
-  async confirm(options?: { prompt?: string; timeoutSeconds: number }): Promise<boolean> {
+  async confirm(options?: { prompt?: string; timeoutSeconds?: number }): Promise<boolean> {
     if (!process.stdin.isTTY) {
       return true;
     }

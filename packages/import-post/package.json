@@ -15,6 +15,7 @@
   },
   "scripts": {
     "import": "tsx src/index.ts",
+    "cleanup": "tsx src/cleanup.ts",
     "build": "tsc -p tsconfig.json",
     "check": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run"

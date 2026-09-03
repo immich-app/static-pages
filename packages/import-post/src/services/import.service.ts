@@ -113,7 +113,8 @@ export class ImportService {
       return;
     }
 
-    const existingKeys = new Set(await this.r2Repository.listKeys(bucketFolder));
+    const existing = await this.r2Repository.listObjects(bucketFolder);
+    const existingKeys = new Set(existing.map(({ key }) => key));
     const referencedKeys = new Set<string>();
 
     const upload = async (filename: string, body: Buffer, contentType: string): Promise<string> => {

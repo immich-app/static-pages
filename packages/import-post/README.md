@@ -30,3 +30,14 @@ Required environment variables:
 | `R2_PUBLIC_URL`        | Public base URL for uploaded assets |
 
 The post URL may also be supplied via `OUTLINE_POST_URL` instead of an argument.
+
+## Cleanup
+
+Imports never delete, so re-imports and pipeline changes leave old objects behind. The
+`Cleanup bucket` workflow runs monthly from `main` and deletes every object under `blog/` that no
+post references. Objects uploaded within the last 30 days are kept, since an open import PR
+references its uploads only on its branch. To run it by hand:
+
+```bash
+mise cleanup-bucket
+```
