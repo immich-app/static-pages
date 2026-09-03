@@ -17,6 +17,8 @@
     { color: 'info', label: 'Info' },
     { color: 'warning', label: 'Warning' },
     { color: 'danger', label: 'Danger' },
+    { color: 'muted', label: 'Muted' },
+    { color: 'subtle', label: 'Subtle' },
   ];
 </script>
 
