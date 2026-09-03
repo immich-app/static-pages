@@ -34,7 +34,7 @@ This is ~~strike-through~~
 
 This is `code`
 
-#### Headers can also container `code`
+#### Headers can also contain `code`
 
 ### Link
 
