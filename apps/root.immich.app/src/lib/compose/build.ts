@@ -12,7 +12,7 @@ export const rootlessHardening = ({ uid, gid }: ImmichConfig['rootless']): Compo
 });
 
 export const ROOTLESS_VOLUMES = new Map<string, string[]>([
-  ['immich-machine-learning', ['./ml-model-cache:/cache', './ml-dotcache:/.cache', './ml-config:/.config']],
+  ['immich-machine-learning', ['./ml-model-cache:/cache']],
   ['redis', ['./redis:/data']],
 ]);
 
