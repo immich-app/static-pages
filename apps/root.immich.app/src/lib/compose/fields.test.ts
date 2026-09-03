@@ -61,6 +61,15 @@ const configs: [string, ImmichConfig][] = [
       return config;
     })(),
   ],
+  [
+    'remote machine learning',
+    (() => {
+      const config = structuredClone(DEFAULT_CONFIG);
+      config.machineLearning.external = true;
+      config.hwaccel.ml = 'openvino';
+      return config;
+    })(),
+  ],
 ];
 
 const everything = configs[1][1];

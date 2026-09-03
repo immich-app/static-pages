@@ -122,6 +122,23 @@ const build = (config: ImmichConfig, version: string): { spec: ComposeFile; fiel
   );
   const overrideKeys = overrides.map(({ key }) => key);
 
+  const bundledMl = !config.machineLearning.external;
+
+  const mlService: Record<string, ComposeService> = bundledMl
+    ? {
+        'immich-machine-learning': deepmerge<ComposeService>(
+          {
+            container_name: containerName('immich_machine_learning'),
+            image: IMAGES.machineLearning(version + ML_BACKENDS[config.hwaccel.ml].tag),
+            volumes: rootlessVolumes('immich-machine-learning') ?? [`${NamedVolume.ModelCache}:/cache`],
+            restart: 'always',
+            healthcheck: { disable: false },
+          },
+          ML_BACKENDS[config.hwaccel.ml].fragment,
+        ),
+      }
+    : {};
+
   const services: Record<string, ComposeService> = {
     'immich-server': deepmerge<ComposeService>(
       {
@@ -142,16 +159,7 @@ const build = (config: ImmichConfig, version: string): { spec: ComposeFile; fiel
       },
       TRANSCODE_BACKENDS[config.hwaccel.transcoding].fragment,
     ),
-    'immich-machine-learning': deepmerge<ComposeService>(
-      {
-        container_name: containerName('immich_machine_learning'),
-        image: IMAGES.machineLearning(version + ML_BACKENDS[config.hwaccel.ml].tag),
-        volumes: rootlessVolumes('immich-machine-learning') ?? [`${NamedVolume.ModelCache}:/cache`],
-        restart: 'always',
-        healthcheck: { disable: false },
-      },
-      ML_BACKENDS[config.hwaccel.ml].fragment,
-    ),
+    ...mlService,
     ...backingServices,
   };
 
@@ -194,6 +202,7 @@ const build = (config: ImmichConfig, version: string): { spec: ComposeFile; fiel
       return value === undefined || value === '' ? [] : [['services', 'immich-server', 'environment', key]];
     },
     bundledDatabase: !config.database.external,
+    bundledMl,
     databaseVolume,
     network: externalNetwork
       ? [
@@ -217,11 +226,13 @@ const build = (config: ImmichConfig, version: string): { spec: ComposeFile; fiel
             'immich-server',
             key,
           ])
-        : Object.keys(ML_BACKENDS[config.hwaccel.ml].fragment).map((key) => [
-            'services',
-            'immich-machine-learning',
-            key,
-          ]),
+        : bundledMl
+          ? Object.keys(ML_BACKENDS[config.hwaccel.ml].fragment).map((key) => [
+              'services',
+              'immich-machine-learning',
+              key,
+            ])
+          : [],
   };
 
   const fields: FieldPaths = Object.fromEntries(
