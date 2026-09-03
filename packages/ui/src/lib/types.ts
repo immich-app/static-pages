@@ -407,6 +407,17 @@ export type ActionItem = ActionBase & {
   shortcutOptions?: { ignoreInputFields?: boolean; preventDefault?: boolean };
 };
 
+export type TableOfContentsItem = {
+  id: string;
+  text: string;
+  level: number;
+};
+
+export type TableOfContentsProps = {
+  items: TableOfContentsItem[];
+  translations?: TranslationProps<'table_of_contents_title'>;
+} & HTMLAttributes<HTMLElement>;
+
 export type BreadcrumbsProps = {
   separator?: IconLike | { text: string };
   items: BreadcrumbItem[];

@@ -40,6 +40,9 @@ const defaultTranslations = {
   navigate_next: 'Next',
   navigate_previous: 'Previous',
 
+  // table of contents
+  table_of_contents_title: 'On this page',
+
   // date picker
   open_calendar: 'Open calendar',
 
