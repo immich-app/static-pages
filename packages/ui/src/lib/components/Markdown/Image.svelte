@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { IMAGE_SIZES } from '$lib/utilities/image-sizes.js';
+  import { IMAGE_SIZES_QUERY } from '$lib/utilities/image-sizes.js';
   import { cleanClass } from '$lib/utilities/internal.js';
   import type { Snippet } from 'svelte';
 
@@ -22,7 +22,7 @@
   <img
     {src}
     {srcset}
-    sizes={srcset ? IMAGE_SIZES : undefined}
+    sizes={srcset ? IMAGE_SIZES_QUERY : undefined}
     {width}
     {height}
     {alt}

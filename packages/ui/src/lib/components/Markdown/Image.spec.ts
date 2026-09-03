@@ -1,5 +1,5 @@
 import Image from '$lib/components/Markdown/Image.svelte';
-import { IMAGE_SIZES } from '$lib/utilities/image-sizes.js';
+import { IMAGE_SIZES_QUERY } from '$lib/utilities/image-sizes.js';
 import type { ComponentProps } from 'svelte';
 import { render } from 'svelte/server';
 import { describe, expect, it } from 'vitest';
@@ -13,7 +13,7 @@ describe('Markdown.Image', () => {
 
     expect(body).toContain('src="https://cdn/x-2160.avif"');
     expect(body).toContain(`srcset="${srcset}"`);
-    expect(body).toContain(`sizes="${IMAGE_SIZES}"`);
+    expect(body).toContain(`sizes="${IMAGE_SIZES_QUERY}"`);
     expect(body).toContain('width="2160"');
     expect(body).toContain('height="1440"');
   });
