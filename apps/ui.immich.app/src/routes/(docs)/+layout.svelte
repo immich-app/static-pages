@@ -22,7 +22,16 @@
     toastManager,
     type NavbarProps,
   } from '@immich/ui';
-  import { mdiCodeBraces, mdiCompass, mdiCompassOutline, mdiMenu, mdiNote, mdiNoteOutline } from '@mdi/js';
+  import {
+    mdiAlignHorizontalLeft,
+    mdiAlignHorizontalRight,
+    mdiCodeBraces,
+    mdiCompass,
+    mdiCompassOutline,
+    mdiMenu,
+    mdiNote,
+    mdiNoteOutline,
+  } from '@mdi/js';
   import { MediaQuery } from 'svelte/reactivity';
 
   let { children } = $props();
@@ -41,6 +50,12 @@
   commandPaletteManager.enable();
   commandPaletteManager.setTranslations({
     command_palette_prompt_default: 'Quickly find components, links, and commands',
+  });
+
+  let dirIsLtr = $state(true);
+
+  $effect(() => {
+    document.dir = dirIsLtr ? 'ltr' : 'rtl';
   });
 </script>
 
@@ -64,6 +79,14 @@
       </ControlBarHeader>
       <ControlBarOverflow>
         <CommandPaletteButton />
+        <IconButton
+          shape="round"
+          variant="ghost"
+          size="medium"
+          aria-label="Switch between LTR and RTL text direction"
+          icon={dirIsLtr ? mdiAlignHorizontalLeft : mdiAlignHorizontalRight}
+          onclick={() => (dirIsLtr = !dirIsLtr)}
+        />
         <ThemeSwitcher size="medium" />
       </ControlBarOverflow>
     </ControlBar>

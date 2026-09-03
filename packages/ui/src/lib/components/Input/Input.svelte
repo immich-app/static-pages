@@ -31,7 +31,7 @@
     variants: {
       padding: {
         base: 'px-4',
-        icon: 'pl-4',
+        icon: 'ps-4',
       },
     },
   });

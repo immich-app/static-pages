@@ -104,12 +104,12 @@
         giant: 'h-12',
       },
       leadingPadding: {
-        base: 'pl-4',
-        icon: 'pl-0',
+        base: 'ps-4',
+        icon: 'ps-0',
       },
       trailingPadding: {
-        base: 'pr-4',
-        icon: 'pr-0',
+        base: 'pe-4',
+        icon: 'pe-0',
       },
       roundedSize: styleVariants.inputRoundedSize,
     },

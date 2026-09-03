@@ -14,7 +14,7 @@
 <TooltipProvider>
   <div
     class={cleanClass(
-      isEmpty ? 'hidden' : 'absolute top-0 right-0 flex flex-col items-end justify-end gap-2 p-4',
+      isEmpty ? 'hidden' : 'absolute top-0 inset-e-0 flex flex-col items-end justify-end gap-2 p-4',
       zIndex.ToastPanel,
       className,
     )}
