@@ -1,20 +1,25 @@
 <script lang="ts">
   import LinkableHeading from '$common/components/LinkableHeading.svelte';
-  import { categories, siteMetadata, type Category } from '$lib';
+  import { categories, siteMetadata, type Category, type Project } from '$lib';
   import ProjectCard from '$lib/components/ProjectCard.svelte';
   import { Heading, Input, Link, SiteMetadata, Text } from '@immich/ui';
   import { mdiMagnify } from '@mdi/js';
 
   let query = $state('');
 
+  const matchesQuery = (project: Project, query: string) =>
+    [project.title, project.description, project.websiteUrl, project.sourceCodeUrl]
+      .filter(Boolean)
+      .join('|')
+      .toLowerCase()
+      .includes(query);
+
   const filterProjects = (query: string) => {
     query = query.toLowerCase().trim();
 
     const results: Category[] = [];
     for (const category of categories) {
-      const projects = category.projects.filter(({ title, description, href }) =>
-        [title, description, href].join('|').toLowerCase().includes(query),
-      );
+      const projects = category.projects.filter((project) => !query || matchesQuery(project, query));
 
       if (projects.length > 0) {
         results.push({ ...category, projects });
@@ -53,7 +58,7 @@
   </LinkableHeading>
 
   <div class="mt-4 grid grid-cols-1 gap-4">
-    {#each category.projects as project (project.href)}
+    {#each category.projects as project (category.id + project.title)}
       <ProjectCard {project} />
     {/each}
   </div>
