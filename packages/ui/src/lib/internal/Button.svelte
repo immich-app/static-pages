@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Icon from '$lib/components/Icon/Icon.svelte';
   import LoadingSpinner from '$lib/components/LoadingSpinner/LoadingSpinner.svelte';
   import Tooltip from '$lib/components/Tooltip/Tooltip.svelte';
+  import IconWrapper from '$lib/internal/IconWrapper.svelte';
   import { styleVariants } from '$lib/styles.js';
   import type { ButtonProps, Size } from '$lib/types.js';
   import { isExternalLink, resolveUrl } from '$lib/utilities/common.js';
@@ -127,25 +127,17 @@
       className,
     ),
   );
-
-  const iconSizes = {
-    tiny: 'h-4 w-4',
-    small: 'h-4 w-4',
-    medium: 'h-4 w-4',
-    large: 'h-6 w-6',
-    giant: 'h-8 w-8',
-  };
 </script>
 
 {#snippet content()}
   {#if leadingIcon && !loading}
     <div>
-      <Icon size="100%" class={iconSizes[size]} icon={leadingIcon} aria-hidden />
+      <IconWrapper {size} icon={leadingIcon} />
     </div>
   {/if}
   {@render children?.()}
   {#if trailingIcon}
-    <Icon size="100%" class={iconSizes[size]} icon={trailingIcon} aria-hidden />
+    <IconWrapper {size} icon={trailingIcon} />
   {/if}
 {/snippet}
 

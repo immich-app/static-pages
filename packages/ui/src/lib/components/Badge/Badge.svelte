@@ -1,8 +1,9 @@
 <script lang="ts">
   import IconButton from '$lib/components/IconButton/IconButton.svelte';
+  import IconWrapper from '$lib/internal/IconWrapper.svelte';
   import { t } from '$lib/services/translation.svelte.js';
   import { styleVariants } from '$lib/styles.js';
-  import type { Color, Shape, Size, TranslationProps } from '$lib/types.js';
+  import type { Color, IconLike, Shape, Size, TranslationProps } from '$lib/types.js';
   import { cleanClass } from '$lib/utilities/internal.js';
   import { mdiClose } from '@mdi/js';
   import type { Snippet } from 'svelte';
@@ -13,6 +14,8 @@
     size?: Size;
     color?: Color;
     shape?: Shape;
+    leadingIcon?: IconLike;
+    trailingIcon?: IconLike;
     class?: string;
     translations?: TranslationProps<'close'>;
     onClose?: () => void;
@@ -25,6 +28,8 @@
     class: className,
     color = 'primary',
     shape = 'semi-round',
+    leadingIcon,
+    trailingIcon,
     translations,
     onClose,
     close,
@@ -76,7 +81,14 @@
     className,
   )}
 >
+  {#if leadingIcon}
+    <IconWrapper {size} icon={leadingIcon} />
+  {/if}
   {@render children?.()}
+  {#if trailingIcon}
+    <IconWrapper {size} icon={trailingIcon} />
+  {/if}
+
   {#if onClose}
     <IconButton
       icon={mdiClose}
