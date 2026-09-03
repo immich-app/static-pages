@@ -41,7 +41,12 @@ const required = (message: string) => z.string().refine((value) => value.trim() 
 
 const externalLibrarySchema = z.object({ path: z.string(), readOnly: z.boolean() });
 
-const immichConfigSchema = z.object({
+export const immichConfigSchema = z.object({
+  advanced: z.boolean(),
+  version: z.object({
+    pinned: z.boolean(),
+    tag: z.string(),
+  }),
   timezone: z.string(),
   rootless: z.object({
     enabled: z.boolean(),
@@ -113,7 +118,7 @@ const DATABASE = ['services', 'database'];
 
 export const FIELDS = {
   version: {
-    config: [],
+    config: ['version.pinned', 'version.tag'],
     output: ({ server, ml, bundledMl }) => [[...server, 'image'], ...(bundledMl ? [[...ml, 'image']] : [])],
   },
   timezone: { config: ['timezone'], output: ({ env }) => env('TZ') },
@@ -213,6 +218,11 @@ export const FOLDER_OVERRIDES: { key: keyof StorageOverrides; label: string; sub
 ];
 
 export const DEFAULT_CONFIG: ImmichConfig = {
+  advanced: false,
+  version: {
+    pinned: false,
+    tag: '',
+  },
   timezone: '',
   rootless: {
     enabled: false,

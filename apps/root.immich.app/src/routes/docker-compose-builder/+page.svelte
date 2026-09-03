@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
+  import { afterNavigate, goto, replaceState } from '$app/navigation';
+  import { page } from '$app/state';
   import { siteMetadata } from '$lib';
   import PageContent from '$lib/components/PageContent.svelte';
   import { buildCompose, buildComposeFields } from '$lib/compose/build';
   import { DEFAULT_CONFIG, FOLDER_OVERRIDES, StorageType, validate, withoutAdvanced } from '$lib/compose/config';
   import { ML_ACCELS, TRANSCODE_ACCELS } from '$lib/compose/hwaccel';
   import { highlightedLines } from '$lib/compose/highlight';
+  import { decodeShare, encodeShare, randomPassword } from '$lib/compose/share';
   import {
     ActionBar,
     ActionButton,
@@ -51,27 +53,26 @@
     mdiEyeOutline,
     mdiPartyPopper,
     mdiPlus,
+    mdiShareVariant,
   } from '@mdi/js';
   import { siGithub } from 'simple-icons';
   import { onMount } from 'svelte';
+  import { SvelteURL } from 'svelte/reactivity';
   import { yaml as yamlLanguage } from 'svelte-highlight/languages';
 
   const config = $state(structuredClone(DEFAULT_CONFIG));
   const defaultDatabaseLocation =
     DEFAULT_CONFIG.database.mount.type === 'bind' ? DEFAULT_CONFIG.database.mount.location : '';
 
-  let advanced = $state(false);
-  let versionPinned = $state(false);
-  let pinnedVersion = $state('');
   let latestVersion = $state('');
   let versionFailed = $state(false);
 
   const majorVersion = $derived(latestVersion.split('.', 1)[0]);
-  const version = $derived(versionPinned ? pinnedVersion.trim() || latestVersion : majorVersion);
+  const version = $derived(config.version.pinned ? config.version.tag.trim() || latestVersion : majorVersion);
 
   const effectiveConfig = $derived.by(() => {
     const base = $state.snapshot(config);
-    return advanced ? base : withoutAdvanced(base);
+    return base.advanced ? base : withoutAdvanced(base);
   });
   const compose = $derived(buildCompose(effectiveConfig, version));
   const errors = $derived(validate(effectiveConfig));
@@ -96,10 +97,42 @@
 
   const timezones = Intl.supportedValuesOf('timeZone');
 
-  onMount(async () => {
-    if (!config.timezone) {
-      config.timezone = new Intl.DateTimeFormat().resolvedOptions().timeZone ?? '';
+  let detectedTimezone = $state('');
+  let decoded = $state(false);
+  let routerReady = $state(false);
+
+  afterNavigate(() => {
+    routerReady = true;
+  });
+
+  const shareUrl = $derived.by(() => {
+    const shared = structuredClone(effectiveConfig);
+    if (shared.timezone === detectedTimezone) {
+      shared.timezone = DEFAULT_CONFIG.timezone;
     }
+    const url = new SvelteURL(page.url);
+    url.search = encodeShare(shared).toString();
+    return url.href;
+  });
+
+  let writtenUrl = '';
+
+  $effect(() => {
+    const target = shareUrl;
+    if (decoded && routerReady && target !== writtenUrl) {
+      writtenUrl = target;
+      replaceState(target, {});
+    }
+  });
+
+  onMount(async () => {
+    Object.assign(config, decodeShare(page.url.searchParams));
+
+    detectedTimezone = new Intl.DateTimeFormat().resolvedOptions().timeZone ?? '';
+    if (!config.timezone) {
+      config.timezone = detectedTimezone;
+    }
+    decoded = true;
 
     try {
       const response = await fetch('https://version.immich.cloud/version');
@@ -109,9 +142,6 @@
         return;
       }
 
-      if (!pinnedVersion) {
-        pinnedVersion = fetched;
-      }
       latestVersion = fetched;
     } catch {
       versionFailed = true;
@@ -119,11 +149,7 @@
   });
 
   const generatePassword = () => {
-    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
-    config.database.password = Array.from(
-      crypto.getRandomValues(new Uint8Array(24)),
-      (byte) => alphabet[byte % alphabet.length],
-    ).join('');
+    config.database.password = randomPassword();
   };
 
   const addLibrary = () => {
@@ -154,6 +180,16 @@
     setTimeout(() => URL.revokeObjectURL(url), 0);
   };
 
+  const handleShare = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      toastManager.primary('Link copied to clipboard');
+    } catch (error) {
+      toastManager.danger('Failed to copy the link to clipboard');
+      console.error(error);
+    }
+  };
+
   const FEEDBACK_URL = 'https://github.com/immich-app/immich/discussions/31232';
   const SOURCE_URL = 'https://github.com/immich-app/static-pages/tree/main/apps/root.immich.app/src/lib/compose';
   const ISSUE_URL = 'https://github.com/immich-app/static-pages/issues/new';
@@ -175,6 +211,13 @@
     description: 'Build a custom docker-compose.yml file for Immich.',
   };
 
+  const Share: ActionItem = $derived({
+    title: 'Copy shareable link',
+    icon: mdiShareVariant,
+    onAction: () => handleShare(),
+    $if: () => !!globalThis.navigator?.clipboard,
+  });
+
   const Copy: ActionItem = $derived({
     title: 'Copy',
     icon: mdiContentCopy,
@@ -189,12 +232,12 @@
   };
 
   const Advanced: ActionItem = $derived({
-    title: advanced ? 'Hide advanced options' : 'Show advanced options',
-    icon: advanced ? mdiEyeOutline : mdiEyeOffOutline,
+    title: config.advanced ? 'Hide advanced options' : 'Show advanced options',
+    icon: config.advanced ? mdiEyeOutline : mdiEyeOffOutline,
     shape: 'round',
     color: 'secondary',
     variant: 'ghost',
-    onAction: () => (advanced = !advanced),
+    onAction: () => (config.advanced = !config.advanced),
   });
 
   toastManager.setOptions({ class: 'top-[66px]' });
@@ -240,6 +283,7 @@
 
         <div class="my-4 flex justify-end gap-2">
           <ActionButton action={Advanced} />
+          <ActionButton action={Share} />
           <ActionButton action={Copy} />
           <ActionButton action={Download} type="button" variant="filled" size="medium" shape="round" color="primary" />
         </div>
@@ -264,27 +308,27 @@
                           <Button
                             size="small"
                             fullWidth
-                            variant={versionPinned ? 'ghost' : 'filled'}
-                            color={versionPinned ? 'secondary' : 'primary'}
+                            variant={config.version.pinned ? 'ghost' : 'filled'}
+                            color={config.version.pinned ? 'secondary' : 'primary'}
                             data-field="version"
-                            onclick={() => (versionPinned = false)}
+                            onclick={() => (config.version.pinned = false)}
                           >
                             Rolling
                           </Button>
                           <Button
                             size="small"
                             fullWidth
-                            variant={versionPinned ? 'filled' : 'ghost'}
-                            color={versionPinned ? 'primary' : 'secondary'}
+                            variant={config.version.pinned ? 'filled' : 'ghost'}
+                            color={config.version.pinned ? 'primary' : 'secondary'}
                             data-field="version"
-                            onclick={() => (versionPinned = true)}
+                            onclick={() => (config.version.pinned = true)}
                           >
                             Pinned
                           </Button>
                         </div>
-                        {#if versionPinned}
+                        {#if config.version.pinned}
                           <Input
-                            bind:value={pinnedVersion}
+                            bind:value={config.version.tag}
                             data-field="version"
                             placeholder={latestVersion}
                             aria-label="Pinned Immich version tag"
@@ -294,7 +338,7 @@
                           <Text size="small" color="muted">
                             {versionFailed ? 'Version unavailable.' : 'Checking for the latest release...'}
                           </Text>
-                        {:else if versionPinned}
+                        {:else if config.version.pinned}
                           <Text size="small" color="muted">
                             Locked to <Code>{version}</Code>, updated manually.
                           </Text>
@@ -336,7 +380,7 @@
                       </div>
                     {/if}
 
-                    {#if advanced}
+                    {#if config.advanced}
                       <Field
                         label="Container names"
                         description="Turn off to run more than one Immich stack on the same host."
@@ -382,7 +426,7 @@
                       {@render fieldError(errors['storage.uploadLocation'])}
                     </Field>
 
-                    {#if advanced}
+                    {#if config.advanced}
                       <Field
                         label="Custom folder locations"
                         description="Mount individual subfolders on separate storage."
@@ -500,7 +544,7 @@
                 </CardHeader>
                 <CardBody>
                   <Stack gap={4}>
-                    {#if advanced}
+                    {#if config.advanced}
                       <Field label="Remote machine learning">
                         <Switch
                           bind:checked={config.machineLearning.external}
@@ -509,7 +553,7 @@
                         />
                       </Field>
                     {/if}
-                    {#if advanced && config.machineLearning.external}
+                    {#if config.advanced && config.machineLearning.external}
                       <Text size="small" color="muted">
                         Point your server at the remote instance in the admin settings. See the
                         <Link href="https://docs.immich.app/guides/remote-machine-learning"
@@ -534,7 +578,7 @@
                 </CardHeader>
                 <CardBody>
                   <Stack gap={4}>
-                    {#if advanced}
+                    {#if config.advanced}
                       <Field label="External Postgres">
                         <Switch
                           bind:checked={config.database.external}
@@ -543,7 +587,7 @@
                         />
                       </Field>
                     {/if}
-                    {#if advanced && config.database.external}
+                    {#if config.advanced && config.database.external}
                       <Text size="small" color="muted">
                         The VectorChord extension must be installed. See the
                         <Link href="https://docs.immich.app/administration/postgres-standalone"
@@ -609,7 +653,7 @@
                 </CardBody>
               </Card>
 
-              {#if advanced}
+              {#if config.advanced}
                 <Card color="secondary">
                   <CardHeader>
                     <CardTitle>Redis</CardTitle>
