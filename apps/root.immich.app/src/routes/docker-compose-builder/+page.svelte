@@ -49,8 +49,6 @@
     mdiContentCopy,
     mdiDiceMultiple,
     mdiDownload,
-    mdiEyeOffOutline,
-    mdiEyeOutline,
     mdiPartyPopper,
     mdiPlus,
     mdiShareVariant,
@@ -231,15 +229,6 @@
     onAction: () => handleDownload(),
   };
 
-  const Advanced: ActionItem = $derived({
-    title: config.advanced ? 'Hide advanced options' : 'Show advanced options',
-    icon: config.advanced ? mdiEyeOutline : mdiEyeOffOutline,
-    shape: 'round',
-    color: 'secondary',
-    variant: 'ghost',
-    onAction: () => (config.advanced = !config.advanced),
-  });
-
   toastManager.setOptions({ class: 'top-[66px]' });
 </script>
 
@@ -275,18 +264,12 @@
     </AppShellBar>
     <PageContent>
       <Container size="giant" center>
-        <Alert color="primary" icon={mdiPartyPopper} title="New feature" shape="rectangle" class="my-3">
+        <Alert color="primary" icon={mdiPartyPopper} title="New feature" shape="rectangle" class="mt-3 mb-4">
           <div>
             This tool is new. Please give us <Link href={FEEDBACK_URL}>your feedback</Link>!
           </div>
         </Alert>
 
-        <div class="my-4 flex justify-end gap-2">
-          <ActionButton action={Advanced} />
-          <ActionButton action={Share} />
-          <ActionButton action={Copy} />
-          <ActionButton action={Download} type="button" variant="filled" size="medium" shape="round" color="primary" />
-        </div>
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-[clamp(20rem,34%,31.25rem)_1fr]">
           <form
             autocomplete="off"
@@ -294,6 +277,17 @@
             onfocusin={onFocusIn}
             onfocusout={onFocusOut}
           >
+            <div class="mb-4 flex min-h-10 items-center justify-end">
+              <Button
+                size="medium"
+                shape="round"
+                variant="ghost"
+                color="secondary"
+                onclick={() => (config.advanced = !config.advanced)}
+              >
+                {config.advanced ? 'Hide advanced options' : 'Show advanced options'}
+              </Button>
+            </div>
             <Stack gap={6}>
               <Card color="secondary">
                 <CardHeader>
@@ -698,6 +692,18 @@
           </form>
 
           <div class="min-w-0 self-start lg:sticky lg:top-6">
+            <div class="mb-4 flex min-h-10 items-center justify-end gap-2">
+              <ActionButton action={Share} />
+              <ActionButton action={Copy} />
+              <ActionButton
+                action={Download}
+                type="button"
+                variant="filled"
+                size="medium"
+                shape="round"
+                color="primary"
+              />
+            </div>
             {#if versionFailed}
               <Text color="danger">Could not reach the Immich version service. Reload the page to try again.</Text>
             {:else if version}
