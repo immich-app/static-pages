@@ -43,7 +43,14 @@
   <BlogTypeBadge class="mt-2" size="small" type={post.type} />
 
   {#if post.coverUrl}
-    <Markdown.Image src={post.coverUrl} {alt}>
+    <Markdown.Image
+      src={post.coverUrl}
+      srcset={post.coverSrcset}
+      width={post.coverWidth}
+      height={post.coverHeight}
+      {alt}
+      priority
+    >
       {#snippet caption()}
         {#if post.coverAttribution}
           <!-- eslint-disable-next-line svelte/no-at-html-tags -->

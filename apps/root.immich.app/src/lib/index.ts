@@ -35,6 +35,9 @@ type Attributes = {
   featured?: boolean;
   authors: string[];
   coverUrl?: string;
+  coverSrcset?: string;
+  coverWidth?: number;
+  coverHeight?: number;
   coverAlt?: string;
   coverAttribution?: string;
 };
@@ -119,6 +122,9 @@ const asPost = (path: string, content: string): BlogPost => {
     url: `/blog/${slug}`,
     featured: attributes.featured,
     coverUrl: attributes.coverUrl,
+    coverSrcset: attributes.coverSrcset,
+    coverWidth: attributes.coverWidth,
+    coverHeight: attributes.coverHeight,
     coverAlt: attributes.coverAlt,
     coverAttribution: attributes.coverAttribution,
     markdown: content,

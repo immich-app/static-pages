@@ -22,7 +22,10 @@ export class ConfigRepository {
 
   private constructor() {
     this.config = {
-      outlineApiKey: required('OUTLINE_API_KEY'),
+      // Read lazily, so the cleanup workflow can omit the key
+      get outlineApiKey() {
+        return required('OUTLINE_API_KEY');
+      },
       rootPath: fileURLToPath(new URL('../../../../', import.meta.url)),
       r2: {
         bucket: required('R2_BUCKET_NAME'),

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { type BlogPost, type BlogType } from '$lib';
   import BlogTypeBadge from '$lib/components/BlogTypeBadge.svelte';
-  import { Button, Heading, Markdown, Text } from '@immich/ui';
+  import { Button, Heading, IMAGE_SIZES_QUERY, Markdown, Text } from '@immich/ui';
   import { mdiChevronRight } from '@mdi/js';
   import { DateTime } from 'luxon';
 
@@ -25,7 +25,16 @@
   </div>
 
   {#if post.coverUrl}
-    <img src={post.coverUrl} alt={post.coverAlt} class="overflow-hidden rounded-lg" />
+    <img
+      src={post.coverUrl}
+      srcset={post.coverSrcset}
+      sizes={post.coverSrcset && IMAGE_SIZES_QUERY}
+      alt={post.coverAlt}
+      width={post.coverWidth}
+      height={post.coverHeight}
+      loading="lazy"
+      class="overflow-hidden rounded-lg"
+    />
   {/if}
 
   <div class="mt-4">

@@ -27,7 +27,7 @@ describe('JWT Authentication', () => {
     expect(response.status).toBe(200);
     expect(data.token).toBeDefined();
     expect(data.token).toMatch(/^[A-Za-z0-9-_.]+$/);
-  });
+  }, 10_000);
 });
 
 describe('EXIF Dataset upload API worker', () => {

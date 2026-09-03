@@ -1,0 +1,54 @@
+name: Cleanup bucket
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 1 * *'
+
+env:
+  MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}/.mise/config.toml
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: 'main'
+
+      - id: token
+        uses: immich-app/devtools/actions/create-workflow-token@df46d635b905e618b88fc4c95baa920aeb30b309 # create-workflow-token-action-v3.0.1
+        with:
+          client-id: ${{ secrets.PUSH_O_MATIC_APP_CLIENT_ID }}
+          private-key: ${{ secrets.PUSH_O_MATIC_APP_KEY }}
+          permission-contents: read
+
+      - name: Setup Mise
+        uses: immich-app/devtools/actions/use-mise@06a9ef925332c91be647d6256642b86b398592c8 # use-mise-action-v3.2.1
+        with:
+          github_token: ${{ steps.token.outputs.token }}
+
+      - name: Get pnpm store directory
+        id: pnpm-store
+        run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm store
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.pnpm-store.outputs.path }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Cleanup bucket
+        env:
+          R2_BUCKET_NAME: ${{ secrets.STATIC_BUCKET_NAME }}
+          R2_ENDPOINT_URL: ${{ secrets.STATIC_BUCKET_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.STATIC_BUCKET_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.STATIC_BUCKET_KEY_SECRET }}
+          R2_PUBLIC_URL: 'https://static.immich.cloud'
+        run: mise cleanup-bucket

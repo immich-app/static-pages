@@ -25,7 +25,11 @@ export type ParsedDocument = {
   content: string;
 };
 
+export type BucketObject = { key: string; lastModified: Date };
+
 export type OptimizeResult = { buffer: Buffer; extension: string; contentType: string };
+
+export type ImageVariant = { buffer: Buffer; width: number; height: number; extension: 'avif' | 'webp' };
 
 export type MarkdownDocument = Root;
 
@@ -36,6 +40,6 @@ export type OutlineAttachment = {
   type: AttachmentType;
   alt: string;
   title: string | null | undefined;
-  update(url: string, title: string | null | undefined): void;
+  update(markup: string): void;
   remove(): void;
 };
