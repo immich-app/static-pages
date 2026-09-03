@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge';
-import { stringify } from 'yaml';
+import { Document, isMap, isNode } from 'yaml';
 import { ML_BACKENDS, TRANSCODE_BACKENDS } from './hwaccel';
 import { IMAGES } from './images';
 import { FIELDS, FOLDER_OVERRIDES, type ImmichConfig, type OutputContext } from './config';
@@ -253,5 +253,20 @@ export const buildComposeSpec = (config: ImmichConfig, version: string): Compose
 
 export const buildComposeFields = (config: ImmichConfig, version: string): FieldPaths => build(config, version).fields;
 
-export const buildCompose = (config: ImmichConfig, version: string): string =>
-  stringify(buildComposeSpec(config, version), { lineWidth: 0, nullStr: '' });
+const separateItems = (node: unknown) => {
+  if (!isMap(node)) {
+    return;
+  }
+  for (const [index, pair] of node.items.entries()) {
+    if (index > 0 && isNode(pair.key)) {
+      pair.key.spaceBefore = true;
+    }
+  }
+};
+
+export const buildCompose = (config: ImmichConfig, version: string): string => {
+  const document = new Document(buildComposeSpec(config, version));
+  separateItems(document.contents);
+  separateItems(document.getIn(['services'], true));
+  return document.toString({ lineWidth: 0, nullStr: '' });
+};
