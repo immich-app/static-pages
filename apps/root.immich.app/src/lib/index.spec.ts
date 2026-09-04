@@ -1,4 +1,4 @@
-import { BlogType, posts } from '$lib';
+import { BlogType, getPostNeighbors, posts } from '$lib';
 import { readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, test } from 'vitest';
@@ -48,5 +48,23 @@ describe('posts', () => {
   test('has a unique id per post', () => {
     const ids = new Set(posts.map((post) => post.id));
     expect(ids.size).toBe(posts.length);
+  });
+});
+
+describe(getPostNeighbors.name, () => {
+  test('returns the older post as previous and the newer post as next', () => {
+    expect(getPostNeighbors(posts, posts[1])).toEqual({ previous: posts[2], next: posts[0] });
+  });
+
+  test('omits the neighbor that does not exist', () => {
+    expect(getPostNeighbors(posts, posts[0]).next).toBeUndefined();
+    expect(getPostNeighbors(posts, posts.at(-1)!).previous).toBeUndefined();
+  });
+
+  test('returns no neighbors for an unknown post', () => {
+    expect(getPostNeighbors(posts, { ...posts[0], url: '/blog/does-not-exist' })).toEqual({
+      previous: undefined,
+      next: undefined,
+    });
   });
 });

@@ -62,3 +62,12 @@ export const posts: BlogPost[] = getDocs<SerializedPost | ClientDoc>()
   .filter((doc) => isPost(doc))
   .map((doc) => asBlogPost(doc))
   .toSorted((a, b) => b.publishedAt.valueOf() - a.publishedAt.valueOf());
+
+export const getPostNeighbors = (allPosts: BlogPost[], post: SerializedPost | BlogPost) => {
+  const index = allPosts.findIndex((item) => item.url === post.url);
+  if (index === -1) {
+    return { previous: undefined, next: undefined };
+  }
+
+  return { previous: allPosts[index + 1], next: allPosts[index - 1] };
+};
