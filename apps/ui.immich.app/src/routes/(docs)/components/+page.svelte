@@ -5,7 +5,10 @@
   import { components } from '$lib/constants.js';
 </script>
 
-<MarkdownPage attributes={{ title: 'Components', description: 'A list of all the Immich UI components' }} size="large">
+<MarkdownPage
+  doc={{ attributes: { title: 'Components', description: 'A list of all the Immich UI components' } }}
+  size="large"
+>
   <Grid>
     {#each components as component (component.name)}
       <ComponentCard {component} />

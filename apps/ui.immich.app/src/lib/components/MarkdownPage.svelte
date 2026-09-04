@@ -5,14 +5,14 @@
   import type { Snippet } from 'svelte';
 
   type Props = {
-    attributes: { title: string; description: string };
+    doc?: { attributes: { title?: string; description?: string } };
     localeSensitive?: boolean;
     size?: ContainerSize;
     children?: Snippet;
   };
 
-  const { attributes, localeSensitive = false, size = 'medium', children }: Props = $props();
-  const { title, description } = $derived(attributes);
+  const { doc, localeSensitive = false, size = 'medium', children }: Props = $props();
+  const { title = '', description = '' } = $derived(doc?.attributes ?? {});
 
   const page = $derived({ title, description });
 

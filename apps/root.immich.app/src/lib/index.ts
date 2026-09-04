@@ -1,5 +1,7 @@
-import fm from 'front-matter';
+import { BlogType, type BlogPost, type SerializedPost } from '$lib/types';
+import type { ClientDoc } from '@immich/svelte-markdown-preprocess';
 import { DateTime } from 'luxon';
+import { getDocs } from 'virtual:docs';
 
 export const siteMetadata = {
   title: 'Immich',
@@ -25,30 +27,8 @@ export type TimelineItem = {
 
 export const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
-type Attributes = {
-  /**
-  uuid-v7, which can be generated with `npx -y uuid v7`
-  */
-  id: string;
-  title: string;
-  description: string;
-  featured?: boolean;
-  authors: string[];
-  coverUrl?: string;
-  coverSrcset?: string;
-  coverWidth?: number;
-  coverHeight?: number;
-  coverAlt?: string;
-  coverAttribution?: string;
-};
-
-// keep in sync with blog/(type) folders
-export enum BlogType {
-  Announcement = 'announcement',
-  Post = 'post',
-  Recap = 'recap',
-  Release = 'release',
-}
+export { BlogType } from '$lib/types';
+export type { BlogPost, SerializedPost } from '$lib/types';
 
 export const isBlogType = (value: string | BlogType): value is BlogType => {
   return Object.values(BlogType).includes(value as BlogType);
@@ -56,107 +36,29 @@ export const isBlogType = (value: string | BlogType): value is BlogType => {
 
 export const typeToLabel = (type: BlogType) => capitalize(type);
 
-export type BlogPost = Attributes & {
-  publishedAt: DateTime;
-  modifiedAt?: DateTime;
-  url: string;
-  type: BlogType;
-  markdown: string;
-};
+const asDateTime = (value: string) => DateTime.fromISO(value, { zone: 'UTC' }) as DateTime<true>;
 
-type PostFrontMatter = Attributes & {
-  publishedAt: Date;
-  modifiedAt?: Date;
-};
-
-const getFrontMatterExample = (missingAttributes: string[]) => {
-  return [
-    '---',
-    ...Object.entries({
-      id: 'your-uuid-v7-here',
-      title: 'Your post title',
-      description: 'A brief description of your post',
-      publishedAt: '2025-10-01',
-      authors: '[Author 1, Author 2]',
-    })
-      .filter(([key]) => missingAttributes.includes(key))
-      .map(([key, value]) => `${key}: ${value}`),
-    '---',
-  ].join('\n');
-};
-
-const POST_PATH = /\/blog\/\((?<group>[^)]+)\)\/(?<slug>[^/]+)\/\+page\.md$/;
-
-const asPost = (path: string, content: string): BlogPost => {
-  const attributes = fm<PostFrontMatter>(content).attributes;
-  const match = POST_PATH.exec(path);
-  if (!match?.groups) {
-    throw new Error(`${path} is not a valid blog post path - expected blog/(types)/slug/+page.md`);
+const asTitle = ({ title, publishedAt }: BlogPost) => {
+  if (publishedAt < DateTime.now().minus({ years: 1 }) && title.endsWith(' recap')) {
+    return title.replaceAll(' recap', () => ` ${publishedAt.year} recap`);
   }
 
-  const { slug, group } = match.groups;
-  const type = group.replace(/s$/, '');
+  return title;
+};
 
-  const requiredAttributes = ['id', 'title', 'description', 'publishedAt', 'authors'];
-  const missingAttributes = requiredAttributes.filter((attribute) => !Object.hasOwn(attributes, attribute));
-  if (missingAttributes.length > 0) {
-    throw new Error(`${slug} is missing ${missingAttributes.join(', ')}.\n${getFrontMatterExample(missingAttributes)}`);
-  }
-
-  if (!isBlogType(type)) {
-    throw new Error(
-      `${slug} has incorrect blog type - found ${type}, but expected one of ${Object.values(BlogType).join(', ')}`,
-    );
-  }
-
-  return {
-    id: attributes.id,
-    type,
-    title: attributes.title,
-    description: attributes.description,
-    publishedAt: DateTime.fromJSDate(attributes.publishedAt, { zone: 'UTC' }) as DateTime<true>,
-    modifiedAt: attributes.modifiedAt
-      ? (DateTime.fromJSDate(attributes.modifiedAt, { zone: 'UTC' }) as DateTime<true>)
-      : undefined,
-    authors: attributes.authors,
-    url: `/blog/${slug}`,
-    featured: attributes.featured,
-    coverUrl: attributes.coverUrl,
-    coverSrcset: attributes.coverSrcset,
-    coverWidth: attributes.coverWidth,
-    coverHeight: attributes.coverHeight,
-    coverAlt: attributes.coverAlt,
-    coverAttribution: attributes.coverAttribution,
-    markdown: content,
+export const asBlogPost = (post: SerializedPost): BlogPost => {
+  const blogPost = {
+    ...post,
+    publishedAt: asDateTime(post.publishedAt),
+    modifiedAt: post.modifiedAt ? asDateTime(post.modifiedAt) : undefined,
   };
+
+  return { ...blogPost, title: asTitle(blogPost) };
 };
 
-const getPosts = () => {
-  const idMap = new Map<string, string>();
-  const modules = import.meta.glob<{ default: string }>('../routes/**/blog/**/*.md', {
-    query: '?raw',
-    eager: true,
-  });
-  const posts: BlogPost[] = [];
-  for (const [path, { default: content }] of Object.entries(modules)) {
-    const post = asPost(path, content);
+const isPost = (doc: ClientDoc): doc is SerializedPost => 'type' in doc;
 
-    if (idMap.has(post.id)) {
-      throw new Error(
-        `Detected a duplicate blog ID! ${post.id} is used in ${path} and ${idMap.get(post.id)}. Hint: use pnpm uuid to generate a new uuid-v7`,
-      );
-    }
-
-    idMap.set(post.id, path);
-
-    if (post.publishedAt < DateTime.now().minus({ years: 1 }) && post.title.endsWith(' recap')) {
-      post.title = post.title.replaceAll(' recap', () => ` ${post.publishedAt.year} recap`);
-    }
-
-    posts.push(post);
-  }
-
-  return posts.toSorted((a, b) => b.publishedAt.valueOf() - a.publishedAt.valueOf());
-};
-
-export const posts: BlogPost[] = getPosts();
+export const posts: BlogPost[] = getDocs<SerializedPost | ClientDoc>()
+  .filter((doc) => isPost(doc))
+  .map((doc) => asBlogPost(doc))
+  .toSorted((a, b) => b.publishedAt.valueOf() - a.publishedAt.valueOf());

@@ -56,17 +56,45 @@ describe(svelteMarkdownPreprocess.name, () => {
       });
     });
 
-    it('should pass attributes to the layout component', async () => {
+    it('should look up the doc by path and pass it to the layout component', async () => {
       const result = await svelteMarkdownPreprocess({
         layouts: { default: '$lib/layouts/DefaultLayout.svelte' },
       }).markup({
-        filename: 'test.md',
+        filename: '/app/src/routes/(shell)/blog/(posts)/sync-v2/+page.md',
         content: `---\ntitle: Test\n---\n# Hello`,
       });
 
-      expect(result).toMatchObject({ code: expect.stringContaining(`const attributes = {"title":"Test"}`) });
+      expect(result).toMatchObject({ code: expect.stringContaining(`import { getDoc } from 'virtual:docs'`) });
+      expect(result).toMatchObject({
+        code: expect.stringContaining(`const doc = getDoc('(shell)/blog/(posts)/sync-v2/+page.md')`),
+      });
       // eslint-disable-next-line unicorn/no-incorrect-template-string-interpolation
-      expect(result).toMatchObject({ code: expect.stringContaining(`<Layout {attributes}>`) });
+      expect(result).toMatchObject({ code: expect.stringContaining(`<Layout {doc}>`) });
+    });
+
+    it('should look up a doc for markdown that is not a route page', async () => {
+      const result = await svelteMarkdownPreprocess({
+        layouts: { default: '$lib/layouts/DefaultLayout.svelte' },
+      }).markup({
+        filename: '/app/src/routes/components/markdown/Example.md',
+        content: `# Hello`,
+      });
+
+      expect(result).toMatchObject({
+        code: expect.stringContaining(`const doc = getDoc('components/markdown/Example.md')`),
+      });
+    });
+
+    it('should not look up a doc for markdown outside of the configured dir', async () => {
+      const result = await svelteMarkdownPreprocess({
+        layouts: { default: '$lib/layouts/DefaultLayout.svelte' },
+      }).markup({
+        filename: '/app/other/Example.md',
+        content: `# Hello`,
+      });
+
+      expect(result).toMatchObject({ code: expect.not.stringContaining('getDoc') });
+      expect(result).toMatchObject({ code: expect.stringContaining(`<Layout>`) });
     });
   });
 

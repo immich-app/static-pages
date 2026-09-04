@@ -6,20 +6,16 @@
   import type { Snippet } from 'svelte';
 
   type Props = {
-    attributes: {
-      title: string;
-      description: string;
-      updatedAt: string;
-    };
+    doc: { attributes: { title: string; description: string; updatedAt: string } };
     children?: Snippet;
   };
 
-  let { attributes, children }: Props = $props();
+  let { doc, children }: Props = $props();
 
-  const updatedAt = $derived(DateTime.fromISO(attributes.updatedAt).setZone('UTC'));
+  const updatedAt = $derived(DateTime.fromISO(doc.attributes.updatedAt).setZone('UTC'));
   const pageMetadata = $derived({
-    title: attributes.title,
-    description: attributes.description,
+    title: doc.attributes.title,
+    description: doc.attributes.description,
   });
 </script>
 

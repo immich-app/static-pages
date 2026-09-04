@@ -36,7 +36,7 @@ describe('posts', () => {
       expect(post.description, post.url).toEqual(expect.any(String));
       expect(post.authors.length, post.url).toBeGreaterThan(0);
       expect(post.publishedAt.isValid, post.url).toBe(true);
-      expect(post.markdown, post.url).toContain('---');
+      expect(post.headers, post.url).toEqual(expect.any(Array));
     }
   });
 

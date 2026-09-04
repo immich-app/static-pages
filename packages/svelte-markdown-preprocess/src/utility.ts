@@ -1,3 +1,16 @@
+import fm from 'front-matter';
+
+export type FrontMatterAttributes = {
+  layout?: string;
+  [key: string]: unknown;
+};
+
+export const parseFrontMatter = (content: string) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  return fm(content) as { attributes: FrontMatterAttributes; body: string };
+};
+
 export const getIdFromText = (text: string) => {
   let id = text
     .toLowerCase()
