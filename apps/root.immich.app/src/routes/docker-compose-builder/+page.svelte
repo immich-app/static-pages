@@ -54,9 +54,10 @@
     mdiShareVariant,
   } from '@mdi/js';
   import { siGithub } from 'simple-icons';
+  import { createTwoFilesPatch } from 'diff';
   import { onMount } from 'svelte';
   import { SvelteURL } from 'svelte/reactivity';
-  import { yaml as yamlLanguage } from 'svelte-highlight/languages';
+  import { diff as diffLanguage, yaml as yamlLanguage } from 'svelte-highlight/languages';
 
   const config = $state(structuredClone(DEFAULT_CONFIG));
   const defaultDatabaseLocation =
@@ -74,7 +75,6 @@
   });
   const compose = $derived(buildCompose(effectiveConfig, version));
   const errors = $derived(validate(effectiveConfig));
-  const hasErrors = $derived(Object.keys(errors).length > 0);
   const fields = $derived(buildComposeFields(effectiveConfig, version));
 
   let focusedField = $state<string | undefined>();
@@ -96,6 +96,20 @@
   const timezones = Intl.supportedValuesOf('timeZone');
 
   let detectedTimezone = $state('');
+
+  let showDiff = $state(false);
+
+  const composeDiff = $derived.by(() => {
+    const baseline = { ...DEFAULT_CONFIG, timezone: detectedTimezone || DEFAULT_CONFIG.timezone };
+    const patch = createTwoFilesPatch('defaults', 'yours', buildCompose(baseline, majorVersion), compose, '', '', {
+      context: Number.MAX_SAFE_INTEGER,
+    });
+    const body = patch.split('\n').slice(4).join('\n').trimEnd();
+
+    // with no changes there is no hunk at all, so show the file as all-context lines
+    return body || compose.trimEnd().replaceAll(/^/gm, ' ');
+  });
+
   let decoded = $state(false);
   let routerReady = $state(false);
 
@@ -707,13 +721,37 @@
             {#if versionFailed}
               <Text color="danger">Could not reach the Immich version service. Reload the page to try again.</Text>
             {:else if version}
-              <CodeBlock
-                code={compose}
-                language={yamlLanguage}
-                lineNumbers
-                highlightedLines={focusedLines}
-                copy={!hasErrors}
-              />
+              <div class="relative">
+                <div
+                  class="absolute inset-e-2 top-2 z-10 flex gap-1 rounded-full border bg-light-50 p-0.5 dark:bg-light-100"
+                >
+                  <Button
+                    size="tiny"
+                    shape="round"
+                    variant={showDiff ? 'ghost' : 'filled'}
+                    color={showDiff ? 'secondary' : 'primary'}
+                    onclick={() => (showDiff = false)}
+                  >
+                    YAML
+                  </Button>
+                  <Button
+                    size="tiny"
+                    shape="round"
+                    variant={showDiff ? 'filled' : 'ghost'}
+                    color={showDiff ? 'primary' : 'secondary'}
+                    onclick={() => (showDiff = true)}
+                  >
+                    Diff
+                  </Button>
+                </div>
+                <CodeBlock
+                  code={showDiff ? composeDiff : compose}
+                  language={showDiff ? diffLanguage : yamlLanguage}
+                  lineNumbers={!showDiff}
+                  highlightedLines={showDiff ? [] : focusedLines}
+                  copy={false}
+                />
+              </div>
             {:else}
               <LoadingSpinner />
             {/if}
