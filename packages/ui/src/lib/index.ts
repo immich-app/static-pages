@@ -94,6 +94,7 @@ export { default as TableCell } from '$lib/components/Table/TableCell.svelte';
 export { default as TableFooter } from '$lib/components/Table/TableFooter.svelte';
 export { default as TableHeader } from '$lib/components/Table/TableHeader.svelte';
 export { default as TableHeading } from '$lib/components/Table/TableHeading.svelte';
+export { default as TableOfContents } from '$lib/components/TableOfContents/TableOfContents.svelte';
 export { default as TableRow } from '$lib/components/Table/TableRow.svelte';
 export { default as Text } from '$lib/components/Text/Text.svelte';
 export { default as Textarea } from '$lib/components/Textarea/Textarea.svelte';
