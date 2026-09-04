@@ -418,6 +418,17 @@ export type TableOfContentsProps = {
   translations?: TranslationProps<'table_of_contents_title'>;
 } & HTMLAttributes<HTMLElement>;
 
+export type PageFooterNavigationLink = {
+  title: string;
+  href: string;
+};
+
+export type PageFooterNavigationProps = {
+  previous?: PageFooterNavigationLink;
+  next?: PageFooterNavigationLink;
+  translations?: TranslationProps<'page_footer_navigation_label' | 'navigate_previous' | 'navigate_next'>;
+} & HTMLAttributes<HTMLElement>;
+
 export type BreadcrumbsProps = {
   separator?: IconLike | { text: string };
   items: BreadcrumbItem[];

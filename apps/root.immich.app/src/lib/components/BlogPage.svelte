@@ -1,17 +1,18 @@
 <script lang="ts">
-  import { asBlogPost, blogMetadata, BlogType } from '$lib';
+  import { asBlogPost, blogMetadata, BlogType, getPostNeighbors, posts } from '$lib';
   import BlogTypeBadge from '$lib/components/BlogTypeBadge.svelte';
   import {
     Heading,
     Icon,
     Link,
     Markdown,
+    PageFooterNavigation,
     SiteMetadata,
     TableOfContents,
     Text,
     type TableOfContentsItem,
   } from '@immich/ui';
-  import type { SerializedPost } from '$lib/types';
+  import type { BlogPost, SerializedPost } from '$lib/types';
   import { mdiChevronRight } from '@mdi/js';
   import { DateTime } from 'luxon';
   import type { Snippet } from 'svelte';
@@ -30,6 +31,9 @@
     ...post.headers,
     ...(postScript ? [{ id: 'faqs', text: 'FAQs', level: 2 }] : []),
   ]);
+  const { previous, next } = $derived(getPostNeighbors(posts, post));
+
+  const asNavigationLink = (item?: BlogPost) => (item ? { title: item.title, href: item.url } : undefined);
 </script>
 
 <SiteMetadata site={blogMetadata} page={{ title, description }} />
@@ -92,6 +96,8 @@
       <Markdown.Heading level={2} id="faqs">FAQs</Markdown.Heading>
       {@render postScript?.()}
     {/if}
+
+    <PageFooterNavigation previous={asNavigationLink(previous)} next={asNavigationLink(next)} />
   </article>
 
   {#if headers.length > 1}

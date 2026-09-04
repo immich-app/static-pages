@@ -76,6 +76,7 @@ export { default as MultiSelect } from '$lib/components/MultiSelect/MultiSelect.
 export { default as NavbarGroup } from '$lib/components/Navbar/NavbarGroup.svelte';
 export { default as NavbarItem } from '$lib/components/Navbar/NavbarItem.svelte';
 export { default as NumberInput } from '$lib/components/NumberInput/NumberInput.svelte';
+export { default as PageFooterNavigation } from '$lib/components/PageFooterNavigation/PageFooterNavigation.svelte';
 export { default as PasswordInput } from '$lib/components/PasswordInput/PasswordInput.svelte';
 export { default as PinInput } from '$lib/components/PinInput/PinInput.svelte';
 export { default as ProgressBar } from '$lib/components/ProgressBar/ProgressBar.svelte';

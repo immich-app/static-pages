@@ -40,6 +40,9 @@ const defaultTranslations = {
   navigate_next: 'Next',
   navigate_previous: 'Previous',
 
+  // page footer navigation
+  page_footer_navigation_label: 'Page navigation',
+
   // table of contents
   table_of_contents_title: 'On this page',
 
