@@ -275,6 +275,13 @@
         "title": "immich-edit",
         "description": "Self-hosted, non-destructive RAW editor that uses Immich as its photo library while keeping originals unchanged.",
         "sourceCodeUrl": "https://github.com/haavardnk/immich-edit"
+      },
+      {
+        "title": "immich-auto-dumper",
+        "description": "Automatically archives your oldest photos and videos to external storage (NAS, rclone, spare disk) when the library grows past a size limit, while Immich keeps showing them exactly as before via an external library. Connects directly to Immich's Postgres database (read and write) to update asset paths.",
+        "websiteUrl": "https://github.com/de-seingalt/immich-auto-dumper#readme",
+        "sourceCodeUrl": "https://github.com/de-seingalt/immich-auto-dumper",
+        "tags": ["Vibe-Coded"]
       }
     ]
   },
