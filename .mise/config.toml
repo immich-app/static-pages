@@ -2,7 +2,7 @@
 opentofu = "1.12.6"
 terragrunt = "1.1.4"
 node = "24.20.0"
-pnpm = "11.25.0"
+pnpm = "12.3.1"
 wrangler = "4.128.0"
 
 [tasks.deploy]
