@@ -1,4 +1,4 @@
-import { isEnabled, isExternalLink, resolveMetadata, resolveUrl } from '$lib/utilities/common.js';
+import { isEnabled, isExternalLink, parseGithubLink, resolveMetadata, resolveUrl } from '$lib/utilities/common.js';
 import { DateTime } from 'luxon';
 import { beforeAll, describe, expect, it } from 'vitest';
 
@@ -139,4 +139,42 @@ describe(isEnabled.name, () => {
     const user: object = undefined as unknown as object;
     expect(isEnabled({ $if: () => user && true })).toBe(false);
   });
+});
+
+describe('parseGithubLink', () => {
+  const tests = [
+    {
+      url: 'https://github.com/immich-app/immich/issues/1',
+      result: { org: 'immich-app', repo: 'immich', number: 1, type: 'issue' },
+    },
+    {
+      url: 'https://github.com/immich-app/immich/pull/23',
+      result: { org: 'immich-app', repo: 'immich', number: 23, type: 'pr' },
+    },
+    {
+      url: 'https://github.com/immich-app/immich/discussions/456',
+      result: { org: 'immich-app', repo: 'immich', number: 456, type: 'discussion' },
+    },
+    {
+      url: 'https://github.com/immich-app/immich-charts/pull/7/',
+      result: { org: 'immich-app', repo: 'immich-charts', number: 7, type: 'pr' },
+    },
+    {
+      url: 'https://www.github.com/other/repo.js/issues/9',
+      result: { org: 'other', repo: 'repo.js', number: 9, type: 'issue' },
+    },
+    { url: 'https://github.com/immich-app/immich', result: undefined },
+    { url: 'https://github.com/immich-app/immich/pull', result: undefined },
+    { url: 'https://github.com/immich-app/immich/pull/abc', result: undefined },
+    { url: 'https://github.com/immich-app/immich/releases/tag/v1.0.0', result: undefined },
+    { url: 'https://github.com/immich-app/immich/pull/1#issuecomment-2', result: undefined },
+    { url: 'https://gitlab.com/immich-app/immich/issues/1', result: undefined },
+    { url: 'https://immich.app', result: undefined },
+  ];
+
+  for (const { url, result } of tests) {
+    it(`should map ${url} to ${JSON.stringify(result)}`, () => {
+      expect(parseGithubLink(url)).toEqual(result);
+    });
+  }
 });
