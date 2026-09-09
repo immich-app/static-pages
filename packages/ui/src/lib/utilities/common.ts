@@ -61,6 +61,25 @@ export const asGithubLink = (options: number | GithubLinkProps) => {
   return { href: `https://github.com/${org}/${repo}/${urlTypes[type]}/${number}`, text: getText(org, repo, number) };
 };
 
+const getGithubLinkType = (segment: string) =>
+  (Object.entries(urlTypes) as Array<[GithubLinkType, string]>).find(([, value]) => value === segment)?.[0];
+
+const GITHUB_URL_REGEX = new RegExp(
+  String.raw`^https?://(?:www\.)?github\.com/(?<org>[\w.-]+)/(?<repo>[\w.-]+)/(?<segment>${Object.values(urlTypes).join('|')})/(?<number>\d+)/?$`,
+  'i',
+);
+
+export const parseGithubLink = (href: string) => {
+  const groups = GITHUB_URL_REGEX.exec(href)?.groups;
+  if (!groups) {
+    return;
+  }
+
+  const { org, repo, segment, number } = groups;
+
+  return { org, repo, number: Number(number), type: getGithubLinkType(segment.toLowerCase()) };
+};
+
 const getImmichApp = (host: string | undefined) => {
   if (!host || !host.endsWith('immich.app')) {
     return false;
