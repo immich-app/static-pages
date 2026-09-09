@@ -492,13 +492,7 @@ export type LinkProps = {
 
 export type GithubLinkType = 'issue' | 'pr' | 'discussion';
 
-export type GithubLinkOptions = { org?: string; repo?: string; number?: number; type?: GithubLinkType };
-
-export type GithubLinkProps = {
-  icon?: boolean;
-  size?: Size;
-} & GithubLinkOptions &
-  LinkCommon;
+export type GithubLinkProps = { org?: string; repo?: string; number?: number; type?: GithubLinkType } & LinkCommon;
 
 export type MarkdownAlertVariant = 'note' | 'tip' | 'important' | 'warning' | 'caution' | 'info' | 'success' | 'danger';
 

@@ -12,14 +12,11 @@
 <Heading size="small" class="mt-4">Another org</Heading>
 <GithubLink org="kysely-org" repo="kysely" number={64} />
 
-<Heading size="small" class="mt-4">No icon</Heading>
-<GithubLink number={64} icon={false} />
-
 <Stack gap={4} class="mt-4">
   <ComponentSizes>
     {#snippet child({ size })}
       <Text {size}>
-        For example, issue <GithubLink {size} number={1} /> is a link to github.
+        For example, issue <GithubLink number={1} /> is a link to github.
       </Text>
     {/snippet}
   </ComponentSizes>
