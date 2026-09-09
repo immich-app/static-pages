@@ -98,6 +98,49 @@ describe(svelteMarkdownPreprocess.name, () => {
     });
   });
 
+  describe('svelte components', () => {
+    const render = async (content: string) => {
+      const result = await svelteMarkdownPreprocess().markup({ filename: 'test.md', content });
+      return result?.code ?? '';
+    };
+
+    it('should render a component that owns its line', async () => {
+      await expect(render('<Markdown.Image src="a.webp" />')).resolves.toContain('<Markdown.Image src="a.webp" />');
+    });
+
+    it('should render sibling components sharing a line', async () => {
+      const code = await render('<Markdown.Image src="a.webp" /> <Markdown.Image src="b.webp" />');
+
+      expect(code).toContain('<Markdown.Image src="a.webp" />');
+      expect(code).toContain('<Markdown.Image src="b.webp" />');
+      expect(code).not.toContain('&lt;');
+    });
+
+    it('should render a component followed by prose on the same line', async () => {
+      const code = await render('<Markdown.Image src="a.webp" />In order to use this');
+
+      expect(code).toContain('<Markdown.Image src="a.webp" />');
+      expect(code).toContain('<Markdown.Paragraph>In order to use this</Markdown.Paragraph>');
+    });
+
+    it('should render a component preceded by prose on the same line', async () => {
+      await expect(render('Look at this <Markdown.Image src="a.webp" />')).resolves.toContain(
+        '<Markdown.Paragraph>Look at this <Markdown.Image src="a.webp" /></Markdown.Paragraph>',
+      );
+    });
+
+    it('should import a relative source from a component sharing a line', async () => {
+      const code = await render('Look at this <Markdown.Image src="./img/example.webp" />');
+
+      expect(code).toContain(`import __image_0 from './img/example.webp';`);
+      expect(code).toContain('<Markdown.Image src={__image_0} />');
+    });
+
+    it('should leave a component inside a code fence as code', async () => {
+      await expect(render('```svelte\n<Markdown.Image src="a.webp" />\n```')).resolves.toContain('<Markdown.Code');
+    });
+  });
+
   describe('images', () => {
     it('should import relative images so vite can optimize them', async () => {
       const result = await svelteMarkdownPreprocess().markup({
