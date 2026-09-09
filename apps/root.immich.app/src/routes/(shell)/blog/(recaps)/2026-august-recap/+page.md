@@ -2,7 +2,18 @@
 authors: [Immich Team]
 coverAlt: Lake Louise in Alberta, Canada
 coverAttribution: Photo by Antoine
-coverUrl: https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/062946f173a21c28efc68d5372d3e60c.webp
+coverHeight: 1440
+coverSrcset:
+  https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/c71f9a567f005f2312d7b7bf76b0ee83-720.avif
+  720w,
+  https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/c71f9a567f005f2312d7b7bf76b0ee83-1080.avif
+  1080w,
+  https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/c71f9a567f005f2312d7b7bf76b0ee83-1440.avif
+  1440w,
+  https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/c71f9a567f005f2312d7b7bf76b0ee83-2160.avif
+  2160w
+coverUrl: https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/c71f9a567f005f2312d7b7bf76b0ee83-2160.avif
+coverWidth: 2160
 description: A recap of August, 2026, including an update on upcoming features,
   releases, developer updates, and more.
 id: cfa80305-6c59-44be-98d2-f52db4c30254
@@ -24,7 +35,7 @@ We have had three interns over the summer. They have been great and both deliver
 
 Over the last month or two the team has spent some time redesigning the search for Immich (web). After several iterations this is what we landed on:
 
-![New search modal for Immich (web)](https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/f3e1d6d5e8508dff80c4be179a4868d2.webp)
+<Markdown.Image src="https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/eae047671cd2453c0c52f2c1f4d0930b-1482.avif" srcset="https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/eae047671cd2453c0c52f2c1f4d0930b-720.avif 720w, https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/eae047671cd2453c0c52f2c1f4d0930b-1080.avif 1080w, https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/eae047671cd2453c0c52f2c1f4d0930b-1482.avif 1482w" width="1482" height="552" alt="New search modal for Immich (web)" />
 
 The main goal is to make the interface more usable and intuitive, without sacrificing some of the powerful features that it had. It is a difficult problem, but we hope this is a step in the right direction. It’ll be rolling out with the `v3.2.0` release later this week. Let us know your thoughts and feedback on the new design.
 
@@ -56,7 +67,7 @@ More changes to search should continue to roll out in the upcoming months. Addit
 
 In `v3.2.0` we plan to release _cluster groups_ with the initial goal of enabling users to see their own people and faces in shared assets. Cluster groups are groups of users and these groups will be the basis for people and face sharing in the future. It is worth noting that we have had _several_ failed attempts ([#27236](https://github.com/immich-app/immich/pull/27236), [#27437](https://github.com/immich-app/immich/pull/27437), [#30013](https://github.com/immich-app/immich/pull/30013), and [#30606](https://github.com/immich-app/immich/pull/30606)) trying to implement people and face sharing. It is a complicated problem for sure. However, we think this design is the first step towards delivering on some of the long awaited sharing improvements. Once we finish some more pieces who knows, maybe we’ll even write a dedicated post about the whole process.
 
-![Cluster group user settings](https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/ff2f024fc487bedbc8496d7036c278e4.webp)
+<Markdown.Image src="https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/98f2a54fcc3f230371ed55717df713e5-1401.avif" srcset="https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/98f2a54fcc3f230371ed55717df713e5-720.avif 720w, https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/98f2a54fcc3f230371ed55717df713e5-1080.avif 1080w, https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/98f2a54fcc3f230371ed55717df713e5-1401.avif 1401w" width="1401" height="646" alt="Cluster group user settings" />
 
 ### Technical details
 
@@ -78,7 +89,7 @@ Prior to `v3.2.0` releases were always created from `main`. Now, releases are c
 
 Everything is still committed to `main`, like it was before. If a commit on `main` needs to be in a release branch it can be _backported_ ([cherry-picked](https://git-scm.com/docs/git-cherry-pick)) to the release branch. This is automatically done via a set of `backport:release/x` GitHub labels. For example, adding the `backport:release/v3.2` label to a PR will automatically cherry pick the bugfix to the `release/v3.2` branch after it is merged.
 
-![Backport label on a GitHub pull request](https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/c17dd1da5bb78258c8b451ebade5dfe9.webp)
+<Markdown.Image src="https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/84af99356650a7ed8abe4d0e9f7c156e-628.avif" width="628" height="205" alt="Backport label on a GitHub pull request" />
 
 In short, now that the release pipeline works with release branches, it is possible to continue development before, during, and after releases. While quite technical, end users should benefit from faster development cycle and receive fast bug fixes as well.
 
@@ -105,7 +116,7 @@ I’ve taken a larger part of this month off for vacation. Having some down time
 
 This month I spent a decent amount of time migrating about 250 end-to-end (e2e) tests to medium tests. E2e tests require a production stack of Immich to execute and are quite a bit slower to run, harder to developer and validate, and generally more annoying to maintain. So, having them as medium tests is a big win. Also, I helped work on cluster groups, which is the first of many steps towards better sharing.
 
-![Long list of e2e refactor pull requests](https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/be6937e88b8046841d03903aeb5deb4f.webp)
+<Markdown.Image src="https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/7aca242bd0b3a8750d0aaf02c9274f2c-883.avif" srcset="https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/7aca242bd0b3a8750d0aaf02c9274f2c-720.avif 720w, https://static.immich.cloud/blog/cfa80305-6c59-44be-98d2-f52db4c30254/7aca242bd0b3a8750d0aaf02c9274f2c-883.avif 883w" width="883" height="1048" alt="Long list of e2e refactor pull requests" />
 
 ### @danieldietzler
 
@@ -117,11 +128,11 @@ Lastly, as always, there have been many great PRs from the community that needed
 
 ### @mertalev
 
-I’ve been working on ML optimizations for most of this month to ease the memory usage requirements and processing time involved. Since Immich is run on a wide range of hardware from Raspberry Pis to mini data centers with different brand GPUs, a challenge has been in making the models run at their best for all of this hardware. For example, what’s best for running a model for AMD GPUs (MIGraphX) can be much slower when running the model on CPU.
+I’ve been working on ML optimizations for most of this month to ease the memory usage requirements and processing time involved. Since Immich runs on a wide range of hardware from Raspberry Pis to mini data centers with different brand GPUs, a challenge has been in making the models run at their best for all of this hardware. For example, what’s best for running a model for AMD GPUs (MIGraphX) can be much slower when running the model on CPU.
 
-Another complication is that many of these changes required re-publishing updated models. If the ML server expected to use these updated models and required a redownload as a result, it would break for users who air-gap their ML container. The code was written to be able to fall back to the old cached models in this case, meaning it can handle running both old and new models.
+Another complication is that many of these changes required re-publishing updated models. If the ML server expected to use these updated models and required a re-download as a result, it would break for users who air-gap their ML container. The code was written to be able to fall back to the old cached models in this case, meaning it can handle running both old and new models. The new models are needed to fully benefit from the changes, though.
 
-After a _lot_ of testing and optimizations, the processing time can be up to several times faster while using significantly less memory, the exact results depending on the model and backend. These improvements won’t be in 3.2, but they’ll likely come soon after. As more model tasks are added over time, this should ease the load for those of who did not buy NVIDIA shares.
+After a _lot_ of testing and optimizations, the processing time can be up to several times faster while using significantly less memory, the exact results depending on the model and backend. These improvements won’t be in 3.2, but they’ll likely come soon after. As more model tasks are added over time, this should ease the load for those of us who did not buy NVIDIA shares.
 
 ## Next month
 
