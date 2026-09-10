@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.88.0](https://github.com/immich-app/static-pages/compare/ui-v0.87.0...ui-v0.88.0) (2026-09-10)
+
+
+### Features
+
+* badge icons ([#776](https://github.com/immich-app/static-pages/issues/776)) ([e609882](https://github.com/immich-app/static-pages/commit/e609882b1c30ea3fe96ce6b69d909a66d3190e2d))
+* badges ([e609882](https://github.com/immich-app/static-pages/commit/e609882b1c30ea3fe96ce6b69d909a66d3190e2d))
+* footer navigation ([#788](https://github.com/immich-app/static-pages/issues/788)) ([106ee58](https://github.com/immich-app/static-pages/commit/106ee588dfdb915720f3e5f19445704f640c4ab7))
+* optimized srcset images ([#742](https://github.com/immich-app/static-pages/issues/742)) ([7cae956](https://github.com/immich-app/static-pages/commit/7cae95653cf8ad033223266d678f7991bcf91f58))
+* shorter github links ([#801](https://github.com/immich-app/static-pages/issues/801)) ([a45fabb](https://github.com/immich-app/static-pages/commit/a45fabbcda839920dd5b5bbb1d38542f4f798424))
+* table of contents ([#783](https://github.com/immich-app/static-pages/issues/783)) ([d084b08](https://github.com/immich-app/static-pages/commit/d084b0832f5a47431561251cb2ba6916126d2964))
+
+
+### Bug Fixes
+
+* github link ([#800](https://github.com/immich-app/static-pages/issues/800)) ([5dd9452](https://github.com/immich-app/static-pages/commit/5dd94521f39b2bc88ed644d672eab868be2dfc7b))
+* **ui:** various RTL issues ([#774](https://github.com/immich-app/static-pages/issues/774)) ([6a5dc00](https://github.com/immich-app/static-pages/commit/6a5dc00a0a776d68829c05a98f215a26385aaeee))
+
 ## [0.87.0](https://github.com/immich-app/static-pages/compare/ui-v0.86.0...ui-v0.87.0) (2026-09-02)
 
 
