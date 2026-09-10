@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { StorageKey } from '$lib';
+  import { mergeInstanceUrl, StorageKey } from '$lib';
   import FullPageLayout from '$common/components/FullPageLayout.svelte';
   import {
     Button,
@@ -41,7 +41,9 @@
 
     localStorage.setItem(StorageKey.INSTANCE_URL, instanceUrl);
     if (targetUrl && instanceUrl) {
-      location.assign(new URL(targetUrl, instanceUrl).href);
+      const currentUrl = new URL(location.href);
+      currentUrl.searchParams.delete('instanceUrl');
+      location.assign(mergeInstanceUrl(currentUrl, instanceUrl).href);
     } else {
       saved = true;
     }
