@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.8.0](https://github.com/immich-app/static-pages/compare/svelte-markdown-preprocess-v0.7.0...svelte-markdown-preprocess-v0.8.0) (2026-09-10)
+
+
+### Features
+
+* optimized srcset images ([#742](https://github.com/immich-app/static-pages/issues/742)) ([7cae956](https://github.com/immich-app/static-pages/commit/7cae95653cf8ad033223266d678f7991bcf91f58))
+* virtual docs module ([#784](https://github.com/immich-app/static-pages/issues/784)) ([e748709](https://github.com/immich-app/static-pages/commit/e748709956baef780c19e12e0f949c27e5b759c2))
+
+
+### Bug Fixes
+
+* markdown images ([#798](https://github.com/immich-app/static-pages/issues/798)) ([9754c5e](https://github.com/immich-app/static-pages/commit/9754c5ee70b9527d96fb4c33b9a0edb73f7c6070))
+
 ## [0.7.0](https://github.com/immich-app/static-pages/compare/svelte-markdown-preprocess-v0.6.0...svelte-markdown-preprocess-v0.7.0) (2026-08-25)
 
 
