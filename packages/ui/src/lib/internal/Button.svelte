@@ -78,6 +78,8 @@
         danger: 'outline-danger',
         warning: 'outline-warning',
         info: 'outline-info',
+        muted: 'outline-muted',
+        subtle: 'outline-subtle'
       },
       filledColor: styleVariants.filledColor,
       filledColorHover: styleVariants.filledColorHover,
@@ -88,6 +90,8 @@
         danger: 'border-danger bg-danger/10 text-danger not-disabled:hover:bg-danger/20 border',
         warning: 'border-warning bg-warning/10 text-warning not-disabled:hover:bg-warning/20 border',
         info: 'border-info bg-info/10 text-info not-disabled:hover:bg-info/20 border',
+        muted: 'border-muted bg-muted/10 text-dark not-disabled:hover:bg-muted/20 border',
+        subtle: 'border-subtle bg-subtle/10 text-dark not-disabled:hover:bg-subtle/20 border',
       },
       ghostColor: {
         primary: 'text-primary not-disabled:hover:bg-primary/15',
@@ -96,6 +100,8 @@
         danger: 'text-danger not-disabled:hover:bg-danger/15',
         warning: 'text-warning not-disabled:hover:bg-warning/15',
         info: 'text-info not-disabled:hover:bg-info/15',
+        muted: 'text-muted not-disabled:hover:bg-muted/15',
+        subtle: 'text-subtle not-disabled:hover:bg-subtle/15'
       },
     },
   });

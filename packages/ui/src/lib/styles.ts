@@ -52,6 +52,8 @@ export const styleVariants = {
     danger: 'border-danger',
     warning: 'border-warning',
     info: 'border-info',
+    muted: 'border-muted',
+    subtle: 'border-subtle',
   },
 
   fillColor: {
@@ -61,6 +63,8 @@ export const styleVariants = {
     danger: 'fill-danger',
     warning: 'fill-warning',
     info: 'fill-info',
+    muted: 'fill-muted',
+    subtle: 'fill-subtle',
   },
 
   filledColor: {
@@ -70,6 +74,8 @@ export const styleVariants = {
     danger: 'bg-danger text-light',
     warning: 'bg-warning text-light',
     info: 'bg-info text-light',
+    muted: 'bg-muted text-light',
+    subtle: 'bg-subtle text-light',
   },
 
   filledColorHover: {
@@ -79,6 +85,8 @@ export const styleVariants = {
     danger: 'not-disabled:hover:bg-danger/80',
     warning: 'not-disabled:hover:bg-warning/80',
     info: 'not-disabled:hover:bg-info/80',
+    muted: 'not-disabled:hover:bg-muted/80',
+    subtle: 'not-disabled:hover:bg-subtle/80',
   },
 
   textSize: {

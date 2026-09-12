@@ -13,8 +13,8 @@ import type {
   HTMLTextareaAttributes,
 } from 'svelte/elements';
 
-export type Color = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info';
-export type TextColor = Color | 'muted';
+export type Color = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'muted' | 'subtle';
+export type TextColor = Omit<Color, 'subtle'>;
 export type TextVariant = 'italic';
 export type FontWeight =
   'thin' | 'extra-light' | 'light' | 'normal' | 'medium' | 'semi-bold' | 'bold' | 'extra-bold' | 'black';
