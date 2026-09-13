@@ -68,6 +68,7 @@
       >
         <Icon
           icon={expanded ? mdiChevronDown : mdiChevronRight}
+          directional
           size="1em"
           class="shrink-0 delay-100 duration-100 "
           aria-hidden

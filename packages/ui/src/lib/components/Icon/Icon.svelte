@@ -10,6 +10,7 @@
     viewBox = '0 0 24 24',
     class: className = '',
     indicator: indicatorColor,
+    directional = false,
     flipped = false,
     flopped = false,
     spin = false,
@@ -36,13 +37,25 @@
       color: styleVariants.textColor,
     },
   });
+
+  const flip = $derived.by(() => {
+    if (directional && flipped) {
+      return 'ltr:-scale-x-100 rtl:scale-x-100';
+    }
+    if (directional) {
+      return 'rtl:-scale-x-100 ltr:scale-x-100';
+    }
+    if (flipped) {
+      return '-scale-x-100';
+    }
+  });
 </script>
 
 <svg
   width={size}
   height={size}
   {viewBox}
-  class={cleanClass(className, flipped && '-scale-x-100', flopped && 'rotate-180', spin && 'animate-spin')}
+  class={cleanClass(className, flip, flopped && 'rotate-180', spin && 'animate-spin')}
   stroke={strokeColor}
   stroke-width={strokeWidth}
   {role}

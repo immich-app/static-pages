@@ -5,6 +5,8 @@
   import basicExample from './BasicExample.svelte?raw';
   import ColorExample from './ColorExample.svelte';
   import colorExample from './ColorExample.svelte?raw';
+  import DirectionalExample from './DirectionalExample.svelte';
+  import directionalExample from './DirectionalExample.svelte?raw';
   import IndicatorExample from './IndicatorExample.svelte';
   import indicatorExample from './IndicatorExample.svelte?raw';
   import OtherExample from './OtherExample.svelte';
@@ -20,6 +22,7 @@
       { title: 'Sizes', code: sizeExample, component: SizeExample },
       { title: 'Colors', code: colorExample, component: ColorExample },
       { title: 'Indicator', code: indicatorExample, component: IndicatorExample },
+      { title: 'Directionality', code: directionalExample, component: DirectionalExample },
       { title: 'Other', code: otherExample, component: OtherExample },
     ]}
   />

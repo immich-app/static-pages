@@ -18,7 +18,7 @@
         href={previous.href}
         class="hover:border-primary hover:text-primary flex items-center gap-2 rounded-xl border p-4 transition-colors"
       >
-        <Icon icon={mdiChevronLeft} size="1.5rem" />
+        <Icon icon={mdiChevronLeft} size="1.5rem" directional />
         <div class="min-w-0">
           <Text color="muted" size="tiny">{t('navigate_previous', translations)}</Text>
           <Text fontWeight="semi-bold" class="truncate">{previous.title}</Text>
@@ -36,7 +36,7 @@
           <Text color="muted" size="tiny">{t('navigate_next', translations)}</Text>
           <Text fontWeight="semi-bold" class="truncate">{next.title}</Text>
         </div>
-        <Icon icon={mdiChevronRight} size="1.5rem" />
+        <Icon icon={mdiChevronRight} size="1.5rem" directional />
       </a>
     {/if}
   </nav>
