@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.89.0](https://github.com/immich-app/static-pages/compare/ui-v0.88.0...ui-v0.89.0) (2026-09-14)
+
+
+### Features
+
+* **ui:** direction-aware icons ([#804](https://github.com/immich-app/static-pages/issues/804)) ([d2efd8c](https://github.com/immich-app/static-pages/commit/d2efd8cc85186ef0ccaaaded9b94545ea99eb1c4))
+
 ## [0.88.0](https://github.com/immich-app/static-pages/compare/ui-v0.87.0...ui-v0.88.0) (2026-09-10)
 
 
