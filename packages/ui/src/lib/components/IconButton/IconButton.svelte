@@ -5,6 +5,7 @@
 
   const {
     icon,
+    directional,
     flipped,
     flopped,
     indicator,
@@ -18,5 +19,5 @@
 </script>
 
 <Button icon {color} {...buttonProps} title={buttonTitle} aria-label={ariaLabel}>
-  <Icon {icon} {flipped} {flopped} {indicator} size="60%" aria-hidden />
+  <Icon {icon} {directional} {flipped} {flopped} {indicator} size="60%" aria-hidden />
 </Button>

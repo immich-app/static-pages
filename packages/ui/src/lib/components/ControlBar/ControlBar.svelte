@@ -66,6 +66,7 @@
     {:else if onClose}
       <IconButton
         icon={closeIcon ?? mdiClose}
+        directional
         shape="round"
         variant="ghost"
         color="secondary"

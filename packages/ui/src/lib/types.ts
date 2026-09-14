@@ -69,6 +69,10 @@ export type IconProps = {
   size?: string;
   color?: Color | 'currentColor' | string;
   indicator?: Color;
+  /**
+   * Flip the icon in RTL layouts
+   */
+  directional?: boolean;
   flipped?: boolean;
   flopped?: boolean;
   spin?: boolean;
@@ -116,6 +120,10 @@ export type ContextMenuButtonProps = ButtonBase & {
 
 export type IconButtonProps = ButtonBase & {
   icon: IconLike;
+  /**
+   * Flip the icon in RTL layouts
+   */
+  directional?: boolean;
   flipped?: boolean;
   flopped?: boolean;
   indicator?: Color;

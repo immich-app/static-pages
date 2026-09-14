@@ -50,11 +50,12 @@
     onscroll={onScroll}
   >
     {#if canScrollLeft || canScrollRight}
-      <div class="sticky start-0 {zIndex.CarouselImage}">
+      <div class="sticky inset-s-0 light {zIndex.CarouselImage}">
         {#if canScrollLeft}
-          <div class="light absolute start-4 top-27 -translate-y-1/2 max-md:top-19" transition:fade={{ duration: 200 }}>
+          <div class="absolute inset-s-4 top-27 -translate-y-1/2 max-md:top-19" transition:fade={{ duration: 200 }}>
             <IconButton
               icon={mdiChevronLeft}
+              directional
               shape="round"
               variant="outline"
               color="secondary"
@@ -66,12 +67,10 @@
           </div>
         {/if}
         {#if canScrollRight}
-          <div
-            class="light absolute end-4 top-27 {zIndex.CarouselImage} -translate-y-1/2 max-md:top-19"
-            transition:fade={{ duration: 200 }}
-          >
+          <div class="absolute inset-e-4 top-27 -translate-y-1/2 max-md:top-19" transition:fade={{ duration: 200 }}>
             <IconButton
               icon={mdiChevronRight}
+              directional
               shape="round"
               variant="outline"
               color="secondary"

@@ -25,7 +25,7 @@
       {#if typeof separator === 'object' && 'text' in separator}
         <span class="mx-1">{separator.text}</span>
       {:else}
-        <Icon icon={separator} size="1rem" />
+        <Icon icon={separator} size="1rem" directional />
       {/if}
     {/if}
     {#if item.href}
