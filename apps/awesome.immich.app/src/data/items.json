@@ -187,6 +187,12 @@
     "types": ["integration", "integrations"],
     "projects": [
       {
+        "title": "BrightTable",
+        "description": "Desktop app for Linux connecting Immich library to desktop raw editors. Bulk edit, copy/paste metadata and sessings, smarts stacks, printing and more.",
+        "sourceCodeUrl": "https://github.com/brownphotographic/BrightTable",
+        "tags": ["Vibe-Coded"]
+      },
+      {
         "title": "Immich Kodi",
         "description": "Unofficial Kodi plugin for Immich.",
         "sourceCodeUrl": "https://github.com/vladd11/immich-kodi",
