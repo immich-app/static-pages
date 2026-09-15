@@ -1,4 +1,4 @@
-FROM node:24-slim@sha256:ba849c60be29959425b8734d57b8b4b7d56f98edd9504c9af091d5281095a71e AS frontend-builder
+FROM node:24-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553 AS frontend-builder
 # pnpm version is pinned via the root package.json "packageManager" field
 ENV COREPACK_ENABLE_STRICT=1
 RUN corepack enable
@@ -11,7 +11,7 @@ RUN pnpm install --frozen-lockfile --filter survey.immich.app...
 COPY apps/survey.immich.app/ apps/survey.immich.app/
 RUN cd apps/survey.immich.app && pnpm run build
 
-FROM node:24-slim@sha256:ba849c60be29959425b8734d57b8b4b7d56f98edd9504c9af091d5281095a71e AS backend-builder
+FROM node:24-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553 AS backend-builder
 ENV COREPACK_ENABLE_STRICT=1
 RUN corepack enable
 WORKDIR /app
@@ -23,7 +23,7 @@ COPY apps/survey.immich.app/shared/ apps/survey.immich.app/shared/
 COPY apps/survey.immich.app/backend/ apps/survey.immich.app/backend/
 RUN cd apps/survey.immich.app/backend && pnpm run build:node
 
-FROM node:24-slim@sha256:ba849c60be29959425b8734d57b8b4b7d56f98edd9504c9af091d5281095a71e
+FROM node:24-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553
 ENV COREPACK_ENABLE_STRICT=1
 RUN corepack enable
 WORKDIR /app
