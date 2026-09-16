@@ -241,11 +241,6 @@
         "sourceCodeUrl": "https://github.com/miguelangel-nubla/immich-upload-optimizer"
       },
       {
-        "title": "FlowLogix Mirror Immich",
-        "description": "Sync your macOS Apple Photos to Immich with title, description, keywords and other metadata",
-        "sourceCodeUrl": "https://github.com/flowlogix/mirror-immich"
-      },
-      {
         "title": "Telegram to Immich Bot",
         "description": "Telegram bot for uploading files directly to your Immich instance, preserving the metadata",
         "sourceCodeUrl": "https://github.com/myanesp/telegram-immich-bot",
