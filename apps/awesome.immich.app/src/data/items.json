@@ -188,7 +188,7 @@
     "projects": [
       {
         "title": "BrightTable",
-        "description": "Desktop app for Linux connecting Immich library to desktop raw editors. Bulk edit, copy/paste metadata and sessings, smarts stacks, printing and more.",
+        "description": "Desktop app for Linux connecting Immich library to desktop raw editors. Bulk edit, copy/paste metadata and settings, smarts stacks, printing and more.",
         "sourceCodeUrl": "https://github.com/brownphotographic/BrightTable",
         "tags": ["Vibe-Coded"]
       },
