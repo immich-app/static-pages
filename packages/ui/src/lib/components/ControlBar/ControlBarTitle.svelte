@@ -1,6 +1,7 @@
 <script lang="ts">
   import Heading from '$lib/components/Heading/Heading.svelte';
   import type { Color, FontWeight, HeadingSize, HeadingTag } from '$lib/types.js';
+  import { cleanClass } from '$lib/utilities/internal.js';
   import type { Snippet } from 'svelte';
 
   type Props = {
@@ -18,6 +19,6 @@
   const { size = 'small', fontWeight = 'medium', color, tag, class: className, children }: Props = $props();
 </script>
 
-<Heading {tag} {size} {color} {fontWeight} class={className}>
+<Heading {tag} {size} {color} {fontWeight} class={cleanClass('truncate', className)}>
   {@render children?.()}
 </Heading>
