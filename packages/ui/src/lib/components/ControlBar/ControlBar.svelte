@@ -25,7 +25,7 @@
   }: ControlBarProps = $props();
 
   const styles = tv({
-    base: `h-control-bar flex w-full items-center gap-2 px-2`,
+    base: `min-h-control-bar flex flex-wrap w-full items-center gap-2 p-2`,
     variants: {
       variant: {
         filled: 'bg-light-100',
@@ -60,7 +60,7 @@
   class={cleanClass(styles({ shape, variant }), className)}
   {...restProps}
 >
-  <div class={cleanClass('flex shrink-0 items-center gap-2')}>
+  <div class={cleanClass('flex max-w-full items-center gap-2')}>
     {#if typeof closeIcon === 'function'}
       {@render closeIcon?.()}
     {:else if onClose}
@@ -70,13 +70,14 @@
         shape="round"
         variant="ghost"
         color="secondary"
+        class="shrink-0"
         aria-label={t('close', translations)}
         onclick={() => onClose()}
       />
     {/if}
 
     {#if headerChild}
-      <div class={cleanClass('flex shrink-0 flex-col', headerChild.class)}>
+      <div class={cleanClass('flex flex-col truncate', headerChild.class)}>
         {@render headerChild.children?.()}
       </div>
     {/if}
@@ -87,7 +88,7 @@
   </div>
 
   {#if overflowChild}
-    <div class={cleanClass('flex shrink-0 items-center gap-2', overflowChild.class)}>
+    <div class={cleanClass('flex shrink-0 ms-auto items-center gap-2', overflowChild.class)}>
       {@render overflowChild.children?.()}
     </div>
   {/if}
