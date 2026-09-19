@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.89.1](https://github.com/immich-app/static-pages/compare/ui-v0.89.0...ui-v0.89.1) (2026-09-19)
+
+
+### Bug Fixes
+
+* **ui:** wrap control bar when content is too long ([#815](https://github.com/immich-app/static-pages/issues/815)) ([ddef39f](https://github.com/immich-app/static-pages/commit/ddef39fefab077e15cf209be8e4e6443c1215571))
+
 ## [0.89.0](https://github.com/immich-app/static-pages/compare/ui-v0.88.0...ui-v0.89.0) (2026-09-14)
 
 
