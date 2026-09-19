@@ -16,7 +16,7 @@
     {#if previous}
       <a
         href={previous.href}
-        class="hover:border-primary hover:text-primary flex items-center gap-2 rounded-xl border p-4 transition-colors"
+        class="hover:border-primary hover:text-primary flex items-center gap-2 rounded-xl border p-4 transition-colors outline-primary -outline-offset-1 focus-visible:outline-2"
       >
         <Icon icon={mdiChevronLeft} size="1.5rem" directional />
         <div class="min-w-0">
@@ -30,7 +30,7 @@
     {#if next}
       <a
         href={next.href}
-        class="hover:border-primary hover:text-primary flex items-center justify-end gap-2 rounded-xl border p-4 text-end transition-colors"
+        class="hover:border-primary hover:text-primary flex items-center justify-end gap-2 rounded-xl border p-4 text-end transition-colors outline-primary -outline-offset-1 focus-visible:outline-2"
       >
         <div class="min-w-0">
           <Text color="muted" size="tiny">{t('navigate_next', translations)}</Text>

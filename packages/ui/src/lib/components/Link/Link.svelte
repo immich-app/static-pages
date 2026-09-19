@@ -12,7 +12,11 @@
 <a
   href={resolved}
   draggable="false"
-  class={cleanClass(underline && 'underline', className)}
+  class={cleanClass(
+    underline && 'underline',
+    'rounded-xs outline-primary outline-offset-1 focus-visible:outline-2',
+    className,
+  )}
   target={external ? '_blank' : undefined}
   rel={external ? 'noopener noreferrer' : undefined}
   {...restProps}

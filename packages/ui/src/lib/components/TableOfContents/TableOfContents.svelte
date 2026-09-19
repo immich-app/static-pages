@@ -15,7 +15,12 @@
     <ul class="mt-3 flex flex-col gap-2 border-s text-sm">
       {#each items as item (item.id)}
         <li class={item.level === 3 ? 'ps-6' : 'ps-3'}>
-          <a href="#{item.id}" class="text-muted hover:text-primary block transition-colors">{item.text}</a>
+          <a
+            href="#{item.id}"
+            class="text-muted hover:text-primary block transition-colors rounded-xs outline-primary outline-offset-1 focus-visible:outline-2"
+          >
+            {item.text}
+          </a>
         </li>
       {/each}
     </ul>
