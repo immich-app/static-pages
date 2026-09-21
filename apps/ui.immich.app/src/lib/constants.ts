@@ -208,7 +208,7 @@ export const components: ComponentItem[] = [
   { name: 'Tooltip', icon: mdiInformationSlabCircleOutline, activeIcon: mdiInformationSlabCircle },
 ];
 
-const onAction: ActionItemHandler = (item) => {
+const onAction: ActionItemHandler = ({ action: item }) => {
   toastManager.show({
     title: `Clicked ${item.title}`,
     color: item.color ?? 'primary',

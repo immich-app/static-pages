@@ -19,7 +19,7 @@
   const common = $derived({
     variant: variantOverride ?? 'ghost',
     color: colorOverride ?? action.color ?? 'secondary',
-    onclick: () => onAction(action),
+    onclick: (event: MouseEvent) => onAction({ action, event }),
   });
 </script>
 
