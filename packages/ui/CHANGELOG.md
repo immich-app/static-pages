@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.90.0](https://github.com/immich-app/static-pages/compare/ui-v0.89.1...ui-v0.90.0) (2026-09-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* **ui:** propagate action trigger events to action handlers ([#818](https://github.com/immich-app/static-pages/issues/818))
+
+### Features
+
+* **ui:** propagate action trigger events to action handlers ([#818](https://github.com/immich-app/static-pages/issues/818)) ([2ed5c58](https://github.com/immich-app/static-pages/commit/2ed5c589812c55f91b667660cd5e8c666ce32a28))
+
+
+### Bug Fixes
+
+* **ui:** refactor checkbox and consistent outlines ([#817](https://github.com/immich-app/static-pages/issues/817)) ([5b0a40c](https://github.com/immich-app/static-pages/commit/5b0a40c5d60cc4988983c22df6dd817de46205c7))
+
 ## [0.89.1](https://github.com/immich-app/static-pages/compare/ui-v0.89.0...ui-v0.89.1) (2026-09-19)
 
 
