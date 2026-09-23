@@ -29,22 +29,16 @@
 
   const enabled = $derived(checked && !disabled);
 
-  const wrapper = tv({
-    base: 'relative flex flex-col justify-center',
+  const bar = tv({
+    base: 'h-8 w-13 rounded-full border-2 outline-offset-2 focus-visible:outline-2',
     variants: {
       disabled: {
         true: 'cursor-not-allowed opacity-38',
         false: 'cursor-pointer',
       },
-    },
-  });
-
-  const bar = tv({
-    base: 'h-8 w-13 rounded-full border-2',
-    variants: {
       fillColor: {
         default: 'border-light-400 bg-light-200 dark:border-gray-500',
-        primary: 'bg-primary-100 dark:bg-primary-200 border-transparent',
+        primary: 'bg-primary-100 dark:bg-primary-200 border-transparent outline-primary',
         secondary: 'bg-light-200 dark:bg-light-300 border-transparent',
         success: 'bg-success-100 dark:bg-success-200 border-transparent',
         danger: 'bg-danger-100 dark:bg-danger-200 border-transparent',
@@ -55,12 +49,8 @@
   });
 
   const dot = tv({
-    base: 'absolute h-4 w-4 origin-center rounded-full transition-transform duration-100',
+    base: 'block size-4 rounded-full transition-transform duration-100 data-[state=unchecked]:translate-x-1.5 data-[state=unchecked]:rtl:-translate-x-1.5 data-[state=checked]:translate-x-6.5 data-[state=checked]:scale-150 data-[state=checked]:rtl:-translate-x-6.5',
     variants: {
-      checked: {
-        true: 'translate-x-7 scale-150 rtl:-translate-x-7',
-        false: 'translate-x-2 rtl:-translate-x-2',
-      },
       fillColor: {
         default: 'bg-gray-600 dark:bg-gray-500',
         primary: 'bg-primary',
@@ -74,7 +64,7 @@
   });
 
   const inputId = $derived(`input-${id}`);
-  const labelId = $derived(`label-${id}`);
+  const labelId = $derived(label ? `label-${id}` : restProps['aria-labelledby']);
   const descriptionId = $derived(description ? `description-${id}` : restProps['aria-describedby']);
 </script>
 
@@ -92,6 +82,7 @@
     bind:checked
     bind:ref
     id={inputId}
+    class={bar({ disabled, fillColor: enabled ? color : 'default' })}
     disabled={disabled || readOnly}
     required={!!required}
     aria-readonly={readOnly}
@@ -99,11 +90,6 @@
     aria-describedby={descriptionId}
     {...restProps}
   >
-    <Switch.Thumb>
-      <span class={wrapper({ disabled })}>
-        <span class={bar({ fillColor: enabled ? color : 'default' })}> </span>
-        <span class={dot({ checked: enabled, fillColor: enabled ? color : 'default' })}></span>
-      </span>
-    </Switch.Thumb>
+    <Switch.Thumb class={dot({ fillColor: enabled ? color : 'default' })} />
   </Switch.Root>
 </div>
