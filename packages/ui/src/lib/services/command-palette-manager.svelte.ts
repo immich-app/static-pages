@@ -2,7 +2,7 @@ import { matchesShortcut, shortcuts, shouldIgnoreEvent } from '$lib/actions/shor
 import CommandPaletteModal from '$lib/internal/CommandPaletteModal.svelte';
 import { modalManager } from '$lib/services/modal-manager.svelte.js';
 import { isModalOpen } from '$lib/state/modal-state.svelte.js';
-import type { ActionItem, MaybePromise, TranslationProps } from '$lib/types.js';
+import type { ActionEvent, ActionItem, MaybePromise, TranslationProps } from '$lib/types.js';
 import { isEnabled } from '$lib/utilities/common.js';
 import { asArray, generateId } from '$lib/utilities/internal.js';
 import Fuse, { type FuseResult, type FuseResultMatch, type IFuseOptions } from 'fuse.js';
@@ -220,13 +220,13 @@ class CommandPaletteManager {
         event.preventDefault();
       }
 
-      action?.onAction(action);
+      action?.onAction({ action, event });
       return;
     }
   }
 
-  async #onClose(action?: ActionItem) {
-    await action?.onAction(action);
+  async #onClose(actionEvent?: ActionEvent) {
+    await actionEvent?.action.onAction(actionEvent);
     this.#isOpen = false;
     this.#results = [];
   }

@@ -370,7 +370,17 @@ export type DatePickerProps = {
 
 export type IfLike = { $if?: () => boolean };
 
-export type ActionItemHandler<T extends ActionItem = ActionItem> = (item: T) => unknown | Promise<unknown>;
+/**
+ * The event will be a `KeyboardEvent | MouseEvent` for actions triggered via
+ * normal (icon) buttons and the command palette (including shortcuts), and
+ * a custom event type for actions triggered via bits-ui components like the
+ * context menu.
+ */
+export type ActionEvent<T extends ActionItem = ActionItem> = { action: T; event: Event };
+
+export type ActionItemHandler<T extends ActionItem = ActionItem> = (
+  actionEvent: ActionEvent<T>,
+) => unknown | Promise<unknown>;
 
 export type LinkItem = {
   title: string;

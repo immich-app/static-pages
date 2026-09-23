@@ -152,7 +152,7 @@
                   <DropdownMenu.Item
                     textValue={item.title}
                     closeOnSelect
-                    onSelect={() => item.onAction(item)}
+                    onSelect={(event) => item.onAction({ action: item, event })}
                     class={itemStyles({ color: item.color, inset: true })}
                   >
                     {@render itemText(item)}
@@ -168,7 +168,7 @@
                       <DropdownMenu.Item
                         textValue={item.title}
                         closeOnSelect
-                        onSelect={() => item.onAction(item)}
+                        onSelect={(event) => item.onAction({ action: item, event })}
                         title={item.title}
                         class={itemStyles({ color: item.color })}
                       >

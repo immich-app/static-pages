@@ -11,7 +11,7 @@
   type Props = {
     item: ActionItem;
     selected: boolean;
-    onSelect: () => void;
+    onSelect: (event: MouseEvent) => void;
   };
 
   const { item, selected, onSelect }: Props = $props();
@@ -37,7 +37,7 @@
 
 <div bind:this={ref} class="p-1">
   <Button
-    onclick={() => onSelect()}
+    onclick={(event: MouseEvent) => onSelect(event)}
     fullWidth
     variant={selected ? 'outline' : 'ghost'}
     color="secondary"

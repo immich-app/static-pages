@@ -16,11 +16,11 @@
     type CommandPaletteTranslations,
   } from '$lib/services/command-palette-manager.svelte.js';
   import { t } from '$lib/services/translation.svelte.js';
-  import type { ActionItem } from '$lib/types.js';
+  import type { ActionEvent, ActionItem } from '$lib/types.js';
   import { mdiArrowDown, mdiArrowUp, mdiKeyboardEsc, mdiKeyboardReturn, mdiMagnify } from '@mdi/js';
 
   type Props = {
-    onClose: (action?: ActionItem) => void;
+    onClose: (actionEvent?: ActionEvent) => void;
     translations?: CommandPaletteTranslations;
     initialQuery?: string;
   };
@@ -54,7 +54,7 @@
       }
 
       case 'select': {
-        onClose(commandPaletteManager.selectedItem);
+        onClose({ action: commandPaletteManager.selectedItem, event });
         break;
       }
     }
@@ -124,7 +124,7 @@
               <CommandPaletteItem
                 {item}
                 selected={commandPaletteManager.isSelected(item)}
-                onSelect={() => onClose(item)}
+                onSelect={(event) => onClose({ action: item, event })}
               />
             {/each}
           </div>
