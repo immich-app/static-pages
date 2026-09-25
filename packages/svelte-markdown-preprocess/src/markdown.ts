@@ -227,7 +227,7 @@ export const markedSvelte = (): MarkedExtension => ({
     },
 
     codespan({ text }) {
-      return `<Markdown.Code code={\`${text}\`} />`;
+      return `<Markdown.Code code={\`${escapeSvelteCode(text)}\`} />`;
     },
   },
 });

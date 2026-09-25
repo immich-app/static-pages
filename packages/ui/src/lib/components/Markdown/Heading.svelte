@@ -38,4 +38,4 @@
   let { size, tag, class: className } = $derived(getSizeAndTag(level));
 </script>
 
-<Heading {size} {tag} class={cleanClass('flex items-center gap-1', className)} {id} {children} />
+<Heading {size} {tag} class={cleanClass('flex items-center flex-wrap gap-1 ', className)} {id} {children} />
