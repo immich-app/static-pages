@@ -193,6 +193,12 @@
         "tags": ["Vibe-Coded"]
       },
       {
+        "title": "DD Photos",
+        "description": "Desktop app for macOS, Windows and Linux that turns Immich albums into a fast, static photo website you can host anywhere, with captions from photo descriptions and custom sort order. Uses only the Immich API.",
+        "websiteUrl": "https://github.com/dougdonohoe/ddphotos-app/blob/main/docs/IMMICH.md",
+        "sourceCodeUrl": "https://github.com/dougdonohoe/ddphotos-app"
+      },
+      {
         "title": "Immich Kodi",
         "description": "Unofficial Kodi plugin for Immich.",
         "sourceCodeUrl": "https://github.com/vladd11/immich-kodi",
