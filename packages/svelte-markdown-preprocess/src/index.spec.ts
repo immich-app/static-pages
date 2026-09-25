@@ -139,6 +139,12 @@ describe(svelteMarkdownPreprocess.name, () => {
     it('should leave a component inside a code fence as code', async () => {
       await expect(render('```svelte\n<Markdown.Image src="a.webp" />\n```')).resolves.toContain('<Markdown.Code');
     });
+
+    it('should escape template syntax inside inline code', async () => {
+      await expect(render('Use `${PORT}:{PORT}`')).resolves.toContain(
+        '<Markdown.Code code={`' + String.raw`$\{PORT\}:\{PORT\}` + '`} />',
+      );
+    });
   });
 
   describe('images', () => {
