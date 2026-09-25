@@ -5,8 +5,8 @@
   import PageContent from '$lib/components/PageContent.svelte';
   import { buildCompose, buildComposeFields } from '$lib/compose/build';
   import { DEFAULT_CONFIG, FOLDER_OVERRIDES, StorageType, validate, withoutAdvanced } from '$lib/compose/config';
-  import { ML_ACCELS, TRANSCODE_ACCELS } from '$lib/compose/hwaccel';
   import { highlightedLines } from '$lib/compose/highlight';
+  import { ML_ACCELS, TRANSCODE_ACCELS } from '$lib/compose/hwaccel';
   import { decodeShare, encodeShare, randomPassword } from '$lib/compose/share';
   import {
     ActionBar,
@@ -49,15 +49,16 @@
     mdiContentCopy,
     mdiDiceMultiple,
     mdiDownload,
+    mdiInformationOutline,
     mdiPartyPopper,
     mdiPlus,
     mdiShareVariant,
   } from '@mdi/js';
-  import { siGithub } from 'simple-icons';
   import { createTwoFilesPatch } from 'diff';
+  import { siGithub } from 'simple-icons';
   import { onMount } from 'svelte';
-  import { SvelteURL } from 'svelte/reactivity';
   import { diff as diffLanguage, yaml as yamlLanguage } from 'svelte-highlight/languages';
+  import { SvelteURL } from 'svelte/reactivity';
 
   const config = $state(structuredClone(DEFAULT_CONFIG));
   const defaultDatabaseLocation =
@@ -218,6 +219,12 @@
     href: ISSUE_URL,
   };
 
+  const About: ActionLink = {
+    title: 'About',
+    icon: mdiInformationOutline,
+    href: '/blog/docker-compose-builder',
+  };
+
   const pageMetadata = {
     title: 'Docker Compose Builder',
     description: 'Build a custom docker-compose.yml file for Immich.',
@@ -262,7 +269,7 @@
   <AppShell class="h-auto min-h-0 grow">
     <AppShellBar>
       <ActionBar
-        overflowActions={[Source, ReportIssue]}
+        overflowActions={[Source, ReportIssue, About]}
         closeIcon={mdiArrowLeft}
         translations={{ close: 'Back' }}
         closeOnEsc={false}
