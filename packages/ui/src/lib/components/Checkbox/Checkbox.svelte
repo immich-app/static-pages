@@ -14,12 +14,14 @@
     color?: Color;
     shape?: Shape;
     size?: Size;
+    containerClass?: string;
   };
 
   let {
     ref = $bindable(null),
     checked = $bindable(false),
     class: className,
+    containerClass,
     color = 'primary',
     shape = 'semi-round',
     size: initialSize,
@@ -81,7 +83,7 @@
   />
 {/snippet}
 
-<div class="flex flex-col gap-1">
+<div class={cleanClass('flex flex-col gap-1', containerClass)}>
   {#if label}
     <Label id={labelId} for={inputId} {label} requiredIndicator={required === 'indicator'} {...labelProps} {size} />
     {#if description}
