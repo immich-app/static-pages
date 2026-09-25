@@ -35,7 +35,7 @@
 <Modal {title} {onClose} {size} {icon} {closeOnBackdropClick} {closeOnEsc}>
   <ModalBody {children} />
   <ModalFooter>
-    <Button shape="round" color={closeColor} fullWidth onclick={onClose}>
+    <Button shape="round" color={closeColor} fullWidth onclick={() => onClose()}>
       {closeText}
     </Button>
   </ModalFooter>

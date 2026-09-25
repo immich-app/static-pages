@@ -68,7 +68,7 @@
     </div>
     {#if onClose}
       <div class="flex items-center">
-        <CloseButton color="secondary" variant="ghost" onclick={onClose} />
+        <CloseButton color="secondary" variant="ghost" onclick={() => onClose()} />
       </div>
     {/if}
   </div>
