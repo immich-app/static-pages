@@ -96,7 +96,7 @@
       variant="ghost"
       size="tiny"
       aria-label={t('close', translations)}
-      onclick={onClose}
+      onclick={() => onClose()}
     />
   {/if}
   {#if close}
