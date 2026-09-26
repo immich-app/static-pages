@@ -2,10 +2,26 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["local>immich-app/.github:renovate-config"],
   "schedule": "on tuesday",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Images pinned by the compose builder",
+      "managerFilePatterns": ["/^apps/root\\.immich\\.app/src/lib/compose/images\\.ts$/"],
+      "matchStrings": [
+        "'(?<depName>[^':@\\s]+(?:/[^':@\\s]+)*):(?<currentValue>[^'@\\s]+)@(?<currentDigest>sha256:[a-f0-9]{64})'"
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ],
   "packageRules": [
     {
       "matchPackageNames": ["svelte-highlight"],
       "groupName": "svelte-highlight"
+    },
+    {
+      "matchPackageNames": ["ghcr.io/immich-app/postgres"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     }
   ]
 }
