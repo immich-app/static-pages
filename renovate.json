@@ -19,7 +19,6 @@
       "groupName": "svelte-highlight"
     },
     {
-      "description": "Mirrors immich's own renovate rule: Postgres majors are pinned upstream",
       "matchPackageNames": ["ghcr.io/immich-app/postgres"],
       "matchUpdateTypes": ["major"],
       "enabled": false
