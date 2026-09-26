@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.90.1](https://github.com/immich-app/static-pages/compare/ui-v0.90.0...ui-v0.90.1) (2026-09-26)
+
+
+### Bug Fixes
+
+* checkbox container class ([#828](https://github.com/immich-app/static-pages/issues/828)) ([eca7851](https://github.com/immich-app/static-pages/commit/eca7851823c7e856eb58793587f106b6c37914ee))
+* markdown render issues ([#832](https://github.com/immich-app/static-pages/issues/832)) ([f4ecb65](https://github.com/immich-app/static-pages/commit/f4ecb65652f5c11dbd011d23b8ef10e97de4cc57))
+* on close button ([#829](https://github.com/immich-app/static-pages/issues/829)) ([6c642a9](https://github.com/immich-app/static-pages/commit/6c642a9f23d624bd1252c2e9d1950633158dcf2b))
+
 ## [0.90.0](https://github.com/immich-app/static-pages/compare/ui-v0.89.1...ui-v0.90.0) (2026-09-23)
 
 
