@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/immich-app/static-pages/compare/svelte-markdown-preprocess-v0.8.0...svelte-markdown-preprocess-v0.8.1) (2026-09-26)
+
+
+### Bug Fixes
+
+* markdown render issues ([#832](https://github.com/immich-app/static-pages/issues/832)) ([f4ecb65](https://github.com/immich-app/static-pages/commit/f4ecb65652f5c11dbd011d23b8ef10e97de4cc57))
+
 ## [0.8.0](https://github.com/immich-app/static-pages/compare/svelte-markdown-preprocess-v0.7.0...svelte-markdown-preprocess-v0.8.0) (2026-09-10)
 
 
