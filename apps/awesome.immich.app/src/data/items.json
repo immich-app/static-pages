@@ -89,6 +89,11 @@
         "description": "Unofficial native Immich client for iOS, written in Swift.",
         "websiteUrl": "https://imora.vexcited.com",
         "sourceCodeUrl": "https://code.vexcited.com/imora/imora"
+      },
+      {
+        "title": "HomeCanvas",
+        "description": "Touchscreen wall display for the Raspberry Pi: browse and play your Immich albums by hand, run a photo-frame slideshow, and switch to a dashboard of nearly 40 widgets arranged from your phone. Native app, one-command install.",
+        "sourceCodeUrl": "https://github.com/vwillcox/HomeCanvas"
       }
     ]
   },
