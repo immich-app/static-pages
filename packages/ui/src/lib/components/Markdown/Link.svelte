@@ -12,7 +12,7 @@
 
   const { href, title, children }: Props = $props();
 
-  const github = $derived(parseGithubLink(href));
+  const github = $derived(children ? undefined : parseGithubLink(href));
 </script>
 
 {#if github}
