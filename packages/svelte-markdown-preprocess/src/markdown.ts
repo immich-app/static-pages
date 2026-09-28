@@ -221,9 +221,14 @@ export const markedSvelte = (): MarkedExtension => ({
       return `<Markdown.LineBreak />\n`;
     },
 
-    link({ href, title, tokens }) {
+    link({ href, title, text: raw, tokens }) {
+      const attributes = createAttributes({ href, title });
+      if (raw === href) {
+        return `<Markdown.Link${attributes} />`;
+      }
+
       const text = this.parser.parseInline(tokens);
-      return `<Markdown.Link${createAttributes({ href, title })}>${text}</Markdown.Link>`;
+      return `<Markdown.Link${attributes}>${text}</Markdown.Link>`;
     },
 
     codespan({ text }) {
