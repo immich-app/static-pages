@@ -81,7 +81,7 @@ const build = (config: ImmichConfig, version: string): { spec: ComposeFile; fiel
     backingServices.redis = {
       container_name: containerName('immich_redis'),
       image: IMAGES.redis,
-      healthcheck: { test: 'redis-cli ping || exit 1' },
+      healthcheck: { test: 'redis-cli ping | grep -q PONG || exit 1' },
       volumes: rootlessVolumes('redis') ?? [],
       restart: 'always',
     };
