@@ -140,7 +140,7 @@ export const markedSvelte = (): MarkedExtension => ({
       let output = `<Markdown.List${createAttributes({ ordered, start: start === 1 ? undefined : start })}>\n`;
       for (const item of items) {
         const content = this.parser.parse(item.tokens);
-        output += `<Markdown.ListItem${createAttributes({ task: item.task ? true : undefined, checked: item.checked })}>${content}</Markdown.ListItem>\n`;
+        output += `<Markdown.ListItem${createAttributes({ task: item.task || undefined, checked: item.checked })}>${content}</Markdown.ListItem>\n`;
       }
       output += `</Markdown.List>\n`;
 

@@ -109,11 +109,13 @@ class PlaygroundManager {
 
   async load() {
     const data = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (data) {
-      const { apiKey = '', serverUrl = '' } = JSON.parse(data);
-      this.apiKey = apiKey;
-      this.serverUrl = serverUrl;
+    if (!data) {
+      return;
     }
+
+    const { apiKey = '', serverUrl = '' } = JSON.parse(data);
+    this.apiKey = apiKey;
+    this.serverUrl = serverUrl;
   }
 
   async save() {

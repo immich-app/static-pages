@@ -68,10 +68,12 @@ export const decodeShare = (params: URLSearchParams): ImmichConfig => {
 
   for (const [path, raw] of params) {
     const value = path === PASSWORD_PATH ? (raw === PASSWORD_MARKER ? randomPassword() : undefined) : coerce(raw, path);
-    if (value !== undefined) {
-      set(draft, path, value);
-      applied.push(path);
+    if (value === undefined) {
+      continue;
     }
+
+    set(draft, path, value);
+    applied.push(path);
   }
 
   let parsed = immichConfigSchema.safeParse(draft);

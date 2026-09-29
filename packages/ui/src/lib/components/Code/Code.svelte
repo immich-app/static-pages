@@ -60,9 +60,9 @@
 <code
   class={cleanClass(
     styles({
-      filledTheme: variant === 'filled' ? color : false,
-      outlineTheme: variant === 'outline' ? color : false,
-      ghostTheme: variant === 'ghost' ? color : false,
+      filledTheme: variant === 'filled' && color,
+      outlineTheme: variant === 'outline' && color,
+      ghostTheme: variant === 'ghost' && color,
       size,
     }),
     className,

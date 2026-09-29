@@ -13,7 +13,7 @@ export const asPostgresConfig = (params: DatabaseConnectionParams) => {
       username: params.username,
       password: params.password,
       database: params.database,
-      ssl: params.ssl === DatabaseSslMode.Disable ? false : params.ssl,
+      ssl: params.ssl !== DatabaseSslMode.Disable && params.ssl,
     };
   }
 

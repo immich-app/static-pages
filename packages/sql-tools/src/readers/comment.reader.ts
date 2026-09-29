@@ -28,11 +28,13 @@ export const readComments: Reader = async (ctx, db) => {
       continue;
     }
 
-    if (comment.column_name) {
-      const column = table.columns.find(({ name }) => name === comment.column_name);
-      if (column) {
-        column.comment = comment.value;
-      }
+    if (!comment.column_name) {
+      continue;
+    }
+
+    const column = table.columns.find(({ name }) => name === comment.column_name);
+    if (column) {
+      column.comment = comment.value;
     }
   }
 };

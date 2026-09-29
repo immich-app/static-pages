@@ -89,7 +89,7 @@ export const fromColumnValue = (columnValue?: ColumnValue): string | undefined |
 };
 
 export const setIsEqual = (source: Set<unknown>, target: Set<unknown>) =>
-  source.size === target.size && [...source].every((x) => target.has(x));
+  source.size === target.size && source.isSubsetOf(target);
 
 export const haveEqualColumns = (sourceColumns?: string[], targetColumns?: string[]) => {
   sourceColumns ??= [];

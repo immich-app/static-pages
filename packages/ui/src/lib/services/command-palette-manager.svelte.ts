@@ -144,14 +144,16 @@ class CommandPaletteManager {
     }
     this.#isEnabled = true;
 
-    if (globalThis.window && document.body) {
-      shortcuts(document.body, [
-        { shortcut: { key: 'k', meta: true }, onShortcut: () => this.open() },
-        { shortcut: { key: 'k', ctrl: true }, onShortcut: () => this.open() },
-        { shortcut: { key: '/' }, preventDefault: true, onShortcut: () => this.open() },
-      ]);
-      on(document.body, 'keydown', (event) => this.#handleKeydown(event));
+    if (!globalThis.window || !document.body) {
+      return;
     }
+
+    shortcuts(document.body, [
+      { shortcut: { key: 'k', meta: true }, onShortcut: () => this.open() },
+      { shortcut: { key: 'k', ctrl: true }, onShortcut: () => this.open() },
+      { shortcut: { key: '/' }, preventDefault: true, onShortcut: () => this.open() },
+    ]);
+    on(document.body, 'keydown', (event) => this.#handleKeydown(event));
   }
 
   setTranslations(translations: CommandPaletteTranslations = {}) {
@@ -252,13 +254,15 @@ class CommandPaletteManager {
 
     this.#selectedItemIndex--;
 
-    if (this.#selectedItemIndex < 0) {
-      this.#selectedGroupIndex--; // previous group
-      if (this.#selectedGroupIndex < 0) {
-        this.#selectedGroupIndex = groups.length - 1; // first group
-      }
-      this.#selectedItemIndex = groups[this.#selectedGroupIndex].items.length - 1;
+    if (this.#selectedItemIndex >= 0) {
+      return;
     }
+
+    this.#selectedGroupIndex--; // previous group
+    if (this.#selectedGroupIndex < 0) {
+      this.#selectedGroupIndex = groups.length - 1; // first group
+    }
+    this.#selectedItemIndex = groups[this.#selectedGroupIndex].items.length - 1;
   }
 
   navigateDown() {
@@ -270,12 +274,14 @@ class CommandPaletteManager {
 
     this.#selectedItemIndex++;
 
-    if (this.#selectedItemIndex >= group.items.length) {
-      this.#selectedItemIndex = 0;
-      this.#selectedGroupIndex++; // next group
-      if (this.#selectedGroupIndex >= groups.length) {
-        this.#selectedGroupIndex = 0; // first group
-      }
+    if (this.#selectedItemIndex < group.items.length) {
+      return;
+    }
+
+    this.#selectedItemIndex = 0;
+    this.#selectedGroupIndex++; // next group
+    if (this.#selectedGroupIndex >= groups.length) {
+      this.#selectedGroupIndex = 0; // first group
     }
   }
 

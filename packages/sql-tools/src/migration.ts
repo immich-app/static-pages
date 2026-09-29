@@ -239,10 +239,12 @@ ${downSql}
     const distBase = join(this.#migrationsFolder, migrationName);
     for (const extension of ['.js', '.js.map', '.d.ts']) {
       const filePath = `${distBase}${extension}`;
-      if (existsSync(filePath)) {
-        rmSync(filePath, { force: true });
-        console.log(`Removed ${filePath}`);
+      if (!existsSync(filePath)) {
+        continue;
       }
+
+      rmSync(filePath, { force: true });
+      console.log(`Removed ${filePath}`);
     }
 
     if (maybeSyncOrder(sourceFolder)) {

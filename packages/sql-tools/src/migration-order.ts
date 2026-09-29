@@ -90,7 +90,7 @@ export const syncOrder = (folder: string): { previous?: string[]; next: string[]
 };
 
 export const maybeSyncOrder = (folder: string): boolean =>
-  existsSync(join(folder, ORDER_FILENAME)) ? syncOrder(folder).changed : false;
+  existsSync(join(folder, ORDER_FILENAME)) && syncOrder(folder).changed;
 
 export type VerifyOrderOptions = { appendOnlyFrom?: string[] };
 
