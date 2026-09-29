@@ -132,10 +132,12 @@
 
   $effect(() => {
     const target = shareUrl;
-    if (decoded && routerReady && target !== writtenUrl) {
-      writtenUrl = target;
-      replaceState(target, {});
+    if (!(decoded && routerReady) || target === writtenUrl) {
+      return;
     }
+
+    writtenUrl = target;
+    replaceState(target, {});
   });
 
   onMount(async () => {

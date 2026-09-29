@@ -64,6 +64,7 @@ export const processForeignKeyConstraints: Processor = (ctx, items) => {
       continue;
     }
 
+    // eslint-disable-next-line unicorn/prefer-continue
     if (options.index || options.indexName || ctx.options.createForeignKeyIndexes) {
       const indexName =
         options.indexName ||

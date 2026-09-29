@@ -82,7 +82,9 @@
   });
 
   let now = $state(DateTime.now());
+  // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary
   let isStarted = $derived(since ? now >= since : true);
+  // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary
   let isFinished = $derived(until ? now <= until : true);
   let isVisible = $derived(isStarted && isFinished);
   let timer: ReturnType<typeof setInterval>;

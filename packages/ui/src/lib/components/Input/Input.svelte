@@ -61,7 +61,7 @@
       }),
       className,
     )}
-    data-disabled={disabled ? true : undefined}
+    data-disabled={disabled || undefined}
   >
     <InputIcon icon={leadingIcon} {size} {disabled} />
 

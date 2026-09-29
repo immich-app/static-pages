@@ -46,6 +46,7 @@ export const processUniqueConstraints: Processor = (ctx, items) => {
       return ctx.onMissingColumn('@Column', object, propertyName);
     }
 
+    // eslint-disable-next-line unicorn/prefer-continue
     if (type === 'column' && !options.primary && (options.unique || options.uniqueConstraintName)) {
       const uniqueConstraintName =
         options.uniqueConstraintName ||

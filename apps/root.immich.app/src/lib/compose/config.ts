@@ -373,10 +373,12 @@ const validationSchema = immichConfigSchema.superRefine((config, ctx) => {
           : overlaps
             ? 'This path overlaps another mount.'
             : undefined;
-      if (message) {
-        fail(mount.path, message);
-        fail(other.path, message);
+      if (!message) {
+        continue;
       }
+
+      fail(mount.path, message);
+      fail(other.path, message);
     }
   }
 });

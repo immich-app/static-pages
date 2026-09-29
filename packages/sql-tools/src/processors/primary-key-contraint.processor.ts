@@ -10,21 +10,23 @@ export const processPrimaryKeyConstraints: Processor = (ctx) => {
       }
     }
 
-    if (columnNames.length > 0) {
-      const tableMetadata = ctx.getTableMetadata(table);
-      table.constraints.push({
-        type: ConstraintType.PRIMARY_KEY,
-        name:
-          tableMetadata.options.primaryConstraintName ||
-          ctx.getNameFor({
-            type: 'primaryKey',
-            tableName: table.name,
-            columnNames,
-          }),
-        tableName: table.name,
-        columnNames,
-        synchronize: tableMetadata.options.synchronize ?? true,
-      });
+    if (columnNames.length === 0) {
+      continue;
     }
+
+    const tableMetadata = ctx.getTableMetadata(table);
+    table.constraints.push({
+      type: ConstraintType.PRIMARY_KEY,
+      name:
+        tableMetadata.options.primaryConstraintName ||
+        ctx.getNameFor({
+          type: 'primaryKey',
+          tableName: table.name,
+          columnNames,
+        }),
+      tableName: table.name,
+      columnNames,
+      synchronize: tableMetadata.options.synchronize ?? true,
+    });
   }
 };

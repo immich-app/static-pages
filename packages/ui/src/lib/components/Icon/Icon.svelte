@@ -26,10 +26,12 @@
 
   const indicator = $derived.by(() => {
     const [_, yStart, xEnd, yEnd] = viewBox.split(' ', 4);
-    if (yStart && xEnd && yEnd) {
-      const radius = Math.min(Number(xEnd), Number(yEnd)) / 8;
-      return { x: Number(xEnd) - radius, y: Number(yStart) + radius, radius };
+    if (!yStart || !xEnd || !yEnd) {
+      return;
     }
+
+    const radius = Math.min(Number(xEnd), Number(yEnd)) / 8;
+    return { x: Number(xEnd) - radius, y: Number(yStart) + radius, radius };
   });
 
   const indicatorStyles = tv({
