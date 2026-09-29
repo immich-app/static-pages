@@ -33,7 +33,7 @@ type: post
 
 Hello again!
 
-We recently released a new tool for building a `docker-compose.yml` file for Immich! We’re calling it: [Docker Compose Builder](https://immich.app/docker-compose-builder). If you haven’t seen it or tried it out yet, you can access it at <https://immich.app/docker-compose-builder.> There is also a [GitHub Discussion](https://github.com/immich-app/immich/discussions/31232) about the topic if you have any feedback for the team. It’s only been out a few weeks so we’re constantly improving it based off of community feedback.
+We recently released a new tool for building a `docker-compose.yml` file for Immich! We’re calling it: [Docker Compose Builder](https://immich.app/docker-compose-builder). If you haven’t seen it or tried it out yet, you can access it at <https://immich.app/docker-compose-builder>. There is also a [GitHub Discussion](https://github.com/immich-app/immich/discussions/31232) about the topic if you have any feedback for the team. It’s only been out a few weeks so we’re constantly improving it based off of community feedback.
 
 ---
 
