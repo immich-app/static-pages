@@ -32,8 +32,11 @@ const storedCentre = async (avif: Buffer) => {
   return [...new Uint16Array(data.buffer, data.byteOffset + offset * 2, 3)].map((value) => value / 65_535);
 };
 
-const expectClose = (actual: number[], expected: number[]) =>
-  actual.forEach((value, index) => expect(value).toBeCloseTo(expected[index], 1));
+const expectClose = (actual: number[], expected: number[]) => {
+  for (const [index, value] of actual.entries()) {
+    expect(value).toBeCloseTo(expected[index], 1);
+  }
+};
 
 describe(MediaRepository.name, () => {
   it.each([
@@ -53,8 +56,9 @@ describe(MediaRepository.name, () => {
 
   it('leaves untagged sRGB input unconverted and untagged', async () => {
     const [variant] = await sut.optimizeImage(await flat('#ff0000').png().toBuffer());
+    const { hasProfile } = await sharp(variant.buffer).metadata();
 
-    expect((await sharp(variant.buffer).metadata()).hasProfile).toBe(false);
+    expect(hasProfile).toBe(false);
     expectClose(await storedCentre(variant.buffer), [1, 0, 0]);
   });
 
@@ -62,8 +66,9 @@ describe(MediaRepository.name, () => {
     // An rgb16 pipeline treats untagged pixels as P3, so this tags pure P3 green without converting it.
     const p3Green = await flat('#00ff00').pipelineColourspace('rgb16').withIccProfile('p3').png().toBuffer();
     const [variant] = await sut.optimizeImage(p3Green);
+    const [output, input] = await Promise.all([sharp(variant.buffer).metadata(), sharp(p3Green).metadata()]);
 
-    expect((await sharp(variant.buffer).metadata()).icc).toEqual((await sharp(p3Green).metadata()).icc);
+    expect(output.icc).toEqual(input.icc);
     expectClose(await storedCentre(variant.buffer), [0, 1, 0]);
   });
 
