@@ -26,8 +26,8 @@ export class MediaRepository {
   }
 
   async optimizeImage(buffer: Buffer): Promise<ImageVariant[]> {
-    const { pages, width } = await sharp(buffer).metadata();
-    return pages && pages > 1 ? this.encodeAnimations(buffer, width) : this.encodeStills(buffer);
+    const { pages, width, hasProfile } = await sharp(buffer).metadata();
+    return pages && pages > 1 ? this.encodeAnimations(buffer, width) : this.encodeStills(buffer, hasProfile);
   }
 
   async optimizeVideo(buffer: Buffer): Promise<OptimizeResult> {
@@ -40,11 +40,11 @@ export class MediaRepository {
     };
   }
 
-  private async encodeStills(buffer: Buffer): Promise<ImageVariant[]> {
+  private async encodeStills(buffer: Buffer, tagged: boolean): Promise<ImageVariant[]> {
     const source = await this.decode(buffer);
     const variants: ImageVariant[] = [];
     for (const width of imageLadder(source.raw.width)) {
-      const { data, info } = await this.encodeStill(await this.resizeInLinearLight(source, width));
+      const { data, info } = await this.encodeStill(await this.resizeInLinearLight(source, width), tagged);
       variants.push({ buffer: data, width: info.width, height: info.height, extension: 'avif' });
     }
     return variants;
@@ -85,10 +85,9 @@ export class MediaRepository {
   }
 
   // Folding this into the resize would encode against sRGB rather than P3
-  private encodeStill(bitmap: P3Bitmap) {
-    return sharp(bitmap.pixels, { raw: bitmap.raw })
-      .pipelineColourspace('rgb16')
-      .withIccProfile('p3')
+  private encodeStill(bitmap: P3Bitmap, tagged: boolean) {
+    const image = sharp(bitmap.pixels, { raw: bitmap.raw }).pipelineColourspace('rgb16');
+    return (tagged ? image.withIccProfile('p3') : image)
       .toColourspace('rgb16')
       .avif({ quality: 67, bitdepth: 10, effort: 6 })
       .toBuffer({ resolveWithObject: true });
