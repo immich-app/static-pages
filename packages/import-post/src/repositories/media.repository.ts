@@ -63,8 +63,12 @@ export class MediaRepository {
   }
 
   private async decode(buffer: Buffer): Promise<P3Bitmap> {
+    const { hasProfile } = await sharp(buffer).metadata();
+    const tagged = hasProfile
+      ? buffer
+      : await sharp(buffer, { autoOrient: true }).withIccProfile('srgb').tiff({ compression: 'none' }).toBuffer();
     return toP3Bitmap(
-      await sharp(buffer, { autoOrient: true })
+      await sharp(tagged, { autoOrient: true })
         .pipelineColourspace('rgb16')
         .withIccProfile('p3')
         .toColourspace('rgb16')

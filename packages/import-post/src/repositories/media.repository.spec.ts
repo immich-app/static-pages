@@ -36,6 +36,34 @@ describe(MediaRepository.name, () => {
     }
   });
 
+  it.each([
+    ['untagged', (image: sharp.Sharp) => image],
+    ['sRGB-tagged', (image: sharp.Sharp) => image.withIccProfile('srgb')],
+    ['P3-tagged', (image: sharp.Sharp) => image.withIccProfile('p3')],
+  ])('preserves the colour of a %s still', async (_, tag) => {
+    const source = await tag(
+      sharp({ create: { width: 720, height: 480, channels: 3, background: { r: 90, g: 160, b: 40 } } }),
+    )
+      .png()
+      .toBuffer();
+    const [variant] = await sut.optimizeImage(source);
+
+    const toSrgb = (buffer: Buffer) => sharp(buffer).withIccProfile('srgb').raw().toBuffer();
+    const [expected, actual] = await Promise.all([toSrgb(source), toSrgb(variant.buffer)]);
+    for (const channel of [0, 1, 2]) {
+      expect(actual[channel]).toBeCloseTo(expected[channel], -1);
+    }
+  });
+
+  it('keeps EXIF orientation of an untagged still', async () => {
+    const source = await sharp({ create: { width: 900, height: 600, channels: 3, background: 'teal' } })
+      .jpeg()
+      .withMetadata({ orientation: 6 })
+      .toBuffer();
+
+    expect(sizes(await sut.optimizeImage(source))).toEqual(['600x900']);
+  });
+
   it('builds a WebP ladder for an animation, keeping every frame', async () => {
     const variants = await sut.optimizeImage(await animated(3, 900, 600));
     const metadata = await sharp(variants[0].buffer, { animated: true }).metadata();
