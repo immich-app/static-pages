@@ -81,10 +81,7 @@ export const ML_BACKENDS = {
   openvino: {
     label: 'Intel (OpenVINO)',
     tag: '-openvino',
-    fragment: {
-      device_cgroup_rules: ['c 189:* rmw'],
-      devices: ['/dev/dri:/dev/dri'],
-    },
+    fragment: { devices: ['/dev/dri:/dev/dri'] },
   },
   'openvino-wsl': {
     label: 'Intel OpenVINO (WSL2)',
