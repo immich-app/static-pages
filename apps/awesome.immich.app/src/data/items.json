@@ -51,6 +51,12 @@
         "sourceCodeUrl": "https://github.com/alangrainger/immich-public-proxy"
       },
       {
+        "title": "Immich Event Gallery",
+        "description": "Password-protected photo portal for event guests, forked from Immich Public Proxy. Guests enter a password or scan a QR code and land directly in their album. Includes printable QR cards, photo removal requests and brute-force protection.",
+        "sourceCodeUrl": "https://github.com/PottiMc/immich-event-gallery",
+        "tags": ["Vibe-Coded"]
+      },
+      {
         "title": "View-Only Web Interface",
         "description": "Display Immich photos publicly while allowing for the ability to filter and search for images.",
         "sourceCodeUrl": "https://github.com/JimmyeJones/Immich-View-Only-Web-Interface",
