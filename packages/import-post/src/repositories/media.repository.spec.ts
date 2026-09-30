@@ -20,6 +20,21 @@ const animated = (frames: number, width: number, height: number) =>
 const sizes = (variants: { width: number; height: number }[]) =>
   variants.map(({ width, height }) => `${width}x${height}`);
 
+const flat = (background: string) => sharp({ create: { width: 64, height: 64, channels: 3, background } });
+
+// Stored values as 0–1, leaving any embedded profile unapplied.
+const storedCentre = async (avif: Buffer) => {
+  const { data, info } = await sharp(avif, { ignoreIcc: true })
+    .toColourspace('rgb16')
+    .raw({ depth: 'ushort' })
+    .toBuffer({ resolveWithObject: true });
+  const offset = ((info.height / 2) * info.width + info.width / 2) * info.channels;
+  return [...new Uint16Array(data.buffer, data.byteOffset + offset * 2, 3)].map((value) => value / 65_535);
+};
+
+const expectClose = (actual: number[], expected: number[]) =>
+  actual.forEach((value, index) => expect(value).toBeCloseTo(expected[index], 1));
+
 describe(MediaRepository.name, () => {
   it.each([
     [3210, 2140, ['720x480', '1080x720', '1440x960', '2160x1440']],
@@ -34,6 +49,22 @@ describe(MediaRepository.name, () => {
       const metadata = await sharp(variant.buffer).metadata();
       expect(`${metadata.width}x${metadata.height}`).toBe(`${variant.width}x${variant.height}`);
     }
+  });
+
+  it('leaves untagged sRGB input unconverted and untagged', async () => {
+    const [variant] = await sut.optimizeImage(await flat('#ff0000').png().toBuffer());
+
+    expect((await sharp(variant.buffer).metadata()).hasProfile).toBe(false);
+    expectClose(await storedCentre(variant.buffer), [1, 0, 0]);
+  });
+
+  it('keeps colours outside sRGB when the input is tagged P3', async () => {
+    // An rgb16 pipeline treats untagged pixels as P3, so this tags pure P3 green without converting it.
+    const p3Green = await flat('#00ff00').pipelineColourspace('rgb16').withIccProfile('p3').png().toBuffer();
+    const [variant] = await sut.optimizeImage(p3Green);
+
+    expect((await sharp(variant.buffer).metadata()).icc).toEqual((await sharp(p3Green).metadata()).icc);
+    expectClose(await storedCentre(variant.buffer), [0, 1, 0]);
   });
 
   it('builds a WebP ladder for an animation, keeping every frame', async () => {
