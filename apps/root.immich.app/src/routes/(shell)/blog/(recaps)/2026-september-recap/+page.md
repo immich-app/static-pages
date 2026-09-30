@@ -35,7 +35,7 @@ Hello everyone!
 
 Another month, another recap. This time we have some exciting news about people and face sharing, which is available in our latest [release candidate release](https://github.com/immich-app/immich/releases), and expected to be released in v3.3.0 next week. In other news, we released a [Docker Compose Builder](https://immich.app/docker-compose-builder), have some incoming album improvements, and are celebrating [one year since going stable](https://immich.app/blog/v2.0.0-release)! Keep reading below for more details on all this and more.
 
-## Person Sharing
+## Person sharing
 
 On our endeavor of revamping sharing features in Immich, we finally support person sharing properly now. In `v3.2.0` we introduced cluster groups, which allow your own people to show up in shared assets, and we mentioned that in last month's recap post. While being foundational, it was pretty limiting and led to quite a bit of confusion. With this recent batch of improvements we hope everything is a lot easier to understand, simpler to use, and ultimately more powerful.
 
@@ -47,9 +47,13 @@ The v3.3 release is scheduled for next week, but release candidate builds are av
 
 You can now share access to all of your people with users in your cluster group. With shared access turned on you see the combined list making it easier to view and manage people.
 
+<Markdown.Image src="https://static.immich.cloud/blog/65652088-0af4-45ac-8821-c661e0aaf53a/83f670129b8d84706a1c2509e5e849d9-675.avif" width="675" height="535" alt="Sharing modal with the &quot;Share everyone&quot; option enabled." />
+
 ### Shared people management
 
 A common use case for sharing access to people is the idea that multiple users could work together to add names and birthdays. Or, one person could do it for everyone 😂. The access management features we've been working on are bi-directional, meaning you can control who has read vs write access to your people.
+
+<Markdown.Image src="https://static.immich.cloud/blog/65652088-0af4-45ac-8821-c661e0aaf53a/834d7c9b5b17ef90702b0598ef097c54-950.avif" srcset="https://static.immich.cloud/blog/65652088-0af4-45ac-8821-c661e0aaf53a/834d7c9b5b17ef90702b0598ef097c54-720.avif 720w, https://static.immich.cloud/blog/65652088-0af4-45ac-8821-c661e0aaf53a/834d7c9b5b17ef90702b0598ef097c54-950.avif 950w" width="950" height="553" alt="Granting another user to a specific person." />
 
 ## Docker Compose Builder
 
@@ -116,12 +120,8 @@ This month has been very busy for me. Besides some small side quests such as the
 
 Since we are writing this post very last minute (did I already mention things have been busy?), this is it for my update this month :D
 
-## Upcoming goals
-
-Well, that's it for this month. As always, if you find the project helpful, you can support us at <https://buy.immich.app/.>
-
 ## Next month
 
-Well, that's it for this month. Next month we plan to tune and enhance people sharing features, and probably look into PostgreQL 18/19 migration.
+Well, that's it for this month. Next month we plan to tune and enhance people sharing features, and probably look into PostgreSQL 18/19 migration.
 
 As always, if you find the project helpful, you can support us at <https://buy.immich.app/.>
