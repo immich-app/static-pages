@@ -90,7 +90,7 @@ With the release of [NestJS 12](https://github.com/nestjs/nest/releases#release-
 
 Besides some initial hurdles with tsconfig `paths` resolution due to an upstream bug in `@nestjs/cli` and some issues with `tsc-alias`, the migration went pretty flawless and was done in less than a day.
 
-If you are interested, here is the PR: <https://github.com/immich-app/immich/pull/31237.> The changes turned out to be rather minimal and straightforward.
+If you are interested, here is the PR: <https://github.com/immich-app/immich/pull/31237>. The changes turned out to be rather minimal and straightforward.
 
 ## Roadmap update
 
