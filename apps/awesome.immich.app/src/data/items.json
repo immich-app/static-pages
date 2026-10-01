@@ -288,6 +288,13 @@
         "title": "immich-edit",
         "description": "Self-hosted, non-destructive RAW editor that uses Immich as its photo library while keeping originals unchanged.",
         "sourceCodeUrl": "https://github.com/haavardnk/immich-edit"
+      },
+      {
+        "title": "tzsidecar",
+        "description": "Browser page that finds photos with no time zone in their metadata and creates XMP sidecars with the same local time plus the offset of a chosen zone, so Immich can read the right time zone, without changing the originals. Files are read locally and nothing is uploaded.",
+        "websiteUrl": "https://rezarys.github.io/tzsidecar/",
+        "sourceCodeUrl": "https://github.com/Rezarys/tzsidecar",
+        "tags": ["Vibe-Coded"]
       }
     ]
   },
