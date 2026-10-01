@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.5](https://github.com/immich-app/static-pages/compare/sql-tools-v0.6.4...sql-tools-v0.6.5) (2026-10-01)
+
+
+### Bug Fixes
+
+* **deps:** update dependency kysely-postgres-js to v5 ([#850](https://github.com/immich-app/static-pages/issues/850)) ([0bb948e](https://github.com/immich-app/static-pages/commit/0bb948e639581abf57546b8dc55bcdf63f985813))
+
 ## [0.6.4](https://github.com/immich-app/static-pages/compare/sql-tools-v0.6.3...sql-tools-v0.6.4) (2026-09-23)
 
 
