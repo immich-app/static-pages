@@ -41,7 +41,7 @@
 
   const { children }: Props = $props();
 
-  const sidebar = new MediaQuery(`max-width: 850px`);
+  const sidebar = new MediaQuery(`max-width: 1023px`);
   let isMobile = $derived(sidebar.current);
   let isOpen = $state(false);
   let open = $derived(isMobile && isOpen);
@@ -89,7 +89,7 @@
               aria-label="Main menu"
               icon={mdiMenu}
               onclick={() => (isOpen = !isOpen)}
-              class="md:hidden"
+              class="lg:hidden"
             />
             <a href="/" class="flex gap-2 text-4xl">
               <Logo variant="inline" class="hidden sm:block" />
