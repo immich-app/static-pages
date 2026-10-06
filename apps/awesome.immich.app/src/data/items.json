@@ -99,7 +99,8 @@
       {
         "title": "Immich Wear",
         "description": "Unofficial Immich client for Wear OS. Browse recent photos, albums, favorites and memories, view EXIF data and favorite assets from your wrist, with a watch face tile and an optional phone companion app for credential-free setup.",
-        "sourceCodeUrl": "https://github.com/nikosavola/immich-wear"
+        "sourceCodeUrl": "https://github.com/nikosavola/immich-wear",
+        "tags": ["Vibe-Coded"]
       }
     ]
   },
