@@ -17,6 +17,12 @@
         "sourceCodeUrl": "https://github.com/Kartax/immich-desktop-app"
       },
       {
+        "title": "Immount",
+        "description": "Browse your Immich albums, people, nested tags and timeline as folders in macOS Finder. Read-only, and it switches to your server's local address on your home Wi-Fi.",
+        "websiteUrl": "https://immount.app",
+        "sourceCodeUrl": "https://github.com/dan5py/immount"
+      },
+      {
         "title": "Immich Kiosk",
         "description": "Highly configurable slideshows for displaying Immich assets on browsers and devices.",
         "websiteUrl": "https://immichkiosk.app",
