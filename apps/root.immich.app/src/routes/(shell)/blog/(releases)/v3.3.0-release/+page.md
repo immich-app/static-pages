@@ -103,8 +103,7 @@ After
 ### Machine learning performance and accuracy improvements (opt-in)
 
 :::info
-Opt-in to the new machine learning models by adding the following environment variable to the machine learning container: `MACHINE_LEARNING_MODEL_REVISION=v2`
-
+We have re-exported and published the _same_ machine learning models in an optimized format. This means they can be used as-is and do not require re-running any jobs. Opt-in to the revised machine learning models by adding the following environment variable to the machine learning container: `MACHINE_LEARNING_MODEL_REVISION=v2`.
 :::
 
 After a long list of optimizations, ML is both significantly faster and uses less memory. This affects every backend, including CPU inference. However, the level of improvement varies by model and backend. Cases where certain backends (such as OpenVINO) produced wrong outputs at times should be resolved.
