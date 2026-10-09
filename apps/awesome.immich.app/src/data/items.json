@@ -294,6 +294,13 @@
         "title": "immich-edit",
         "description": "Self-hosted, non-destructive RAW editor that uses Immich as its photo library while keeping originals unchanged.",
         "sourceCodeUrl": "https://github.com/haavardnk/immich-edit"
+      },
+      {
+        "title": "Immich Memories",
+        "description": "Turn photos, videos and Live Photos from an Immich library into memory films with titles and music. Review the cut in a web UI or schedule automatic films.",
+        "websiteUrl": "https://sam-dumont.github.io/immich-memories/",
+        "sourceCodeUrl": "https://github.com/sam-dumont/immich-memories",
+        "tags": ["Vibe-Coded"]
       }
     ]
   },
