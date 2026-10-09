@@ -131,6 +131,7 @@ const build = (config: ImmichConfig, version: string): { spec: ComposeFile; fiel
             container_name: containerName('immich_machine_learning'),
             image: IMAGES.machineLearning(version + ML_BACKENDS[config.hwaccel.ml].tag),
             volumes: rootlessVolumes('immich-machine-learning') ?? [`${NamedVolume.ModelCache}:/cache`],
+            environment: { MACHINE_LEARNING_MODEL_REVISION: 'v2' },
             restart: 'always',
             healthcheck: { disable: false },
           },
