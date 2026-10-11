@@ -17,6 +17,7 @@
     <Tooltip.Portal>
       <Tooltip.Content
         sideOffset={8}
+        interactOutsideBehavior="defer-otherwise-close"
         class="tooltip-content bg-light-800 text-light {zIndex.Tooltip} rounded-lg px-3.5 py-2 text-xs shadow-lg"
       >
         {text}
