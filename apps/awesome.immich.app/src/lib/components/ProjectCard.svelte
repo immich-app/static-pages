@@ -1,19 +1,13 @@
 <script lang="ts">
-  import { getProjectUrl, ProjectTag, type Project } from '#lib';
-  import { Badge, Card, CardBody, CardHeader, Heading, Link, Text, type Color, type IconLike } from '@immich/ui';
-  import { mdiAlertOutline, mdiCheckDecagram, mdiCodeTags, mdiOpenInNew, mdiRobot, mdiWeb } from '@mdi/js/mdi';
+  import { badges, getProjectUrl, type Project } from '#lib';
+  import { Badge, Card, CardBody, CardHeader, Heading, Link, Text } from '@immich/ui';
+  import { mdiCodeTags, mdiOpenInNew, mdiWeb } from '@mdi/js/mdi';
 
   type Props = {
     project: Project;
   };
 
   const { project }: Props = $props();
-
-  const badges: Record<ProjectTag, { color: Color; icon: IconLike }> = {
-    [ProjectTag.Official]: { color: 'primary', icon: mdiCheckDecagram },
-    [ProjectTag.Unmaintained]: { color: 'warning', icon: mdiAlertOutline },
-    [ProjectTag.VibeCoded]: { color: 'warning', icon: mdiRobot },
-  };
 
   const url = $derived(getProjectUrl(project));
 </script>
