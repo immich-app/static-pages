@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { TableOfContents, Text, type TableOfContentsItem } from '@immich/ui';
+  import Lorem from '$lib/components/Lorem.svelte';
+  import { Heading, TableOfContents, Text, type TableOfContentsItem } from '@immich/ui';
 
   const items: TableOfContentsItem[] = [
     { id: 'installation', text: 'Installation', level: 2 },
@@ -10,10 +11,20 @@
   ];
 </script>
 
-<div class="flex gap-12">
-  <Text class="min-w-0 grow">
-    The table of contents is a sticky aside, hidden below the <code>xl</code> breakpoint. Level three headings are indented
-    under level two headings.
-  </Text>
-  <TableOfContents {items} />
+<div class="h-96 overflow-y-auto">
+  <div class="flex gap-12">
+    <div class="flex min-w-0 grow flex-col gap-4">
+      <Text>
+        The table of contents is a sticky aside, hidden below the <code>xl</code> breakpoint. Level three headings are indented
+        under level two headings, and the sections currently on screen are highlighted.
+      </Text>
+      {#each items as item (item.id)}
+        <Heading tag={item.level === 3 ? 'h3' : 'h2'} size={item.level === 3 ? 'small' : 'medium'} id={item.id}>
+          {item.text}
+        </Heading>
+        <Text><Lorem count={item.level === 3 ? 2 : 4} /></Text>
+      {/each}
+    </div>
+    <TableOfContents {items} />
+  </div>
 </div>
