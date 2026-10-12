@@ -199,6 +199,11 @@
     "types": ["integration", "integrations"],
     "projects": [
       {
+        "title": "Immich Integration for Nextcloud",
+        "description": "Browse your Immich photo library directly inside Nextcloud - timeline, albums, people, map and more.",
+        "sourceCodeUrl": "https://github.com/xXRoxXeRXx/integration_immich"
+      },
+      {
         "title": "BrightTable",
         "description": "Desktop app for Linux connecting Immich library to desktop raw editors. Bulk edit, copy/paste metadata and settings, smarts stacks, printing and more.",
         "sourceCodeUrl": "https://github.com/brownphotographic/BrightTable",
