@@ -2,7 +2,7 @@
   import LinkableHeading from '$common/components/LinkableHeading.svelte';
   import { categories, siteMetadata, type Category, type Project } from '#lib';
   import ProjectCard from '#lib/components/ProjectCard.svelte';
-  import { Heading, Input, Link, SiteMetadata, Text } from '@immich/ui';
+  import { Heading, Input, SiteMetadata, TableOfContents, Text, type TableOfContentsItem } from '@immich/ui';
   import { mdiMagnify } from '@mdi/js';
 
   let query = $state('');
@@ -30,6 +30,10 @@
   };
 
   let filteredCategories = $derived(filterProjects(query));
+
+  let tocItems = $derived<TableOfContentsItem[]>(
+    filteredCategories.map(({ id, name, projects }) => ({ id, text: `${name} (${projects.length})`, level: 2 })),
+  );
 </script>
 
 <SiteMetadata site={siteMetadata} />
@@ -37,29 +41,28 @@
 <Heading size="giant">{siteMetadata.title}</Heading>
 <Text size="large" color="muted">{siteMetadata.description}</Text>
 
-<Input type="search" leadingIcon={mdiMagnify} bind:value={query} placeholder="Search..." class="my-6 w-full" />
+<div class="mt-6 flex flex-col gap-6 lg:flex-row-reverse lg:items-start lg:gap-8">
+  <aside class="flex flex-col gap-6 lg:sticky lg:top-6 lg:w-60 lg:shrink-0">
+    <Input type="search" leadingIcon={mdiMagnify} bind:value={query} placeholder="Search..." class="w-full" />
 
-<Heading tag="h2">Quick Links</Heading>
-<ul class="mb-8 list-disc ps-6">
-  {#each filteredCategories as category (category.name)}
-    <li>
-      <Link href={`#${category.id}`} class="hover:text-primary" underline={false}>{category.name}</Link>
-    </li>
-  {/each}
-</ul>
+    <TableOfContents items={tocItems} translations={{ table_of_contents_title: 'Quick links' }} class="block w-full" />
+  </aside>
 
-{#each filteredCategories as category, i (category.name)}
-  {#if i !== 0}
-    <hr class="mt-8" />
-  {/if}
+  <div class="min-w-0 grow">
+    {#each filteredCategories as category, i (category.name)}
+      {#if i !== 0}
+        <hr class="mt-8" />
+      {/if}
 
-  <LinkableHeading tag="h2" class="mt-6 mb-2" id={category.id}>
-    {category.name} ({category.projects.length})
-  </LinkableHeading>
+      <LinkableHeading tag="h2" class={i === 0 ? 'mb-2' : 'mt-6 mb-2'} id={category.id}>
+        {category.name} ({category.projects.length})
+      </LinkableHeading>
 
-  <div class="mt-4 grid grid-cols-1 gap-4">
-    {#each category.projects as project (category.id + project.title)}
-      <ProjectCard {project} />
+      <div class="mt-4 grid grid-cols-1 gap-4">
+        {#each category.projects as project (category.id + project.title)}
+          <ProjectCard {project} />
+        {/each}
+      </div>
     {/each}
   </div>
-{/each}
+</div>
