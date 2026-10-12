@@ -12,8 +12,8 @@
 
   let { resetOnNavigate = false, class: className, children, ref = $bindable() }: Props = $props();
 
-  afterNavigate(() => {
-    if (resetOnNavigate) {
+  afterNavigate(({ to }) => {
+    if (resetOnNavigate && !to?.url.hash) {
       ref?.scrollTo(0, 0);
     }
   });
