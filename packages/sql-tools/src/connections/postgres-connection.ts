@@ -54,7 +54,9 @@ export const createPostgres = (options: DatabasePostgresOptions = {}) => {
       to: 1184,
       from: [1082, 1114, 1184],
       serialize: (x: Date | string) => (x instanceof Date ? x.toISOString() : x),
-      parse: (x: string) => new Date(x),
+      // new Date() misreads postgres' years below 100 (`0015-09-15 00:00:00+00`), so make those ISO first
+      parse: (x: string) =>
+        new Date(x.startsWith('00') && x[10] === ' ' ? x.replace(' ', 'T').replace(/([+-]\d\d)$/, '$1:00') : x),
     };
   }
 
