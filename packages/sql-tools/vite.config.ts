@@ -1,6 +1,7 @@
 import dts from 'vite-plugin-dts';
 import { defineConfig } from 'vitest/config';
 
+// eslint-disable-next-line unicorn/no-top-level-side-effects
 export default defineConfig({
   build: {
     lib: {

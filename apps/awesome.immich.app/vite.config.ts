@@ -11,6 +11,7 @@ dotenv.config({ path: '../../.env' });
 
 const staticFiles = new Set(['/favicon.ico', '/img/social-preview.png']);
 
+// eslint-disable-next-line unicorn/no-top-level-side-effects
 export default defineConfig({
   plugins: [
     tailwindcss(),

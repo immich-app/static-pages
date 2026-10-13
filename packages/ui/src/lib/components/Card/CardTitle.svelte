@@ -5,8 +5,8 @@
 
   type Props = {
     /**
-     * The HTML element type.
-     */
+    The HTML element type.
+    */
     tag?: HeadingTag;
     class?: string;
     size?: HeadingSize;

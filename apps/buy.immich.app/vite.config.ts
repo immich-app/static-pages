@@ -10,6 +10,7 @@ import { sveltekit } from '@sveltejs/kit/vite';
 dotenv.config({ path: '../../.env' });
 process.env.PUBLIC_IMMICH_PAY_HOST ||= 'https://pay.futo.org';
 
+// eslint-disable-next-line unicorn/no-top-level-side-effects
 export default defineConfig({
   plugins: [
     tailwindcss(),

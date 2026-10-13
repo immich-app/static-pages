@@ -4,8 +4,8 @@ import { getRegisteredItems, resetRegisteredItems } from 'src/register.js';
 import { ConstraintType, SchemaFromCodeOptions } from 'src/types.js';
 
 /**
- * Load schema from code (decorators, etc)
- */
+Load schema from code (decorators, etc)
+*/
 export const schemaFromCode = (options: SchemaFromCodeOptions = {}) => {
   try {
     const ctx = new ProcessorContext(options);
