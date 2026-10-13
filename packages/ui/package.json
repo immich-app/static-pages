@@ -38,7 +38,7 @@
     "./theme/default.css": "./dist/theme/default.css"
   },
   "peerDependencies": {
-    "@sveltejs/kit": "^2.13.0",
+    "@sveltejs/kit": "^2.13.0 || ^3.0.0",
     "svelte": "^5.0.0"
   },
   "devDependencies": {
