@@ -1,126 +1,94 @@
 <script lang="ts">
   import Text from '#lib/components/Text/Text.svelte';
   import { t } from '#lib/services/translation.svelte.js';
-  import type { TableOfContentsProps } from '#lib/types.js';
+  import type { TableOfContentsItem, TableOfContentsProps } from '#lib/types.js';
   import { cleanClass } from '#lib/utilities/internal.js';
+  import { Previous, useIntersectionObserver, useResizeObserver, watch } from 'runed';
+  import { SvelteSet } from 'svelte/reactivity';
 
   const { items, translations, class: className, ...restProps }: TableOfContentsProps = $props();
 
   const title = $derived(t('table_of_contents_title', translations));
 
-  let list = $state<HTMLElement>();
-  const listItems: (HTMLElement | null)[] = [];
+  type Block = { element: HTMLElement; section: number };
 
-  let highlight = $state<{ first: number; last: number }>();
-  let bar = $state({ top: 0, height: 0, animate: false });
-
-  const getCommonAncestor = (a: Element, b: Element) => {
-    let ancestor: Element | null = a;
-    while (ancestor && !ancestor.contains(b)) {
-      ancestor = ancestor.parentElement;
+  const getBlocks = (items: TableOfContentsItem[]): Block[] => {
+    const headings = items.map(({ id }) => document.querySelector(`#${CSS.escape(id)}`));
+    const firstHeading = headings.find((heading) => heading !== null);
+    const lastHeading = headings.findLast((heading) => heading !== null);
+    if (!firstHeading || !lastHeading) {
+      return [];
     }
-    return ancestor ?? document.documentElement;
-  };
 
-  const getScrollContainer = (element: Element) => {
-    for (let parent = element.parentElement; parent; parent = parent.parentElement) {
-      if (/auto|scroll/.test(getComputedStyle(parent).overflowY) && parent.scrollHeight > parent.clientHeight) {
-        return parent;
+    const range = document.createRange();
+    range.setStartBefore(firstHeading);
+    range.setEndAfter(lastHeading);
+    const content = range.commonAncestorContainer;
+    if (!(content instanceof Element)) {
+      return [];
+    }
+
+    const blocks: Block[] = [];
+    let section: number | undefined;
+    for (const element of content.children) {
+      const index = headings.findLastIndex((heading) => heading && element.contains(heading));
+      if (index !== -1) {
+        section = index;
+      }
+      if (section !== undefined && element instanceof HTMLElement) {
+        blocks.push({ element, section });
       }
     }
+    return blocks;
   };
 
-  $effect(() => {
-    const sections = items.flatMap(({ id }, index) => {
-      const heading = document.querySelector(`#${CSS.escape(id)}`);
-      return heading ? [{ index, heading }] : [];
-    });
-    const [firstSection] = sections;
-    const lastSection = sections.at(-1);
-    if (!list || !firstSection || !lastSection) {
-      highlight = undefined;
+  let blocks = $state<Block[]>([]);
+  const visibleBlocks = new SvelteSet<Element>();
+
+  watch(
+    () => items,
+    (items) => {
+      blocks = getBlocks(items);
+    },
+  );
+
+  useIntersectionObserver(
+    () => blocks.map(({ element }) => element),
+    (entries) => {
+      for (const { target, isIntersecting, boundingClientRect } of entries) {
+        if (isIntersecting && boundingClientRect.height > 0) {
+          visibleBlocks.add(target);
+        } else {
+          visibleBlocks.delete(target);
+        }
+      }
+    },
+    { threshold: 0 },
+  );
+
+  const highlight = $derived.by(() => {
+    const visible = blocks.filter(({ element }) => visibleBlocks.has(element));
+    const first = visible.at(0)?.section;
+    const last = visible.at(-1)?.section;
+    return first === undefined || last === undefined ? undefined : { first, last };
+  });
+
+  let list = $state<HTMLElement>();
+  const listItems = $state<HTMLLIElement[]>([]);
+  let bar = $state<{ top: number; height: number }>();
+  const previousHighlight = new Previous(() => highlight);
+
+  const measureBar = () => {
+    if (!highlight) {
       return;
     }
+    const first = listItems[highlight.first];
+    const last = listItems[highlight.last];
+    bar = { top: first.offsetTop, height: last.offsetTop + last.offsetHeight - first.offsetTop };
+  };
 
-    const content = getCommonAncestor(firstSection.heading.parentElement ?? firstSection.heading, lastSection.heading);
-    let container: HTMLElement | undefined;
-    let scroller: EventTarget | undefined;
-
-    const update = () => {
-      if (!list?.checkVisibility()) {
-        return;
-      }
-
-      const viewport = container?.getBoundingClientRect() ?? { top: 0, bottom: window.innerHeight };
-      const contentEnd = content.getBoundingClientRect().bottom;
-      // anchor jumps can leave a sub-pixel sliver of the previous section
-      const minOverlap = 1 / window.devicePixelRatio;
-
-      const visible = sections.filter(({ heading }, i) => {
-        const start = heading.getBoundingClientRect().top;
-        const end = sections[i + 1]?.heading.getBoundingClientRect().top ?? contentEnd;
-        return Math.min(end, viewport.bottom) - Math.max(start, viewport.top) >= minOverlap;
-      });
-      const first = visible.at(0)?.index;
-      const last = visible.at(-1)?.index;
-      const firstItem = first === undefined ? undefined : listItems[first];
-      const lastItem = last === undefined ? undefined : listItems[last];
-      if (first === undefined || last === undefined || !firstItem || !lastItem) {
-        highlight = undefined;
-        return;
-      }
-
-      const listTop = list.getBoundingClientRect().top;
-      const top = firstItem.getBoundingClientRect().top - listTop;
-      const height = lastItem.getBoundingClientRect().bottom - listTop - top;
-      if (bar.top !== top || bar.height !== height) {
-        // jump into place when appearing rather than growing from the previous position
-        bar = { top, height, animate: !!highlight };
-      }
-      if (highlight?.first !== first || highlight.last !== last) {
-        highlight = { first, last };
-      }
-    };
-
-    let frame: number | undefined;
-    const schedule = () => {
-      frame ??= requestAnimationFrame(() => {
-        frame = undefined;
-        update();
-      });
-    };
-
-    // the container can change as content grows enough to overflow it
-    const attachScroller = () => {
-      container = getScrollContainer(firstSection.heading);
-      const next = container ?? globalThis;
-      if (next === scroller) {
-        return;
-      }
-      scroller?.removeEventListener('scroll', schedule);
-      scroller = next;
-      scroller.addEventListener('scroll', schedule, { passive: true });
-    };
-
-    // update only from callbacks, so this effect doesn't subscribe to the highlight it writes
-    attachScroller();
-    addEventListener('resize', schedule, { passive: true });
-    const observer = new ResizeObserver(() => {
-      attachScroller();
-      schedule();
-    });
-    observer.observe(content);
-    observer.observe(list);
-
-    return () => {
-      scroller?.removeEventListener('scroll', schedule);
-      removeEventListener('resize', schedule);
-      observer.disconnect();
-      if (frame !== undefined) {
-        cancelAnimationFrame(frame);
-      }
-    };
-  });
+  $effect(measureBar);
+  useResizeObserver(() => list, measureBar);
 
   const isHighlighted = (index: number) => !!highlight && index >= highlight.first && index <= highlight.last;
 </script>
@@ -145,16 +113,18 @@
           </li>
         {/each}
       </ul>
-      <div
-        class={cleanClass(
-          'bg-primary pointer-events-none absolute -start-px w-0.5 duration-300 ease-out',
-          bar.animate ? 'transition-all' : 'transition-opacity',
-          highlight ? 'opacity-100' : 'opacity-0',
-        )}
-        style:top="{bar.top}px"
-        style:height="{bar.height}px"
-        aria-hidden="true"
-      ></div>
+      {#if bar}
+        <div
+          class={cleanClass(
+            'bg-primary pointer-events-none absolute -start-px w-0.5 duration-300 ease-out motion-reduce:transition-none',
+            previousHighlight.current ? 'transition-all' : 'transition-opacity',
+            highlight ? 'opacity-100' : 'opacity-0',
+          )}
+          style:top="{bar.top}px"
+          style:height="{bar.height}px"
+          aria-hidden="true"
+        ></div>
+      {/if}
     </div>
   </div>
 </aside>
