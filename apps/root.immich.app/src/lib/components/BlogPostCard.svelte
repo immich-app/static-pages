@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { type BlogPost, type BlogType } from '$lib';
-  import BlogTypeBadge from '$lib/components/BlogTypeBadge.svelte';
+  import { type BlogPost, type BlogType } from '#lib';
+  import BlogTypeBadge from '#lib/components/BlogTypeBadge.svelte';
   import { Button, Heading, IMAGE_SIZES_QUERY, Markdown, Text } from '@immich/ui';
   import { mdiChevronRight } from '@mdi/js';
   import { DateTime } from 'luxon';

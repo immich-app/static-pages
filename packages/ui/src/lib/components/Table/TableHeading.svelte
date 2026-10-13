@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import type { Snippet } from 'svelte';
   import type { HTMLAttributes } from 'svelte/elements';
 

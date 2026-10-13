@@ -1,4 +1,4 @@
-import { mergeInstanceUrl, shouldRedirect } from '$lib';
+import { mergeInstanceUrl, shouldRedirect } from '#lib';
 import { describe, expect, it } from 'vitest';
 
 describe('URL utils', () => {

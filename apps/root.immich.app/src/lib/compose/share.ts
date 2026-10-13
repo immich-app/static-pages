@@ -1,5 +1,6 @@
 import { get, has, set } from 'lodash-es';
 import { DEFAULT_CONFIG, FIELDS, immichConfigSchema, type ImmichConfig } from './config';
+import type { ReadonlyURLSearchParams } from '$app/state';
 
 const PASSWORD_PATH = 'database.password';
 const PASSWORD_MARKER = 'random';
@@ -62,7 +63,7 @@ export const encodeShare = (config: ImmichConfig): URLSearchParams => {
   return params;
 };
 
-export const decodeShare = (params: URLSearchParams): ImmichConfig => {
+export const decodeShare = (params: ReadonlyURLSearchParams): ImmichConfig => {
   const draft = structuredClone(DEFAULT_CONFIG);
   const applied: string[] = [];
 

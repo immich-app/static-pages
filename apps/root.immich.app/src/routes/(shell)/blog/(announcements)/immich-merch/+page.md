@@ -9,7 +9,7 @@ authors: [Zack Pollard, Jason Rasmussen]
 <script lang="ts">
   import { Button, Constants, Link } from '@immich/ui';
   import { mdiOpenInNew } from '@mdi/js';
-  import img from '$lib/assets/img/merch-website.webp';
+  import img from '#lib/assets/img/merch-website.webp';
 </script>
 
 Hello everybody,

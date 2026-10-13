@@ -1,6 +1,6 @@
 <script lang="ts">
-  import ApiHistory from '$lib/components/ApiHistory.svelte';
-  import type { HistoryItem } from '$lib/services/open-api.d';
+  import ApiHistory from '#lib/components/ApiHistory.svelte';
+  import type { HistoryItem } from '#lib/services/open-api.d.js';
   import { Heading, Modal, ModalBody } from '@immich/ui';
   import { mdiHistory } from '@mdi/js/mdi';
 

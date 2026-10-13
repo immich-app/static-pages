@@ -1,6 +1,6 @@
 <script lang="ts">
-  import ExampleCard from '$lib/components/ComponentExampleCard.svelte';
-  import type { ExampleItem } from '$lib/constants.js';
+  import ExampleCard from '#lib/components/ComponentExampleCard.svelte';
+  import type { ExampleItem } from '#lib/constants.js';
   import { Stack } from '@immich/ui';
 
   type Props = {

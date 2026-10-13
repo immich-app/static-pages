@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ExampleActions } from '$lib/constants.js';
+  import { ExampleActions } from '#lib/constants.js';
   import {
     ActionButton,
     type ActionEvent,

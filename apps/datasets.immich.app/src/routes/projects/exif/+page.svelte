@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { shortcuts } from '$lib/actions/shortcut';
-  import DragAndDropUpload from '$lib/components/DragAndDropUpload.svelte';
-  import UploadErrorModal from '$lib/components/UploadErrorModal.svelte';
-  import UploadModal from '$lib/components/UploadModal.svelte';
+  import { shortcuts } from '#lib/actions/shortcut.js';
+  import DragAndDropUpload from '#lib/components/DragAndDropUpload.svelte';
+  import UploadErrorModal from '#lib/components/UploadErrorModal.svelte';
+  import UploadModal from '#lib/components/UploadModal.svelte';
   import {
     AssetTypeIcons,
     AssetTypeNames,
     exifUploaderManager,
     type AssetType,
-  } from '$lib/exif-uploader-manager.svelte';
+  } from '#lib/exif-uploader-manager.svelte.js';
   import {
     Button,
     Card,

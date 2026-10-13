@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import type { IconOrSnippet, Size } from '$lib/types.js';
-  import { isIconLike } from '$lib/utilities/internal.js';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import type { IconOrSnippet, Size } from '#lib/types.js';
+  import { isIconLike } from '#lib/utilities/internal.js';
   import { tv } from 'tailwind-variants';
 
   type Props = {

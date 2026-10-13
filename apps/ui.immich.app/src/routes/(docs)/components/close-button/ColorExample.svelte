@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ComponentColors from '$lib/components/ComponentColors.svelte';
+  import ComponentColors from '#lib/components/ComponentColors.svelte';
   import { CloseButton, HStack, Text } from '@immich/ui';
 </script>
 

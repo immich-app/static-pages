@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { asBlogPost, blogMetadata, BlogType, getPostNeighbors, posts } from '$lib';
-  import BlogTypeBadge from '$lib/components/BlogTypeBadge.svelte';
+  import { asBlogPost, blogMetadata, BlogType, getPostNeighbors, posts } from '#lib';
+  import BlogTypeBadge from '#lib/components/BlogTypeBadge.svelte';
   import {
     Heading,
     Icon,
@@ -12,7 +12,7 @@
     Text,
     type TableOfContentsItem,
   } from '@immich/ui';
-  import type { BlogPost, SerializedPost } from '$lib/types';
+  import type { BlogPost, SerializedPost } from '#lib/types.js';
   import { mdiChevronRight } from '@mdi/js';
   import { DateTime } from 'luxon';
   import type { Snippet } from 'svelte';

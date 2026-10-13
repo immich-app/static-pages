@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ProgressBar, { type Props as InternalProps } from '$lib/internal/ProgressBar.svelte';
+  import ProgressBar, { type Props as InternalProps } from '#lib/internal/ProgressBar.svelte';
 
   type Props = Omit<InternalProps, 'type'> & {
     progress?: number;

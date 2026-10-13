@@ -1,4 +1,4 @@
-import ConfirmModal from '$lib/components/ConfirmModal/ConfirmModal.svelte';
+import ConfirmModal from '#lib/components/ConfirmModal/ConfirmModal.svelte';
 import { mount, unmount, type Component, type ComponentProps } from 'svelte';
 
 // if `T = () => void`, `R` will be `unknown` which we turn into `void` instead

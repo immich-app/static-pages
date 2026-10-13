@@ -1,4 +1,4 @@
-import ApiConfigureModal from '$lib/components/ApiConfigureModal.svelte';
+import ApiConfigureModal from '#lib/components/ApiConfigureModal.svelte';
 import { modalManager } from '@immich/ui';
 
 const LOCAL_STORAGE_KEY = 'immich-api:connection';

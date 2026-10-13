@@ -1,4 +1,4 @@
-import { mergeInstanceUrl, shouldRedirect, StorageKey } from '$lib';
+import { mergeInstanceUrl, shouldRedirect, StorageKey } from '#lib';
 import { redirect } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 

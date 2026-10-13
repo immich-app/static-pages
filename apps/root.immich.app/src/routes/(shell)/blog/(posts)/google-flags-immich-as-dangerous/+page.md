@@ -7,8 +7,8 @@ authors: [Jason Rasmussen]
 ---
 
 <script lang="ts">
-  import dangerousSite from '$lib/assets/img/dangerous-site.webp';
-  import dangerousSiteAppeal from '$lib/assets/img/dangerous-site-appeal.webp';
+  import dangerousSite from '#lib/assets/img/dangerous-site.webp';
+  import dangerousSiteAppeal from '#lib/assets/img/dangerous-site-appeal.webp';
 </script>
 
 Earlier this month all of our `*.immich.cloud` websites were marked as dangerous and users started being shown the dreaded "red-screen-of-death" page.

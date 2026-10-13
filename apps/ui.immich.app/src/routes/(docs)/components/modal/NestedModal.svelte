@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Lorem from '$lib/components/Lorem.svelte';
+  import Lorem from '#lib/components/Lorem.svelte';
   import { Button, CommandPaletteDefaultProvider, Modal, ModalBody, ModalFooter, modalManager } from '@immich/ui';
   import { mdiCheck } from '@mdi/js';
 

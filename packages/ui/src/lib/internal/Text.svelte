@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { styleVariants } from '$lib/styles.js';
-  import type { FontWeight, HeadingColor, HeadingTag, Size, TextVariant } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { styleVariants } from '#lib/styles.js';
+  import type { FontWeight, HeadingColor, HeadingTag, Size, TextVariant } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import type { Snippet } from 'svelte';
   import type { HTMLAttributes } from 'svelte/elements';
   import { tv } from 'tailwind-variants';

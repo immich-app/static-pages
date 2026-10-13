@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { browser } from '$app/environment';
+  import { browser } from '$app/env';
   import { page } from '$app/state';
-  import { blogMetadata, BlogType, isBlogType, posts, typeToLabel } from '$lib';
-  import BlogPostCard from '$lib/components/BlogPostCard.svelte';
-  import { Routes } from '$lib/route';
+  import { blogMetadata, BlogType, isBlogType, posts, typeToLabel } from '#lib';
+  import BlogPostCard from '#lib/components/BlogPostCard.svelte';
+  import { Routes } from '#lib/route.js';
   import { Badge, Heading, SiteMetadata, Stack, Text } from '@immich/ui';
 
   const fromParam = <T extends string>(name: string, isValid: (value: string) => value is T) => {

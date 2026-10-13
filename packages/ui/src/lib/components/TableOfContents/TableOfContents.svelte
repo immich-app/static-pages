@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Text from '$lib/components/Text/Text.svelte';
-  import { t } from '$lib/services/translation.svelte.js';
-  import type { TableOfContentsProps } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import Text from '#lib/components/Text/Text.svelte';
+  import { t } from '#lib/services/translation.svelte.js';
+  import type { TableOfContentsProps } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
 
   const { items, translations, class: className, ...restProps }: TableOfContentsProps = $props();
 

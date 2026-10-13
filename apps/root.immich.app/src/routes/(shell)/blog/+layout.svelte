@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from '$app/state';
-  import PageContent from '$lib/components/PageContent.svelte';
+  import PageContent from '#lib/components/PageContent.svelte';
   import type { Snippet } from 'svelte';
   import { tv } from 'tailwind-variants';
 

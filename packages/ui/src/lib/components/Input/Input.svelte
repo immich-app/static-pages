@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { getFieldContext } from '$lib/common/context.svelte.js';
-  import Label from '$lib/components/Label/Label.svelte';
-  import Text from '$lib/components/Text/Text.svelte';
-  import InputIcon from '$lib/internal/InputIcon.svelte';
-  import { inputContainerStyles, inputStyles } from '$lib/styles.js';
-  import type { InputProps } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { getFieldContext } from '#lib/common/context.svelte.js';
+  import Label from '#lib/components/Label/Label.svelte';
+  import Text from '#lib/components/Text/Text.svelte';
+  import InputIcon from '#lib/internal/InputIcon.svelte';
+  import { inputContainerStyles, inputStyles } from '#lib/styles.js';
+  import type { InputProps } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { tv } from 'tailwind-variants';
 
   let {

@@ -1,13 +1,13 @@
 <script lang="ts" generics="T extends string">
-  import { getFieldContext } from '$lib/common/context.svelte.js';
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import Label from '$lib/components/Label/Label.svelte';
-  import Text from '$lib/components/Text/Text.svelte';
-  import Tooltip from '$lib/components/Tooltip/Tooltip.svelte';
-  import { zIndex } from '$lib/constants.js';
-  import { styleVariants } from '$lib/styles.js';
-  import type { SelectCommonProps, SelectOption } from '$lib/types.js';
-  import { cleanClass, generateId } from '$lib/utilities/internal.js';
+  import { getFieldContext } from '#lib/common/context.svelte.js';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import Label from '#lib/components/Label/Label.svelte';
+  import Text from '#lib/components/Text/Text.svelte';
+  import Tooltip from '#lib/components/Tooltip/Tooltip.svelte';
+  import { zIndex } from '#lib/constants.js';
+  import { styleVariants } from '#lib/styles.js';
+  import type { SelectCommonProps, SelectOption } from '#lib/types.js';
+  import { cleanClass, generateId } from '#lib/utilities/internal.js';
   import { mdiArrowDown, mdiArrowUp, mdiCheck, mdiChevronDown } from '@mdi/js';
   import { Select } from 'bits-ui';
   import { tv } from 'tailwind-variants';

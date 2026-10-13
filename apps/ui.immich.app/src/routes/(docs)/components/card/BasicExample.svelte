@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Lorem from '$lib/components/Lorem.svelte';
+  import Lorem from '#lib/components/Lorem.svelte';
   import { Card, CardBody, CardDescription, CardFooter, CardHeader, CardTitle, Stack } from '@immich/ui';
 </script>
 

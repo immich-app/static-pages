@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { commandPaletteManager, type ActionProvider } from '$lib/services/command-palette-manager.svelte.js';
+  import { commandPaletteManager, type ActionProvider } from '#lib/services/command-palette-manager.svelte.js';
 
   type Props = {
     providers: ActionProvider[];

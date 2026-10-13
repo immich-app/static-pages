@@ -7,7 +7,7 @@ authors: [Jason Rasmussen]
 ---
 
 <script>
-  import mediumTests from '$lib/assets/img/medium-tests.webp';
+  import mediumTests from '#lib/assets/img/medium-tests.webp';
   import { GithubLink } from '@immich/ui';
 </script>
 

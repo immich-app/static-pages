@@ -1,4 +1,4 @@
-import { feed } from '$lib/server';
+import { feed } from '#lib/server/index.js';
 
 export const prerender = true;
 

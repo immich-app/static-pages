@@ -1,9 +1,9 @@
 <script lang="ts">
-  import IconButton from '$lib/components/IconButton/IconButton.svelte';
-  import { themeManager } from '$lib/services/theme-manager.svelte.js';
-  import { t } from '$lib/services/translation.svelte.js';
-  import { Theme, type Color, type Size, type TranslationProps, type Variants } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import IconButton from '#lib/components/IconButton/IconButton.svelte';
+  import { themeManager } from '#lib/services/theme-manager.svelte.js';
+  import { t } from '#lib/services/translation.svelte.js';
+  import { Theme, type Color, type Size, type TranslationProps, type Variants } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { mdiWeatherNight, mdiWeatherSunny } from '@mdi/js';
 
   type Props = {

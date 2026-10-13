@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { siteMetadata } from '$lib';
-  import FeatureCard from '$lib/components/FeatureCard.svelte';
-  import PageContent from '$lib/components/PageContent.svelte';
-  import type { Feature } from '$lib/types';
+  import { siteMetadata } from '#lib';
+  import FeatureCard from '#lib/components/FeatureCard.svelte';
+  import PageContent from '#lib/components/PageContent.svelte';
+  import type { Feature } from '#lib/types.js';
   import { Container, Heading, SiteMetadata, Text } from '@immich/ui';
   import {
     mdiAccountCog,

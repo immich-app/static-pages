@@ -1,4 +1,4 @@
-import type { Color, IconLike, MaybeArray, TextColor } from '$lib/types.js';
+import type { Color, IconLike, MaybeArray, TextColor } from '#lib/types.js';
 import { twMerge } from 'tailwind-merge';
 
 export const cleanClass = (...classNames: unknown[]) => {

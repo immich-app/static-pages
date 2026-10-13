@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ComponentSizes from '$lib/components/ComponentSizes.svelte';
+  import ComponentSizes from '#lib/components/ComponentSizes.svelte';
   import { Field, Select, Stack, type SelectOption } from '@immich/ui';
 
   const options: SelectOption[] = [

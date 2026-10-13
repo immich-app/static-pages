@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { asComponentHref } from '$lib/utilities.js';
+  import { asComponentHref } from '#lib/utilities.js';
   import { Link } from '@immich/ui';
 
   type Props = {

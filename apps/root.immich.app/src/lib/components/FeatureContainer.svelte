@@ -1,6 +1,6 @@
 <script lang="ts">
   import { cleanClass } from '$common';
-  import PageContent from '$lib/components/PageContent.svelte';
+  import PageContent from '#lib/components/PageContent.svelte';
   import { Container, type ContainerSize } from '@immich/ui';
   import type { Snippet } from 'svelte';
 

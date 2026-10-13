@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Alert from '$lib/components/Alert/Alert.svelte';
-  import type { Color, IconLike, MarkdownAlertVariant } from '$lib/types.js';
+  import Alert from '#lib/components/Alert/Alert.svelte';
+  import type { Color, IconLike, MarkdownAlertVariant } from '#lib/types.js';
   import {
     mdiAlertCircleOutline,
     mdiAlertOctagonOutline,

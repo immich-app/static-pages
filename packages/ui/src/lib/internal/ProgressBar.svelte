@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { styleVariants } from '$lib/styles.js';
-  import type { Color, Shape, Size } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { styleVariants } from '#lib/styles.js';
+  import type { Color, Shape, Size } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { Meter, Progress } from 'bits-ui';
   import type { ComponentProps, Snippet } from 'svelte';
   import { tv } from 'tailwind-variants';

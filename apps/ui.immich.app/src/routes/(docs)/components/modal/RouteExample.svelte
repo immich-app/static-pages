@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Lorem from '$lib/components/Lorem.svelte';
+  import Lorem from '#lib/components/Lorem.svelte';
   import { Button, Modal, ModalBody, Stack } from '@immich/ui';
 
   let item = $state(0);

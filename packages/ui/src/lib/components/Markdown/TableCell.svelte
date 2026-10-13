@@ -1,5 +1,5 @@
 <script lang="ts">
-  import TableCell from '$lib/components/Table/TableCell.svelte';
+  import TableCell from '#lib/components/Table/TableCell.svelte';
   import type { Snippet } from 'svelte';
 
   type Props = {

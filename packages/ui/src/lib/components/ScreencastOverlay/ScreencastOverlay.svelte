@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { renderKeyboardEvent } from '$lib/actions/shortcut.js';
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import { zIndex } from '$lib/constants.js';
-  import { screencastManager } from '$lib/services/screencast-manager.svelte.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { renderKeyboardEvent } from '#lib/actions/shortcut.js';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import { zIndex } from '#lib/constants.js';
+  import { screencastManager } from '#lib/services/screencast-manager.svelte.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { onMount, type Snippet } from 'svelte';
 
   type Props = {

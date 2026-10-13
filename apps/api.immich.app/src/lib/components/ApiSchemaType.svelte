@@ -1,8 +1,8 @@
 <script lang="ts">
   import { cleanClass } from '$common';
-  import ApiSchemaType from '$lib/components/ApiSchemaType.svelte';
-  import { getOpenApi, getRefHref, isRef } from '$lib/services/open-api';
-  import type { ReferenceObject, SchemaObject } from '$lib/services/open-api.d';
+  import ApiSchemaType from '#lib/components/ApiSchemaType.svelte';
+  import { getOpenApi, getRefHref, isRef } from '#lib/services/open-api.js';
+  import type { ReferenceObject, SchemaObject } from '#lib/services/open-api.d.js';
   import { Link, Text } from '@immich/ui';
 
   type Props = {

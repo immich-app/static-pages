@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ApiParam } from '$lib/services/open-api';
+  import type { ApiParam } from '#lib/services/open-api.js';
   import ApiParamsInternal from './ApiParamsInternal.svelte';
 
   type Props = {

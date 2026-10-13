@@ -1,8 +1,8 @@
 <script lang="ts">
-  import IconButton from '$lib/components/IconButton/IconButton.svelte';
-  import Input from '$lib/components/Input/Input.svelte';
-  import { t } from '$lib/services/translation.svelte.js';
-  import type { PasswordInputProps } from '$lib/types.js';
+  import IconButton from '#lib/components/IconButton/IconButton.svelte';
+  import Input from '#lib/components/Input/Input.svelte';
+  import { t } from '#lib/services/translation.svelte.js';
+  import type { PasswordInputProps } from '#lib/types.js';
   import { mdiEyeOffOutline, mdiEyeOutline } from '@mdi/js';
 
   let {

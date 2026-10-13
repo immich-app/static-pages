@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { afterNavigate, goto, replaceState } from '$app/navigation';
+  import { afterNavigate, goto } from '$app/navigation';
   import { page } from '$app/state';
-  import { siteMetadata } from '$lib';
-  import PageContent from '$lib/components/PageContent.svelte';
-  import { buildCompose, buildComposeFields } from '$lib/compose/build';
-  import { DEFAULT_CONFIG, FOLDER_OVERRIDES, StorageType, validate, withoutAdvanced } from '$lib/compose/config';
-  import { highlightedLines } from '$lib/compose/highlight';
-  import { ML_ACCELS, TRANSCODE_ACCELS } from '$lib/compose/hwaccel';
-  import { decodeShare, encodeShare, randomPassword } from '$lib/compose/share';
+  import { siteMetadata } from '#lib';
+  import PageContent from '#lib/components/PageContent.svelte';
+  import { buildCompose, buildComposeFields } from '#lib/compose/build.js';
+  import { DEFAULT_CONFIG, FOLDER_OVERRIDES, StorageType, validate, withoutAdvanced } from '#lib/compose/config.js';
+  import { highlightedLines } from '#lib/compose/highlight.js';
+  import { ML_ACCELS, TRANSCODE_ACCELS } from '#lib/compose/hwaccel.js';
+  import { decodeShare, encodeShare, randomPassword } from '#lib/compose/share.js';
   import {
     ActionBar,
     ActionButton,
@@ -114,7 +114,11 @@
   let decoded = $state(false);
   let routerReady = $state(false);
 
-  afterNavigate(() => {
+  afterNavigate(({ shallow, type }) => {
+    if (shallow && type === 'goto') {
+      return;
+    }
+
     routerReady = true;
   });
 
@@ -123,7 +127,7 @@
     if (shared.timezone === detectedTimezone) {
       shared.timezone = DEFAULT_CONFIG.timezone;
     }
-    const url = new SvelteURL(page.url);
+    const url = new SvelteURL(page.url.href);
     url.search = encodeShare(shared).toString();
     return url.href;
   });
@@ -137,7 +141,7 @@
     }
 
     writtenUrl = target;
-    replaceState(target, {});
+    goto(target, { shallow: true, replace: true });
   });
 
   onMount(async () => {
@@ -307,9 +311,8 @@
                 variant="ghost"
                 color="secondary"
                 onclick={() => (config.advanced = !config.advanced)}
+                >{config.advanced ? 'Hide advanced options' : 'Show advanced options'}</Button
               >
-                {config.advanced ? 'Hide advanced options' : 'Show advanced options'}
-              </Button>
             </div>
             <Stack gap={6}>
               <Card color="secondary">
@@ -328,20 +331,17 @@
                             variant={config.version.pinned ? 'ghost' : 'filled'}
                             color={config.version.pinned ? 'secondary' : 'primary'}
                             data-field="version"
-                            onclick={() => (config.version.pinned = false)}
+                            onclick={() => (config.version.pinned = false)}>Rolling</Button
                           >
-                            Rolling
-                          </Button>
+
                           <Button
                             size="small"
                             fullWidth
                             variant={config.version.pinned ? 'filled' : 'ghost'}
                             color={config.version.pinned ? 'primary' : 'secondary'}
                             data-field="version"
-                            onclick={() => (config.version.pinned = true)}
+                            onclick={() => (config.version.pinned = true)}>Pinned</Button
                           >
-                            Pinned
-                          </Button>
                         </div>
                         {#if config.version.pinned}
                           <Input
@@ -739,19 +739,16 @@
                     shape="round"
                     variant={showDiff ? 'ghost' : 'filled'}
                     color={showDiff ? 'secondary' : 'primary'}
-                    onclick={() => (showDiff = false)}
+                    onclick={() => (showDiff = false)}>YAML</Button
                   >
-                    YAML
-                  </Button>
+
                   <Button
                     size="tiny"
                     shape="round"
                     variant={showDiff ? 'filled' : 'ghost'}
                     color={showDiff ? 'primary' : 'secondary'}
-                    onclick={() => (showDiff = true)}
+                    onclick={() => (showDiff = true)}>Diff</Button
                   >
-                    Diff
-                  </Button>
                 </div>
                 <CodeBlock
                   code={showDiff ? composeDiff : compose}

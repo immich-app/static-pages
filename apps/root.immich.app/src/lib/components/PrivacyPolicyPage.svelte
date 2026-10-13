@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { siteMetadata } from '$lib';
-  import PageContent from '$lib/components/PageContent.svelte';
+  import { siteMetadata } from '#lib';
+  import PageContent from '#lib/components/PageContent.svelte';
   import { Card, CardBody, Container, Heading, SiteMetadata, Text } from '@immich/ui';
   import { DateTime } from 'luxon';
   import type { Snippet } from 'svelte';

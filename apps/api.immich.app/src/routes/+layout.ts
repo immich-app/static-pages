@@ -1,4 +1,4 @@
-import { loadOpenApi } from '$lib/services/open-api';
+import { loadOpenApi } from '#lib/services/open-api.js';
 import type { LayoutLoad } from './$types';
 
 export const ssr = false;

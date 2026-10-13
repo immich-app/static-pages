@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Input from '$lib/components/Input/Input.svelte';
-  import type { NumberInputProps } from '$lib/types.js';
+  import Input from '#lib/components/Input/Input.svelte';
+  import type { NumberInputProps } from '#lib/types.js';
 
   let { value = $bindable(), color = 'secondary', size, ...props }: NumberInputProps = $props();
 

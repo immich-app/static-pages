@@ -1,5 +1,5 @@
 <script>
-  import ComponentColors from '$lib/components/ComponentColors.svelte';
+  import ComponentColors from '#lib/components/ComponentColors.svelte';
   import { Table, TableBody, TableCell, TableHeader, TableHeading, TableRow } from '@immich/ui';
 </script>
 

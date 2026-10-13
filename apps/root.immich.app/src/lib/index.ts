@@ -1,4 +1,4 @@
-import { BlogType, type BlogPost, type SerializedPost } from '$lib/types';
+import { BlogType, type BlogPost, type SerializedPost } from '#lib/types.js';
 import type { ClientDoc } from '@immich/svelte-markdown-preprocess';
 import { DateTime } from 'luxon';
 import { getDocs } from 'virtual:docs';
@@ -27,8 +27,8 @@ export type TimelineItem = {
 
 export const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
-export { BlogType } from '$lib/types';
-export type { BlogPost, SerializedPost } from '$lib/types';
+export { BlogType } from '#lib/types.js';
+export type { BlogPost, SerializedPost } from '#lib/types.js';
 
 export const isBlogType = (value: string | BlogType): value is BlogType => {
   return Object.values(BlogType).includes(value as BlogType);

@@ -1,4 +1,4 @@
-import type { IconLike } from '$lib/types.js';
+import type { IconLike } from '#lib/types.js';
 import {
   mdiAppleKeyboardCommand,
   mdiAppleKeyboardOption,

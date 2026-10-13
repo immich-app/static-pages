@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Logo from '$lib/components/Logo/Logo.svelte';
-  import Text from '$lib/components/Text/Text.svelte';
-  import { t } from '$lib/services/translation.svelte.js';
-  import type { Size } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import Logo from '#lib/components/Logo/Logo.svelte';
+  import Text from '#lib/components/Text/Text.svelte';
+  import { t } from '#lib/services/translation.svelte.js';
+  import type { Size } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import type { Snippet } from 'svelte';
   import { tv } from 'tailwind-variants';
 

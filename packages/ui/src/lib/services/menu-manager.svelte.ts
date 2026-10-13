@@ -1,6 +1,6 @@
-import ContextMenu from '$lib/components/ContextMenu/ContextMenu.svelte';
-import { modalManager } from '$lib/services/modal-manager.svelte.js';
-import type { ContextMenuBaseProps } from '$lib/types.js';
+import ContextMenu from '#lib/components/ContextMenu/ContextMenu.svelte';
+import { modalManager } from '#lib/services/modal-manager.svelte.js';
+import type { ContextMenuBaseProps } from '#lib/types.js';
 
 class MenuManager {
   show(props: ContextMenuBaseProps) {

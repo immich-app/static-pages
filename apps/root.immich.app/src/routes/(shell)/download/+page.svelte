@@ -5,10 +5,10 @@
   import portainerIcon from '$common/img/portainer.svg';
   import truenasIcon from '$common/img/truenas-scale.svg';
   import unraidIcon from '$common/img/unraid.svg';
-  import { siteMetadata } from '$lib';
-  import featureMobile from '$lib/assets/img/feature-mobile.webp';
-  import FeatureHighlight from '$lib/components/FeatureHighlight.svelte';
-  import PageContent from '$lib/components/PageContent.svelte';
+  import { siteMetadata } from '#lib';
+  import featureMobile from '#lib/assets/img/feature-mobile.webp';
+  import FeatureHighlight from '#lib/components/FeatureHighlight.svelte';
+  import PageContent from '#lib/components/PageContent.svelte';
   import {
     appStoreBadge,
     Button,

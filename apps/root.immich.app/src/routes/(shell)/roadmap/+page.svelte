@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { TimelineItem } from '$lib';
-  import { siteMetadata } from '$lib';
-  import PageContent from '$lib/components/PageContent.svelte';
-  import Timeline from '$lib/components/Timeline.svelte';
+  import type { TimelineItem } from '#lib';
+  import { siteMetadata } from '#lib';
+  import PageContent from '#lib/components/PageContent.svelte';
+  import Timeline from '#lib/components/Timeline.svelte';
   import { Container, Heading, SiteMetadata, Stack, Text } from '@immich/ui';
   import {
     mdiAccountGroup,

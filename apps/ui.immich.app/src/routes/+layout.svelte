@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getDocsProviders } from '$lib/constants.js';
+  import { getDocsProviders } from '#lib/constants.js';
   import {
     commandPaletteManager,
     CommandPaletteProvider,
@@ -9,7 +9,7 @@
     TooltipProvider,
   } from '@immich/ui';
   import '@immich/ui/theme/default.css';
-  import '$lib/app.css';
+  import '#lib/app.css';
 
   let { children } = $props();
 

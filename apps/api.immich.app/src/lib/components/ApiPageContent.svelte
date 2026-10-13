@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ApiNextSteps from '$lib/components/ApiNextSteps.svelte';
+  import ApiNextSteps from '#lib/components/ApiNextSteps.svelte';
   import { Heading, Stack, Text } from '@immich/ui';
   import type { Snippet } from 'svelte';
 

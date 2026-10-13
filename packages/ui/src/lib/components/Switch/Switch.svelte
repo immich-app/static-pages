@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { getFieldContext } from '$lib/common/context.svelte.js';
-  import Label from '$lib/components/Label/Label.svelte';
-  import Text from '$lib/components/Text/Text.svelte';
-  import type { Color } from '$lib/types.js';
-  import { cleanClass, generateId } from '$lib/utilities/internal.js';
+  import { getFieldContext } from '#lib/common/context.svelte.js';
+  import Label from '#lib/components/Label/Label.svelte';
+  import Text from '#lib/components/Text/Text.svelte';
+  import type { Color } from '#lib/types.js';
+  import { cleanClass, generateId } from '#lib/utilities/internal.js';
   import { Switch, type WithoutChildrenOrChild } from 'bits-ui';
   import { tv } from 'tailwind-variants';
 

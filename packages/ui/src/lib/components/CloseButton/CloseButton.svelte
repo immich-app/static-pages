@@ -1,7 +1,7 @@
 <script lang="ts">
-  import IconButton from '$lib/components/IconButton/IconButton.svelte';
-  import { t } from '$lib/services/translation.svelte.js';
-  import type { CloseButtonProps } from '$lib/types.js';
+  import IconButton from '#lib/components/IconButton/IconButton.svelte';
+  import { t } from '#lib/services/translation.svelte.js';
+  import type { CloseButtonProps } from '#lib/types.js';
   import { mdiClose } from '@mdi/js';
 
   const {

@@ -1,4 +1,4 @@
-import type { TranslationProps } from '$lib/types.js';
+import type { TranslationProps } from '#lib/types.js';
 
 const defaultTranslations = {
   // common

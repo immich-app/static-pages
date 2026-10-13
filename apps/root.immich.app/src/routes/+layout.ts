@@ -1,5 +1,5 @@
 import { browser } from '$app/env';
-import type { SearchDoc } from '$lib/search';
+import type { SearchDoc } from '#lib/search.js';
 import type { LayoutLoad } from './$types';
 
 export const prerender = true;

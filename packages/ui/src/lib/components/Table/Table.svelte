@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { setChildContext, setTableContext } from '$lib/common/context.svelte.js';
-  import { ChildKey } from '$lib/constants.js';
-  import { styleVariants } from '$lib/styles.js';
-  import type { TableContext } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { setChildContext, setTableContext } from '#lib/common/context.svelte.js';
+  import { ChildKey } from '#lib/constants.js';
+  import { styleVariants } from '#lib/styles.js';
+  import type { TableContext } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { type Snippet } from 'svelte';
   import type { HTMLAttributes } from 'svelte/elements';
   import { tv } from 'tailwind-variants';

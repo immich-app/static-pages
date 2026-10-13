@@ -1,7 +1,7 @@
-import ToastPanel from '$lib/components/Toast/ToastPanel.svelte';
-import { t } from '$lib/services/translation.svelte.js';
-import type { ToastCustom, ToastItem, ToastOptions, ToastPanelProps, ToastShow, ToastWithId } from '$lib/types.js';
-import { generateId } from '$lib/utilities/internal.js';
+import ToastPanel from '#lib/components/Toast/ToastPanel.svelte';
+import { t } from '#lib/services/translation.svelte.js';
+import type { ToastCustom, ToastItem, ToastOptions, ToastPanelProps, ToastShow, ToastWithId } from '#lib/types.js';
+import { generateId } from '#lib/utilities/internal.js';
 import { mount, unmount } from 'svelte';
 
 export const isCustomToast = (item: ToastItem): item is ToastCustom => !!(item as ToastCustom).component;

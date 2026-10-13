@@ -1,10 +1,10 @@
 <script lang="ts">
-  import ActionButton from '$lib/components/ActionButton/ActionButton.svelte';
-  import ContextMenuButton from '$lib/components/ContextMenu/ContextMenuButton.svelte';
-  import ControlBar from '$lib/components/ControlBar/ControlBar.svelte';
-  import ControlBarOverflow from '$lib/components/ControlBar/ControlBarOverflow.svelte';
-  import type { ActionBarProps } from '$lib/types.js';
-  import { isEnabled, isMenuItemType } from '$lib/utilities/common.js';
+  import ActionButton from '#lib/components/ActionButton/ActionButton.svelte';
+  import ContextMenuButton from '#lib/components/ContextMenu/ContextMenuButton.svelte';
+  import ControlBar from '#lib/components/ControlBar/ControlBar.svelte';
+  import ControlBarOverflow from '#lib/components/ControlBar/ControlBarOverflow.svelte';
+  import type { ActionBarProps } from '#lib/types.js';
+  import { isEnabled, isMenuItemType } from '#lib/utilities/common.js';
 
   const { actions = [], overflowActions = [], children, ...restProps }: ActionBarProps = $props();
 

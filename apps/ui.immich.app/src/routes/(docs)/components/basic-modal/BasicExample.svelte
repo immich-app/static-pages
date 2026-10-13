@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Lorem from '$lib/components/Lorem.svelte';
+  import Lorem from '#lib/components/Lorem.svelte';
   import { BasicModal, Button, Field, Input, Select, Stack, type Color, type SelectOption } from '@immich/ui';
 
   const colors: SelectOption<Color>[] = [

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { type ExampleCardProps } from '$lib/constants.js';
+  import { type ExampleCardProps } from '#lib/constants.js';
   import { Button, Card, CardBody, CardHeader, CardTitle, HStack, Theme } from '@immich/ui';
   import { mdiEye, mdiXml } from '@mdi/js';
   import { HighlightSvelte, LineNumbers } from 'svelte-highlight';

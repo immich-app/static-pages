@@ -1,8 +1,8 @@
 <script lang="ts">
-  import ComponentExamples from '$lib/components/ComponentExamples.svelte';
-  import ComponentFieldCard from '$lib/components/ComponentFieldCard.svelte';
-  import ComponentLink from '$lib/components/ComponentLink.svelte';
-  import ComponentPage from '$lib/components/ComponentPage.svelte';
+  import ComponentExamples from '#lib/components/ComponentExamples.svelte';
+  import ComponentFieldCard from '#lib/components/ComponentFieldCard.svelte';
+  import ComponentLink from '#lib/components/ComponentLink.svelte';
+  import ComponentPage from '#lib/components/ComponentPage.svelte';
   import { Markdown, Text } from '@immich/ui';
   import FormExample from './FormExample.svelte';
   import formExample from './FormExample.svelte?raw';

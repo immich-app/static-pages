@@ -1,4 +1,4 @@
-import { BlogType, getPostNeighbors, posts } from '$lib';
+import { BlogType, getPostNeighbors, posts } from '#lib';
 import { readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, test } from 'vitest';

@@ -1,6 +1,6 @@
 <script lang="ts">
   import DefaultPageLayout from '$common/components/DefaultPageLayout.svelte';
-  import ProjectCard from '$lib/components/ProjectCard.svelte';
+  import ProjectCard from '#lib/components/ProjectCard.svelte';
   import { Heading, Link, Stack, Text } from '@immich/ui';
   import { mdiCameraEnhance, mdiPaw } from '@mdi/js';
 </script>

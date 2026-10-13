@@ -1,5 +1,5 @@
-import Image from '$lib/components/Markdown/Image.svelte';
-import { IMAGE_SIZES_QUERY } from '$lib/utilities/image-sizes.js';
+import Image from '#lib/components/Markdown/Image.svelte';
+import { IMAGE_SIZES_QUERY } from '#lib/utilities/image-sizes.js';
 import type { ComponentProps } from 'svelte';
 import { render } from 'svelte/server';
 import { describe, expect, it } from 'vitest';

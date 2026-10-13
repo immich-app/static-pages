@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { typeToLabel, type BlogType } from '$lib';
-  import { Routes } from '$lib/route';
+  import { typeToLabel, type BlogType } from '#lib';
+  import { Routes } from '#lib/route.js';
   import { Badge, type Size } from '@immich/ui';
 
   type Props = {

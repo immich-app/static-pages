@@ -1,11 +1,11 @@
 <script lang="ts">
-  import LoadingSpinner from '$lib/components/LoadingSpinner/LoadingSpinner.svelte';
-  import Tooltip from '$lib/components/Tooltip/Tooltip.svelte';
-  import IconWrapper from '$lib/internal/IconWrapper.svelte';
-  import { styleVariants } from '$lib/styles.js';
-  import type { ButtonProps, Size } from '$lib/types.js';
-  import { isExternalLink, resolveUrl } from '$lib/utilities/common.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import LoadingSpinner from '#lib/components/LoadingSpinner/LoadingSpinner.svelte';
+  import Tooltip from '#lib/components/Tooltip/Tooltip.svelte';
+  import IconWrapper from '#lib/internal/IconWrapper.svelte';
+  import { styleVariants } from '#lib/styles.js';
+  import type { ButtonProps, Size } from '#lib/types.js';
+  import { isExternalLink, resolveUrl } from '#lib/utilities/common.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { Button as ButtonPrimitive } from 'bits-ui';
   import type { HTMLAnchorAttributes, HTMLButtonAttributes } from 'svelte/elements';
   import { tv } from 'tailwind-variants';

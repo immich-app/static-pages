@@ -1,5 +1,5 @@
-import { ApiPage } from '$lib';
-import { getOpenApi } from '$lib/services/open-api';
+import { ApiPage } from '#lib';
+import { getOpenApi } from '#lib/services/open-api.js';
 import { redirect } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 

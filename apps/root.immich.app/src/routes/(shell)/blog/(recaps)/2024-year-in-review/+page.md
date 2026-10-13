@@ -7,11 +7,11 @@ authors: [Alex Tran]
 ---
 
 <script>
-  import emailNotifications from '$lib/assets/img/email-notifications.webp';
-  import folderView from '$lib/assets/img/folder-view.webp';
-  import improvedSearch from '$lib/assets/img/improved-search.webp';
-  import networkSwitching from '$lib/assets/img/network-switching.webp';
-  import newLogo from '$lib/assets/img/new-logo.webp';
+  import emailNotifications from '#lib/assets/img/email-notifications.webp';
+  import folderView from '#lib/assets/img/folder-view.webp';
+  import improvedSearch from '#lib/assets/img/improved-search.webp';
+  import networkSwitching from '#lib/assets/img/network-switching.webp';
+  import newLogo from '#lib/assets/img/new-logo.webp';
   import { Button, Constants, Link } from '@immich/ui';
 </script>
 

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { getFieldContext } from '$lib/common/context.svelte.js';
-  import Label from '$lib/components/Label/Label.svelte';
-  import InputIcon from '$lib/internal/InputIcon.svelte';
-  import { getLocale } from '$lib/state/locale-state.svelte.js';
-  import { inputContainerStyles, inputSegmentStyles, inputStyles } from '$lib/styles.js';
-  import type { TimeInputProps } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { getFieldContext } from '#lib/common/context.svelte.js';
+  import Label from '#lib/components/Label/Label.svelte';
+  import InputIcon from '#lib/internal/InputIcon.svelte';
+  import { getLocale } from '#lib/state/locale-state.svelte.js';
+  import { inputContainerStyles, inputSegmentStyles, inputStyles } from '#lib/styles.js';
+  import type { TimeInputProps } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { TimeField, type TimeValue } from 'bits-ui';
 
   let {

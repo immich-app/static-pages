@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { type ApiEndpoint, type ApiMethod } from '$lib/services/open-api';
-  import { playgroundManager } from '$lib/services/playground-manager.svelte';
+  import { type ApiEndpoint, type ApiMethod } from '#lib/services/open-api.js';
+  import { playgroundManager } from '#lib/services/playground-manager.svelte.js';
   import {
     Button,
     Code,

@@ -1,6 +1,6 @@
 <script lang="ts">
   import PageContent from '$common/components/PageContent.svelte';
-  import stackedBlocksUrl from '$lib/assets/img/stacked-blocks.svg';
+  import stackedBlocksUrl from '#lib/assets/img/stacked-blocks.svg';
   import {
     AppShell,
     AppShellHeader,
