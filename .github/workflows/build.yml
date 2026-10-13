@@ -33,7 +33,7 @@ jobs:
           permission-contents: read
 
       - name: Setup Mise
-        uses: immich-app/devtools/actions/use-mise@06a9ef925332c91be647d6256642b86b398592c8 # use-mise-action-v3.2.1
+        uses: immich-app/devtools/actions/use-mise@b5d01f97c667b7a5ff8818596d0d12983da32e7e # use-mise-action-v3.2.2
         with:
           github_token: ${{ steps.token.outputs.token }}
 
@@ -59,7 +59,7 @@ jobs:
           PUBLIC_CF_TURNSTILE_SITE: ${{ secrets.CF_TURNSTILE_DEFAULT_INVISIBLE_SITE_KEY }}
 
       - name: Upload builds
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: build
           path: |
@@ -97,7 +97,7 @@ jobs:
           permission-contents: read
 
       - name: Setup Mise
-        uses: immich-app/devtools/actions/use-mise@06a9ef925332c91be647d6256642b86b398592c8 # use-mise-action-v3.2.1
+        uses: immich-app/devtools/actions/use-mise@b5d01f97c667b7a5ff8818596d0d12983da32e7e # use-mise-action-v3.2.2
         with:
           github_token: ${{ steps.token.outputs.token }}
 
@@ -120,7 +120,7 @@ jobs:
         uses: 1password/install-cli-action@1a3160d5e9de1ae0803eaa08a88746f5ae3daa50 # v4.1.0
 
       - name: Download builds
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: build
           path: apps # restore pre-built build and dist folders
@@ -170,7 +170,7 @@ jobs:
 
       - name: Upload preview URL
         if: ${{ github.event_name == 'pull_request' }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: preview-url-${{ matrix.app_name }}
           path: /tmp/preview-urls/${{ matrix.app_name }}.txt
@@ -184,7 +184,7 @@ jobs:
     steps:
       - name: Download all preview URLs
         continue-on-error: true
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: preview-url-*
           path: /tmp/preview-urls
@@ -212,7 +212,7 @@ jobs:
           } >> $GITHUB_OUTPUT
 
       - name: Comment
-        uses: immich-app/devtools/actions/sticky-comment@0135acd12ad9f3369b94a2aa3c0ae8c835a4e926 # sticky-comment-action-v1.0.0
+        uses: immich-app/devtools/actions/sticky-comment@5f79a5a552b30a23aa7984ffa06c3dbfaf4330f6 # sticky-comment-action-v1.1.0
         with:
           id: preview-urls
           body: ${{ steps.build-comment.outputs.body }}
