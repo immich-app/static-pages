@@ -11,6 +11,7 @@ dotenv.config({ path: '../../.env' });
 
 process.env.PUBLIC_IMMICH_SPEC_URL ||= 'https://docs.immich.app/openapi.json';
 
+// eslint-disable-next-line unicorn/no-top-level-side-effects
 export default defineConfig({
   plugins: [
     tailwindcss(),

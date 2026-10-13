@@ -24,6 +24,7 @@ const IMAGE_VARIANTS = RUNGS.map(([width, height]) => ({
   extension: 'avif',
 }));
 
+// eslint-disable-next-line unicorn/no-unnecessary-parameters
 const variantKeys = (hash: string) => RUNGS.map(([width]) => `blog/post-id-1/${hash}-${width}.avif`);
 
 type Mock<T extends object> = Mocked<Pick<T, keyof T>>;

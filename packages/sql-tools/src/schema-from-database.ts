@@ -6,8 +6,8 @@ import { readers } from 'src/readers/index.js';
 import { DatabaseSchema, PostgresDB, SchemaFromDatabaseOptions } from 'src/types.js';
 
 /**
- * Load schema from a database url
- */
+Load schema from a database url
+*/
 export const schemaFromDatabase = async (options: SchemaFromDatabaseOptions = {}): Promise<DatabaseSchema> => {
   const ctx = new ReaderContext(options);
   const db = new Kysely<PostgresDB>({ dialect: new PostgresJSDialect({ postgres: createPostgres(options) }) });

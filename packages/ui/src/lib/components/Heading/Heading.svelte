@@ -8,8 +8,8 @@
 
   type Props = {
     /**
-     * The HTML element type.
-     */
+    The HTML element type.
+    */
     tag?: HeadingTag;
     size?: HeadingSize;
     color?: HeadingColor;

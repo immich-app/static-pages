@@ -11,6 +11,7 @@ dotenv.config({ path: '../../.env' });
 process.env.PUBLIC_CF_TURNSTILE_SITE ||= '1x00000000000000000000BB';
 process.env.PUBLIC_DATASET_API_ENDPOINT ||= '/api';
 
+// eslint-disable-next-line unicorn/no-top-level-side-effects
 export default defineConfig({
   plugins: [
     tailwindcss(),
