@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ComponentLink from '$lib/components/ComponentLink.svelte';
+  import ComponentLink from '#lib/components/ComponentLink.svelte';
   import { Markdown, Text } from '@immich/ui';
 </script>
 

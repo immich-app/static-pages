@@ -1,4 +1,4 @@
-import { PersistedLocalStorage } from '$lib/state/persisted.js';
+import { PersistedLocalStorage } from '#lib/state/persisted.js';
 import { DateTime } from 'luxon';
 
 class ScreencastManager {

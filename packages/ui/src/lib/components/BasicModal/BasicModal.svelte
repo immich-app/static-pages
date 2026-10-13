@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Button from '$lib/components/Button/Button.svelte';
-  import Modal from '$lib/components/Modal/Modal.svelte';
-  import ModalBody from '$lib/components/Modal/ModalBody.svelte';
-  import ModalFooter from '$lib/components/Modal/ModalFooter.svelte';
-  import { t } from '$lib/services/translation.svelte.js';
-  import type { Color, ModalSize } from '$lib/types.js';
+  import Button from '#lib/components/Button/Button.svelte';
+  import Modal from '#lib/components/Modal/Modal.svelte';
+  import ModalBody from '#lib/components/Modal/ModalBody.svelte';
+  import ModalFooter from '#lib/components/Modal/ModalFooter.svelte';
+  import { t } from '#lib/services/translation.svelte.js';
+  import type { Color, ModalSize } from '#lib/types.js';
   import type { Snippet } from 'svelte';
 
   type Props = {

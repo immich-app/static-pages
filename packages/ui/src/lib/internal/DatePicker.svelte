@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { getFieldContext } from '$lib/common/context.svelte.js';
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import IconButton from '$lib/components/IconButton/IconButton.svelte';
-  import Label from '$lib/components/Label/Label.svelte';
-  import { zIndex } from '$lib/constants.js';
-  import { t } from '$lib/services/translation.svelte.js';
-  import { getLocale } from '$lib/state/locale-state.svelte.js';
-  import { inputContainerStyles, inputSegmentStyles, inputStyles } from '$lib/styles.js';
-  import type { Shape, Size } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { getFieldContext } from '#lib/common/context.svelte.js';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import IconButton from '#lib/components/IconButton/IconButton.svelte';
+  import Label from '#lib/components/Label/Label.svelte';
+  import { zIndex } from '#lib/constants.js';
+  import { t } from '#lib/services/translation.svelte.js';
+  import { getLocale } from '#lib/state/locale-state.svelte.js';
+  import { inputContainerStyles, inputSegmentStyles, inputStyles } from '#lib/styles.js';
+  import type { Shape, Size } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import type { DateValue } from '@internationalized/date';
   import { mdiCalendar, mdiChevronLeft, mdiChevronRight, mdiChevronDown } from '@mdi/js';
   import { DatePicker, Select } from 'bits-ui';

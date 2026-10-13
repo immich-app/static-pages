@@ -1,7 +1,7 @@
 <script lang="ts">
-  import ApiParamsInternal from '$lib/components/ApiParamsInternal.svelte';
-  import { withExtensions } from '$lib/services/open-api';
-  import type { SchemaObject } from '$lib/services/open-api.d';
+  import ApiParamsInternal from '#lib/components/ApiParamsInternal.svelte';
+  import { withExtensions } from '#lib/services/open-api.js';
+  import type { SchemaObject } from '#lib/services/open-api.d.js';
 
   type Props = {
     schema: SchemaObject;

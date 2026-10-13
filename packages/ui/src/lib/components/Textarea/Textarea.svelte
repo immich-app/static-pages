@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { getFieldContext } from '$lib/common/context.svelte.js';
-  import Label from '$lib/components/Label/Label.svelte';
-  import Text from '$lib/components/Text/Text.svelte';
-  import { styleVariants } from '$lib/styles.js';
-  import type { TextareaProps } from '$lib/types.js';
-  import { cleanClass, generateId } from '$lib/utilities/internal.js';
+  import { getFieldContext } from '#lib/common/context.svelte.js';
+  import Label from '#lib/components/Label/Label.svelte';
+  import Text from '#lib/components/Text/Text.svelte';
+  import { styleVariants } from '#lib/styles.js';
+  import type { TextareaProps } from '#lib/types.js';
+  import { cleanClass, generateId } from '#lib/utilities/internal.js';
   import { tv } from 'tailwind-variants';
 
   let {

@@ -1,6 +1,8 @@
 <script lang="ts">
-  import { PUBLIC_CF_TURNSTILE_SITE, PUBLIC_DATASET_API_ENDPOINT } from '$env/static/public';
+  import { PUBLIC_CF_TURNSTILE_SITE, PUBLIC_DATASET_API_ENDPOINT } from '$app/env/public';
+
   import { Button, Checkbox, Field, HelperText, Input, Modal, ModalBody, ModalFooter, Stack } from '@immich/ui';
+
   import pLimit from 'p-limit';
   import { Turnstile } from 'svelte-turnstile';
   import type { UploadableAssets } from '../../../types/upload-manager';

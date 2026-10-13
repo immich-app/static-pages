@@ -1,5 +1,5 @@
 <script lang="ts">
-  import MarkdownPage from '$lib/components/MarkdownPage.svelte';
+  import MarkdownPage from '#lib/components/MarkdownPage.svelte';
   import { type ContainerSize } from '@immich/ui';
   import type { Snippet } from 'svelte';
 

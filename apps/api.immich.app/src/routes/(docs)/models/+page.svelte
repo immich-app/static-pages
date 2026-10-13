@@ -1,6 +1,6 @@
 <script lang="ts">
-  import ApiPageContent from '$lib/components/ApiPageContent.svelte';
-  import { getOpenApi } from '$lib/services/open-api';
+  import ApiPageContent from '#lib/components/ApiPageContent.svelte';
+  import { getOpenApi } from '#lib/services/open-api.js';
   import { Card, CardTitle } from '@immich/ui';
 
   const { models } = getOpenApi();

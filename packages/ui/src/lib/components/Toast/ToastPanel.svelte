@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Toast from '$lib/components/Toast/Toast.svelte';
-  import TooltipProvider from '$lib/components/Tooltip/TooltipProvider.svelte';
-  import { zIndex } from '$lib/constants.js';
-  import { isCustomToast } from '$lib/services/toast-manager.svelte.js';
-  import type { ToastPanelProps } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import Toast from '#lib/components/Toast/Toast.svelte';
+  import TooltipProvider from '#lib/components/Tooltip/TooltipProvider.svelte';
+  import { zIndex } from '#lib/constants.js';
+  import { isCustomToast } from '#lib/services/toast-manager.svelte.js';
+  import type { ToastPanelProps } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
 
   const { items, class: className, ...props }: ToastPanelProps = $props();
 

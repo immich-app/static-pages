@@ -1,8 +1,8 @@
 <script lang="ts">
   import { beforeNavigate } from '$app/navigation';
   import { page } from '$app/state';
-  import { posts } from '$lib';
-  import '$lib/app.css';
+  import { posts } from '#lib';
+  import '#lib/app.css';
   import {
     AnnouncementBanner,
     AppShell,
@@ -46,7 +46,11 @@
   let isOpen = $state(false);
   let open = $derived(isMobile && isOpen);
 
-  beforeNavigate(() => {
+  beforeNavigate(({ shallow, type }) => {
+    if (shallow && type === 'goto') {
+      return;
+    }
+
     isOpen = false;
   });
 
@@ -99,13 +103,17 @@
 
           <div class="hidden place-items-center gap-1 lg:flex">
             <Button href="/blog" variant="ghost" color={withActiveColor('/blog')}>Blog</Button>
+
             <Button href="/roadmap" variant="ghost" color={withActiveColor('/roadmap')}>Roadmap</Button>
-            <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Store} color="secondary" variant="ghost">
-              Merch
-            </Button>
-            <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Docs} color="secondary" variant="ghost">
-              Docs
-            </Button>
+
+            <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Store} color="secondary" variant="ghost"
+              >Merch</Button
+            >
+
+            <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Docs} color="secondary" variant="ghost"
+              >Docs</Button
+            >
+
             <Button
               leadingIcon={siGithub.path}
               trailingIcon={mdiOpenInNew}

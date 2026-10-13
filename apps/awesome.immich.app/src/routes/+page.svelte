@@ -1,7 +1,7 @@
 <script lang="ts">
   import LinkableHeading from '$common/components/LinkableHeading.svelte';
-  import { categories, siteMetadata, type Category, type Project } from '$lib';
-  import ProjectCard from '$lib/components/ProjectCard.svelte';
+  import { categories, siteMetadata, type Category, type Project } from '#lib';
+  import ProjectCard from '#lib/components/ProjectCard.svelte';
   import { Heading, Input, Link, SiteMetadata, Text } from '@immich/ui';
   import { mdiMagnify } from '@mdi/js';
 

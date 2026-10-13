@@ -1,7 +1,7 @@
 <script lang="ts">
   import { cleanClass } from '$common';
-  import ApiState from '$lib/components/ApiState.svelte';
-  import { getEndpointColor, type ApiEndpointTag } from '$lib/services/open-api';
+  import ApiState from '#lib/components/ApiState.svelte';
+  import { getEndpointColor, type ApiEndpointTag } from '#lib/services/open-api.js';
   import { Button, Card, CardTitle, Heading, Text } from '@immich/ui';
 
   type Props = {

@@ -1,12 +1,12 @@
 <script lang="ts">
-  import Card from '$lib/components/Card/Card.svelte';
-  import CardBody from '$lib/components/Card/CardBody.svelte';
-  import CloseButton from '$lib/components/CloseButton/CloseButton.svelte';
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import Text from '$lib/components/Text/Text.svelte';
-  import { styleVariants } from '$lib/styles.js';
-  import type { Color, IconLike, Size } from '$lib/types.js';
-  import { cleanClass, resolveIcon } from '$lib/utilities/internal.js';
+  import Card from '#lib/components/Card/Card.svelte';
+  import CardBody from '#lib/components/Card/CardBody.svelte';
+  import CloseButton from '#lib/components/CloseButton/CloseButton.svelte';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import Text from '#lib/components/Text/Text.svelte';
+  import { styleVariants } from '#lib/styles.js';
+  import type { Color, IconLike, Size } from '#lib/types.js';
+  import { cleanClass, resolveIcon } from '#lib/utilities/internal.js';
   import {
     mdiAlertOutline,
     mdiCheckCircleOutline,

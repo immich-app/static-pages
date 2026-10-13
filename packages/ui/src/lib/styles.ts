@@ -1,4 +1,4 @@
-import { cleanClass } from '$lib/utilities/internal.js';
+import { cleanClass } from '#lib/utilities/internal.js';
 import { tv } from 'tailwind-variants';
 
 const color = {

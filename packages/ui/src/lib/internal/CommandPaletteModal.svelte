@@ -1,22 +1,22 @@
 <script lang="ts">
-  import { shortcuts } from '$lib/actions/shortcut.js';
-  import CloseButton from '$lib/components/CloseButton/CloseButton.svelte';
-  import CommandPaletteItem from '$lib/components/CommandPalette/CommandPaletteItem.svelte';
-  import Heading from '$lib/components/Heading/Heading.svelte';
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import Input from '$lib/components/Input/Input.svelte';
-  import Modal from '$lib/components/Modal/Modal.svelte';
-  import ModalBody from '$lib/components/Modal/ModalBody.svelte';
-  import ModalFooter from '$lib/components/Modal/ModalFooter.svelte';
-  import ModalHeader from '$lib/components/Modal/ModalHeader.svelte';
-  import Stack from '$lib/components/Stack/Stack.svelte';
-  import Text from '$lib/components/Text/Text.svelte';
+  import { shortcuts } from '#lib/actions/shortcut.js';
+  import CloseButton from '#lib/components/CloseButton/CloseButton.svelte';
+  import CommandPaletteItem from '#lib/components/CommandPalette/CommandPaletteItem.svelte';
+  import Heading from '#lib/components/Heading/Heading.svelte';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import Input from '#lib/components/Input/Input.svelte';
+  import Modal from '#lib/components/Modal/Modal.svelte';
+  import ModalBody from '#lib/components/Modal/ModalBody.svelte';
+  import ModalFooter from '#lib/components/Modal/ModalFooter.svelte';
+  import ModalHeader from '#lib/components/Modal/ModalHeader.svelte';
+  import Stack from '#lib/components/Stack/Stack.svelte';
+  import Text from '#lib/components/Text/Text.svelte';
   import {
     commandPaletteManager,
     type CommandPaletteTranslations,
-  } from '$lib/services/command-palette-manager.svelte.js';
-  import { t } from '$lib/services/translation.svelte.js';
-  import type { ActionEvent, ActionItem } from '$lib/types.js';
+  } from '#lib/services/command-palette-manager.svelte.js';
+  import { t } from '#lib/services/translation.svelte.js';
+  import type { ActionEvent, ActionItem } from '#lib/types.js';
   import { mdiArrowDown, mdiArrowUp, mdiKeyboardEsc, mdiKeyboardReturn, mdiMagnify } from '@mdi/js';
 
   type Props = {

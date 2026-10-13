@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getCallbackUrl, ImmichLicense } from '$lib';
+  import { getCallbackUrl, ImmichLicense } from '#lib';
   import {
     AppShell,
     AppShellHeader,

@@ -1,8 +1,8 @@
 <script lang="ts">
   import { page } from '$app/state';
-  import '$lib/app.css';
-  import ErrorLayout from '$lib/components/ErrorLayout.svelte';
-  import { getOpenApiProviders } from '$lib/services/open-api';
+  import '#lib/app.css';
+  import ErrorLayout from '#lib/components/ErrorLayout.svelte';
+  import { getOpenApiProviders } from '#lib/services/open-api.js';
   import {
     commandPaletteManager,
     CommandPaletteProvider,

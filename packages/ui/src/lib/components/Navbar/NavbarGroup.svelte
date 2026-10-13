@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Text from '$lib/components/Text/Text.svelte';
-  import type { FontWeight, NavbarVariant, Size, TextColor } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import Text from '#lib/components/Text/Text.svelte';
+  import type { FontWeight, NavbarVariant, Size, TextColor } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { tv } from 'tailwind-variants';
 
   type Props = {

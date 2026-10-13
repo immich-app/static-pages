@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { mergeInstanceUrl, StorageKey } from '$lib';
+  import { mergeInstanceUrl, StorageKey } from '#lib';
   import FullPageLayout from '$common/components/FullPageLayout.svelte';
   import {
     Button,

@@ -1,5 +1,5 @@
 <script>
-  import ComponentColors from '$lib/components/ComponentColors.svelte';
+  import ComponentColors from '#lib/components/ComponentColors.svelte';
   import { Stack, Text, ThemeSwitcher } from '@immich/ui';
 </script>
 

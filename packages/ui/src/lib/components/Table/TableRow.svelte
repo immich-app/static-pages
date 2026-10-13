@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { getTableContext } from '$lib/common/context.svelte.js';
-  import { styleVariants } from '$lib/styles.js';
-  import type { Color } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { getTableContext } from '#lib/common/context.svelte.js';
+  import { styleVariants } from '#lib/styles.js';
+  import type { Color } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import type { Snippet } from 'svelte';
   import type { HTMLAttributes } from 'svelte/elements';
   import { tv } from 'tailwind-variants';

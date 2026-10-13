@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Link from '$lib/components/Link/Link.svelte';
-  import Text from '$lib/components/Text/Text.svelte';
+  import Link from '#lib/components/Link/Link.svelte';
+  import Text from '#lib/components/Text/Text.svelte';
 
   type Props = {
     href: string;

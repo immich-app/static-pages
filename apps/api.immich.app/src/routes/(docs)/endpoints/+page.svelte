@@ -1,7 +1,7 @@
 <script lang="ts">
-  import ApiPageContent from '$lib/components/ApiPageContent.svelte';
-  import ApiTagSummary from '$lib/components/ApiTagSummary.svelte';
-  import { getOpenApi } from '$lib/services/open-api';
+  import ApiPageContent from '#lib/components/ApiPageContent.svelte';
+  import ApiTagSummary from '#lib/components/ApiTagSummary.svelte';
+  import { getOpenApi } from '#lib/services/open-api.js';
 
   const { tags } = getOpenApi();
 </script>

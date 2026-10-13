@@ -1,6 +1,6 @@
 <script lang="ts">
-  import ComponentColors from '$lib/components/ComponentColors.svelte';
-  import ComponentSizes from '$lib/components/ComponentSizes.svelte';
+  import ComponentColors from '#lib/components/ComponentColors.svelte';
+  import ComponentSizes from '#lib/components/ComponentSizes.svelte';
   import { Heading, NavbarGroup, NavbarItem } from '@immich/ui';
   import { mdiButtonPointer, mdiCardOutline, mdiHome } from '@mdi/js';
 </script>

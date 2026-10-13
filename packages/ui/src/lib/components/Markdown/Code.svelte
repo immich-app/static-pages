@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Code from '$lib/components/Code/Code.svelte';
-  import CodeBlock from '$lib/components/CodeBlock/CodeBlock.svelte';
+  import Code from '#lib/components/Code/Code.svelte';
+  import CodeBlock from '#lib/components/CodeBlock/CodeBlock.svelte';
   import * as languages from 'svelte-highlight/languages';
 
   type Props = {

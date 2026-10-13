@@ -1,10 +1,10 @@
 <script lang="ts">
-  import IconButton from '$lib/components/IconButton/IconButton.svelte';
-  import ImageCard from '$lib/components/ImageCard/ImageCard.svelte';
-  import { zIndex } from '$lib/constants.js';
-  import { t } from '$lib/services/translation.svelte.js';
-  import type { CarouselImageItem, TranslationProps } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import IconButton from '#lib/components/IconButton/IconButton.svelte';
+  import ImageCard from '#lib/components/ImageCard/ImageCard.svelte';
+  import { zIndex } from '#lib/constants.js';
+  import { t } from '#lib/services/translation.svelte.js';
+  import type { CarouselImageItem, TranslationProps } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { mdiChevronLeft, mdiChevronRight } from '@mdi/js';
   import type { Snippet } from 'svelte';
   import { fade } from 'svelte/transition';

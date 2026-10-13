@@ -1,6 +1,6 @@
-import type { Shortcut } from '$lib/actions/shortcut.js';
-import type { ChildKey } from '$lib/constants.js';
-import type { Translations } from '$lib/services/translation.svelte.js';
+import type { Shortcut } from '#lib/actions/shortcut.js';
+import type { ChildKey } from '#lib/constants.js';
+import type { Translations } from '#lib/services/translation.svelte.js';
 import type { TimeValue } from 'bits-ui';
 import type { DateTime } from 'luxon';
 import type { Component, Snippet } from 'svelte';

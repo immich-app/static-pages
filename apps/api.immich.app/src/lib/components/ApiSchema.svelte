@@ -1,10 +1,10 @@
 <script lang="ts">
-  import ApiSchemaEnum from '$lib/components/ApiSchemaEnum.svelte';
-  import ApiSchemaObject from '$lib/components/ApiSchemaObject.svelte';
-  import ApiSchemaRef from '$lib/components/ApiSchemaRef.svelte';
-  import ApiSchemaType from '$lib/components/ApiSchemaType.svelte';
-  import { isRef } from '$lib/services/open-api';
-  import type { ReferenceObject, SchemaObject } from '$lib/services/open-api.d';
+  import ApiSchemaEnum from '#lib/components/ApiSchemaEnum.svelte';
+  import ApiSchemaObject from '#lib/components/ApiSchemaObject.svelte';
+  import ApiSchemaRef from '#lib/components/ApiSchemaRef.svelte';
+  import ApiSchemaType from '#lib/components/ApiSchemaType.svelte';
+  import { isRef } from '#lib/services/open-api.js';
+  import type { ReferenceObject, SchemaObject } from '#lib/services/open-api.d.js';
 
   type Props = {
     schema?: SchemaObject | ReferenceObject;

@@ -1,4 +1,4 @@
-import { PUBLIC_IMMICH_PAY_HOST } from '$env/static/public';
+import { PUBLIC_IMMICH_PAY_HOST } from '$app/env/public';
 
 export enum ImmichLicense {
   Server = 'immich-server',
@@ -19,6 +19,7 @@ export type PaymentStatusResponseDto = {
 
 export const getPaymentStatus = async (orderId: string) => {
   const response = await fetch(new URL(`/api/v1/payment/status/${orderId}`, PUBLIC_IMMICH_PAY_HOST));
+
   return response.ok ? ((await response.json()) as PaymentStatusResponseDto) : undefined;
 };
 

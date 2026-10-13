@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getProjectUrl, ProjectTag, type Project } from '$lib';
+  import { getProjectUrl, ProjectTag, type Project } from '#lib';
   import { Badge, Card, CardBody, CardHeader, Heading, Link, Text, type Color, type IconLike } from '@immich/ui';
   import { mdiAlertOutline, mdiCheckDecagram, mdiCodeTags, mdiOpenInNew, mdiRobot, mdiWeb } from '@mdi/js/mdi';
 

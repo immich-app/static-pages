@@ -1,5 +1,5 @@
 <script lang="ts">
-  import TableHeader from '$lib/components/Table/TableHeader.svelte';
+  import TableHeader from '#lib/components/Table/TableHeader.svelte';
   import type { Snippet } from 'svelte';
 
   type Props = {

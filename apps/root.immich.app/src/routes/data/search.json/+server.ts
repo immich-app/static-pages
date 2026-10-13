@@ -1,6 +1,6 @@
-import { posts, typeToLabel, type BlogPost } from '$lib';
-import type { SearchDoc } from '$lib/search';
-import { getPostText } from '$lib/server/posts';
+import { posts, typeToLabel, type BlogPost } from '#lib';
+import type { SearchDoc } from '#lib/search.js';
+import { getPostText } from '#lib/server/posts.js';
 import { json } from '@sveltejs/kit';
 
 export const prerender = true;

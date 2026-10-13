@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import Text from '$lib/components/Text/Text.svelte';
-  import { t } from '$lib/services/translation.svelte.js';
-  import type { PageFooterNavigationProps } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import Text from '#lib/components/Text/Text.svelte';
+  import { t } from '#lib/services/translation.svelte.js';
+  import type { PageFooterNavigationProps } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { mdiChevronLeft, mdiChevronRight } from '@mdi/js';
 
   const { previous, next, translations, class: className, ...restProps }: PageFooterNavigationProps = $props();

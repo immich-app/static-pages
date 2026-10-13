@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { carouselImageItems } from '$lib/constants.js';
+  import { carouselImageItems } from '#lib/constants.js';
   import { mdiHeart, mdiPlayCircleOutline, mdiStar } from '@mdi/js';
   import { ImageCarousel } from '@immich/ui';
 

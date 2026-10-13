@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ComponentSizes from '$lib/components/ComponentSizes.svelte';
+  import ComponentSizes from '#lib/components/ComponentSizes.svelte';
   import { Field, Stack, Textarea } from '@immich/ui';
 
   const lorem = `The quick brown fox jumps over the lazy dog`;

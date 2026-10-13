@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { carouselImageItems, ExampleActions, exampleActions } from '$lib/constants.js';
+  import { carouselImageItems, ExampleActions, exampleActions } from '#lib/constants.js';
   import {
     ActionBar,
     AppShell,

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import ComponentExamples from '$lib/components/ComponentExamples.svelte';
-  import ComponentPage from '$lib/components/ComponentPage.svelte';
+  import ComponentExamples from '#lib/components/ComponentExamples.svelte';
+  import ComponentPage from '#lib/components/ComponentPage.svelte';
   import CustomExample from './CustomExample.svelte';
   import customExample from './CustomExample.svelte?raw';
   import BasicExample from './BasicExample.svelte';

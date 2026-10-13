@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { ChildKey } from '$lib/constants.js';
-  import Child from '$lib/internal/Child.svelte';
-  import type { ChildData } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { ChildKey } from '#lib/constants.js';
+  import Child from '#lib/internal/Child.svelte';
+  import type { ChildData } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { tv } from 'tailwind-variants';
 
   type Props = {

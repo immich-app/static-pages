@@ -1,7 +1,7 @@
 <script lang="ts">
   import PageContent from '$common/components/PageContent.svelte';
-  import { getCategoryProviders, siteMetadata } from '$lib';
-  import '$lib/app.css';
+  import { getCategoryProviders, siteMetadata } from '#lib';
+  import '#lib/app.css';
   import {
     AppShell,
     AppShellHeader,

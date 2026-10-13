@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ExampleActions, exampleActions } from '$lib/constants.js';
+  import { ExampleActions, exampleActions } from '#lib/constants.js';
   import { ActionBar, ControlBarHeader, ControlBarTitle, MenuItemType, Stack } from '@immich/ui';
 
   const onClose = () => {};

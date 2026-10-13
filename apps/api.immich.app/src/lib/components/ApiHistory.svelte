@@ -1,6 +1,6 @@
 <script lang="ts">
-  import ApiState from '$lib/components/ApiState.svelte';
-  import type { HistoryItem } from '$lib/services/open-api.d';
+  import ApiState from '#lib/components/ApiState.svelte';
+  import type { HistoryItem } from '#lib/services/open-api.d.js';
   import { Code, Markdown } from '@immich/ui';
 
   type Props = {

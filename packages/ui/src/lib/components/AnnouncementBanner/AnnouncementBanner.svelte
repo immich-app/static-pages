@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import Text from '$lib/components/Text/Text.svelte';
-  import { styleVariants } from '$lib/styles.js';
-  import type { IconLike, Size, TextColor } from '$lib/types.js';
-  import { cleanClass, resolveIcon } from '$lib/utilities/internal.js';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import Text from '#lib/components/Text/Text.svelte';
+  import { styleVariants } from '#lib/styles.js';
+  import type { IconLike, Size, TextColor } from '#lib/types.js';
+  import { cleanClass, resolveIcon } from '#lib/utilities/internal.js';
   import { mdiAlertCircleOutline, mdiAlertOutline, mdiCheckAll, mdiInformationOutline, mdiPartyPopper } from '@mdi/js';
   import { DateTime } from 'luxon';
   import { onDestroy, onMount, type Snippet } from 'svelte';

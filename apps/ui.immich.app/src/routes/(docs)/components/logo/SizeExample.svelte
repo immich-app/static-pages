@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ComponentSizes from '$lib/components/ComponentSizes.svelte';
+  import ComponentSizes from '#lib/components/ComponentSizes.svelte';
   import { Card, CardBody, HStack, Logo, Stack, Text } from '@immich/ui';
 </script>
 

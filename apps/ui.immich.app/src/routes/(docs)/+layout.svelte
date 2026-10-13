@@ -2,8 +2,8 @@
   import { beforeNavigate } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
-  import { components } from '$lib/constants.js';
-  import { asComponentHref } from '$lib/utilities.js';
+  import { components } from '#lib/constants.js';
+  import { asComponentHref } from '#lib/utilities.js';
   import {
     AppShell,
     AppShellHeader,
@@ -39,7 +39,11 @@
   const sidebar = new MediaQuery(`min-width: 850px`);
   let open = $derived(sidebar.current);
 
-  beforeNavigate(() => {
+  beforeNavigate(({ shallow, type }) => {
+    if (shallow && type === 'goto') {
+      return;
+    }
+
     if (!sidebar.current) {
       open = false;
     }
@@ -112,12 +116,7 @@
           icon={component.icon}
           activeIcon={component.activeIcon}
           items={component.items?.map(
-            ({ name, ...item }) =>
-              ({
-                title: name,
-                href: asComponentHref(name),
-                ...item,
-              }) as NavbarProps,
+            ({ name, ...item }) => ({ title: name, href: asComponentHref(name), ...item }) as NavbarProps,
           )}
         />
       {/each}

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { browser } from '$app/environment';
-  import type { TimelineItem } from '$lib';
+  import { browser } from '$app/env';
+  import type { TimelineItem } from '#lib';
   import { Checkbox, Icon, Link, Logo, Text } from '@immich/ui';
 
   type Props = {

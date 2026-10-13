@@ -1,5 +1,5 @@
 <script>
-  import ComponentSizes from '$lib/components/ComponentSizes.svelte';
+  import ComponentSizes from '#lib/components/ComponentSizes.svelte';
   import { Meter, Stack, Text } from '@immich/ui';
 </script>
 

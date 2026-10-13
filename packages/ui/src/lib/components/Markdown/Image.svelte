@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { IMAGE_SIZES_QUERY } from '$lib/utilities/image-sizes.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { IMAGE_SIZES_QUERY } from '#lib/utilities/image-sizes.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import type { Snippet } from 'svelte';
 
   type Props = {

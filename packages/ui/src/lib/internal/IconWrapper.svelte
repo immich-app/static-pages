@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import type { Size } from '$lib/types.js';
-  import type { IconLike } from '$lib/types.js';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import type { Size } from '#lib/types.js';
+  import type { IconLike } from '#lib/types.js';
 
   type Props = {
     icon: IconLike;

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { resolveMetadata, resolveUrl, type ArticleMetadata, type Metadata } from '$lib/utilities/common.js';
+  import { resolveMetadata, resolveUrl, type ArticleMetadata, type Metadata } from '#lib/utilities/common.js';
 
   type Props = {
     site: Metadata;

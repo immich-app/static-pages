@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { playgroundManager } from '$lib/services/playground-manager.svelte';
+  import { playgroundManager } from '#lib/services/playground-manager.svelte.js';
   import { Button, Code, Field, HStack, Input, Modal, ModalBody, ModalFooter, Stack, Text } from '@immich/ui';
   import { mdiConnection } from '@mdi/js';
 

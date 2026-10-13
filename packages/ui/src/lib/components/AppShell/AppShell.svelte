@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { setChildContext } from '$lib/common/context.svelte.js';
-  import Scrollable from '$lib/components/Scrollable/Scrollable.svelte';
-  import { ChildKey, zIndex } from '$lib/constants.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { setChildContext } from '#lib/common/context.svelte.js';
+  import Scrollable from '#lib/components/Scrollable/Scrollable.svelte';
+  import { ChildKey, zIndex } from '#lib/constants.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import type { Snippet } from 'svelte';
 
   type Props = {

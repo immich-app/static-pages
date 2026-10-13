@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Button from '$lib/internal/Button.svelte';
-  import type { ButtonProps } from '$lib/types.js';
+  import Button from '#lib/internal/Button.svelte';
+  import type { ButtonProps } from '#lib/types.js';
 
   let { ref = $bindable(null), color = 'primary', ...props }: ButtonProps = $props();
 </script>

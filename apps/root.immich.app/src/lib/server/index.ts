@@ -1,4 +1,4 @@
-import { blogMetadata, posts } from '$lib';
+import { blogMetadata, posts } from '#lib';
 import { Feed } from 'feed';
 import { DateTime } from 'luxon';
 

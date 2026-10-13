@@ -1,5 +1,5 @@
 <script lang="ts">
-  import TableBody from '$lib/components/Table/TableBody.svelte';
+  import TableBody from '#lib/components/Table/TableBody.svelte';
   import type { Snippet } from 'svelte';
 
   type Props = {

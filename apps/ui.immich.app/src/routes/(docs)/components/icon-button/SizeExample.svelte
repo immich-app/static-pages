@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ComponentSizes from '$lib/components/ComponentSizes.svelte';
+  import ComponentSizes from '#lib/components/ComponentSizes.svelte';
   import { Heading, HStack, IconButton, Stack } from '@immich/ui';
   import { mdiMagnify } from '@mdi/js';
 

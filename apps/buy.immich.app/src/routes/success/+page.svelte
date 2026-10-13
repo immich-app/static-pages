@@ -1,7 +1,7 @@
 <script lang="ts">
   import DefaultPageLayout from '$common/components/DefaultPageLayout.svelte';
-  import { getPaymentStatus, getRedirectUrl, PurchaseStatus, type PaymentStatusResponseDto } from '$lib';
-  import LicenseKey from '$lib/components/LicenseKey.svelte';
+  import { getPaymentStatus, getRedirectUrl, PurchaseStatus, type PaymentStatusResponseDto } from '#lib';
+  import LicenseKey from '#lib/components/LicenseKey.svelte';
   import { Alert, Button, Card, CardBody, Heading, LoadingSpinner, Stack, Text } from '@immich/ui';
   import { onMount } from 'svelte';
   import type { PageData } from './$types';

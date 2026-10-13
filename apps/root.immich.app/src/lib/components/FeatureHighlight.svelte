@@ -1,6 +1,6 @@
 <script lang="ts">
   import { cleanClass } from '$common';
-  import FeatureContainer from '$lib/components/FeatureContainer.svelte';
+  import FeatureContainer from '#lib/components/FeatureContainer.svelte';
   import type { Snippet } from 'svelte';
 
   type Props = {

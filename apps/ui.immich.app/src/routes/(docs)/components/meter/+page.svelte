@@ -1,7 +1,7 @@
 <script lang="ts">
-  import ComponentExamples from '$lib/components/ComponentExamples.svelte';
-  import ComponentLink from '$lib/components/ComponentLink.svelte';
-  import ComponentPage from '$lib/components/ComponentPage.svelte';
+  import ComponentExamples from '#lib/components/ComponentExamples.svelte';
+  import ComponentLink from '#lib/components/ComponentLink.svelte';
+  import ComponentPage from '#lib/components/ComponentPage.svelte';
   import { Markdown, Text } from '@immich/ui';
   import ColorExample from './ColorExample.svelte';
   import colorExample from './ColorExample.svelte?raw';

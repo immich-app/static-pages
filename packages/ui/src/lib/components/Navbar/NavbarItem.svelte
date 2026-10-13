@@ -1,11 +1,11 @@
 <script lang="ts">
   import { page } from '$app/state';
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import Link from '$lib/components/Link/Link.svelte';
-  import NavbarItem from '$lib/components/Navbar/NavbarItem.svelte';
-  import { t } from '$lib/services/translation.svelte.js';
-  import type { IconLike, IconProps, NavbarProps } from '$lib/types.js';
-  import { cleanClass, isIconLike } from '$lib/utilities/internal.js';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import Link from '#lib/components/Link/Link.svelte';
+  import NavbarItem from '#lib/components/Navbar/NavbarItem.svelte';
+  import { t } from '#lib/services/translation.svelte.js';
+  import type { IconLike, IconProps, NavbarProps } from '#lib/types.js';
+  import { cleanClass, isIconLike } from '#lib/utilities/internal.js';
   import { mdiChevronDown, mdiChevronRight } from '@mdi/js';
   import { tv } from 'tailwind-variants';
 

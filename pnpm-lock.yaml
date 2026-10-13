@@ -276,10 +276,10 @@ importers:
         specifier: ^1.55.1
         version: 1.64.0
       svelte:
-        specifier: ^5.39.5
+        specifier: ^5.57.1
         version: 5.57.2(@typescript-eslint/types@8.71.1)
       svelte-check:
-        specifier: ^4.3.2
+        specifier: ^4.7.5
         version: 4.7.6(@typescript/typescript6@6.0.2)(picomatch@4.0.7)(svelte@5.57.2(@typescript-eslint/types@8.71.1))
       tailwindcss:
         specifier: ^4.2.2
@@ -288,7 +288,7 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite:
-        specifier: ^8.0.0
+        specifier: ^8.0.12
         version: 8.3.4(@types/node@24.19.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: ^4.1.0
@@ -361,10 +361,10 @@ importers:
         specifier: ^16.0.0
         version: 16.34.0
       svelte:
-        specifier: ^5.39.5
+        specifier: ^5.57.1
         version: 5.57.2(@typescript-eslint/types@8.71.1)
       svelte-check:
-        specifier: ^4.3.2
+        specifier: ^4.7.5
         version: 4.7.6(@typescript/typescript6@6.0.2)(picomatch@4.0.7)(svelte@5.57.2(@typescript-eslint/types@8.71.1))
       tailwindcss:
         specifier: ^4.2.2
@@ -373,7 +373,7 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite:
-        specifier: ^8.0.0
+        specifier: ^8.0.12
         version: 8.3.4(@types/node@24.19.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: ^4.0.12
@@ -428,10 +428,10 @@ importers:
         specifier: ^1.55.1
         version: 1.64.0
       svelte:
-        specifier: ^5.39.5
+        specifier: ^5.57.1
         version: 5.57.2(@typescript-eslint/types@8.71.1)
       svelte-check:
-        specifier: ^4.3.2
+        specifier: ^4.7.5
         version: 4.7.6(@typescript/typescript6@6.0.2)(picomatch@4.0.7)(svelte@5.57.2(@typescript-eslint/types@8.71.1))
       tailwindcss:
         specifier: ^4.2.2
@@ -440,7 +440,7 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite:
-        specifier: ^8.0.0
+        specifier: ^8.0.12
         version: 8.3.4(@types/node@24.19.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: ^4.1.0
@@ -507,10 +507,10 @@ importers:
         specifier: ^1.55.1
         version: 1.64.0
       svelte:
-        specifier: ^5.39.5
+        specifier: ^5.57.1
         version: 5.57.2(@typescript-eslint/types@8.71.1)
       svelte-check:
-        specifier: ^4.3.2
+        specifier: ^4.7.5
         version: 4.7.6(@typescript/typescript6@6.0.2)(picomatch@4.0.7)(svelte@5.57.2(@typescript-eslint/types@8.71.1))
       tailwindcss:
         specifier: ^4.2.2
@@ -519,7 +519,7 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite:
-        specifier: ^8.0.0
+        specifier: ^8.0.12
         version: 8.3.4(@types/node@24.19.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: ^4.1.0
@@ -614,10 +614,10 @@ importers:
         specifier: ^1.55.1
         version: 1.64.0
       svelte:
-        specifier: ^5.39.5
+        specifier: ^5.57.1
         version: 5.57.2(@typescript-eslint/types@8.71.1)
       svelte-check:
-        specifier: ^4.3.2
+        specifier: ^4.7.5
         version: 4.7.6(@typescript/typescript6@6.0.2)(picomatch@4.0.7)(svelte@5.57.2(@typescript-eslint/types@8.71.1))
       tailwindcss:
         specifier: ^4.2.2
@@ -626,7 +626,7 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite:
-        specifier: ^8.0.0
+        specifier: ^8.0.12
         version: 8.3.4(@types/node@24.19.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: ^4.1.0
@@ -681,10 +681,10 @@ importers:
         specifier: ^1.55.1
         version: 1.64.0
       svelte:
-        specifier: ^5.39.5
+        specifier: ^5.57.1
         version: 5.57.2(@typescript-eslint/types@8.71.1)
       svelte-check:
-        specifier: ^4.3.2
+        specifier: ^4.7.5
         version: 4.7.6(@typescript/typescript6@6.0.2)(picomatch@4.0.7)(svelte@5.57.2(@typescript-eslint/types@8.71.1))
       tailwindcss:
         specifier: ^4.2.2
@@ -693,7 +693,7 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite:
-        specifier: ^8.0.0
+        specifier: ^8.0.12
         version: 8.3.4(@types/node@24.19.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: ^4.1.0
@@ -796,10 +796,10 @@ importers:
         specifier: ^16.0.0
         version: 16.34.0
       svelte:
-        specifier: ^5.39.5
+        specifier: ^5.57.1
         version: 5.57.2(@typescript-eslint/types@8.71.1)
       svelte-check:
-        specifier: ^4.3.2
+        specifier: ^4.7.5
         version: 4.7.6(@typescript/typescript6@6.0.2)(picomatch@4.0.7)(svelte@5.57.2(@typescript-eslint/types@8.71.1))
       tailwindcss:
         specifier: ^4.2.2
@@ -808,7 +808,7 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite:
-        specifier: ^8.0.0
+        specifier: ^8.0.12
         version: 8.3.4(@types/node@24.19.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: ^4.1.0
@@ -893,7 +893,7 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite:
-        specifier: ^8.0.0
+        specifier: ^8.0.12
         version: 8.3.4(@types/node@25.9.8)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: ^4.1.0
@@ -1077,10 +1077,10 @@ importers:
         specifier: ^0.3.0
         version: 0.3.25
       svelte:
-        specifier: ^5.37.0
+        specifier: ^5.57.1
         version: 5.57.2(@typescript-eslint/types@8.71.1)
       svelte-check:
-        specifier: ^4.0.0
+        specifier: ^4.7.5
         version: 4.7.6(@typescript/typescript6@6.0.2)(picomatch@4.0.7)(svelte@5.57.2(@typescript-eslint/types@8.71.1))
       tailwindcss:
         specifier: ^4.2.2
@@ -1089,7 +1089,7 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite:
-        specifier: ^8.0.0
+        specifier: ^8.0.12
         version: 8.3.4(@types/node@25.9.8)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: ^4.1.0

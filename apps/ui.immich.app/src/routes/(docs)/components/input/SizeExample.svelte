@@ -1,5 +1,5 @@
 <script>
-  import ComponentSizes from '$lib/components/ComponentSizes.svelte';
+  import ComponentSizes from '#lib/components/ComponentSizes.svelte';
   import { Field, Input, Stack } from '@immich/ui';
 </script>
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import ApiSchema from '$lib/components/ApiSchema.svelte';
-  import type { ApiModel } from '$lib/services/open-api';
+  import ApiSchema from '#lib/components/ApiSchema.svelte';
+  import type { ApiModel } from '#lib/services/open-api.js';
   import { Code, Heading } from '@immich/ui';
   import type { PageData } from './$types';
 

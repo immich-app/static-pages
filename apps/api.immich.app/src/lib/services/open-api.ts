@@ -1,7 +1,7 @@
 import { goto } from '$app/navigation';
-import type { Pathname } from '$app/types';
-import { PUBLIC_IMMICH_SPEC_URL } from '$env/static/public';
-import { ApiPage } from '$lib';
+import type { Path } from '$app/types';
+import { PUBLIC_IMMICH_SPEC_URL } from '$app/env/public';
+import { ApiPage } from '#lib';
 import type {
   HistoryItem,
   OpenAPIObject,
@@ -11,7 +11,7 @@ import type {
   RequestBodyObject,
   SchemaObject,
   State,
-} from '$lib/services/open-api.d';
+} from '#lib/services/open-api.d.js';
 import { defaultProvider, type ActionItem } from '@immich/ui';
 import { mdiApi, mdiTag, mdiTagMultiple } from '@mdi/js/mdi';
 
@@ -19,7 +19,7 @@ export type ApiMethod = 'GET' | 'PUT' | 'POST' | 'DELETE' | 'OPTIONS' | 'HEAD' |
 export type AuthenticationMethod = 'ApiKey' | 'Cookie' | 'Bearer';
 
 type Linkable<T> = T & {
-  href: Pathname;
+  href: Path;
   name: string;
   previous?: Linkable<T>;
   next?: Linkable<T>;
@@ -78,8 +78,8 @@ const isParameterObject =
     (param as ParameterObject).in === type;
 
 const asSlug = (tag: string) => tag.toLowerCase().replaceAll(/\s/g, '-');
-const getModelHref = (model: string) => `${ApiPage.Models}/${model}` as Pathname;
-const getTagHref = (tag: string) => `${ApiPage.Endpoints}/${asSlug(tag)}` as Pathname;
+const getModelHref = (model: string) => `${ApiPage.Models}/${model}` as Path;
+const getTagHref = (tag: string) => `${ApiPage.Endpoints}/${asSlug(tag)}` as Path;
 
 export const withExtensions = <T>(param: ApiCustomExtensions<T>): T & { history?: HistoryItem[]; state?: State } => {
   return { ...param, history: param['x-immich-history'], state: param['x-immich-state'] };
@@ -96,6 +96,7 @@ const methodColor: Partial<Record<ApiMethod, string>> = {
   PATCH: 'text-warning',
   DELETE: 'text-danger',
 };
+
 export const getEndpointColor = (endpoint: ApiEndpoint) =>
   endpoint.deprecated ? '' : (methodColor[endpoint.method] ?? '');
 
@@ -221,7 +222,7 @@ export const parseSpec = (spec: OpenAPIObject) => {
         addTag({ name: tag });
       }
 
-      const endpointHref = `${tagsMap[tag].href}/${item.operationId}` as Pathname;
+      const endpointHref = `${tagsMap[tag].href}/${item.operationId}` as Path;
       tagsMap[tag].endpoints.push({ ...item, href: endpointHref });
     }
   }

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ApiNextStepCard from '$lib/components/ApiNextStepCard.svelte';
+  import ApiNextStepCard from '#lib/components/ApiNextStepCard.svelte';
   import { Heading, Stack } from '@immich/ui';
 
   type Props = {

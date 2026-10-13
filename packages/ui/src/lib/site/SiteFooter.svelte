@@ -1,11 +1,11 @@
 <script lang="ts">
-  import Heading from '$lib/components/Heading/Heading.svelte';
-  import IconButton from '$lib/components/IconButton/IconButton.svelte';
-  import HStack from '$lib/components/Stack/HStack.svelte';
-  import Stack from '$lib/components/Stack/Stack.svelte';
-  import { Constants } from '$lib/site/constants.js';
-  import SiteFooterLink from '$lib/site/SiteFooterLink.svelte';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import Heading from '#lib/components/Heading/Heading.svelte';
+  import IconButton from '#lib/components/IconButton/IconButton.svelte';
+  import HStack from '#lib/components/Stack/HStack.svelte';
+  import Stack from '#lib/components/Stack/Stack.svelte';
+  import { Constants } from '#lib/site/constants.js';
+  import SiteFooterLink from '#lib/site/SiteFooterLink.svelte';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { siDiscord, siGithub, siReddit, siRss, siWeblate, siX, siYoutube } from 'simple-icons';
 
   type Props = {

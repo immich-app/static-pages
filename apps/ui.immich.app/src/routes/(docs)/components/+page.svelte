@@ -1,8 +1,8 @@
 <script lang="ts">
-  import ComponentCard from '$lib/components/ComponentCard.svelte';
-  import Grid from '$lib/components/Grid.svelte';
-  import MarkdownPage from '$lib/components/MarkdownPage.svelte';
-  import { components } from '$lib/constants.js';
+  import ComponentCard from '#lib/components/ComponentCard.svelte';
+  import Grid from '#lib/components/Grid.svelte';
+  import MarkdownPage from '#lib/components/MarkdownPage.svelte';
+  import { components } from '#lib/constants.js';
 </script>
 
 <MarkdownPage
