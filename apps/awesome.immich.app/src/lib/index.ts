@@ -1,4 +1,5 @@
-import { defaultProvider, linkCommands, type ActionProvider } from '@immich/ui';
+import { defaultProvider, linkCommands, type ActionProvider, type Color, type IconLike } from '@immich/ui';
+import { mdiAlertOutline, mdiCheckDecagram, mdiRobot } from '@mdi/js';
 import { orderBy } from 'lodash-es';
 import { z } from 'zod';
 import items from '../data/items.json';
@@ -21,6 +22,12 @@ export enum ProjectTag {
   Unmaintained = 'Unmaintained',
   VibeCoded = 'Vibe-Coded',
 }
+
+export const badges: Record<ProjectTag, { color: Color; icon: IconLike; hideable: boolean }> = {
+  [ProjectTag.Official]: { color: 'primary', icon: mdiCheckDecagram, hideable: false },
+  [ProjectTag.Unmaintained]: { color: 'warning', icon: mdiAlertOutline, hideable: true },
+  [ProjectTag.VibeCoded]: { color: 'warning', icon: mdiRobot, hideable: true },
+};
 
 export const projectSchema = z
   .object({
