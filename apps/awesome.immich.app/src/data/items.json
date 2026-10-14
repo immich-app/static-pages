@@ -127,6 +127,12 @@
         "description": "Unofficial native Linux desktop client (Flutter/GTK) aiming for parity with the web and mobile apps: timeline, memories, viewer with live and 360° photos, faces, albums, sharing, map, search, admin settings, folder backup and tray. AppImage available.",
         "sourceCodeUrl": "https://github.com/Pacuka/fotoroll",
         "tags": ["Vibe-Coded"]
+      },
+      {
+        "title": "Immich Splash",
+        "description": "System-tray app for Windows and Linux that backs up chosen PC folders to Immich, with a library browser styled like the web app. Uses only the Immich API.",
+        "sourceCodeUrl": "https://github.com/TypicalZedF/immich-splash",
+        "tags": ["Vibe-Coded"]
       }
     ]
   },
