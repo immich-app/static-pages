@@ -20,7 +20,7 @@ export const load = (async ({ url }) => {
   const targetUrl = mergeInstanceUrl(url, instanceUrl);
 
   if (shouldRedirect(url)) {
-    redirect(302, targetUrl);
+    redirect(302, targetUrl, { external: true });
   }
 
   return { instanceUrl, targetUrl };
