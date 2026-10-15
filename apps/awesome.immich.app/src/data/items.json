@@ -278,7 +278,7 @@
         "title": "Immich ReverseGeo",
         "description": "Improve, correct, and get more precise reverse geocoding using Overture and GADM. Integrated geocoding",
         "websiteUrl": "https://immich-reversegeo.github.io",
-        "sourceCodeUrl": "https://github.com/immich-reversegeo/immich-reversegeo.github.io"
+        "sourceCodeUrl": "https://github.com/immich-reversegeo/immich-reversegeo"
       },
       {
         "title": "Immich Power Tools",
