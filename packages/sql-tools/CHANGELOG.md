@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.5](https://github.com/immich-app/static-pages/compare/sql-tools-v0.6.4...sql-tools-v0.6.5) (2026-10-15)
+
+
+### Bug Fixes
+
+* **deps:** update dependency kysely-postgres-js to v5 ([#850](https://github.com/immich-app/static-pages/issues/850)) ([0bb948e](https://github.com/immich-app/static-pages/commit/0bb948e639581abf57546b8dc55bcdf63f985813))
+* **sql-tools:** parse postgres timestamps with a year below 100 ([#892](https://github.com/immich-app/static-pages/issues/892)) ([6e9cb53](https://github.com/immich-app/static-pages/commit/6e9cb531d3cd26b81b02ab050575da62f7c727d3))
+
 ## [0.6.4](https://github.com/immich-app/static-pages/compare/sql-tools-v0.6.3...sql-tools-v0.6.4) (2026-09-23)
 
 
