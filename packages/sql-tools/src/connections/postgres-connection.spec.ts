@@ -1,4 +1,4 @@
-import { asPostgresConfig } from 'src/connections/postgres-connection.js';
+import { asPostgresConfig, createPostgres } from 'src/connections/postgres-connection.js';
 import { describe, expect, it } from 'vitest';
 
 describe('database  utils', () => {
@@ -80,6 +80,19 @@ describe('database  utils', () => {
         host: '/path/to/socket',
         database: 'database2',
       });
+    });
+  });
+
+  describe('createPostgres', () => {
+    const { parsers } = createPostgres().options;
+
+    it('should parse timestamps with a year below 100', () => {
+      expect(parsers[1184]('0015-09-15 00:00:00+00')).toEqual(new Date('0015-09-15T00:00:00Z'));
+      expect(parsers[1184]('0099-12-31 00:00:00+00')).toEqual(new Date('0099-12-31T00:00:00Z'));
+    });
+
+    it('should parse dates with a year below 100', () => {
+      expect(parsers[1082]('0015-09-15')).toEqual(new Date('0015-09-15T00:00:00Z'));
     });
   });
 });
