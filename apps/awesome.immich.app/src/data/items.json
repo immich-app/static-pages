@@ -74,11 +74,6 @@
         "sourceCodeUrl": "https://github.com/mezmerize/harbour-immich"
       },
       {
-        "title": "Immich Companion",
-        "description": "Browser extension that adds right-click save to Immich, CLIP-powered search from the toolbar, optional new tab photo memories, and inline search results that show your photos alongside Google/DuckDuckGo results.",
-        "sourceCodeUrl": "https://github.com/bjoernch/immich-companion"
-      },
-      {
         "title": "Picture Frame",
         "description": "Self-hosted digital photo frame for the Raspberry Pi that syncs an Immich album, with smooth crossfades even on a Pi Zero, motion-aware screen power, and Home Assistant control over MQTT.",
         "websiteUrl": "https://pictureframe.ekemate.hu",
@@ -149,8 +144,7 @@
       {
         "title": "Immich Downloader",
         "description": "Downloads a configurable number of random photos based on people or album ID.",
-        "sourceCodeUrl": "https://github.com/jon6fingrs/immich-dl",
-        "tags": ["Unmaintained"]
+        "sourceCodeUrl": "https://github.com/jon6fingrs/immich-dl"
       },
       {
         "title": "Immich Machine Learning Load Balancer",
@@ -162,7 +156,7 @@
         "title": "Immich-Slideshow-Toolkit",
         "description": "Commandline tools for creating video slideshow Mp4s from Immich albums.",
         "sourceCodeUrl": "https://github.com/knom/immich-slideshow-toolkit",
-        "tags": ["Unmaintained"]
+        "tags": ["Unmaintained", "Vibe-Coded"]
       },
       {
         "title": "TeleImmich",
@@ -357,12 +351,6 @@
         "description": "A rewrite of the original Immich Docker Compose file using Podman Quadlets, with a set of extra guides in the repository's wiki.",
         "websiteUrl": "https://github.com/linux-universe/immich-podman-quadlets/blob/main/README.md",
         "sourceCodeUrl": "https://github.com/linux-universe/immich-podman-quadlets"
-      },
-      {
-        "title": "Podman/Quadlets Install",
-        "description": "Documentation for simple podman setup using quadlets.",
-        "websiteUrl": "https://github.com/tbelway/immich-podman-quadlets/blob/main/docs/install/podman-quadlet.md",
-        "sourceCodeUrl": "https://github.com/tbelway/immich-podman-quadlets"
       },
       {
         "title": "Google Photos import + albums",
