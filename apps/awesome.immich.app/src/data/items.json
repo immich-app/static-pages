@@ -23,6 +23,12 @@
         "sourceCodeUrl": "https://github.com/damongolding/immich-kiosk"
       },
       {
+        "title": "Immich Lounge",
+        "description": "Photo slideshows and a screensaver for Roku, with a self-hosted companion for setup and slideshow profiles.",
+        "websiteUrl": "https://immich-lounge.github.io/",
+        "sourceCodeUrl": "https://github.com/immich-lounge/immich-lounge"
+      },
+      {
         "title": "Immich Slides",
         "description": "Yet another Immich slideshow app — but with an actual settings UI. Configure layouts, filters, timing, and animations directly from the interface instead of Docker env files or URL parameters.",
         "sourceCodeUrl": "https://github.com/ntrampe/slides"
