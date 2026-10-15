@@ -10,8 +10,8 @@ import { transformers } from 'src/transformers/index.js';
 import { DatabaseSchema, SchemaDiff, SchemaDiffOptions, SchemaDiffResult, SchemaDiffToSqlOptions } from 'src/types.js';
 
 /**
- * Compute the difference between two database schemas
- */
+Compute the difference between two database schemas
+*/
 export const schemaDiff = (
   source: DatabaseSchema,
   target: DatabaseSchema,
@@ -46,15 +46,15 @@ export const schemaDiff = (
 };
 
 /**
- * Convert schema diffs into SQL statements
- */
+Convert schema diffs into SQL statements
+*/
 export const schemaDiffToSql = (items: SchemaDiff[], options: SchemaDiffToSqlOptions = {}): string[] => {
   return items.flatMap((item) => asSql(item, options));
 };
 
 /**
- * Convert schema diff into human readable statements
- */
+Convert schema diff into human readable statements
+*/
 export const schemaDiffToHuman = (items: SchemaDiff[]): string[] => {
   return items.flatMap((item) => asHuman(item));
 };

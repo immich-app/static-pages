@@ -1,6 +1,6 @@
-import type { Shortcut } from '$lib/actions/shortcut.js';
-import type { ChildKey } from '$lib/constants.js';
-import type { Translations } from '$lib/services/translation.svelte.js';
+import type { Shortcut } from '#lib/actions/shortcut.js';
+import type { ChildKey } from '#lib/constants.js';
+import type { Translations } from '#lib/services/translation.svelte.js';
 import type { TimeValue } from 'bits-ui';
 import type { DateTime } from 'luxon';
 import type { Component, Snippet } from 'svelte';
@@ -70,8 +70,8 @@ export type IconProps = {
   color?: Color | 'currentColor' | string;
   indicator?: Color;
   /**
-   * Flip the icon in RTL layouts
-   */
+  Flip the icon in RTL layouts
+  */
   directional?: boolean;
   flipped?: boolean;
   flopped?: boolean;
@@ -121,8 +121,8 @@ export type ContextMenuButtonProps = ButtonBase & {
 export type IconButtonProps = ButtonBase & {
   icon: IconLike;
   /**
-   * Flip the icon in RTL layouts
-   */
+  Flip the icon in RTL layouts
+  */
   directional?: boolean;
   flipped?: boolean;
   flopped?: boolean;
@@ -371,11 +371,11 @@ export type DatePickerProps = {
 export type IfLike = { $if?: () => boolean };
 
 /**
- * The event will be a `KeyboardEvent | MouseEvent` for actions triggered via
- * normal (icon) buttons and the command palette (including shortcuts), and
- * a custom event type for actions triggered via bits-ui components like the
- * context menu.
- */
+The event will be a `KeyboardEvent | MouseEvent` for actions triggered via
+normal (icon) buttons and the command palette (including shortcuts), and
+a custom event type for actions triggered via bits-ui components like the
+context menu.
+*/
 export type ActionEvent<T extends ActionItem = ActionItem> = { action: T; event: Event };
 
 export type ActionItemHandler<T extends ActionItem = ActionItem> = (

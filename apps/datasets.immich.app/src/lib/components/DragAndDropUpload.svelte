@@ -11,9 +11,9 @@
   let dragStartTarget: EventTarget | null = $state(null);
 
   /** Determines whether an event should be ignored. The event will be ignored if:
-   *  - The element dispatching the event is not the same as the element which the event listener is attached to
-   *  - The element dispatching the event is an input field
-   */
+   - The element dispatching the event is not the same as the element which the event listener is attached to
+   - The element dispatching the event is an input field
+  */
   export const shouldIgnoreEvent = (event: KeyboardEvent | ClipboardEvent): boolean => {
     if (event.target === event.currentTarget) {
       return false;

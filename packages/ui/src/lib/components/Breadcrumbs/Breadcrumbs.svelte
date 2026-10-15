@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import Link from '$lib/components/Link/Link.svelte';
-  import type { BreadcrumbItem, BreadcrumbsProps } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import Link from '#lib/components/Link/Link.svelte';
+  import type { BreadcrumbItem, BreadcrumbsProps } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { mdiChevronRight } from '@mdi/js';
 
   let { separator = mdiChevronRight, class: className, items, ...props }: BreadcrumbsProps = $props();

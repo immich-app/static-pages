@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { ApiPage } from '$lib';
-  import ApiPageContent from '$lib/components/ApiPageContent.svelte';
+  import { ApiPage } from '#lib';
+  import ApiPageContent from '#lib/components/ApiPageContent.svelte';
   import { Code, CodeBlock, Constants, Heading, Link, Text } from '@immich/ui';
   import { bash } from 'svelte-highlight/languages';
 

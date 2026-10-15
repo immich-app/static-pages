@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { getFieldContext } from '$lib/common/context.svelte.js';
-  import Label from '$lib/components/Label/Label.svelte';
-  import { styleVariants } from '$lib/styles.js';
-  import type { PinInputProps } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { getFieldContext } from '#lib/common/context.svelte.js';
+  import Label from '#lib/components/Label/Label.svelte';
+  import { styleVariants } from '#lib/styles.js';
+  import type { PinInputProps } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { PinInput, REGEXP_ONLY_DIGITS } from 'bits-ui';
   import { tv } from 'tailwind-variants';
 

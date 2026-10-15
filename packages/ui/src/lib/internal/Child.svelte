@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { getChildContext } from '$lib/common/context.svelte.js';
-  import { ChildKey } from '$lib/constants.js';
-  import type { ChildData } from '$lib/types.js';
+  import { getChildContext } from '#lib/common/context.svelte.js';
+  import { ChildKey } from '#lib/constants.js';
+  import type { ChildData } from '#lib/types.js';
   import { onMount } from 'svelte';
 
   type Props = {

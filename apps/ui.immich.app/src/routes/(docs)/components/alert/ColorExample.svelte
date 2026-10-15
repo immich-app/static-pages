@@ -1,6 +1,6 @@
 <script lang="ts">
-  import ComponentColors from '$lib/components/ComponentColors.svelte';
-  import Lorem from '$lib/components/Lorem.svelte';
+  import ComponentColors from '#lib/components/ComponentColors.svelte';
+  import Lorem from '#lib/components/Lorem.svelte';
   import { Alert, Stack } from '@immich/ui';
 </script>
 

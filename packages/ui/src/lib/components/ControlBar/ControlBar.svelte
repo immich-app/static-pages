@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { shortcuts } from '$lib/actions/shortcut.js';
-  import { setChildContext } from '$lib/common/context.svelte.js';
-  import IconButton from '$lib/components/IconButton/IconButton.svelte';
-  import { ChildKey } from '$lib/constants.js';
-  import { t } from '$lib/services/translation.svelte.js';
-  import type { ControlBarProps } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { shortcuts } from '#lib/actions/shortcut.js';
+  import { setChildContext } from '#lib/common/context.svelte.js';
+  import IconButton from '#lib/components/IconButton/IconButton.svelte';
+  import { ChildKey } from '#lib/constants.js';
+  import { t } from '#lib/services/translation.svelte.js';
+  import type { ControlBarProps } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { mdiClose } from '@mdi/js';
   import { fly } from 'svelte/transition';
   import { tv } from 'tailwind-variants';

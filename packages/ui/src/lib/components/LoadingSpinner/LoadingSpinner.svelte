@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { styleVariants } from '$lib/styles.js';
-  import type { Color, Size } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { styleVariants } from '#lib/styles.js';
+  import type { Color, Size } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { tv } from 'tailwind-variants';
 
   interface Props {

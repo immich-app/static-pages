@@ -1,4 +1,4 @@
-import { getCallbackUrl, ImmichLicense } from '$lib';
+import { getCallbackUrl, ImmichLicense } from '#lib';
 import { redirect } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 

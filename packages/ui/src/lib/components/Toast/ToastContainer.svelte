@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { styleVariants } from '$lib/styles.js';
-  import type { ToastContainerProps } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { styleVariants } from '#lib/styles.js';
+  import type { ToastContainerProps } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { fade, fly } from 'svelte/transition';
   import { tv } from 'tailwind-variants';
 

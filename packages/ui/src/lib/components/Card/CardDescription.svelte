@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Text from '$lib/components/Text/Text.svelte';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import Text from '#lib/components/Text/Text.svelte';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import type { Snippet } from 'svelte';
 
   type Props = {

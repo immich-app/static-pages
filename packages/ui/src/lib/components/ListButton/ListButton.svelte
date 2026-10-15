@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import HStack from '$lib/components/Stack/HStack.svelte';
-  import Button from '$lib/internal/Button.svelte';
-  import type { ButtonProps, IconLike } from '$lib/types.js';
-  import { cleanClass, isIconLike } from '$lib/utilities/internal.js';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import HStack from '#lib/components/Stack/HStack.svelte';
+  import Button from '#lib/internal/Button.svelte';
+  import type { ButtonProps, IconLike } from '#lib/types.js';
+  import { cleanClass, isIconLike } from '#lib/utilities/internal.js';
   import { mdiCheck } from '@mdi/js';
   import type { Snippet } from 'svelte';
   import { tv } from 'tailwind-variants';

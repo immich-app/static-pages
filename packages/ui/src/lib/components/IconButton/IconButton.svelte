@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import Button from '$lib/internal/Button.svelte';
-  import type { IconButtonProps } from '$lib/types.js';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import Button from '#lib/internal/Button.svelte';
+  import type { IconButtonProps } from '#lib/types.js';
 
   const {
     icon,

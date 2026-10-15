@@ -1,12 +1,12 @@
-import futoDark from '$lib/assets/immich-logo-futo-dark.svg';
-import futoLight from '$lib/assets/immich-logo-futo-light.svg';
-import inlineDark from '$lib/assets/immich-logo-inline-dark.svg';
-import inlineLight from '$lib/assets/immich-logo-inline-light.svg';
-import stackedDark from '$lib/assets/immich-logo-stacked-dark.svg';
-import stackedLight from '$lib/assets/immich-logo-stacked-light.svg';
-import icon from '$lib/assets/immich-logo.svg';
+import futoDark from '#lib/assets/immich-logo-futo-dark.svg';
+import futoLight from '#lib/assets/immich-logo-futo-light.svg';
+import inlineDark from '#lib/assets/immich-logo-inline-dark.svg';
+import inlineLight from '#lib/assets/immich-logo-inline-light.svg';
+import stackedDark from '#lib/assets/immich-logo-stacked-dark.svg';
+import stackedLight from '#lib/assets/immich-logo-stacked-light.svg';
+import icon from '#lib/assets/immich-logo.svg';
 
-import { Theme, type LogoSet, type LogoVariants } from '$lib/index.js';
+import { Theme, type LogoSet, type LogoVariants } from '#lib/index.js';
 
 const defaultLogos: LogoSet = {
   stacked: {

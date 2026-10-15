@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Button from '$lib/components/Button/Button.svelte';
-  import IconButton from '$lib/components/IconButton/IconButton.svelte';
-  import type { ActionItem, Color, Shape, Size, Variants } from '$lib/types.js';
-  import { isEnabled } from '$lib/utilities/common.js';
+  import Button from '#lib/components/Button/Button.svelte';
+  import IconButton from '#lib/components/IconButton/IconButton.svelte';
+  import type { ActionItem, Color, Shape, Size, Variants } from '#lib/types.js';
+  import { isEnabled } from '#lib/utilities/common.js';
   import { mdiPlus } from '@mdi/js';
 
   type Props = {

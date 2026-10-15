@@ -1,9 +1,9 @@
-import { defaultProvider } from '$lib/services/command-palette-manager.svelte.js';
-import { screencastManager } from '$lib/services/screencast-manager.svelte.js';
-import { themeManager } from '$lib/services/theme-manager.svelte.js';
-import { Constants } from '$lib/site/constants.js';
-import { ThemePreference, type ActionItem, type LinkItem } from '$lib/types.js';
-import { isExternalLink, navigateTo, resolveUrl } from '$lib/utilities/common.js';
+import { defaultProvider } from '#lib/services/command-palette-manager.svelte.js';
+import { screencastManager } from '#lib/services/screencast-manager.svelte.js';
+import { themeManager } from '#lib/services/theme-manager.svelte.js';
+import { Constants } from '#lib/site/constants.js';
+import { ThemePreference, type ActionItem, type LinkItem } from '#lib/types.js';
+import { isExternalLink, navigateTo, resolveUrl } from '#lib/utilities/common.js';
 import { mdiKeyboard, mdiOpenInNew, mdiThemeLightDark } from '@mdi/js';
 
 export const linkCommands = (items: LinkItem[]): ActionItem[] => {

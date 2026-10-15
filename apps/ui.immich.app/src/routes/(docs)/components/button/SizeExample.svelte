@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ComponentSizes from '$lib/components/ComponentSizes.svelte';
+  import ComponentSizes from '#lib/components/ComponentSizes.svelte';
   import { Button, Code, Heading } from '@immich/ui';
 </script>
 

@@ -8,8 +8,8 @@ authors: [Immich Team]
 
 <script lang="ts">
   import { mdiOpenInNew } from '@mdi/js';
-  import merchStealth from '$lib/assets/img/merch-stealth.webp';
-  import retroDisk from '$lib/assets/img/retro-disk.webp';
+  import merchStealth from '#lib/assets/img/merch-stealth.webp';
+  import retroDisk from '#lib/assets/img/retro-disk.webp';
 </script>
 
 ## Welcome

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ComponentColors from '$lib/components/ComponentColors.svelte';
+  import ComponentColors from '#lib/components/ComponentColors.svelte';
   import { Stack, Text, Toast } from '@immich/ui';
 
   const description = 'This is the description for the toast';

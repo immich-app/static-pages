@@ -6,7 +6,7 @@ import {
   type GithubLinkType,
   type IfLike,
   type MenuItem,
-} from '$lib/types.js';
+} from '#lib/types.js';
 import type { DateTime } from 'luxon';
 
 export type QueryValue = number | string;

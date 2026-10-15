@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ComponentTextColors from '$lib/components/ComponentTextColors.svelte';
+  import ComponentTextColors from '#lib/components/ComponentTextColors.svelte';
   import { Heading, Stack } from '@immich/ui';
 </script>
 

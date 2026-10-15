@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Scrollable from '$lib/components/Scrollable/Scrollable.svelte';
-  import { ChildKey, zIndex } from '$lib/constants.js';
-  import Child from '$lib/internal/Child.svelte';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import Scrollable from '#lib/components/Scrollable/Scrollable.svelte';
+  import { ChildKey, zIndex } from '#lib/constants.js';
+  import Child from '#lib/internal/Child.svelte';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { type Snippet } from 'svelte';
   import { tv } from 'tailwind-variants';
 

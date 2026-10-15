@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { setChildContext, setFieldContext } from '$lib/common/context.svelte.js';
-  import { ChildKey } from '$lib/constants.js';
-  import type { FieldContext } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { setChildContext, setFieldContext } from '#lib/common/context.svelte.js';
+  import { ChildKey } from '#lib/constants.js';
+  import type { FieldContext } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { type Snippet } from 'svelte';
 
   type Props = FieldContext & {

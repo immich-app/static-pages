@@ -1,10 +1,10 @@
 <script lang="ts">
-  import CloseButton from '$lib/components/CloseButton/CloseButton.svelte';
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import Text from '$lib/components/Text/Text.svelte';
-  import { styleVariants } from '$lib/styles.js';
-  import type { ToastContentProps } from '$lib/types.js';
-  import { resolveIcon } from '$lib/utilities/internal.js';
+  import CloseButton from '#lib/components/CloseButton/CloseButton.svelte';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import Text from '#lib/components/Text/Text.svelte';
+  import { styleVariants } from '#lib/styles.js';
+  import type { ToastContentProps } from '#lib/types.js';
+  import { resolveIcon } from '#lib/utilities/internal.js';
   import { mdiAlert, mdiBell, mdiCheck, mdiCloseOctagon, mdiInformation } from '@mdi/js';
   import { type Snippet } from 'svelte';
   import { tv } from 'tailwind-variants';

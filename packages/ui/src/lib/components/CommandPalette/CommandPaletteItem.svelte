@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { renderShortcut } from '$lib/actions/shortcut.js';
-  import Badge from '$lib/components/Badge/Badge.svelte';
-  import Button from '$lib/components/Button/Button.svelte';
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import Kbd from '$lib/components/Kbd/Kbd.svelte';
-  import Text from '$lib/components/Text/Text.svelte';
-  import type { ActionItem, ActionItemTag } from '$lib/types.js';
-  import { highlightHtml } from '$lib/utilities/internal.js';
+  import { renderShortcut } from '#lib/actions/shortcut.js';
+  import Badge from '#lib/components/Badge/Badge.svelte';
+  import Button from '#lib/components/Button/Button.svelte';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import Kbd from '#lib/components/Kbd/Kbd.svelte';
+  import Text from '#lib/components/Text/Text.svelte';
+  import type { ActionItem, ActionItemTag } from '#lib/types.js';
+  import { highlightHtml } from '#lib/utilities/internal.js';
 
   type Props = {
     item: ActionItem;

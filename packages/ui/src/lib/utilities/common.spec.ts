@@ -1,4 +1,4 @@
-import { isEnabled, isExternalLink, parseGithubLink, resolveMetadata, resolveUrl } from '$lib/utilities/common.js';
+import { isEnabled, isExternalLink, parseGithubLink, resolveMetadata, resolveUrl } from '#lib/utilities/common.js';
 import { DateTime } from 'luxon';
 import { beforeAll, describe, expect, it } from 'vitest';
 

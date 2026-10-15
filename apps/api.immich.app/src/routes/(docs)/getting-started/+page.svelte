@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { ApiPage } from '$lib';
-  import ApiPageContent from '$lib/components/ApiPageContent.svelte';
-  import ApiPermission from '$lib/components/ApiPermission.svelte';
+  import { ApiPage } from '#lib';
+  import ApiPageContent from '#lib/components/ApiPageContent.svelte';
+  import ApiPermission from '#lib/components/ApiPermission.svelte';
   import { Alert, Heading, Link, Text } from '@immich/ui';
   import { mdiLightbulbOnOutline } from '@mdi/js';
 </script>

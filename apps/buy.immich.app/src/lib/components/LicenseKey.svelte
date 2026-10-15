@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getRedirectUrl } from '$lib';
+  import { getRedirectUrl } from '#lib';
   import { Button, Card, CardBody, CardFooter, CardHeader, CardTitle, Stack, Text } from '@immich/ui';
   import { mdiCheckCircleOutline, mdiContentCopy } from '@mdi/js';
 

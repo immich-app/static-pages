@@ -1,6 +1,6 @@
 <script lang="ts">
-  import DatePickerInternal from '$lib/internal/DatePicker.svelte';
-  import type { DatePickerProps } from '$lib/types.js';
+  import DatePickerInternal from '#lib/internal/DatePicker.svelte';
+  import type { DatePickerProps } from '#lib/types.js';
   import { CalendarDate, type DateValue } from '@internationalized/date';
   import { DateTime } from 'luxon';
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { zIndex } from '$lib/constants.js';
+  import { zIndex } from '#lib/constants.js';
   import { Tooltip } from 'bits-ui';
   import type { Snippet } from 'svelte';
 

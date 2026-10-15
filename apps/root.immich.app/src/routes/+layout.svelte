@@ -1,8 +1,8 @@
 <script lang="ts">
   import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/state';
-  import '$lib/app.css';
-  import { getSearchProvider } from '$lib/search';
+  import '#lib/app.css';
+  import { getSearchProvider } from '#lib/search.js';
   import {
     commandPaletteManager,
     CommandPaletteProvider,
@@ -25,12 +25,20 @@
     pathname = page.url.pathname;
   });
 
-  beforeNavigate(() => {
+  beforeNavigate(({ shallow, type }) => {
+    if (shallow && type === 'goto') {
+      return;
+    }
+
     const newPathname = $state.snapshot(page.url.pathname);
     pathname = newPathname;
   });
 
-  afterNavigate(() => {
+  afterNavigate(({ shallow, type }) => {
+    if (shallow && type === 'goto') {
+      return;
+    }
+
     const newPathname = $state.snapshot(page.url.pathname);
     if (pathname === newPathname) {
       return;

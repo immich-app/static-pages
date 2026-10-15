@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { ReferenceObject, SchemaObject } from '$lib/services/open-api.d';
-  import { getRefHref, getRefName, isRef } from '$lib/services/open-api';
+  import type { ReferenceObject, SchemaObject } from '#lib/services/open-api.d.js';
+  import { getRefHref, getRefName, isRef } from '#lib/services/open-api.js';
   import { Link, Text } from '@immich/ui';
 
   type Props = {

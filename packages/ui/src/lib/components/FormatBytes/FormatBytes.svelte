@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getLocale } from '$lib/state/locale-state.svelte.js';
-  import { getByteUnitString } from '$lib/utilities/byte-units.js';
+  import { getLocale } from '#lib/state/locale-state.svelte.js';
+  import { getByteUnitString } from '#lib/utilities/byte-units.js';
 
   type Props = {
     bytes: number;

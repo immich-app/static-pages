@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import type { CarouselImageItem, IconLike } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import type { CarouselImageItem, IconLike } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
 
   type Props = {
     item: CarouselImageItem;

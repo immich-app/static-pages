@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { ApiPage } from '$lib';
-  import ApiTagSummary from '$lib/components/ApiTagSummary.svelte';
+  import { ApiPage } from '#lib';
+  import ApiTagSummary from '#lib/components/ApiTagSummary.svelte';
   import { Button, CommandPaletteDefaultProvider, Heading, Icon, Stack, Text, type ActionItem } from '@immich/ui';
   import { mdiArrowLeft, mdiArrowRight } from '@mdi/js';
   import { type PageData } from './$types';

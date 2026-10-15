@@ -9,6 +9,7 @@ import eslintPluginBetterTailwindcss from 'eslint-plugin-better-tailwindcss';
 import { readdirSync } from 'node:fs';
 import { RulesConfig } from 'eslint';
 
+// eslint-disable-next-line unicorn/no-top-level-side-effects
 export default defineConfig([
   js.configs.recommended,
   // TODO switch to recommendedTypeChecked
@@ -92,6 +93,7 @@ export default defineConfig([
       'unicorn/class-reference-in-static-methods': ['error', { preferThis: false, preferSuper: false }],
       'unicorn/prefer-minimal-ternary': 'off',
       'unicorn/no-declarations-before-early-exit': 'off',
+      'unicorn/prefer-default-parameters': 'off',
       'prettier/prettier': 0,
       'object-shorthand': ['error', 'always'],
       'no-restricted-imports': [

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import '$lib/app.css';
+  import '#lib/app.css';
   import { TooltipProvider } from '@immich/ui';
   import type { Snippet } from 'svelte';
 

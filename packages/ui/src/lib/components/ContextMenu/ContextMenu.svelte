@@ -1,12 +1,12 @@
 <script lang="ts">
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import Link from '$lib/components/Link/Link.svelte';
-  import Text from '$lib/components/Text/Text.svelte';
-  import { zIndex } from '$lib/constants.js';
-  import { styleVariants } from '$lib/styles.js';
-  import { type ActionItem, type ActionLink, type ContextMenuProps, type MenuItems } from '$lib/types.js';
-  import { isActionLink, isEnabled, isMenuItemType } from '$lib/utilities/common.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import Link from '#lib/components/Link/Link.svelte';
+  import Text from '#lib/components/Text/Text.svelte';
+  import { zIndex } from '#lib/constants.js';
+  import { styleVariants } from '#lib/styles.js';
+  import { type ActionItem, type ActionLink, type ContextMenuProps, type MenuItems } from '#lib/types.js';
+  import { isActionLink, isEnabled, isMenuItemType } from '#lib/utilities/common.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { DropdownMenu } from 'bits-ui';
   import { fly } from 'svelte/transition';
   import { tv } from 'tailwind-variants';

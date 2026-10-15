@@ -1,5 +1,5 @@
 <script lang="ts">
-  import DecorativeBlock from '$lib/components/DecorativeBlock.svelte';
+  import DecorativeBlock from '#lib/components/DecorativeBlock.svelte';
   import { HStack } from '@immich/ui';
 </script>
 

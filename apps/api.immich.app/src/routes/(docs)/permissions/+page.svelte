@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { ApiPage } from '$lib';
-  import ApiPageContent from '$lib/components/ApiPageContent.svelte';
+  import { ApiPage } from '#lib';
+  import ApiPageContent from '#lib/components/ApiPageContent.svelte';
   import { Link, Text } from '@immich/ui';
 </script>
 

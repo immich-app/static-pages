@@ -1,13 +1,11 @@
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig, type UserConfig } from 'vite';
 
+// eslint-disable-next-line unicorn/no-top-level-side-effects
 export default defineConfig({
-  plugins: [tailwindcss(), sveltekit()],
-  preview: {
-    allowedHosts: true,
-  },
-  test: {
-    include: ['src/**/*.{test,spec}.{js,ts}'],
-  },
+  plugins: [tailwindcss(), sveltekit({ preprocess: vitePreprocess() })],
+  preview: { allowedHosts: true },
+  test: { include: ['src/**/*.{test,spec}.{js,ts}'] },
 } as UserConfig);

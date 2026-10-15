@@ -1,6 +1,6 @@
 <script lang="ts">
-  import ComponentExamples from '$lib/components/ComponentExamples.svelte';
-  import ComponentPage from '$lib/components/ComponentPage.svelte';
+  import ComponentExamples from '#lib/components/ComponentExamples.svelte';
+  import ComponentPage from '#lib/components/ComponentPage.svelte';
   import AlertExample from './AlertExample.svelte';
   import alertExample from './AlertExample.svelte?raw';
   // @ts-expect-error: .md files are handled by the md preprocessor

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import ComponentVariants from '$lib/components/ComponentVariants.svelte';
-  import { exampleMenuItems } from '$lib/constants.js';
+  import ComponentVariants from '#lib/components/ComponentVariants.svelte';
+  import { exampleMenuItems } from '#lib/constants.js';
   import {
     Button,
     ContextMenuButton,

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import GithubLink from '$lib/components/GithubLink/GithubLink.svelte';
-  import Link from '$lib/components/Link/Link.svelte';
-  import { parseGithubLink } from '$lib/utilities/common.js';
+  import GithubLink from '#lib/components/GithubLink/GithubLink.svelte';
+  import Link from '#lib/components/Link/Link.svelte';
+  import { parseGithubLink } from '#lib/utilities/common.js';
   import type { Snippet } from 'svelte';
 
   type Props = {

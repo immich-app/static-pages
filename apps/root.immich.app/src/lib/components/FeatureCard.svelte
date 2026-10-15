@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Feature } from '$lib/types';
+  import type { Feature } from '#lib/types.js';
   import { Button, Heading, Icon, Link, Text } from '@immich/ui';
   import { tv } from 'tailwind-variants';
 

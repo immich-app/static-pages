@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Button from '$lib/components/Button/Button.svelte';
-  import ToastContainer from '$lib/components/Toast/ToastContainer.svelte';
-  import ToastContent from '$lib/components/Toast/ToastContent.svelte';
-  import type { ToastProps } from '$lib/types.js';
+  import Button from '#lib/components/Button/Button.svelte';
+  import ToastContainer from '#lib/components/Toast/ToastContainer.svelte';
+  import ToastContent from '#lib/components/Toast/ToastContent.svelte';
+  import type { ToastProps } from '#lib/types.js';
 
   let { children, title, description, icon, onClose, button, ...props }: ToastProps = $props();
 </script>

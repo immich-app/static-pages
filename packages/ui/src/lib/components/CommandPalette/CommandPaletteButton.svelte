@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Icon from '$lib/components/Icon/Icon.svelte';
-  import IconButton from '$lib/components/IconButton/IconButton.svelte';
-  import Text from '$lib/components/Text/Text.svelte';
-  import { commandPaletteManager } from '$lib/services/command-palette-manager.svelte.js';
-  import { t } from '$lib/services/translation.svelte.js';
-  import type { TranslationProps } from '$lib/types.js';
+  import Icon from '#lib/components/Icon/Icon.svelte';
+  import IconButton from '#lib/components/IconButton/IconButton.svelte';
+  import Text from '#lib/components/Text/Text.svelte';
+  import { commandPaletteManager } from '#lib/services/command-palette-manager.svelte.js';
+  import { t } from '#lib/services/translation.svelte.js';
+  import type { TranslationProps } from '#lib/types.js';
   import { mdiMagnify } from '@mdi/js';
 
   type Props = {

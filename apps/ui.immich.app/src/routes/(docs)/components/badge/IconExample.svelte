@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Closable from '$lib/components/Closable.svelte';
+  import Closable from '#lib/components/Closable.svelte';
   import { Badge, Stack, Text } from '@immich/ui';
   import { mdiLightbulb, mdiLightningBolt } from '@mdi/js';
 </script>

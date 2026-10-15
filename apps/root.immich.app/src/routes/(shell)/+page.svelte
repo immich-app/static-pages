@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { browser } from '$app/environment';
+  import { browser } from '$app/env';
   import qrCodeDark from '$common/img/app-qr-code-dark.svg';
   import qrCodeLight from '$common/img/app-qr-code-light.svg';
   import screenshotDark from '$common/img/screenshot-dark.webp';
   import screenshotLight from '$common/img/screenshot-light.webp';
-  import { siteMetadata } from '$lib';
-  import featureFacialRecognition from '$lib/assets/img/feature-facial-recognition.webp';
-  import featureMobile from '$lib/assets/img/feature-mobile.webp';
-  import featureSharing from '$lib/assets/img/feature-sharing.webp';
-  import FeatureContainer from '$lib/components/FeatureContainer.svelte';
-  import FeatureHighlight from '$lib/components/FeatureHighlight.svelte';
-  import PageContent from '$lib/components/PageContent.svelte';
-  import SupportCard from '$lib/components/SupportCard.svelte';
-  import SupportLinkCard from '$lib/components/SupportLinkCard.svelte';
+  import { siteMetadata } from '#lib';
+  import featureFacialRecognition from '#lib/assets/img/feature-facial-recognition.webp';
+  import featureMobile from '#lib/assets/img/feature-mobile.webp';
+  import featureSharing from '#lib/assets/img/feature-sharing.webp';
+  import FeatureContainer from '#lib/components/FeatureContainer.svelte';
+  import FeatureHighlight from '#lib/components/FeatureHighlight.svelte';
+  import PageContent from '#lib/components/PageContent.svelte';
+  import SupportCard from '#lib/components/SupportCard.svelte';
+  import SupportLinkCard from '#lib/components/SupportLinkCard.svelte';
   import {
     appStoreBadge,
     Button,

@@ -3,9 +3,11 @@
   import { page } from '$app/state';
   import Header from '$common/components/Header.svelte';
   import PageContent from '$common/components/PageContent.svelte';
-  import { ApiPage, getIcon } from '$lib';
-  import { getOpenApi } from '$lib/services/open-api';
+  import { ApiPage, getIcon } from '#lib';
+  import { getOpenApi } from '#lib/services/open-api.js';
+
   import { AppShell, AppShellHeader, AppShellSidebar, NavbarGroup, NavbarItem } from '@immich/ui';
+
   import {
     mdiApi,
     mdiCompass,
@@ -34,7 +36,11 @@
   const sidebar = new MediaQuery(`min-width: 850px`);
   let open = $derived(sidebar.current);
 
-  beforeNavigate(() => {
+  beforeNavigate(({ shallow, type }) => {
+    if (shallow && type === 'goto') {
+      return;
+    }
+
     if (!sidebar.current) {
       open = false;
     }
@@ -42,9 +48,7 @@
 </script>
 
 <AppShell>
-  <AppShellHeader>
-    <Header onToggleSidebar={() => (open = !open)} />
-  </AppShellHeader>
+  <AppShellHeader><Header onToggleSidebar={() => (open = !open)} /></AppShellHeader>
 
   <AppShellSidebar bind:open class="border-e">
     <div class="my-4 me-4 mb-24 flex flex-col gap-4">
@@ -61,9 +65,13 @@
           icon={mdiCompassOutline}
           activeIcon={mdiCompass}
         />
+
         <NavbarItem title="Authentication" href={ApiPage.Authentication} icon={mdiSecurity} />
+
         <NavbarItem title="Permissions" href={ApiPage.Permissions} icon={mdiLockOutline} activeIcon={mdiLock} />
+
         <NavbarItem title="SDK" href={ApiPage.Sdk} icon={mdiCubeOutline} activeIcon={mdiCube} />
+
         <NavbarItem
           title="Endpoints"
           href={ApiPage.Endpoints}

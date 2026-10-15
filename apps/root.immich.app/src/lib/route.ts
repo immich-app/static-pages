@@ -1,4 +1,4 @@
-import type { BlogType } from '$lib';
+import type { BlogType } from '#lib';
 import { asQueryString } from '@immich/ui';
 
 export const Routes = {

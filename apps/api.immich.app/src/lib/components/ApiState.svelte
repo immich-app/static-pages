@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { State } from '$lib/services/open-api.d';
+  import type { State } from '#lib/services/open-api.d.js';
   import { tv } from 'tailwind-variants';
 
   type Props = {

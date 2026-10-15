@@ -1,5 +1,5 @@
 import { goto } from '$app/navigation';
-import { asComponentHref } from '$lib/utilities.js';
+import { asComponentHref } from '#lib/utilities.js';
 import {
   defaultProvider,
   linkCommands,

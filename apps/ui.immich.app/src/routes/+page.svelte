@@ -1,6 +1,6 @@
 <script lang="ts">
-  import imageUrl from '$lib/assets/design_placeholder.svg';
-  import { siteMetadata } from '$lib/constants.js';
+  import imageUrl from '#lib/assets/design_placeholder.svg';
+  import { siteMetadata } from '#lib/constants.js';
   import {
     AppShell,
     AppShellHeader,

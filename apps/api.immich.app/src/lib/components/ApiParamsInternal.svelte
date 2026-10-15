@@ -1,8 +1,8 @@
 <script lang="ts">
-  import ApiHistoryModal from '$lib/components/ApiHistoryModal.svelte';
-  import ApiSchemaType from '$lib/components/ApiSchemaType.svelte';
-  import ApiState from '$lib/components/ApiState.svelte';
-  import type { HistoryItem, ReferenceObject, SchemaObject, State } from '$lib/services/open-api.d';
+  import ApiHistoryModal from '#lib/components/ApiHistoryModal.svelte';
+  import ApiSchemaType from '#lib/components/ApiSchemaType.svelte';
+  import ApiState from '#lib/components/ApiState.svelte';
+  import type { HistoryItem, ReferenceObject, SchemaObject, State } from '#lib/services/open-api.d.js';
   import { Card, CardBody, IconButton, modalManager, Text } from '@immich/ui';
   import { mdiHistory } from '@mdi/js/mdi';
 

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { logoManager } from '$lib/services/logo-manager.svelte';
-  import { themeManager } from '$lib/services/theme-manager.svelte.js';
-  import type { LogoVariants, Size } from '$lib/types.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import { logoManager } from '#lib/services/logo-manager.svelte.js';
+  import { themeManager } from '#lib/services/theme-manager.svelte.js';
+  import type { LogoVariants, Size } from '#lib/types.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
   import { tv } from 'tailwind-variants';
 
   type Props = {

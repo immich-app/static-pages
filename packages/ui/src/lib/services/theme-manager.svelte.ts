@@ -1,6 +1,6 @@
-import { browser } from '$app/environment';
-import { PersistedLocalStorage } from '$lib/state/persisted.js';
-import { Theme, ThemePreference } from '$lib/types.js';
+import { browser } from '$app/env';
+import { PersistedLocalStorage } from '#lib/state/persisted.js';
+import { Theme, ThemePreference } from '#lib/types.js';
 import { MediaQuery } from 'svelte/reactivity';
 
 const LIGHT_CLASS = 'light';

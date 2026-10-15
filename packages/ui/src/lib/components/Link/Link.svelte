@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { LinkProps } from '$lib/types.js';
-  import { isExternalLink, resolveUrl } from '$lib/utilities/common.js';
-  import { cleanClass } from '$lib/utilities/internal.js';
+  import type { LinkProps } from '#lib/types.js';
+  import { isExternalLink, resolveUrl } from '#lib/utilities/common.js';
+  import { cleanClass } from '#lib/utilities/internal.js';
 
   const { href, class: className, underline = true, children, ...restProps }: LinkProps = $props();
 

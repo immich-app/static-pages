@@ -1,5 +1,5 @@
 <script>
-  import ComponentColors from '$lib/components/ComponentColors.svelte';
+  import ComponentColors from '#lib/components/ComponentColors.svelte';
   import { HStack, ProgressBar } from '@immich/ui';
 </script>
 
