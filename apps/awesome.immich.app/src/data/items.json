@@ -26,7 +26,8 @@
         "title": "Immich Lounge",
         "description": "Photo slideshows and a screensaver for Roku, with a self-hosted companion for setup and slideshow profiles.",
         "websiteUrl": "https://immich-lounge.github.io/",
-        "sourceCodeUrl": "https://github.com/immich-lounge/immich-lounge"
+        "sourceCodeUrl": "https://github.com/immich-lounge/immich-lounge",
+        "tags": ["Vibe-Coded"]
       },
       {
         "title": "Immich Slides",
