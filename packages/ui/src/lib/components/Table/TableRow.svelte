@@ -41,6 +41,6 @@
   });
 </script>
 
-<tr class={cleanClass(styles({ color, striped, spacing }), className)} {...restProps}>
+<tr class={cleanClass(styles({ color, striped: striped && !color, spacing }), className)} {...restProps}>
   {@render children?.()}
 </tr>
