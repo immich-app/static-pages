@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.91.0](https://github.com/immich-app/static-pages/compare/ui-v0.90.0...ui-v0.91.0) (2026-10-16)
+
+
+### Features
+
+* **ui:** highlight visible sections in table of contents ([#885](https://github.com/immich-app/static-pages/issues/885)) ([f281394](https://github.com/immich-app/static-pages/commit/f2813945a3597b36931fcd2c5baf7105ce2e94f6))
+
+
+### Bug Fixes
+
+* checkbox container class ([#828](https://github.com/immich-app/static-pages/issues/828)) ([eca7851](https://github.com/immich-app/static-pages/commit/eca7851823c7e856eb58793587f106b6c37914ee))
+* github links ([#840](https://github.com/immich-app/static-pages/issues/840)) ([009b77a](https://github.com/immich-app/static-pages/commit/009b77ad783a206ff6b111f88ae7de39eb0fb912))
+* let outside clicks pass through tooltips ([5c2f513](https://github.com/immich-app/static-pages/commit/5c2f513043fd086cead574b09327556e6410e3f0))
+* markdown render issues ([#832](https://github.com/immich-app/static-pages/issues/832)) ([f4ecb65](https://github.com/immich-app/static-pages/commit/f4ecb65652f5c11dbd011d23b8ef10e97de4cc57))
+* on close button ([#829](https://github.com/immich-app/static-pages/issues/829)) ([6c642a9](https://github.com/immich-app/static-pages/commit/6c642a9f23d624bd1252c2e9d1950633158dcf2b))
+* table color ([#906](https://github.com/immich-app/static-pages/issues/906)) ([af7a95f](https://github.com/immich-app/static-pages/commit/af7a95f22d077808b87f36b0a31e504d5145c771))
+* **ui:** don't reset scroll when navigating to an anchor ([#887](https://github.com/immich-app/static-pages/issues/887)) ([e0890b0](https://github.com/immich-app/static-pages/commit/e0890b00ae4c9c2c126be79f5cf19e443ce32400))
+* **ui:** let outside clicks pass through tooltips ([#880](https://github.com/immich-app/static-pages/issues/880)) ([5c2f513](https://github.com/immich-app/static-pages/commit/5c2f513043fd086cead574b09327556e6410e3f0))
+* **ui:** table of contents link hover color ([#886](https://github.com/immich-app/static-pages/issues/886)) ([7ce6058](https://github.com/immich-app/static-pages/commit/7ce60581227890cc0252d28a67e22d256ddaf686))
+
 ## [0.90.0](https://github.com/immich-app/static-pages/compare/ui-v0.89.1...ui-v0.90.0) (2026-09-23)
 
 
