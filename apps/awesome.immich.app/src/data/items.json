@@ -96,6 +96,11 @@
         "description": "Unofficial Immich client for Wear OS. Browse recent photos, albums, favorites and memories, view EXIF data and favorite assets from your wrist, with a watch face tile and an optional phone companion app for credential-free setup.",
         "sourceCodeUrl": "https://github.com/nikosavola/immich-wear",
         "tags": ["Vibe-Coded"]
+      },
+      {
+        "title": "immich lite",
+        "description": "Unofficial Immich app for older LG TVs (webOS 3 and 4, 2016–2019) that newer TV apps can't run on. Timeline, map, albums, search, slideshow and video, with sign-in from your phone.",
+        "sourceCodeUrl": "https://github.com/cgbeaulieu/immich-lite"
       }
     ]
   },
