@@ -96,6 +96,12 @@
         "description": "Unofficial Immich client for Wear OS. Browse recent photos, albums, favorites and memories, view EXIF data and favorite assets from your wrist, with a watch face tile and an optional phone companion app for credential-free setup.",
         "sourceCodeUrl": "https://github.com/nikosavola/immich-wear",
         "tags": ["Vibe-Coded"]
+      },
+      {
+        "title": "Fotoroll",
+        "description": "Unofficial native Linux desktop client (Flutter/GTK) aiming for parity with the web and mobile apps: timeline, memories, viewer with live and 360° photos, faces, albums, sharing, map, search, admin settings, folder backup and tray. AppImage available.",
+        "sourceCodeUrl": "https://github.com/Pacuka/fotoroll",
+        "tags": ["Vibe-Coded"]
       }
     ]
   },
