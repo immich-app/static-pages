@@ -7,7 +7,7 @@ export const load = (({ url }) => {
   const instanceUrl = url.searchParams.get('instanceUrl') as string;
 
   if (productId && instanceUrl) {
-    redirect(302, getCallbackUrl(productId, instanceUrl));
+    redirect(302, getCallbackUrl(productId, instanceUrl), { external: true });
   }
 
   return {
