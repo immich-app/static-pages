@@ -184,6 +184,11 @@
         "title": "Immich Custom Memories",
         "description": "Create customized Memories in Immich.",
         "sourceCodeUrl": "https://github.com/SinTan1729/immich-custom-memories"
+      },
+      {
+        "title": "Immich Relocator",
+        "description": "Relocate pics & videos from Immich internal folder to one or more External Libraries, while updating the Immich db accordingly, so that you never lose track of albums, stacks, faces, tags, etc.",
+        "sourceCodeUrl": "https://github.com/bihius/immich-relocator"
       }
     ]
   },
