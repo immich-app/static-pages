@@ -56,6 +56,12 @@ describe('compareTriggers', () => {
       expect(compareTriggers().onCompare(source, target)).toEqual([{ type: 'TriggerCreate', object: source, reason }]);
     });
 
+    it('should not depend on the order of the actions', () => {
+      const source: DatabaseTrigger = { ...testTrigger, actions: ['update', 'insert'] };
+      const target: DatabaseTrigger = { ...testTrigger, actions: ['insert', 'update'] };
+      expect(compareTriggers().onCompare(source, target)).toEqual([]);
+    });
+
     it('should detect a change in timing', () => {
       const source: DatabaseTrigger = { ...testTrigger, timing: 'before' };
       const target: DatabaseTrigger = { ...testTrigger, timing: 'after' };

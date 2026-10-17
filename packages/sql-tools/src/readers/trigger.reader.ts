@@ -79,7 +79,6 @@ export const parseTriggerType = (type: number) => {
   for (const { mask, value } of actionMasks) {
     if (hasMask(type, mask)) {
       actions.push(value);
-      break;
     }
   }
 

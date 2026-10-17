@@ -1,4 +1,7 @@
-import { Comparer, DatabaseTrigger, Reason } from 'src/types.js';
+import { Comparer, DatabaseTrigger, Reason, TriggerAction } from 'src/types.js';
+
+const haveEqualActions = (source: TriggerAction[], target: TriggerAction[]) =>
+  source.length === target.length && source.every((action) => target.includes(action));
 
 export const compareTriggers = (): Comparer<DatabaseTrigger> => ({
   onMissing: (source) => [{ type: 'TriggerCreate', object: source, reason: Reason.MissingInTarget }],
@@ -7,7 +10,7 @@ export const compareTriggers = (): Comparer<DatabaseTrigger> => ({
     let reason = '';
     if (source.functionName !== target.functionName) {
       reason = `function is different (${source.functionName} vs ${target.functionName})`;
-    } else if (source.actions.join(' OR ') !== target.actions.join(' OR ')) {
+    } else if (!haveEqualActions(source.actions, target.actions)) {
       reason = `action is different (${source.actions} vs ${target.actions})`;
     } else if (source.timing !== target.timing) {
       reason = `timing method is different (${source.timing} vs ${target.timing})`;
