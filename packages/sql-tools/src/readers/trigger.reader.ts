@@ -16,7 +16,8 @@ export const readTriggers: Reader = async (ctx, db) => {
       't.tgargs as arguments',
       't.tgoldtable as referencing_old_table_as',
       't.tgnewtable as referencing_new_table_as',
-      eb.fn<string>('pg_get_expr', ['t.tgqual', 't.tgrelid']).as('when_expression'),
+      eb.fn<string>('pg_get_triggerdef', ['t.oid']).as('definition'),
+      eb('t.tgqual', 'is not', null).as('has_when'),
       'p.proname as function_name',
       'c.relname as table_name',
     ])
@@ -37,12 +38,16 @@ export const readTriggers: Reader = async (ctx, db) => {
       functionName: trigger.function_name,
       referencingNewTableAs: trigger.referencing_new_table_as ?? undefined,
       referencingOldTableAs: trigger.referencing_old_table_as ?? undefined,
-      when: trigger.when_expression,
+      when: trigger.has_when ? parseTriggerWhen(trigger.definition) : undefined,
       synchronize: true,
       ...parseTriggerType(trigger.type),
     });
   }
 };
+
+// pg_get_expr can't deparse a condition that references OLD or NEW, but the trigger definition can
+export const parseTriggerWhen = (definition: string) =>
+  / FOR EACH (?:ROW|STATEMENT) WHEN \((.+)\) EXECUTE FUNCTION /s.exec(definition)?.[1];
 
 export const hasMask = (input: number, mask: number) => (input & mask) === mask;
 

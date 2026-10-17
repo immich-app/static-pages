@@ -1,0 +1,10 @@
+CREATE TABLE "table1" ("column1" integer);
+CREATE FUNCTION test_fn() RETURNS TRIGGER LANGUAGE PLPGSQL AS $$ BEGIN RETURN NULL; END $$;
+CREATE TRIGGER "trigger_old_new" AFTER UPDATE ON "table1" FOR EACH ROW WHEN (OLD."column1" IS DISTINCT FROM NEW."column1") EXECUTE FUNCTION test_fn();
+CREATE TRIGGER "trigger_old" AFTER DELETE ON "table1" FOR EACH ROW WHEN (OLD."column1" IS NOT NULL) EXECUTE FUNCTION test_fn();
+CREATE TRIGGER "trigger_depth" AFTER INSERT ON "table1" FOR EACH ROW WHEN (pg_trigger_depth() = 0) EXECUTE FUNCTION test_fn();
+CREATE TRIGGER "trigger_none" BEFORE UPDATE ON "table1" FOR EACH ROW EXECUTE FUNCTION test_fn();
+CREATE TRIGGER "trigger_case" AFTER UPDATE ON "table1" FOR EACH ROW WHEN (CASE WHEN NEW."column1" > 0 THEN true ELSE false END) EXECUTE FUNCTION test_fn();
+CREATE TRIGGER "trigger_newline" AFTER UPDATE ON "table1" FOR EACH ROW WHEN (NEW."column1"::text = E'a\nb') EXECUTE FUNCTION test_fn();
+CREATE TRIGGER "skip WHEN (bulk)" AFTER UPDATE ON "table1" FOR EACH ROW WHEN (NEW."column1" > 1) EXECUTE FUNCTION test_fn();
+CREATE TRIGGER "trigger_statement" AFTER UPDATE ON "table1" FOR EACH STATEMENT WHEN (pg_trigger_depth() = 0) EXECUTE FUNCTION test_fn();

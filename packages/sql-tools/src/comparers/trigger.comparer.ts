@@ -17,6 +17,8 @@ export const compareTriggers = (): Comparer<DatabaseTrigger> => ({
       reason = `new table reference is different (${source.referencingNewTableAs} vs ${target.referencingNewTableAs})`;
     } else if (source.referencingOldTableAs !== target.referencingOldTableAs) {
       reason = `old table reference is different (${source.referencingOldTableAs} vs ${target.referencingOldTableAs})`;
+    } else if (source.when !== target.when) {
+      reason = `when clause is different (${source.when} vs ${target.when})`;
     }
 
     if (reason) {

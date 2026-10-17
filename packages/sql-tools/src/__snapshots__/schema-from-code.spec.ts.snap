@@ -2569,6 +2569,69 @@ exports[`schemaFromCode > test files > trigger-name-override.stub.ts 1`] = `
 }
 `;
 
+exports[`schemaFromCode > test files > trigger-when-old-new.stub.ts 1`] = `
+{
+  "databaseName": "postgres",
+  "enums": [],
+  "extensions": [],
+  "functions": [
+    {
+      "expression": "CREATE OR REPLACE FUNCTION test_fn()
+  RETURNS TRIGGER
+  LANGUAGE PLPGSQL
+  AS $$
+    BEGIN
+      RETURN NULL;
+    END
+  $$;",
+      "name": "test_fn",
+      "override": undefined,
+      "synchronize": true,
+    },
+  ],
+  "overrides": [],
+  "parameters": [],
+  "schemaName": "public",
+  "tables": [
+    {
+      "columns": [
+        {
+          "isArray": false,
+          "name": "column1",
+          "nullable": true,
+          "primary": false,
+          "synchronize": true,
+          "tableName": "table1",
+          "type": "character varying",
+        },
+      ],
+      "constraints": [],
+      "indexes": [],
+      "name": "table1",
+      "synchronize": true,
+      "triggers": [
+        {
+          "actions": [
+            "update",
+          ],
+          "functionName": "test_fn",
+          "name": "my_trigger",
+          "override": undefined,
+          "referencingNewTableAs": undefined,
+          "referencingOldTableAs": undefined,
+          "scope": "row",
+          "synchronize": true,
+          "tableName": "table1",
+          "timing": "after",
+          "when": "OLD."column1" IS DISTINCT FROM NEW."column1"",
+        },
+      ],
+    },
+  ],
+  "warnings": [],
+}
+`;
+
 exports[`schemaFromCode > test files > unique-constraint-name-default.stub.ts 1`] = `
 {
   "databaseName": "postgres",

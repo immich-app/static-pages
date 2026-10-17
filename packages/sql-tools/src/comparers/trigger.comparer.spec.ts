@@ -83,5 +83,12 @@ describe('compareTriggers', () => {
       const reason = `old table reference is different (old_table vs undefined)`;
       expect(compareTriggers().onCompare(source, target)).toEqual([{ type: 'TriggerCreate', object: source, reason }]);
     });
+
+    it('should detect a change in the when clause', () => {
+      const source: DatabaseTrigger = { ...testTrigger, when: 'OLD."id" IS DISTINCT FROM NEW."id"' };
+      const target: DatabaseTrigger = { ...testTrigger, when: undefined };
+      const reason = `when clause is different (OLD."id" IS DISTINCT FROM NEW."id" vs undefined)`;
+      expect(compareTriggers().onCompare(source, target)).toEqual([{ type: 'TriggerCreate', object: source, reason }]);
+    });
   });
 });
