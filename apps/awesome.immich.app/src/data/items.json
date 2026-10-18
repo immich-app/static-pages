@@ -5,6 +5,12 @@
     "types": ["client", "clients"],
     "projects": [
       {
+        "title": "Immich Face Sheet",
+        "description": "Create contact sheets, collages, and photomosaics from a person's face crops in your Immich library.",
+        "websiteUrl": "https://github.com/tiagonmas/immich-face-sheet",
+        "sourceCodeUrl": "https://github.com/tiagonmas/immich-face-sheet"
+      },
+      {
         "title": "ImmichFrame",
         "description": "Run an Immich slideshow in a photo frame.",
         "websiteUrl": "https://immichframe.dev",
