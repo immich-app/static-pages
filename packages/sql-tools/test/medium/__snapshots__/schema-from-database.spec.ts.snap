@@ -119,3 +119,246 @@ exports[`schemaFromDatabase > table-create.sql 1`] = `
   ],
 }
 `;
+
+exports[`schemaFromDatabase > trigger-actions.sql 1`] = `
+{
+  "databaseName": "postgres",
+  "enums": [],
+  "extensions": [],
+  "functions": [
+    {
+      "expression": "CREATE OR REPLACE FUNCTION public.test_fn()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$ BEGIN RETURN NULL; END $function$
+",
+      "name": "test_fn",
+      "override": undefined,
+      "synchronize": true,
+    },
+  ],
+  "overrides": [],
+  "parameters": [],
+  "schemaName": "public",
+  "tables": [
+    {
+      "columns": [
+        {
+          "default": undefined,
+          "isArray": false,
+          "length": undefined,
+          "name": "column1",
+          "nullable": true,
+          "numericPrecision": 32,
+          "numericScale": 0,
+          "primary": false,
+          "synchronize": true,
+          "tableName": "table1",
+          "type": "integer",
+        },
+      ],
+      "constraints": [],
+      "indexes": [],
+      "name": "table1",
+      "synchronize": true,
+      "triggers": [
+        {
+          "actions": [
+            "insert",
+            "update",
+          ],
+          "functionName": "test_fn",
+          "name": "trigger_insert_update",
+          "override": undefined,
+          "referencingNewTableAs": undefined,
+          "referencingOldTableAs": undefined,
+          "scope": "row",
+          "synchronize": true,
+          "tableName": "table1",
+          "timing": "before",
+          "when": undefined,
+        },
+      ],
+    },
+  ],
+  "warnings": [
+    "[Overrides] Error reading override table: PostgresError: relation "migration_overrides" does not exist",
+  ],
+}
+`;
+
+exports[`schemaFromDatabase > trigger-when.sql 1`] = `
+{
+  "databaseName": "postgres",
+  "enums": [],
+  "extensions": [],
+  "functions": [
+    {
+      "expression": "CREATE OR REPLACE FUNCTION public.test_fn()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$ BEGIN RETURN NULL; END $function$
+",
+      "name": "test_fn",
+      "override": undefined,
+      "synchronize": true,
+    },
+  ],
+  "overrides": [],
+  "parameters": [],
+  "schemaName": "public",
+  "tables": [
+    {
+      "columns": [
+        {
+          "default": undefined,
+          "isArray": false,
+          "length": undefined,
+          "name": "column1",
+          "nullable": true,
+          "numericPrecision": 32,
+          "numericScale": 0,
+          "primary": false,
+          "synchronize": true,
+          "tableName": "table1",
+          "type": "integer",
+        },
+      ],
+      "constraints": [],
+      "indexes": [],
+      "name": "table1",
+      "synchronize": true,
+      "triggers": [
+        {
+          "actions": [
+            "update",
+          ],
+          "functionName": "test_fn",
+          "name": "trigger_old_new",
+          "override": undefined,
+          "referencingNewTableAs": undefined,
+          "referencingOldTableAs": undefined,
+          "scope": "row",
+          "synchronize": true,
+          "tableName": "table1",
+          "timing": "after",
+          "when": "(old.column1 IS DISTINCT FROM new.column1)",
+        },
+        {
+          "actions": [
+            "delete",
+          ],
+          "functionName": "test_fn",
+          "name": "trigger_old",
+          "override": undefined,
+          "referencingNewTableAs": undefined,
+          "referencingOldTableAs": undefined,
+          "scope": "row",
+          "synchronize": true,
+          "tableName": "table1",
+          "timing": "after",
+          "when": "(old.column1 IS NOT NULL)",
+        },
+        {
+          "actions": [
+            "insert",
+          ],
+          "functionName": "test_fn",
+          "name": "trigger_depth",
+          "override": undefined,
+          "referencingNewTableAs": undefined,
+          "referencingOldTableAs": undefined,
+          "scope": "row",
+          "synchronize": true,
+          "tableName": "table1",
+          "timing": "after",
+          "when": "(pg_trigger_depth() = 0)",
+        },
+        {
+          "actions": [
+            "update",
+          ],
+          "functionName": "test_fn",
+          "name": "trigger_none",
+          "override": undefined,
+          "referencingNewTableAs": undefined,
+          "referencingOldTableAs": undefined,
+          "scope": "row",
+          "synchronize": true,
+          "tableName": "table1",
+          "timing": "before",
+          "when": undefined,
+        },
+        {
+          "actions": [
+            "update",
+          ],
+          "functionName": "test_fn",
+          "name": "trigger_case",
+          "override": undefined,
+          "referencingNewTableAs": undefined,
+          "referencingOldTableAs": undefined,
+          "scope": "row",
+          "synchronize": true,
+          "tableName": "table1",
+          "timing": "after",
+          "when": "
+        CASE
+            WHEN (new.column1 > 0) THEN true
+            ELSE false
+        END",
+        },
+        {
+          "actions": [
+            "update",
+          ],
+          "functionName": "test_fn",
+          "name": "trigger_newline",
+          "override": undefined,
+          "referencingNewTableAs": undefined,
+          "referencingOldTableAs": undefined,
+          "scope": "row",
+          "synchronize": true,
+          "tableName": "table1",
+          "timing": "after",
+          "when": "((new.column1)::text = 'a
+b'::text)",
+        },
+        {
+          "actions": [
+            "update",
+          ],
+          "functionName": "test_fn",
+          "name": "skip WHEN (bulk)",
+          "override": undefined,
+          "referencingNewTableAs": undefined,
+          "referencingOldTableAs": undefined,
+          "scope": "row",
+          "synchronize": true,
+          "tableName": "table1",
+          "timing": "after",
+          "when": "(new.column1 > 1)",
+        },
+        {
+          "actions": [
+            "update",
+          ],
+          "functionName": "test_fn",
+          "name": "trigger_statement",
+          "override": undefined,
+          "referencingNewTableAs": undefined,
+          "referencingOldTableAs": undefined,
+          "scope": "statement",
+          "synchronize": true,
+          "tableName": "table1",
+          "timing": "after",
+          "when": "(pg_trigger_depth() = 0)",
+        },
+      ],
+    },
+  ],
+  "warnings": [
+    "[Overrides] Error reading override table: PostgresError: relation "migration_overrides" does not exist",
+  ],
+}
+`;

@@ -56,6 +56,12 @@ describe('compareTriggers', () => {
       expect(compareTriggers().onCompare(source, target)).toEqual([{ type: 'TriggerCreate', object: source, reason }]);
     });
 
+    it('should not depend on the order of the actions', () => {
+      const source: DatabaseTrigger = { ...testTrigger, actions: ['update', 'insert'] };
+      const target: DatabaseTrigger = { ...testTrigger, actions: ['insert', 'update'] };
+      expect(compareTriggers().onCompare(source, target)).toEqual([]);
+    });
+
     it('should detect a change in timing', () => {
       const source: DatabaseTrigger = { ...testTrigger, timing: 'before' };
       const target: DatabaseTrigger = { ...testTrigger, timing: 'after' };
@@ -81,6 +87,13 @@ describe('compareTriggers', () => {
       const source: DatabaseTrigger = { ...testTrigger, referencingOldTableAs: 'old_table' };
       const target: DatabaseTrigger = { ...testTrigger, referencingOldTableAs: undefined };
       const reason = `old table reference is different (old_table vs undefined)`;
+      expect(compareTriggers().onCompare(source, target)).toEqual([{ type: 'TriggerCreate', object: source, reason }]);
+    });
+
+    it('should detect a change in the when clause', () => {
+      const source: DatabaseTrigger = { ...testTrigger, when: 'OLD."id" IS DISTINCT FROM NEW."id"' };
+      const target: DatabaseTrigger = { ...testTrigger, when: undefined };
+      const reason = `when clause is different (OLD."id" IS DISTINCT FROM NEW."id" vs undefined)`;
       expect(compareTriggers().onCompare(source, target)).toEqual([{ type: 'TriggerCreate', object: source, reason }]);
     });
   });

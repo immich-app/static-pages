@@ -641,6 +641,41 @@ DELETE FROM "migration_overrides" WHERE "name" = 'trigger_trigger1';
 DROP TABLE "migration_overrides";"
 `;
 
+exports[`fixtures > trigger-when-old-new.stub.ts 1`] = `
+"CREATE OR REPLACE FUNCTION test_fn()
+  RETURNS TRIGGER
+  LANGUAGE PLPGSQL
+  AS $$
+    BEGIN
+      RETURN NULL;
+    END
+  $$;
+CREATE TABLE "table1" (
+  "column1" character varying
+);
+CREATE OR REPLACE TRIGGER "my_trigger"
+  AFTER UPDATE ON "table1"
+  FOR EACH ROW
+  WHEN (OLD."column1" IS DISTINCT FROM NEW."column1")
+  EXECUTE FUNCTION test_fn();
+CREATE TABLE "migration_overrides" (
+  "name" character varying NOT NULL,
+  "value" jsonb NOT NULL,
+  CONSTRAINT "migration_overrides_pkey" PRIMARY KEY ("name")
+);
+INSERT INTO "migration_overrides" ("name", "value") VALUES ('function_test_fn', $json\${"type":"function","name":"test_fn","sql":"CREATE OR REPLACE FUNCTION test_fn()\\n  RETURNS TRIGGER\\n  LANGUAGE PLPGSQL\\n  AS $$\\n    BEGIN\\n      RETURN NULL;\\n    END\\n  $$;"}$json$::jsonb);
+INSERT INTO "migration_overrides" ("name", "value") VALUES ('trigger_my_trigger', $json\${"type":"trigger","name":"my_trigger","sql":"CREATE OR REPLACE TRIGGER \\"my_trigger\\"\\n  AFTER UPDATE ON \\"table1\\"\\n  FOR EACH ROW\\n  WHEN (OLD.\\"column1\\" IS DISTINCT FROM NEW.\\"column1\\")\\n  EXECUTE FUNCTION test_fn();"}$json$::jsonb);"
+`;
+
+exports[`fixtures > trigger-when-old-new.stub.ts 2`] = `
+"DROP TRIGGER "my_trigger" ON "table1";
+DROP FUNCTION test_fn;
+DROP TABLE "table1";
+DELETE FROM "migration_overrides" WHERE "name" = 'function_test_fn';
+DELETE FROM "migration_overrides" WHERE "name" = 'trigger_my_trigger';
+DROP TABLE "migration_overrides";"
+`;
+
 exports[`fixtures > unique-constraint-name-default.stub.ts 1`] = `
 "CREATE TABLE "table1" (
   "id" uuid NOT NULL,
