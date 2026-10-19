@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.6](https://github.com/immich-app/static-pages/compare/sql-tools-v0.6.5...sql-tools-v0.6.6) (2026-10-19)
+
+
+### Bug Fixes
+
+* **sql-tools:** handle when conditions that reference `OLD` or `NEW` ([#908](https://github.com/immich-app/static-pages/issues/908)) ([40b2d8b](https://github.com/immich-app/static-pages/commit/40b2d8bd4f8d88ad69ba1b26ed99c09d6785cec2))
+
 ## [0.6.5](https://github.com/immich-app/static-pages/compare/sql-tools-v0.6.4...sql-tools-v0.6.5) (2026-10-15)
 
 
