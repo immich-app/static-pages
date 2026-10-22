@@ -163,7 +163,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  svelte-highlight: 7.14.1
+  svelte-highlight: 7.23.1
 
 importers:
 
@@ -239,8 +239,8 @@ importers:
         specifier: ^16.0.0
         version: 16.34.0
       svelte-highlight:
-        specifier: 7.14.1
-        version: 7.14.1
+        specifier: 7.23.1
+        version: 7.23.1
       tailwind-variants:
         specifier: ^3.1.1
         version: 3.3.1(tailwind-merge@3.7.0)(tailwindcss@4.3.3)
@@ -394,8 +394,8 @@ importers:
         specifier: ^16.0.0
         version: 16.34.0
       svelte-highlight:
-        specifier: 7.14.1
-        version: 7.14.1
+        specifier: 7.23.1
+        version: 7.23.1
     devDependencies:
       '@sveltejs/adapter-static':
         specifier: ^4.0.0
@@ -470,8 +470,8 @@ importers:
         specifier: ^16.0.0
         version: 16.34.0
       svelte-highlight:
-        specifier: 7.14.1
-        version: 7.14.1
+        specifier: 7.23.1
+        version: 7.23.1
       svelte-turnstile:
         specifier: ^0.11.0
         version: 0.11.0(svelte@5.57.2(@typescript-eslint/types@8.71.1))
@@ -580,8 +580,8 @@ importers:
         specifier: ^16.0.0
         version: 16.34.0
       svelte-highlight:
-        specifier: 7.14.1
-        version: 7.14.1
+        specifier: 7.23.1
+        version: 7.23.1
     devDependencies:
       '@sveltejs/adapter-static':
         specifier: ^4.0.0
@@ -647,8 +647,8 @@ importers:
         specifier: ^16.0.0
         version: 16.34.0
       svelte-highlight:
-        specifier: 7.14.1
-        version: 7.14.1
+        specifier: 7.23.1
+        version: 7.23.1
     devDependencies:
       '@sveltejs/adapter-static':
         specifier: ^4.0.0
@@ -729,8 +729,8 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0
       svelte-highlight:
-        specifier: 7.14.1
-        version: 7.14.1
+        specifier: 7.23.1
+        version: 7.23.1
       tailwind-variants:
         specifier: ^3.2.2
         version: 3.3.1(tailwind-merge@3.7.0)(tailwindcss@4.3.3)
@@ -847,8 +847,8 @@ importers:
         specifier: ^4.3.2
         version: 4.7.6(@typescript/typescript6@6.0.2)(picomatch@4.0.7)(svelte@5.57.2(@typescript-eslint/types@8.71.1))
       svelte-highlight:
-        specifier: 7.14.1
-        version: 7.14.1
+        specifier: 7.23.1
+        version: 7.23.1
       tailwind-merge:
         specifier: ^3.0.0
         version: 3.7.0
@@ -1037,8 +1037,8 @@ importers:
         specifier: ^16.0.0
         version: 16.34.0
       svelte-highlight:
-        specifier: 7.14.1
-        version: 7.14.1
+        specifier: 7.23.1
+        version: 7.23.1
       tailwind-merge:
         specifier: ^3.0.0
         version: 3.7.0
@@ -3228,10 +3228,6 @@ packages:
     resolution: {integrity: sha512-iZyKG96/JwPz1N55vj2Ie2vXbhu440zfUfJvSwEqEbeLluk7NnapfGqa7LH0mOsnDxTF85Mx8/dyR6HfqcbmbQ==}
     engines: {node: '>=20'}
 
-  highlight.js@11.11.1:
-    resolution: {integrity: sha512-Xwwo44whKBVCYoliBQwaPvtd/2tYFkRQtXDWj1nackaV2JPXx3L0+Jvd8/qCJ2p+ML0/XVkJ2q+Mr+UVdpJK5w==}
-    engines: {node: '>=12.0.0'}
-
   hookified@1.15.1:
     resolution: {integrity: sha512-MvG/clsADq1GPM2KGo2nyfaWVyn9naPiXrqIe4jYjXNZQt238kWyOGrsyc/DmRAQ+Re6yeo6yX/yoNCG5KAEVg==}
 
@@ -4171,8 +4167,8 @@ packages:
       svelte:
         optional: true
 
-  svelte-highlight@7.14.1:
-    resolution: {integrity: sha512-Ruxkxp9N9/hJE2TO/NU/LdIuK0LeXPPMOgAJIBHUvwXzryfLK2yeC1VZlbOcfjSB6JUhPU6QCBobTAG0HmMWpQ==}
+  svelte-highlight@7.23.1:
+    resolution: {integrity: sha512-7LAEocg8U4YxPRZhIdc6sCU4Vlum7SBe557Aaz6CD4VlCoHlaYIhFz+663lQJWzSSdj3vgz3sY0wEm1AuknAfw==}
 
   svelte-toolbelt@0.10.6:
     resolution: {integrity: sha512-YWuX+RE+CnWYx09yseAe4ZVMM7e7GRFZM6OYWpBKOb++s+SQ8RBIMMe+Bs/CznBMc0QPLjr+vDBxTAkozXsFXQ==}
@@ -6663,8 +6659,6 @@ snapshots:
     dependencies:
       hookified: 1.15.1
 
-  highlight.js@11.11.1: {}
-
   hookified@1.15.1: {}
 
   hookified@2.2.0: {}
@@ -7748,10 +7742,7 @@ snapshots:
     optionalDependencies:
       svelte: 5.57.2(@typescript-eslint/types@8.71.1)
 
-  svelte-highlight@7.14.1:
-    dependencies:
-      highlight.js: 11.11.1
-      magic-string: 0.30.21
+  svelte-highlight@7.23.1: {}
 
   svelte-toolbelt@0.10.6(@sveltejs/kit@3.0.1(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.2(@typescript-eslint/types@8.71.1))(vite@8.3.4(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)))(@typescript/typescript6@6.0.2)(svelte@5.57.2(@typescript-eslint/types@8.71.1))(vite@8.3.4(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)))(svelte@5.57.2(@typescript-eslint/types@8.71.1)):
     dependencies:
