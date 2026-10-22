@@ -109,6 +109,12 @@
         "description": "Unofficial Immich client for Wear OS. Browse recent photos, albums, favorites and memories, view EXIF data and favorite assets from your wrist, with a watch face tile and an optional phone companion app for credential-free setup.",
         "sourceCodeUrl": "https://github.com/nikosavola/immich-wear",
         "tags": ["Vibe-Coded"]
+      },
+      {
+        "title": "Immich Desktop",
+        "description": "System-tray app for Windows and Linux that backs up chosen PC folders to Immich, with a library browser styled like the web app. Uses only the Immich API.",
+        "sourceCodeUrl": "https://github.com/TypicalZedF/immich-desktop",
+        "tags": ["Vibe-Coded"]
       }
     ]
   },
