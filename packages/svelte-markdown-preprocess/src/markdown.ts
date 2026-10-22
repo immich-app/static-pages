@@ -164,6 +164,12 @@ export const markedSvelte = (): MarkedExtension => ({
       ) {
         return children;
       }
+
+      // `Markdown.Image` renders a block level <figure>, which is invalid inside a <p>
+      if (tokens.length === 1 && tokens[0].type === 'image') {
+        return children;
+      }
+
       return `<Markdown.Paragraph>${children}</Markdown.Paragraph>\n`;
     },
 
