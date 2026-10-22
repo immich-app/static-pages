@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.8.1](https://github.com/immich-app/static-pages/compare/svelte-markdown-preprocess-v0.8.0...svelte-markdown-preprocess-v0.8.1) (2026-10-22)
+
+
+### Bug Fixes
+
+* **blog:** prevent hydration crash on markdown images ([#921](https://github.com/immich-app/static-pages/issues/921)) ([9def885](https://github.com/immich-app/static-pages/commit/9def885a4e3d99ed0d837abf1c00b74595085c54))
+* github links ([#840](https://github.com/immich-app/static-pages/issues/840)) ([009b77a](https://github.com/immich-app/static-pages/commit/009b77ad783a206ff6b111f88ae7de39eb0fb912))
+* markdown render issues ([#832](https://github.com/immich-app/static-pages/issues/832)) ([f4ecb65](https://github.com/immich-app/static-pages/commit/f4ecb65652f5c11dbd011d23b8ef10e97de4cc57))
+
 ## [0.8.0](https://github.com/immich-app/static-pages/compare/svelte-markdown-preprocess-v0.7.0...svelte-markdown-preprocess-v0.8.0) (2026-09-10)
 
 
