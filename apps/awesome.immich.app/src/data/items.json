@@ -5,6 +5,12 @@
     "types": ["client", "clients"],
     "projects": [
       {
+        "title": "TV Client for Immich",
+        "description": "Unofficial Android TV and Google TV client in the style of Immich: smooth timeline, memories, smart search, world map and a photo screensaver. Highly configurable and extensively tested on real TV hardware.",
+        "sourceCodeUrl": "https://github.com/neforce/android-tv-immich-client",
+        "tags": ["Vibe-Coded"]
+      },
+      {
         "title": "Immich Face Sheet",
         "description": "Create contact sheets, collages, and photomosaics from a person's face crops in your Immich library.",
         "websiteUrl": "https://github.com/tiagonmas/immich-face-sheet",
