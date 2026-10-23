@@ -206,6 +206,12 @@
     "types": ["integration", "integrations"],
     "projects": [
       {
+        "title": "Self-host Immich on CloudFlare",
+        "description": "Your own Immich photo server, running entirely on Cloudflare. No server to manage. Stock Immich iOS app and web app work out of the box.",
+        "sourceCodeUrl": "https://github.com/krugerm/immich-cloudflare",
+        "tags": ["Vibe-Coded"]
+      },
+      {
         "title": "Immich Integration for Nextcloud",
         "description": "Browse your Immich photo library directly inside Nextcloud - timeline, albums, people, map and more.",
         "sourceCodeUrl": "https://github.com/xXRoxXeRXx/integration_immich"
