@@ -109,6 +109,13 @@
         "description": "Unofficial Immich client for Wear OS. Browse recent photos, albums, favorites and memories, view EXIF data and favorite assets from your wrist, with a watch face tile and an optional phone companion app for credential-free setup.",
         "sourceCodeUrl": "https://github.com/nikosavola/immich-wear",
         "tags": ["Vibe-Coded"]
+      },
+      {
+        "title": "Retrace for Immich",
+        "description": "Your photos on a map and a timeline: see where you've been, and replay a trip photo by photo along its route.",
+        "websiteUrl": "https://immich-retrace-demo.holoskii.me",
+        "sourceCodeUrl": "https://github.com/holoskii/immich-retrace",
+        "tags": ["Vibe-Coded"]
       }
     ]
   },
