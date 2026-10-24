@@ -1,4 +1,11 @@
 {
+  "webcredentials": {
+    "apps": [
+      "2W7AC6T8T5.app.alextran.immich",
+      "2W7AC6T8T5.app.alextran.immich.vdebug",
+      "2W7AC6T8T5.app.alextran.immich.profile"
+    ]
+  },
   "applinks": {
     "apps": [],
     "details": [
@@ -6,7 +13,7 @@
         "appIDs": [
           "2W7AC6T8T5.app.alextran.immich",
           "2W7AC6T8T5.app.alextran.immich.vdebug",
-          "2W7AC6T8T5.app.alextran.immich.profile",
+          "2W7AC6T8T5.app.alextran.immich.profile"
         ],
         "appID": "2W7AC6T8T5.app.alextran.immich",
         "components": [
