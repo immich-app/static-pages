@@ -4,7 +4,7 @@
   "description": "Monorepo for static sites",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@12.10.1",
+  "packageManager": "pnpm@12.14.0",
   "engines": {
     "pnpm": ">=10.0.0"
   },
