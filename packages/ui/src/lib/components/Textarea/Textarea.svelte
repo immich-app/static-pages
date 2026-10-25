@@ -20,6 +20,8 @@
     ...restProps
   }: TextareaProps = $props();
 
+  let clientWidth = $state(0);
+
   const context = getFieldContext();
   const { label, description, readOnly, required, invalid, disabled, ...labelProps } = $derived(context());
   const size = $derived(initialSize ?? labelProps.size ?? 'small');
@@ -105,7 +107,15 @@
 
   $effect(() => {
     void value;
-    autogrow(ref);
+    void clientWidth;
+
+    const element = ref;
+    if (!element || !grow) {
+      return;
+    }
+
+    const frame = requestAnimationFrame(() => autogrow(element));
+    return () => cancelAnimationFrame(frame);
   });
 </script>
 
@@ -144,6 +154,7 @@
       )}
       bind:this={ref}
       bind:value
+      bind:clientWidth
       {...restProps}></textarea>
   </div>
 </div>
