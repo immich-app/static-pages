@@ -33,5 +33,12 @@
         ]
       }
     ]
+  },
+  "webcredentials": {
+    "apps": [
+      "2W7AC6T8T5.app.alextran.immich",
+      "2W7AC6T8T5.app.futo.immich.debug",
+      "2W7AC6T8T5.app.futo.immich.profile"
+    ]
   }
 }
