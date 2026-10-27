@@ -148,6 +148,23 @@ describe(svelteMarkdownPreprocess.name, () => {
   });
 
   describe('images', () => {
+    it('should not wrap an image only paragraph in a p element', async () => {
+      await expect(
+        svelteMarkdownPreprocess().markup({
+          filename: 'test.md',
+          content: `![Alt text](https://immich.app/image.webp)`,
+        }),
+      ).resolves.toMatchObject({
+        code: expect.stringContaining(`<Markdown.Image src="https://immich.app/image.webp" alt="Alt text"/>\n`),
+      });
+
+      const result = await svelteMarkdownPreprocess().markup({
+        filename: 'test.md',
+        content: `![Alt text](https://immich.app/image.webp)`,
+      });
+      expect(result?.code).not.toContain('<Markdown.Paragraph>');
+    });
+
     it('should import relative images so vite can optimize them', async () => {
       const result = await svelteMarkdownPreprocess().markup({
         filename: 'test.md',

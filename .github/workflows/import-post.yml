@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Generate a token
         id: generate-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
           client-id: ${{ secrets.PUSH_O_MATIC_APP_CLIENT_ID }}
           private-key: ${{ secrets.PUSH_O_MATIC_APP_KEY }}
@@ -26,7 +26,7 @@ jobs:
           ref: 'main'
 
       - name: Setup Mise
-        uses: immich-app/devtools/actions/use-mise@b5d01f97c667b7a5ff8818596d0d12983da32e7e # use-mise-action-v3.2.2
+        uses: immich-app/devtools/actions/use-mise@caac7f7e4298458a14238959504f411fc6cc7f06 # use-mise-action-v3.2.3
         with:
           github_token: ${{ steps.generate-token.outputs.token }}
 

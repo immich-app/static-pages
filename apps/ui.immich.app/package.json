@@ -44,7 +44,7 @@
     "tailwind-variants": "^3.0.0"
   },
   "volta": {
-    "node": "24.21.0"
+    "node": "24.22.1"
   },
   "imports": {
     "#lib": "./src/lib/index.js",

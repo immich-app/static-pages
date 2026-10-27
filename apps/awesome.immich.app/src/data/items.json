@@ -5,6 +5,12 @@
     "types": ["client", "clients"],
     "projects": [
       {
+        "title": "TV Client for Immich",
+        "description": "Unofficial Android TV and Google TV client in the style of Immich: smooth timeline, memories, smart search, world map and a photo screensaver. Highly configurable and extensively tested on real TV hardware.",
+        "sourceCodeUrl": "https://github.com/neforce/android-tv-immich-client",
+        "tags": ["Vibe-Coded"]
+      },
+      {
         "title": "Immich Face Sheet",
         "description": "Create contact sheets, collages, and photomosaics from a person's face crops in your Immich library.",
         "websiteUrl": "https://github.com/tiagonmas/immich-face-sheet",
@@ -70,6 +76,12 @@
         "tags": ["Vibe-Coded"]
       },
       {
+        "title": "Immich Folio",
+        "description": "Self-hosted photography portfolio that turns Immich albums into a public-facing gallery, acting as a secure reverse proxy so your Immich server stays private.",
+        "sourceCodeUrl": "https://github.com/ralksta/immich-folio",
+        "tags": ["Vibe-Coded"]
+      },
+      {
         "title": "View-Only Web Interface",
         "description": "Display Immich photos publicly while allowing for the ability to filter and search for images.",
         "sourceCodeUrl": "https://github.com/JimmyeJones/Immich-View-Only-Web-Interface",
@@ -108,6 +120,12 @@
         "title": "Immich Wear",
         "description": "Unofficial Immich client for Wear OS. Browse recent photos, albums, favorites and memories, view EXIF data and favorite assets from your wrist, with a watch face tile and an optional phone companion app for credential-free setup.",
         "sourceCodeUrl": "https://github.com/nikosavola/immich-wear",
+        "tags": ["Vibe-Coded"]
+      },
+      {
+        "title": "Fotoroll",
+        "description": "Unofficial native Linux desktop client (Flutter/GTK) aiming for parity with the web and mobile apps: timeline, memories, viewer with live and 360° photos, faces, albums, sharing, map, search, admin settings, folder backup and tray. AppImage available.",
+        "sourceCodeUrl": "https://github.com/Pacuka/fotoroll",
         "tags": ["Vibe-Coded"]
       }
     ]
@@ -311,6 +329,13 @@
         "title": "Immich Analyze",
         "description": "AI-powered image description generator for Immich that analyzes photos with Ollama models and updates database metadata",
         "sourceCodeUrl": "https://github.com/timasoft/immich-analyze"
+      },
+      {
+        "title": "Immich Memories",
+        "description": "Turn photos, videos and Live Photos from an Immich library into memory films with titles and music. Review the cut in a web UI or schedule automatic films.",
+        "websiteUrl": "https://sam-dumont.github.io/immich-memories/",
+        "sourceCodeUrl": "https://github.com/sam-dumont/immich-memories",
+        "tags": ["Vibe-Coded"]
       }
     ]
   },

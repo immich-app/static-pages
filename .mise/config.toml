@@ -1,9 +1,9 @@
 [tools]
-opentofu = "1.13.1"
-terragrunt = "1.1.6"
-node = "24.21.0"
-pnpm = "12.10.1"
-wrangler = "4.149.0"
+opentofu = "1.13.2"
+terragrunt = "1.2.0"
+node = "24.22.1"
+pnpm = "12.15.0"
+wrangler = "4.151.3"
 
 [env]
 OP_ACCOUNT = "immich.1password.com"
