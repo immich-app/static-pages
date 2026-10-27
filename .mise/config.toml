@@ -1,5 +1,5 @@
 [tools]
-opentofu = "1.13.1"
+opentofu = "1.13.2"
 terragrunt = "1.1.6"
 node = "24.22.1"
 pnpm = "12.15.0"
