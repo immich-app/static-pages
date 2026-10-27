@@ -326,6 +326,12 @@
         "sourceCodeUrl": "https://github.com/haavardnk/immich-edit"
       },
       {
+        "title": "Immich Analyze",
+        "description": "AI-powered image description generator for Immich that analyzes photos with Ollama models and updates database metadata",
+        "sourceCodeUrl": "https://github.com/timasoft/immich-analyze",
+        "tags": ["Vibe-Coded"]
+      },
+      {
         "title": "Immich Memories",
         "description": "Turn photos, videos and Live Photos from an Immich library into memory films with titles and music. Review the cut in a web UI or schedule automatic films.",
         "websiteUrl": "https://sam-dumont.github.io/immich-memories/",
