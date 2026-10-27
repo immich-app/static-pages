@@ -328,7 +328,8 @@
       {
         "title": "Immich Analyze",
         "description": "AI-powered image description generator for Immich that analyzes photos with Ollama models and updates database metadata",
-        "sourceCodeUrl": "https://github.com/timasoft/immich-analyze"
+        "sourceCodeUrl": "https://github.com/timasoft/immich-analyze",
+        "tags": ["Vibe-Coded"]
       },
       {
         "title": "Immich Memories",
