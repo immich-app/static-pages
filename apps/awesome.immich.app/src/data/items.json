@@ -72,7 +72,8 @@
       {
         "title": "Immich Folio",
         "description": "Self-hosted photography portfolio that turns Immich albums into a public-facing gallery, acting as a secure reverse proxy so your Immich server stays private.",
-        "sourceCodeUrl": "https://github.com/ralksta/immich-folio"
+        "sourceCodeUrl": "https://github.com/ralksta/immich-folio",
+        "tags": ["Vibe-Coded"]
       },
       {
         "title": "View-Only Web Interface",
