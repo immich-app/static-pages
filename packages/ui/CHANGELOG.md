@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.91.1](https://github.com/immich-app/static-pages/compare/ui-v0.91.0...ui-v0.91.1) (2026-10-28)
+
+
+### Bug Fixes
+
+* **blog:** prevent hydration crash on markdown images ([#921](https://github.com/immich-app/static-pages/issues/921)) ([9def885](https://github.com/immich-app/static-pages/commit/9def885a4e3d99ed0d837abf1c00b74595085c54))
+* **deps:** update dependency runed to ^0.37.0 ([#917](https://github.com/immich-app/static-pages/issues/917)) ([18e2752](https://github.com/immich-app/static-pages/commit/18e2752b69c8c84b9100f110ea946c118f31b5c9))
+* **ui:** resize textareas when their width changes ([#922](https://github.com/immich-app/static-pages/issues/922)) ([af750c6](https://github.com/immich-app/static-pages/commit/af750c6fda2723294781fc8cce4f9bd1e7d5b4d3))
+
 ## [0.91.0](https://github.com/immich-app/static-pages/compare/ui-v0.90.0...ui-v0.91.0) (2026-10-16)
 
 
