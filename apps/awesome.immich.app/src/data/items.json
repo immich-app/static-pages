@@ -343,6 +343,12 @@
         "websiteUrl": "https://sam-dumont.github.io/immich-memories/",
         "sourceCodeUrl": "https://github.com/sam-dumont/immich-memories",
         "tags": ["Vibe-Coded"]
+      },
+      {
+        "title": "self-host",
+        "description": "Installs Immich and other self-hosted apps with Docker Compose and sets them up: admin accounts, API keys and the apps connected to each other. Terminal dashboard, and a built-in skill so an agent can do it for you.",
+        "websiteUrl": "https://self-host.fyi",
+        "sourceCodeUrl": "https://github.com/ajnart/self-host"
       }
     ]
   },
