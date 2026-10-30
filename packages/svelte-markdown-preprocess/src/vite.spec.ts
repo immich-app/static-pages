@@ -4,7 +4,7 @@ import { getHeaders, getHrefFromPath, isMarkdownPath } from './vite.js';
 describe('getHeaders', () => {
   test('keeps level two and three headings with anchors matching the rendered ids', () => {
     expect(getHeaders('# Title\n\n## Using `restic`\n\nText\n\n### Sub heading\n\n#### Deep\n')).toEqual([
-      { id: 'using', text: 'Using restic', level: 2 },
+      { id: 'using-restic', text: 'Using restic', level: 2 },
       { id: 'sub-heading', text: 'Sub heading', level: 3 },
     ]);
   });
@@ -27,7 +27,18 @@ describe('getHeaders', () => {
 
   test('replaces emoji shortcodes in the text, but not in the anchor', () => {
     expect(getHeaders('## Bye bye interns! :wave:\n')).toEqual([
-      { id: 'bye-bye-interns', text: 'Bye bye interns! \u{1F44B}', level: 2 },
+      { id: 'bye-bye-interns-', text: 'Bye bye interns! \u{1F44B}', level: 2 },
+    ]);
+  });
+
+  test('derives the anchor from inline code', () => {
+    expect(getHeaders('## `v3.0.0`\n')).toEqual([{ id: 'v300', text: 'v3.0.0', level: 2 }]);
+  });
+
+  test('suffixes repeated anchors, counting headings of every level', () => {
+    expect(getHeaders('## Setup\n\n#### Setup\n\n## Setup\n')).toEqual([
+      { id: 'setup', text: 'Setup', level: 2 },
+      { id: 'setup-2', text: 'Setup', level: 2 },
     ]);
   });
 

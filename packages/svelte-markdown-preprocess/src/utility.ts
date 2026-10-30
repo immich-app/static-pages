@@ -1,4 +1,5 @@
 import fm from 'front-matter';
+import GithubSlugger, { slug } from 'github-slugger';
 
 export type FrontMatterAttributes = {
   layout?: string;
@@ -11,18 +12,21 @@ export const parseFrontMatter = (content: string) => {
   return fm(content) as { attributes: FrontMatterAttributes; body: string };
 };
 
-export const getIdFromText = (text: string) => {
-  let id = text
-    .toLowerCase()
+const cleanText = (text: string) =>
+  text
     .replaceAll(/<[^>]*>/g, '')
-    .replaceAll(/[^a-z1-9 ]/g, '')
-    .replaceAll(/\s+/g, '-');
+    .replaceAll(/\s+/g, ' ')
+    .trim();
 
-  if (id.endsWith('-')) {
-    id = id.slice(0, -1);
-  }
+export const getIdFromText = (text: string) => slug(cleanText(text));
 
-  return id;
+export const createSlugger = () => {
+  const slugger = new GithubSlugger();
+
+  return {
+    slug: (text: string) => slugger.slug(cleanText(text)),
+    reset: () => slugger.reset(),
+  };
 };
 
 export const escapeHtml = (text: string) => {

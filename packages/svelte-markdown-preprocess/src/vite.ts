@@ -1,10 +1,9 @@
-import { Marked, Parser, type Token, type Tokens } from 'marked';
-import { emojify } from 'node-emoji';
+import { Marked, type Tokens } from 'marked';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import type { Plugin } from 'vite';
-import { markedSvelte } from './markdown.js';
-import { getIdFromText, parseFrontMatter, type FrontMatterAttributes } from './utility.js';
+import { inlineToText, markedSvelte } from './markdown.js';
+import { createSlugger, parseFrontMatter, type FrontMatterAttributes } from './utility.js';
 
 export type DocHeader = {
   id: string;
@@ -44,18 +43,8 @@ const GROUP = /^\(.*\)$/;
 
 const md = new Marked().use(markedSvelte());
 
-const inlineText = (tokens: Token[]): string =>
-  tokens
-    .map((token) => {
-      if ('tokens' in token && token.tokens) {
-        return inlineText(token.tokens);
-      }
-
-      return 'text' in token ? emojify(token.text) : '';
-    })
-    .join('');
-
 export const getHeaders = (body: string, levels: number[] = [2, 3]): DocHeader[] => {
+  const slugger = createSlugger();
   const headers: DocHeader[] = [];
 
   for (const token of md.lexer(body)) {
@@ -64,15 +53,11 @@ export const getHeaders = (body: string, levels: number[] = [2, 3]): DocHeader[]
     }
 
     const { depth, tokens } = token as Tokens.Heading;
-    if (!levels.includes(depth)) {
-      continue;
+    const text = inlineToText(tokens);
+    const id = slugger.slug(text);
+    if (levels.includes(depth)) {
+      headers.push({ id, text, level: depth });
     }
-
-    headers.push({
-      id: getIdFromText(Parser.parseInline(tokens, md.defaults)),
-      text: inlineText(tokens),
-      level: depth,
-    });
   }
 
   return headers;
