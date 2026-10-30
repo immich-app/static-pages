@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.92.0](https://github.com/immich-app/static-pages/compare/ui-v0.91.1...ui-v0.92.0) (2026-10-30)
+
+
+### Features
+
+* **ui:** tooltip customization ([#932](https://github.com/immich-app/static-pages/issues/932)) ([41bbe6a](https://github.com/immich-app/static-pages/commit/41bbe6a614c942a19642942946b50b241527423e))
+
+
+### Bug Fixes
+
+* header ids ([#935](https://github.com/immich-app/static-pages/issues/935)) ([f2bf763](https://github.com/immich-app/static-pages/commit/f2bf7636fb3cca997785410ad60b9a9ac4f779ee))
+* markdown links ([#940](https://github.com/immich-app/static-pages/issues/940)) ([daf92d5](https://github.com/immich-app/static-pages/commit/daf92d5dfc59abd9744527f7131b888010bbfd95))
+
 ## [0.91.1](https://github.com/immich-app/static-pages/compare/ui-v0.91.0...ui-v0.91.1) (2026-10-28)
 
 
