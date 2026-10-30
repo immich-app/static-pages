@@ -7,6 +7,7 @@
   import {
     mdiAccountGroup,
     mdiAccountGroupOutline,
+    mdiAccountMultiplePlusOutline,
     mdiAndroid,
     mdiApi,
     mdiAppleIos,
@@ -30,6 +31,7 @@
     mdiDatabaseOutline,
     mdiDevices,
     mdiDisc,
+    mdiDocker,
     mdiEmailOutline,
     mdiExpansionCard,
     mdiEyeOutline,
@@ -55,6 +57,7 @@
     mdiImageSearch,
     mdiImport,
     mdiKeyboardSettingsOutline,
+    mdiLayersOutline,
     mdiLicense,
     mdiLinkEdit,
     mdiLockOutline,
@@ -62,6 +65,7 @@
     mdiMagnifyScan,
     mdiMap,
     mdiMapOutline,
+    mdiMapSearchOutline,
     mdiMaterialDesign,
     mdiMatrix,
     mdiMerge,
@@ -83,11 +87,13 @@
     mdiShare,
     mdiShareAll,
     mdiShareCircle,
+    mdiSpeedometer,
     mdiStar,
     mdiStarOutline,
     mdiSync,
     mdiTableKey,
     mdiTag,
+    mdiTagEdit,
     mdiTagFaces,
     mdiTagMultiple,
     mdiText,
@@ -103,6 +109,9 @@
   } from '@mdi/js';
 
   const releases = {
+    'v3.3.0': new Date(2026, 9, 7),
+    'v3.2.0': new Date(2026, 8, 10),
+    'v3.1.0': new Date(2026, 6, 29),
     'v3.0.0': new Date(2026, 6, 2),
     'v2.7.0': new Date(2026, 3, 7),
     'v2.6.0': new Date(2026, 2, 19),
@@ -247,7 +256,7 @@
     {
       icon: mdiShareAll,
       title: 'Better sharing',
-      description: 'Improve sharing capabilities, especially around facial recognition data.',
+      description: 'Continue improving sharing, building on cluster groups and shared people.',
     },
     {
       icon: mdiAccountGroupOutline,
@@ -293,6 +302,66 @@
 
   const milestones: TimelineItem[] = [
     releaseItem({
+      icon: mdiAccountMultiplePlusOutline,
+      title: 'Shared people management',
+      description: 'Share recognized people with other users in your cluster group, with cross-user merging.',
+      release: 'v3.3.0',
+    }),
+    releaseItem({
+      icon: mdiCakeVariant,
+      title: 'Birthday memories',
+      description: "Celebrate a person's birthday with a memory of previous birthdays.",
+      release: 'v3.3.0',
+    }),
+    releaseItem({
+      icon: mdiLayersOutline,
+      title: 'Auto-stacked mobile edits',
+      description: 'Automatically stack edits made in other apps on top of the original.',
+      release: 'v3.3.0',
+    }),
+    releaseItem({
+      icon: mdiSpeedometer,
+      title: 'Machine learning v2 models',
+      description:
+        'Faster inference with less memory, RKNPU parity, TensorRT RTX for newer NVIDIA GPUs, and new PP-OCRv6 models.',
+      release: 'v3.3.0',
+    }),
+    releaseItem({
+      icon: mdiMagnify,
+      title: 'Revamped search UI (web)',
+      description: 'A redesigned, simpler search modal.',
+      release: 'v3.2.0',
+    }),
+    releaseItem({
+      icon: mdiHistory,
+      title: 'Memories page',
+      description: 'Browse past memories and favorite the ones you want to keep.',
+      release: 'v3.2.0',
+    }),
+    releaseItem({
+      icon: mdiTagEdit,
+      title: 'Tag renaming (web)',
+      description: 'Rename existing tags.',
+      release: 'v3.2.0',
+    }),
+    releaseItem({
+      icon: mdiMapSearchOutline,
+      title: 'Map viewport timeline (web)',
+      description: 'View a timeline of the assets currently visible on the map.',
+      release: 'v3.2.0',
+    }),
+    {
+      icon: mdiDocker,
+      title: 'Docker Compose Builder',
+      description: 'Put together a custom compose file for Immich.',
+      link: {
+        href: '/docker-compose-builder',
+        text: 'immich.app/docker-compose-builder',
+      },
+      getDateLabel: withLanguage(new Date(2026, 8, 1)),
+    },
+    starMilestone(110_000, new Date(2026, 7, 8)),
+    releaseItem({
       icon: mdiVideoSwitchOutline,
       title: 'Real-time transcoding (web)',
       description: 'Serve videos with on-the-fly transcoding to the web.',
@@ -324,7 +393,7 @@
     }),
     releaseItem({
       icon: mdiOcr,
-      title: 'Optical Character Recognition (ORC) (mobile).',
+      title: 'Optical Character Recognition (OCR) (mobile)',
       description: 'Show extracted text as an overlay on mobile, for easy copying.',
       release: 'v3.0.0',
     }),
