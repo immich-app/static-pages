@@ -93,4 +93,4 @@ I also got to work on a new onboarding page for the mobile app that walks users 
 
 Well, that's it for this month. Next month we hope to figure out a better release strategy that doesn’t block the team so much, continue to iterate on workflows, and _finally_ deliver something related to better sharing.
 
-As always, if you find the project helpful, you can support us at <https://buy.immich.app/.>
+As always, if you find the project helpful, you can support us at <https://buy.immich.app/>.

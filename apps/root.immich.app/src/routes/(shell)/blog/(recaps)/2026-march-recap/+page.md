@@ -153,4 +153,4 @@ We sold over 500 DVDs since they were released! This was a super fun project to 
 
 Looking forward into April, we hope to have a final `v2.7.0` release, and then start work on `v3`, which will include a handful of API breaking changes, and:crossed_fingers: hopefully an initial release of workflows!
 
-Well, that's it for this month. As always, if you find the project helpful, you can support us at <https://buy.immich.app/.>
+Well, that's it for this month. As always, if you find the project helpful, you can support us at <https://buy.immich.app/>.

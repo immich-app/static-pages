@@ -112,4 +112,4 @@ None of this would have been possible without our incredible community. Thank yo
 
 On behalf of FUTO, we wish you a peaceful and joyful holiday season. We will wind down on GitHub and Discord activity for the rest of the year to recharge, collect more memories, and come back strong in 2026.
 
-_And as always, if you find the project helpful, you can support us at <https://buy.immich.app/.>_
+_And as always, if you find the project helpful, you can support us at <https://buy.immich.app/>._
