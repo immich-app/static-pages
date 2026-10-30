@@ -5,7 +5,7 @@ description: Release notes for v3.3.0 – People sharing, birthday memories,
 id: 7f57b1e5-5003-48d9-9207-457ee4b5ff35
 publishedAt: 2026-10-07
 slug: v3.3.0-release
-title: v3.3.0
+title: Release v3.3.0
 type: release
 ---
 

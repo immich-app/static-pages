@@ -49,10 +49,7 @@
 <hr class="my-4" />
 
 <Stack gap={6} class="mt-8">
-  {#each posts.filter((post) => !selected || selected === post.type) as post, i (post.url)}
-    {#if i !== 0}
-      <hr class="my-2 border" />
-    {/if}
-    <BlogPostCard {post} type={selected} />
+  {#each posts.filter((post) => !selected || selected === post.type) as post (post.url)}
+    <BlogPostCard {post} />
   {/each}
 </Stack>

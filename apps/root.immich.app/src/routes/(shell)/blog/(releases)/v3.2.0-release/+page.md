@@ -5,7 +5,7 @@ description: Release notes for v3.2.0 – Search v2, view own people in shared
 id: 6a66f5d5-96bc-4510-ab1c-06504fb9d3de
 publishedAt: 2026-09-10
 slug: v3.2.0-release
-title: v3.2.0
+title: Release v3.2.0
 type: release
 ---
 
