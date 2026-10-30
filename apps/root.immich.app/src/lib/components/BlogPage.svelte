@@ -1,6 +1,6 @@
 <script lang="ts">
   import { asBlogPost, blogMetadata, BlogType, getPostNeighbors, posts } from '#lib';
-  import BlogTypeBadge from '#lib/components/BlogTypeBadge.svelte';
+  import { Routes } from '#lib/route.js';
   import {
     Heading,
     Icon,
@@ -45,10 +45,12 @@
     <div>
       <ul class="flex place-items-center gap-1 text-muted">
         <li class="flex place-items-center">
-          <Link href="/blog" underline={false}><span class="hover:underline">Blog</span></Link>
+          <Link href="/" underline={false}><span class="hover:underline">Home</span></Link>
           <Icon icon={mdiChevronRight} size="1rem" />
         </li>
-        <li>{title}</li>
+        <li>
+          <Link href={Routes.blog()} underline={false}><span class="hover:underline">Blog</span></Link>
+        </li>
       </ul>
 
       <Heading tag="h1" size="giant" class="mt-6">
@@ -61,8 +63,6 @@
       </div>
 
       <Markdown.Paragraph><em>{description}</em></Markdown.Paragraph>
-
-      <BlogTypeBadge class="mt-2" size="small" type={post.type} />
 
       {#if post.coverUrl}
         <Markdown.Image
@@ -84,7 +84,7 @@
         </Markdown.Image>
       {/if}
 
-      <Markdown.LineBreak />
+      <hr class="my-6" />
     </div>
 
     {@render children?.()}
