@@ -54,7 +54,7 @@ By default, changes to the name & date of birth are reflected for both users. On
 
 <Markdown.Image src="https://static.immich.cloud/blog/7f57b1e5-5003-48d9-9207-457ee4b5ff35/64ec0bc5ca7e19d3f77923b1049121a7-424.avif" width="424" height="431" alt="Edit person modal showing a checkbox &quot;Only change for me&quot;" />
 
-Also, there is a preference for this behavior in the “Sharing settings”, which can be changed to make this the default behavior when editing a person. The setting can be changed here:[ https://my.immich.app/user-settings?isOpen=feature+peopl](https://my.immich.app/user-settings?isOpen=feature+people.)[e](https://my.immich.app/user-settings?isOpen=feature+people).
+Also, there is a preference for this behavior in the “Sharing settings”, which can be changed to make this the default behavior when editing a person. The setting can be changed here: <https://my.immich.app/user-settings?isOpen=feature+people>.
 
 <Markdown.Image src="https://static.immich.cloud/blog/7f57b1e5-5003-48d9-9207-457ee4b5ff35/9c7f29e477f105774ea95b967b04a422-604.avif" width="604" height="113" alt="A dropdown that allows choosing whether changes should apply to everyone or just the current user" />
 

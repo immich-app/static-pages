@@ -138,4 +138,4 @@ After a _lot_ of testing and optimizations, the processing time can be up to sev
 
 Well, that's it for this month. Next month we hope to work out any kinks with the new workflow process, release branches, and backporting. Also, we plan to continue to iterate on workflows, search, memories, and sharing.
 
-As always, if you find the project helpful, you can support us at <https://buy.immich.app/.>
+As always, if you find the project helpful, you can support us at <https://buy.immich.app/>.

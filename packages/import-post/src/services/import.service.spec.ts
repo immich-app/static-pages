@@ -173,6 +173,53 @@ slug: test
     });
   });
 
+  describe('links', () => {
+    const write = async (body: string) => {
+      outlineMock.getDocument.mockResolvedValue({
+        id: 'post-id-1',
+        title: 'Test',
+        text: `---
+title: Test
+slug: test
+---
+
+${body}`,
+      });
+
+      await sut.run(POST_URL);
+
+      return systemMock.write.mock.calls[0][1];
+    };
+
+    it('should move trailing punctuation out of a bare url', async () => {
+      await expect(write('Support us at [https://buy.immich.app/.](https://buy.immich.app/.)')).resolves.toContain(
+        'Support us at <https://buy.immich.app/>.',
+      );
+    });
+
+    it('should move trailing punctuation out of an autolink', async () => {
+      await expect(write('See <https://github.com/immich-app/immich/pull/32194.>')).resolves.toContain(
+        'See <https://github.com/immich-app/immich/pull/32194>.',
+      );
+    });
+
+    it('should keep balanced parentheses in a bare url', async () => {
+      await expect(write('<https://en.wikipedia.org/wiki/Immich_(software)>')).resolves.toContain(
+        '<https://en.wikipedia.org/wiki/Immich_(software)>',
+      );
+    });
+
+    it('should leave a link with custom text alone', async () => {
+      await expect(write('[docs](https://immich.app/docs/.)')).resolves.toContain('[docs](https://immich.app/docs/.)');
+    });
+
+    it('should leave a link with a title alone', async () => {
+      await expect(write('[https://buy.immich.app/.](https://buy.immich.app/. "Donate")')).resolves.toContain(
+        '[https://buy.immich.app/.](https://buy.immich.app/. "Donate")',
+      );
+    });
+  });
+
   describe('metadata', () => {
     it('should default the published date to today', async () => {
       const today = new Date().toISOString().slice(0, 10);

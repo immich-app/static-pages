@@ -7,4 +7,4 @@
   const { href, text } = $derived(asGithubLink({ org, repo, number, type }));
 </script>
 
-<Link {...rest} {href} class="inline-flex items-center">{text}</Link>
+<Link {...rest} {href}>{text}</Link>

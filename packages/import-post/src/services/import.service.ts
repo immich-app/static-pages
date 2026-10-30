@@ -80,6 +80,35 @@ const markdown = unified()
   .use(remarkGfm)
   .use(remarkStringify, { bullet: '-', emphasis: '_', strong: '*', rule: '-' });
 
+const relinkBareUrls = (document: MarkdownDocument): void => {
+  visit(document, 'link', (node, index, parent) => {
+    const [child] = node.children;
+    if (
+      !parent ||
+      typeof index !== 'number' ||
+      node.title ||
+      node.children.length !== 1 ||
+      child.type !== 'text' ||
+      child.value !== node.url
+    ) {
+      return;
+    }
+
+    const [paragraph, ...rest] = markdown.parse(node.url).children;
+    if (rest.length > 0 || paragraph?.type !== 'paragraph') {
+      return;
+    }
+
+    const links = paragraph.children.filter(({ type }) => type === 'link');
+    if (links.length !== 1) {
+      return;
+    }
+
+    parent.children.splice(index, 1, ...paragraph.children);
+    return index + paragraph.children.length;
+  });
+};
+
 export class ImportService {
   constructor(
     private readonly configRepository: ConfigRepository,
@@ -128,6 +157,7 @@ export class ImportService {
     };
 
     const document = markdown.parse(content);
+    relinkBareUrls(document);
     const firstAsCover = postType !== 'release';
 
     let cover: Record<string, unknown> | undefined;

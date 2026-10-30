@@ -124,4 +124,4 @@ Since we are writing this post very last minute (did I already mention things ha
 
 Well, that's it for this month. Next month we plan to tune and enhance people sharing features, and probably look into PostgreSQL 18/19 migration.
 
-As always, if you find the project helpful, you can support us at <https://buy.immich.app/.>
+As always, if you find the project helpful, you can support us at <https://buy.immich.app/>.

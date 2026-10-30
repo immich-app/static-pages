@@ -90,7 +90,7 @@ I also spent a bit of time working on [Immich UI](https://ui.immich.app/), which
 
 ![New Immich UI homepage](https://static.immich.cloud/blog/9c740a9a-d239-4213-8bf6-08670f572f07/827a36ff5e50c5b67be21dbe515446c1.webp)
 
-Many of these improvements were made to the library itself, and have been rolled out to the rest of our sites like <https://immich.app,> <https://api.immich.app/,> etc.
+Many of these improvements were made to the library itself, and have been rolled out to the rest of our sites like <https://immich.app>, <https://api.immich.app/>, etc.
 
 Also, the Immich API website now links to the replacement endpoint, when available.
 
@@ -120,4 +120,4 @@ Another wrinkle has been that Immich can scale to multiple servers, so we needed
 
 ## Upcoming goals
 
-Looking forward into May we hope to release `v3.0.0` with an initial version of Workflows, as well as make progress of some of those big features mentioned earlier. Well, that's it for this month. As always, if you find the project helpful, you can support us at <https://buy.immich.app/.>
+Looking forward into May we hope to release `v3.0.0` with an initial version of Workflows, as well as make progress of some of those big features mentioned earlier. Well, that's it for this month. As always, if you find the project helpful, you can support us at <https://buy.immich.app/>.
