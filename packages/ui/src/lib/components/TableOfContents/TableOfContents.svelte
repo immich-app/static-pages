@@ -9,6 +9,7 @@
   const { items, translations, class: className, ...restProps }: TableOfContentsProps = $props();
 
   const title = $derived(t('table_of_contents_title', translations));
+  const entries = $derived(items.filter(({ id }) => id !== ''));
 
   type Block = { element: HTMLElement; section: number };
 
@@ -46,9 +47,9 @@
   const visibleBlocks = new SvelteSet<Element>();
 
   watch(
-    () => items,
-    (items) => {
-      blocks = getBlocks(items);
+    () => entries,
+    (entries) => {
+      blocks = getBlocks(entries);
     },
   );
 
@@ -98,7 +99,7 @@
     <Text color="muted" size="small" fontWeight="semi-bold">{title}</Text>
     <div class="relative mt-3">
       <ul bind:this={list} class="flex flex-col border-s text-sm">
-        {#each items as item, i (item.id)}
+        {#each entries as item, i (item.id)}
           <li bind:this={listItems[i]} class={item.level === 3 ? 'py-1 ps-6' : 'py-1 ps-3'}>
             <a
               href="#{item.id}"

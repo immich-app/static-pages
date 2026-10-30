@@ -2,7 +2,7 @@
 import fmUntyped, { FrontMatterOptions, FrontMatterResult } from 'front-matter';
 import { Marked, MarkedExtension, Token, Tokens } from 'marked';
 import { emojify } from 'node-emoji';
-import { createAttributes, escapeHtml, escapeSvelteCode, getIdFromText } from './utility.js';
+import { createAttributes, createSlugger, escapeHtml, escapeSvelteCode } from './utility.js';
 
 const fm = fmUntyped as unknown as <T>(file: string, options?: FrontMatterOptions) => FrontMatterResult<T>;
 
@@ -32,216 +32,227 @@ const SVELTE_COMPONENT_BLOCK_REGEX = new RegExp(String.raw`${SVELTE_COMPONENT_RE
 
 const normalizeText = (text: string) => escapeHtml(emojify(text));
 
-export const markedSvelte = (): MarkedExtension => ({
-  gfm: true,
+export const markedSvelte = (): MarkedExtension => {
+  const slugger = createSlugger();
 
-  walkTokens(token) {
-    if (token.type !== 'blockquote') {
-      return;
-    }
+  return {
+    gfm: true,
 
-    // parse github admonitions as alerts
-    const blockquote = token as Tokens.Blockquote;
-    const match = GFM_ALERT_REGEX.exec(blockquote.text);
-    if (!match?.groups) {
-      return;
-    }
-
-    Object.assign(blockquote, { type: 'alert', variant: match.groups.variant.toLowerCase() });
-
-    const firstChild = blockquote.tokens?.[0] as Tokens.Paragraph | undefined;
-    if (!firstChild) {
-      return;
-    }
-
-    if (firstChild.raw?.replace(GFM_ALERT_REGEX, '').trim()) {
-      const innerFirst = firstChild.tokens?.[0] as Tokens.Text | undefined;
-      if (innerFirst) {
-        innerFirst.raw = innerFirst.raw.replace(GFM_ALERT_REGEX, '');
-        innerFirst.text = innerFirst.text.replace(GFM_ALERT_REGEX, '');
-      }
-      if (firstChild.tokens?.[1]?.type === 'br') {
-        firstChild.tokens.splice(1, 1);
-      }
-    } else {
-      blockquote.tokens?.shift();
-    }
-  },
-
-  tokenizer: {
-    code(src) {
-      if (src.startsWith(' '.repeat(4))) {
-        return false;
-      }
-    },
-
-    html(src) {
-      const match = SVELTE_COMPONENT_BLOCK_REGEX.exec(src);
-      return match ? { type: 'html', raw: match[0], text: `${match[0].trim()}\n`, pre: false, block: true } : false;
-    },
-
-    tag(src) {
-      const match = SVELTE_COMPONENT_REGEX.exec(src);
-      return match
-        ? { type: 'html', raw: match[0], text: match[0], inLink: false, inRawBlock: false, block: false }
-        : false;
-    },
-  },
-
-  extensions: [
-    {
-      name: 'alert',
-      level: 'block',
-      start(src) {
-        return src.match(/^:::/m)?.index;
+    hooks: {
+      preprocess(markdown) {
+        slugger.reset();
+        return markdown;
       },
-      tokenizer(src) {
-        const match = ADMONITION_REGEX.exec(src);
-        if (!match?.groups) {
-          return;
+    },
+
+    walkTokens(token) {
+      if (token.type !== 'blockquote') {
+        return;
+      }
+
+      // parse github admonitions as alerts
+      const blockquote = token as Tokens.Blockquote;
+      const match = GFM_ALERT_REGEX.exec(blockquote.text);
+      if (!match?.groups) {
+        return;
+      }
+
+      Object.assign(blockquote, { type: 'alert', variant: match.groups.variant.toLowerCase() });
+
+      const firstChild = blockquote.tokens?.[0] as Tokens.Paragraph | undefined;
+      if (!firstChild) {
+        return;
+      }
+
+      if (firstChild.raw?.replace(GFM_ALERT_REGEX, '').trim()) {
+        const innerFirst = firstChild.tokens?.[0] as Tokens.Text | undefined;
+        if (innerFirst) {
+          innerFirst.raw = innerFirst.raw.replace(GFM_ALERT_REGEX, '');
+          innerFirst.text = innerFirst.text.replace(GFM_ALERT_REGEX, '');
+        }
+        if (firstChild.tokens?.[1]?.type === 'br') {
+          firstChild.tokens.splice(1, 1);
+        }
+      } else {
+        blockquote.tokens?.shift();
+      }
+    },
+
+    tokenizer: {
+      code(src) {
+        if (src.startsWith(' '.repeat(4))) {
+          return false;
+        }
+      },
+
+      html(src) {
+        const match = SVELTE_COMPONENT_BLOCK_REGEX.exec(src);
+        return match ? { type: 'html', raw: match[0], text: `${match[0].trim()}\n`, pre: false, block: true } : false;
+      },
+
+      tag(src) {
+        const match = SVELTE_COMPONENT_REGEX.exec(src);
+        return match
+          ? { type: 'html', raw: match[0], text: match[0], inLink: false, inRawBlock: false, block: false }
+          : false;
+      },
+    },
+
+    extensions: [
+      {
+        name: 'alert',
+        level: 'block',
+        start(src) {
+          return src.match(/^:::/m)?.index;
+        },
+        tokenizer(src) {
+          const match = ADMONITION_REGEX.exec(src);
+          if (!match?.groups) {
+            return;
+          }
+
+          const { variant, title, body } = match.groups;
+
+          return {
+            type: 'alert',
+            raw: match[0],
+            variant: variant.toLowerCase(),
+            title,
+            tokens: this.lexer.blockTokens(body, []),
+          };
+        },
+        renderer(token) {
+          const { variant, title, tokens } = token as unknown as AlertToken;
+          return renderAlert(this.parser, variant, title, tokens);
+        },
+      },
+    ],
+
+    renderer: {
+      heading({ tokens, depth }) {
+        const text = this.parser.parseInline(tokens);
+        const id = slugger.slug(inlineToText(tokens));
+        switch (depth) {
+          case 1:
+          case 2:
+          case 3:
+          case 4:
+          case 5:
+          case 6: {
+            return `<Markdown.Heading${createAttributes({ id, level: depth })}>${text}</Markdown.Heading>\n`;
+          }
         }
 
-        const { variant, title, body } = match.groups;
-
-        return {
-          type: 'alert',
-          raw: match[0],
-          variant: variant.toLowerCase(),
-          title,
-          tokens: this.lexer.blockTokens(body, []),
-        };
+        return `<Markdown.Paragraph>${text}</Markdown.Paragraph>\n`;
       },
-      renderer(token) {
-        const { variant, title, tokens } = token as unknown as AlertToken;
-        return renderAlert(this.parser, variant, title, tokens);
-      },
-    },
-  ],
 
-  renderer: {
-    heading({ tokens, depth }) {
-      const text = this.parser.parseInline(tokens);
-      const id = getIdFromText(text);
-      switch (depth) {
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6: {
-          return `<Markdown.Heading${createAttributes({ id, level: depth })}>${text}</Markdown.Heading>\n`;
+      list({ items, ordered, start }) {
+        let output = `<Markdown.List${createAttributes({ ordered, start: start === 1 ? undefined : start })}>\n`;
+        for (const item of items) {
+          const content = this.parser.parse(item.tokens);
+          output += `<Markdown.ListItem${createAttributes({ task: item.task || undefined, checked: item.checked })}>${content}</Markdown.ListItem>\n`;
         }
-      }
+        output += `</Markdown.List>\n`;
 
-      return `<Markdown.Paragraph>${text}</Markdown.Paragraph>\n`;
-    },
+        return output;
+      },
 
-    list({ items, ordered, start }) {
-      let output = `<Markdown.List${createAttributes({ ordered, start: start === 1 ? undefined : start })}>\n`;
-      for (const item of items) {
-        const content = this.parser.parse(item.tokens);
-        output += `<Markdown.ListItem${createAttributes({ task: item.task || undefined, checked: item.checked })}>${content}</Markdown.ListItem>\n`;
-      }
-      output += `</Markdown.List>\n`;
+      blockquote({ tokens }) {
+        const children = this.parser.parse(tokens);
+        return `<Markdown.BlockQuote>${children}</Markdown.BlockQuote>\n`;
+      },
 
-      return output;
-    },
+      paragraph({ tokens }) {
+        const children = this.parser.parseInline(tokens);
 
-    blockquote({ tokens }) {
-      const children = this.parser.parse(tokens);
-      return `<Markdown.BlockQuote>${children}</Markdown.BlockQuote>\n`;
-    },
+        // pass through svelte syntax unchanged
+        if (
+          children.startsWith('{#') ||
+          children.startsWith('{/') ||
+          children.startsWith('{:') ||
+          children.startsWith('{@')
+        ) {
+          return children;
+        }
 
-    paragraph({ tokens }) {
-      const children = this.parser.parseInline(tokens);
+        // `Markdown.Image` renders a block level <figure>, which is invalid inside a <p>
+        if (tokens.length === 1 && tokens[0].type === 'image') {
+          return children;
+        }
 
-      // pass through svelte syntax unchanged
-      if (
-        children.startsWith('{#') ||
-        children.startsWith('{/') ||
-        children.startsWith('{:') ||
-        children.startsWith('{@')
-      ) {
-        return children;
-      }
+        return `<Markdown.Paragraph>${children}</Markdown.Paragraph>\n`;
+      },
 
-      // `Markdown.Image` renders a block level <figure>, which is invalid inside a <p>
-      if (tokens.length === 1 && tokens[0].type === 'image') {
-        return children;
-      }
+      text(token) {
+        if (token.type === 'text') {
+          return token.tokens ? this.parser.parseInline(token.tokens) : normalizeText(token.text);
+        }
 
-      return `<Markdown.Paragraph>${children}</Markdown.Paragraph>\n`;
-    },
+        return token.text;
+      },
 
-    text(token) {
-      if (token.type === 'text') {
-        return token.tokens ? this.parser.parseInline(token.tokens) : normalizeText(token.text);
-      }
+      image({ href, text: alt, title }) {
+        return `<Markdown.Image${createAttributes({ src: href, alt, title })}/>\n`;
+      },
 
-      return token.text;
-    },
+      space() {
+        return `<Markdown.Space />\n`;
+      },
 
-    image({ href, text: alt, title }) {
-      return `<Markdown.Image${createAttributes({ src: href, alt, title })}/>\n`;
-    },
+      table({ header, rows }) {
+        // table
+        let output = `<Markdown.Table>\n`;
 
-    space() {
-      return `<Markdown.Space />\n`;
-    },
-
-    table({ header, rows }) {
-      // table
-      let output = `<Markdown.Table>\n`;
-
-      // header
-      output += `<Markdown.TableHeader>\n`;
-      for (const cell of header) {
-        const content = this.parser.parseInline(cell.tokens);
-        output += `<Markdown.TableHeading>${content}</Markdown.TableHeading>\n`;
-      }
-      output += `</Markdown.TableHeader>\n`;
-
-      // body
-      output += `<Markdown.TableBody>\n`;
-      for (const row of rows) {
-        output += `<Markdown.TableRow>\n`;
-        for (const cell of row) {
+        // header
+        output += `<Markdown.TableHeader>\n`;
+        for (const cell of header) {
           const content = this.parser.parseInline(cell.tokens);
-          output += `<Markdown.TableCell>${content}</Markdown.TableCell>\n`;
+          output += `<Markdown.TableHeading>${content}</Markdown.TableHeading>\n`;
         }
-        output += `</Markdown.TableRow>\n`;
-      }
-      output += `</Markdown.TableBody>\n`;
+        output += `</Markdown.TableHeader>\n`;
 
-      output += `</Markdown.Table>\n`;
+        // body
+        output += `<Markdown.TableBody>\n`;
+        for (const row of rows) {
+          output += `<Markdown.TableRow>\n`;
+          for (const cell of row) {
+            const content = this.parser.parseInline(cell.tokens);
+            output += `<Markdown.TableCell>${content}</Markdown.TableCell>\n`;
+          }
+          output += `</Markdown.TableRow>\n`;
+        }
+        output += `</Markdown.TableBody>\n`;
 
-      return output;
+        output += `</Markdown.Table>\n`;
+
+        return output;
+      },
+
+      code({ text, lang }) {
+        const escaped = escapeSvelteCode(text);
+        return `<Markdown.Code lang="${lang}" code={\`${escaped}\`} multiline />\n`;
+      },
+
+      hr() {
+        return `<Markdown.LineBreak />\n`;
+      },
+
+      link({ href, title, text: raw, tokens }) {
+        const attributes = createAttributes({ href, title });
+        if (raw === href) {
+          return `<Markdown.Link${attributes} />`;
+        }
+
+        const text = this.parser.parseInline(tokens);
+        return `<Markdown.Link${attributes}>${text}</Markdown.Link>`;
+      },
+
+      codespan({ text }) {
+        return `<Markdown.Code code={\`${escapeSvelteCode(text)}\`} />`;
+      },
     },
-
-    code({ text, lang }) {
-      const escaped = escapeSvelteCode(text);
-      return `<Markdown.Code lang="${lang}" code={\`${escaped}\`} multiline />\n`;
-    },
-
-    hr() {
-      return `<Markdown.LineBreak />\n`;
-    },
-
-    link({ href, title, text: raw, tokens }) {
-      const attributes = createAttributes({ href, title });
-      if (raw === href) {
-        return `<Markdown.Link${attributes} />`;
-      }
-
-      const text = this.parser.parseInline(tokens);
-      return `<Markdown.Link${attributes}>${text}</Markdown.Link>`;
-    },
-
-    codespan({ text }) {
-      return `<Markdown.Code code={\`${escapeSvelteCode(text)}\`} />`;
-    },
-  },
-});
+  };
+};
 
 /**
 Render markdown to plain text
@@ -282,7 +293,7 @@ const blockToText = (token: Token): string => {
   }
 };
 
-const inlineToText = (tokens: Token[]): string =>
+export const inlineToText = (tokens: Token[]): string =>
   tokens
     .map((token) => {
       if ('tokens' in token && token.tokens) {

@@ -145,6 +145,28 @@ describe(svelteMarkdownPreprocess.name, () => {
         '<Markdown.Code code={`' + String.raw`$\{PORT\}:\{PORT\}` + '`} />',
       );
     });
+
+    it('should derive heading ids from plain text, including inline code', async () => {
+      await expect(render('## Upcoming `v3.0.0`')).resolves.toContain(
+        '<Markdown.Heading id="upcoming-v300" level={2}>',
+      );
+    });
+
+    it('should suffix repeated heading ids within a file', async () => {
+      const code = await render('## Setup\n\n## Setup');
+
+      expect(code).toContain('<Markdown.Heading id="setup" level={2}>');
+      expect(code).toContain('<Markdown.Heading id="setup-1" level={2}>');
+    });
+
+    it('should start numbering again for each file', async () => {
+      const plugin = svelteMarkdownPreprocess();
+      await plugin.markup({ filename: 'a.md', content: '## Setup' });
+
+      await expect(plugin.markup({ filename: 'b.md', content: '## Setup' })).resolves.toMatchObject({
+        code: expect.stringContaining('<Markdown.Heading id="setup" level={2}>'),
+      });
+    });
   });
 
   describe('images', () => {
