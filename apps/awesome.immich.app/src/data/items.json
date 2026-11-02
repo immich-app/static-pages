@@ -213,6 +213,12 @@
         "sourceCodeUrl": "https://github.com/timonrieger/immichpy"
       },
       {
+        "title": "immich-rs",
+        "description": "Rust client library and SDK for the Immich API.",
+        "sourceCodeUrl": "https://github.com/boul2gom/immich-rs",
+        "websiteUrl": "https://crates.io/crates/immich-rs"
+      },
+      {
         "title": "lrimmich",
         "description": "Sync albums and metadata from a Lightroom Classic catalog to Immich when both share the same photo folder via an external library.",
         "sourceCodeUrl": "https://github.com/haavardnk/lrimmich"
