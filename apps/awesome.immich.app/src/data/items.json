@@ -133,6 +133,13 @@
         "description": "System-tray app for Windows and Linux that backs up chosen PC folders to Immich, with a library browser styled like the web app. Uses only the Immich API.",
         "sourceCodeUrl": "https://github.com/TypicalZedF/immich-splash",
         "tags": ["Vibe-Coded"]
+      },
+      {
+        "title": "Immich TV for Samsung",
+        "description": "Unofficial read-only Samsung Smart TV client for Tizen 5.0+ (2019 and newer): timeline, albums, people, memories, search, videos and Live Photos, slideshows and an ambient photo-frame mode, all driven by the Smart Remote. Installs through Apps2Samsung, which can fill in the server and API key for you.",
+        "websiteUrl": "https://immich-samsungtv.app",
+        "sourceCodeUrl": "https://github.com/rfsmason/immich-tv-for-samsung",
+        "tags": ["Vibe-Coded"]
       }
     ]
   },
