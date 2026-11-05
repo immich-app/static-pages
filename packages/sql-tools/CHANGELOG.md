@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/immich-app/static-pages/compare/sql-tools-v0.6.6...sql-tools-v0.7.0) (2026-11-05)
+
+
+### Features
+
+* **sql-tools:** option to ignore tables/enums/func by prefix ([#957](https://github.com/immich-app/static-pages/issues/957)) ([819dc8f](https://github.com/immich-app/static-pages/commit/819dc8f9929fc4c5d28f3984f42e41b2fef8a3b5))
+
 ## [0.6.6](https://github.com/immich-app/static-pages/compare/sql-tools-v0.6.5...sql-tools-v0.6.6) (2026-10-19)
 
 
