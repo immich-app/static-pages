@@ -148,11 +148,11 @@ class CommandPaletteManager {
       return;
     }
 
-    shortcuts(document.body, [
+    shortcuts([
       { shortcut: { key: 'k', meta: true }, onShortcut: () => this.open() },
       { shortcut: { key: 'k', ctrl: true }, onShortcut: () => this.open() },
       { shortcut: { key: '/' }, preventDefault: true, onShortcut: () => this.open() },
-    ]);
+    ])(document.body);
     on(document.body, 'keydown', (event) => this.#handleKeydown(event));
   }
 
