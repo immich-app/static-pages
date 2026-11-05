@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { shortcuts } from '#lib/actions/shortcut.js';
   import DragAndDropUpload from '#lib/components/DragAndDropUpload.svelte';
   import UploadErrorModal from '#lib/components/UploadErrorModal.svelte';
   import UploadModal from '#lib/components/UploadModal.svelte';
@@ -23,6 +22,7 @@
     Input,
     modalManager,
     Select,
+    shortcuts,
     Stack,
     Text,
   } from '@immich/ui';
@@ -95,11 +95,11 @@
 </script>
 
 <svelte:window
-  use:shortcuts={[
+  {@attach shortcuts([
     { shortcut: { key: 'a', meta: true }, onShortcut: () => exifUploaderManager.selectAll() },
     { shortcut: { key: 'a', ctrl: true }, onShortcut: () => exifUploaderManager.selectAll() },
     { shortcut: { key: 'Escape' }, onShortcut: () => exifUploaderManager.deselectAll() },
-  ]}
+  ])}
   onkeydown={onKeyDown}
   onkeyup={onKeyUp}
 />
