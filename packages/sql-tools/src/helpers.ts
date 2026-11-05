@@ -12,11 +12,13 @@ import {
   DatabaseFunction,
   DatabaseIndex,
   DatabaseOverride,
+  DatabaseSchema,
   DatabaseTable,
   DatabaseTrigger,
   IgnoreOptions,
   OutputTarget,
   SchemaDiff,
+  SchemaDiffOptions,
   SchemaItem,
 } from 'src/types.js';
 
@@ -117,6 +119,25 @@ export const haveEqualOverrides = <T extends { override?: DatabaseOverride }>(so
   const targetValue = target.override.value;
 
   return sourceValue.name === targetValue.name && sourceValue.sql === targetValue.sql;
+};
+
+export const applyIgnoreOptions = (schema: DatabaseSchema, { ignorePrefixes }: SchemaDiffOptions): DatabaseSchema => {
+  if (!ignorePrefixes) {
+    return schema;
+  }
+
+  const withoutIgnored = <T extends { name: string }>(objects: T[]) =>
+    objects.filter(({ name }) => ignorePrefixes.every((prefix) => !name.startsWith(prefix)));
+
+  return {
+    ...schema,
+    functions: withoutIgnored(schema.functions),
+    enums: withoutIgnored(schema.enums),
+    tables: withoutIgnored(schema.tables),
+    extensions: withoutIgnored(schema.extensions),
+    parameters: withoutIgnored(schema.parameters),
+    overrides: withoutIgnored(schema.overrides),
+  };
 };
 
 export const compare = <T extends { name: string; synchronize: boolean }>(

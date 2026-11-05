@@ -5,7 +5,13 @@ import { compareOverrides } from 'src/comparers/override.comparer.js';
 import { compareParameters } from 'src/comparers/parameter.comparer.js';
 import { compareTables } from 'src/comparers/table.comparer.js';
 import { BaseContext } from 'src/contexts/base-context.js';
-import { compare, getSchemaItemChildrenIds, getSchemaItemId, topologicalSort } from 'src/helpers.js';
+import {
+  applyIgnoreOptions,
+  compare,
+  getSchemaItemChildrenIds,
+  getSchemaItemId,
+  topologicalSort,
+} from 'src/helpers.js';
 import { transformers } from 'src/transformers/index.js';
 import { DatabaseSchema, SchemaDiff, SchemaDiffOptions, SchemaDiffResult, SchemaDiffToSqlOptions } from 'src/types.js';
 
@@ -18,21 +24,15 @@ export const schemaDiff = (
   options: SchemaDiffOptions = {},
 ): SchemaDiffResult => {
   const ctx = new BaseContext(options);
-  const { ignorePrefixes } = options;
-  const withoutIgnored = <T extends { name: string }>(objects: T[]) =>
-    ignorePrefixes ? objects.filter(({ name }) => ignorePrefixes.every((prefix) => !name.startsWith(prefix))) : objects;
+  source = applyIgnoreOptions(source, options);
+  target = applyIgnoreOptions(target, options);
 
   const items = [
     ...compare(source.parameters, target.parameters, options.parameters, compareParameters()),
     ...compare(source.extensions, target.extensions, options.extensions, compareExtensions()),
-    ...compare(
-      withoutIgnored(source.functions),
-      withoutIgnored(target.functions),
-      options.functions,
-      compareFunctions(),
-    ),
-    ...compare(withoutIgnored(source.enums), withoutIgnored(target.enums), options.enums, compareEnums()),
-    ...compare(withoutIgnored(source.tables), withoutIgnored(target.tables), options.tables, compareTables(options)),
+    ...compare(source.functions, target.functions, options.functions, compareFunctions()),
+    ...compare(source.enums, target.enums, options.enums, compareEnums()),
+    ...compare(source.tables, target.tables, options.tables, compareTables(options)),
     ...compare(source.overrides, target.overrides, options.overrides, compareOverrides()),
   ];
 

@@ -39,7 +39,7 @@ program
   .option('--source-folder <migrationsSourceFolder>', 'Path to the migration source files', 'src/schema/migrations')
   .option(
     '--ignore-prefix <prefix>',
-    'Ignore tables, enums and functions whose names start with this prefix',
+    'Ignore schema objects whose names start with this prefix',
     (prefix: string, prefixes: string[]) => [...prefixes, prefix],
     [] as string[],
   );
