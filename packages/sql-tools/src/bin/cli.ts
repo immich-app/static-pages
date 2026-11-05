@@ -21,6 +21,7 @@ const withMigrator =
         connectionParams: { connectionType: 'url', url: options.url },
         allowUnorderedMigrations: false,
         migrationFolder: join(process.cwd(), options.folder),
+        ignorePrefixes: options.ignorePrefix,
       });
       await fn(migrator, options, command.args);
       await migrator.destroy();
@@ -35,7 +36,13 @@ program
     'Path to the runnable (compiled) migration files',
     'dist/schema/migrations',
   )
-  .option('--source-folder <migrationsSourceFolder>', 'Path to the migration source files', 'src/schema/migrations');
+  .option('--source-folder <migrationsSourceFolder>', 'Path to the migration source files', 'src/schema/migrations')
+  .option(
+    '--ignore-prefix <prefix>',
+    'Ignore tables, enums and functions whose names start with this prefix',
+    (prefix: string, prefixes: string[]) => [...prefixes, prefix],
+    [] as string[],
+  );
 
 program
   .command('query')

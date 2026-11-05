@@ -246,6 +246,64 @@ describe(schemaDiff.name, () => {
     });
   });
 
+  describe('ignorePrefixes', () => {
+    it('should only diff tables, enums and functions without an ignored prefix', () => {
+      const source: DatabaseSchema = {
+        ...newSchema({ tables: [{ name: 'own_missing_table' }, { name: 'other_missing_table' }] }),
+        enums: [
+          { name: 'own_changed_enum', values: ['a', 'b'], synchronize: true },
+          { name: 'other_changed_enum', values: ['a', 'b'], synchronize: true },
+          { name: 'own_missing_enum', values: ['a'], synchronize: true },
+          { name: 'other_missing_enum', values: ['a'], synchronize: true },
+        ],
+        functions: [
+          { name: 'own_missing_function', expression: 'SELECT 1', synchronize: true },
+          { name: 'other_missing_function', expression: 'SELECT 1', synchronize: true },
+        ],
+      };
+
+      const target: DatabaseSchema = {
+        ...newSchema({ tables: [{ name: 'own_extra_table' }, { name: 'other_extra_table' }] }),
+        enums: [
+          { name: 'own_changed_enum', values: ['a'], synchronize: true },
+          { name: 'other_changed_enum', values: ['a'], synchronize: true },
+          { name: 'own_extra_enum', values: ['a'], synchronize: true },
+          { name: 'other_extra_enum', values: ['a'], synchronize: true },
+        ],
+        functions: [
+          { name: 'own_extra_function', expression: 'SELECT 1', synchronize: true },
+          { name: 'other_extra_function', expression: 'SELECT 1', synchronize: true },
+        ],
+      };
+
+      const diff = schemaDiff(source, target, {
+        ignorePrefixes: ['other_'],
+        tables: { ignoreExtra: false },
+        functions: { ignoreExtra: false },
+      });
+
+      expect(diff.items).toEqual([
+        expect.objectContaining({
+          type: 'FunctionCreate',
+          object: expect.objectContaining({ name: 'own_missing_function' }),
+        }),
+        expect.objectContaining({
+          type: 'FunctionDrop',
+          object: expect.objectContaining({ name: 'own_extra_function' }),
+        }),
+        expect.objectContaining({ type: 'EnumDrop', object: expect.objectContaining({ name: 'own_changed_enum' }) }),
+        expect.objectContaining({ type: 'EnumCreate', object: expect.objectContaining({ name: 'own_changed_enum' }) }),
+        expect.objectContaining({ type: 'EnumCreate', object: expect.objectContaining({ name: 'own_missing_enum' }) }),
+        expect.objectContaining({ type: 'EnumDrop', object: expect.objectContaining({ name: 'own_extra_enum' }) }),
+        expect.objectContaining({
+          type: 'TableCreate',
+          object: expect.objectContaining({ name: 'own_missing_table' }),
+        }),
+        expect.objectContaining({ type: 'TableDrop', object: expect.objectContaining({ name: 'own_extra_table' }) }),
+      ]);
+    });
+  });
+
   describe('column', () => {
     describe('ColumnAdd', () => {
       it('should find a new column', () => {

@@ -18,13 +18,21 @@ export const schemaDiff = (
   options: SchemaDiffOptions = {},
 ): SchemaDiffResult => {
   const ctx = new BaseContext(options);
+  const { ignorePrefixes } = options;
+  const withoutIgnored = <T extends { name: string }>(objects: T[]) =>
+    ignorePrefixes ? objects.filter(({ name }) => ignorePrefixes.every((prefix) => !name.startsWith(prefix))) : objects;
 
   const items = [
     ...compare(source.parameters, target.parameters, options.parameters, compareParameters()),
     ...compare(source.extensions, target.extensions, options.extensions, compareExtensions()),
-    ...compare(source.functions, target.functions, options.functions, compareFunctions()),
-    ...compare(source.enums, target.enums, options.enums, compareEnums()),
-    ...compare(source.tables, target.tables, options.tables, compareTables(options)),
+    ...compare(
+      withoutIgnored(source.functions),
+      withoutIgnored(target.functions),
+      options.functions,
+      compareFunctions(),
+    ),
+    ...compare(withoutIgnored(source.enums), withoutIgnored(target.enums), options.enums, compareEnums()),
+    ...compare(withoutIgnored(source.tables), withoutIgnored(target.tables), options.tables, compareTables(options)),
     ...compare(source.overrides, target.overrides, options.overrides, compareOverrides()),
   ];
 

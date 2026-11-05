@@ -84,6 +84,7 @@ export type SchemaDiffOptions = BaseContextOptions & {
   extensions?: IgnoreOptions;
   parameters?: IgnoreOptions;
   overrides?: IgnoreOptions;
+  ignorePrefixes?: string[];
 };
 
 export type SchemaDiffResult = {

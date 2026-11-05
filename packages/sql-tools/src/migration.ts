@@ -44,17 +44,20 @@ export class Migrator {
   #connectionParams: DatabaseConnectionParams;
   #migrationsFolder: string;
   #uuidFactory: typeof defaultUuidFactory;
+  #ignorePrefixes: string[];
 
   constructor(options: {
     connectionParams: DatabaseConnectionParams;
     allowUnorderedMigrations: boolean;
     migrationFolder: string;
     uuidFactory?: typeof defaultUuidFactory;
+    ignorePrefixes?: string[];
   }) {
-    const { connectionParams, allowUnorderedMigrations, migrationFolder, uuidFactory } = options;
+    const { connectionParams, allowUnorderedMigrations, migrationFolder, uuidFactory, ignorePrefixes } = options;
     this.#connectionParams = connectionParams;
     this.#migrationsFolder = migrationFolder;
     this.#uuidFactory = uuidFactory ?? defaultUuidFactory;
+    this.#ignorePrefixes = ignorePrefixes ?? [];
     this.#db = this.#getDatabaseClient();
     this.#migrator = this.#getMigrator(allowUnorderedMigrations);
   }
@@ -194,12 +197,14 @@ export class Migrator {
       functions: { ignoreExtra: false },
       parameters: { ignoreExtra: true },
       extensions: { ignoreExtra: true },
+      ignorePrefixes: this.#ignorePrefixes,
     });
     const down = schemaDiff(target, source, {
       tables: { ignoreExtra: false, ignoreMissing: true },
       functions: { ignoreExtra: false },
       extensions: { ignoreMissing: true },
       parameters: { ignoreMissing: true },
+      ignorePrefixes: this.#ignorePrefixes,
     });
 
     return { up, down };
