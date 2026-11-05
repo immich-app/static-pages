@@ -23,7 +23,7 @@ export type Shortcut = {
   meta?: boolean;
 };
 
-export type ShortcutOptions<T = HTMLElement> = {
+export type ShortcutOptions<T extends HTMLElement | Window = HTMLElement | Window> = {
   shortcut: Shortcut;
   /**
   If true, the event handler will not execute if the event comes from an input field
@@ -155,13 +155,8 @@ export const renderShortcut = ({ alt, meta, ctrl, shift, key }: Shortcut): Short
 /**
 Bind a single keyboard shortcut to node.
 */
-export const shortcut =
-  <T extends HTMLElement | Window>(option: ShortcutOptions<T>): Attachment<T> =>
-  (node: T) => {
-    const destroy = shortcuts([option])(node);
-
-    return destroy;
-  };
+export const shortcut = <T extends HTMLElement | Window>(option: ShortcutOptions<T>): Attachment<T> =>
+  shortcuts([option]);
 
 /**
 Binds multiple keyboard shortcuts to node
@@ -189,5 +184,5 @@ export const shortcuts =
       }
     }
 
-    return on(node as unknown as HTMLElement, 'keydown', onKeydown);
+    return on(node as EventTarget, 'keydown', onKeydown as EventListener);
   };
