@@ -5,7 +5,13 @@ import { compareOverrides } from 'src/comparers/override.comparer.js';
 import { compareParameters } from 'src/comparers/parameter.comparer.js';
 import { compareTables } from 'src/comparers/table.comparer.js';
 import { BaseContext } from 'src/contexts/base-context.js';
-import { compare, getSchemaItemChildrenIds, getSchemaItemId, topologicalSort } from 'src/helpers.js';
+import {
+  applyIgnoreOptions,
+  compare,
+  getSchemaItemChildrenIds,
+  getSchemaItemId,
+  topologicalSort,
+} from 'src/helpers.js';
 import { transformers } from 'src/transformers/index.js';
 import { DatabaseSchema, SchemaDiff, SchemaDiffOptions, SchemaDiffResult, SchemaDiffToSqlOptions } from 'src/types.js';
 
@@ -18,6 +24,8 @@ export const schemaDiff = (
   options: SchemaDiffOptions = {},
 ): SchemaDiffResult => {
   const ctx = new BaseContext(options);
+  source = applyIgnoreOptions(source, options);
+  target = applyIgnoreOptions(target, options);
 
   const items = [
     ...compare(source.parameters, target.parameters, options.parameters, compareParameters()),
