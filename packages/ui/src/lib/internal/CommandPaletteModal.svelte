@@ -79,7 +79,7 @@
 </script>
 
 <svelte:window
-  use:shortcuts={[
+  {@attach shortcuts([
     { shortcut: { key: 'ArrowUp' }, preventDefault: false, ignoreInputFields: false, onShortcut: handleUp },
     { shortcut: { key: 'ArrowDown' }, preventDefault: false, ignoreInputFields: false, onShortcut: handleDown },
     { shortcut: { key: 'k', ctrl: true }, ignoreInputFields: false, onShortcut: handleUp },
@@ -87,7 +87,7 @@
     { shortcut: { key: 'j', ctrl: true }, ignoreInputFields: false, onShortcut: handleDown },
     { shortcut: { key: 'j', meta: true }, ignoreInputFields: false, onShortcut: handleDown },
     { shortcut: { key: 'Enter' }, ignoreInputFields: false, onShortcut: handleSelect },
-  ]}
+  ])}
 />
 
 <Modal size="large" {onClose} closeOnBackdropClick focusOnOpen class="md:max-h-[85vh] lg:max-h-[75vh]">

@@ -12,7 +12,7 @@ import {
   mdiKeyboardTabReverse,
   mdiMicrosoftWindows,
 } from '@mdi/js';
-import type { ActionReturn } from 'svelte/action';
+import type { Attachment } from 'svelte/attachments';
 import { on } from 'svelte/events';
 
 export type Shortcut = {
@@ -155,55 +155,39 @@ export const renderShortcut = ({ alt, meta, ctrl, shift, key }: Shortcut): Short
 /**
 Bind a single keyboard shortcut to node.
 */
-export const shortcut = <T extends HTMLElement>(
-  node: T,
-  option: ShortcutOptions<T>,
-): ActionReturn<ShortcutOptions<T>> => {
-  const { update: shortcutsUpdate, destroy } = shortcuts(node, [option]);
+export const shortcut =
+  <T extends HTMLElement | Window>(option: ShortcutOptions<T>): Attachment<T> =>
+  (node: T) => {
+    const destroy = shortcuts([option])(node);
 
-  return {
-    update(newOption) {
-      shortcutsUpdate?.([newOption]);
-    },
-    destroy,
+    return destroy;
   };
-};
 
 /**
 Binds multiple keyboard shortcuts to node
 */
-export const shortcuts = <T extends HTMLElement>(
-  node: T,
-  options: ShortcutOptions<T>[],
-): ActionReturn<ShortcutOptions<T>[]> => {
-  function onKeydown(event: KeyboardEvent) {
-    if (event.defaultPrevented) {
-      return;
-    }
-    const ignoreShortcut = shouldIgnoreEvent(event);
-    for (const { shortcut, onShortcut, ignoreInputFields = true, preventDefault = true } of options) {
-      if (ignoreInputFields && ignoreShortcut) {
-        continue;
-      }
-
-      if (matchesShortcut(event, shortcut)) {
-        if (preventDefault) {
-          event.preventDefault();
-        }
-        onShortcut(event as KeyboardEvent & { currentTarget: T });
+export const shortcuts =
+  <T extends HTMLElement | Window>(options: ShortcutOptions<T>[]): Attachment<T> =>
+  (node: T) => {
+    function onKeydown(event: KeyboardEvent) {
+      if (event.defaultPrevented) {
         return;
       }
+      const ignoreShortcut = shouldIgnoreEvent(event);
+      for (const { shortcut, onShortcut, ignoreInputFields = true, preventDefault = true } of options) {
+        if (ignoreInputFields && ignoreShortcut) {
+          continue;
+        }
+
+        if (matchesShortcut(event, shortcut)) {
+          if (preventDefault) {
+            event.preventDefault();
+          }
+          onShortcut(event as KeyboardEvent & { currentTarget: T });
+          return;
+        }
+      }
     }
-  }
 
-  const off = on(node, 'keydown', onKeydown);
-
-  return {
-    update(newOptions) {
-      options = newOptions;
-    },
-    destroy() {
-      off();
-    },
+    return on(node as unknown as HTMLElement, 'keydown', onKeydown);
   };
-};

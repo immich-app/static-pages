@@ -52,7 +52,7 @@
   const overflowChild = $derived(getByKey(ChildKey.ControlBarOverflow));
 </script>
 
-<svelte:window use:shortcuts={[{ shortcut: { key: 'Escape' }, onShortcut: onEscape }]} />
+<svelte:window {@attach shortcuts([{ shortcut: { key: 'Escape' }, onShortcut: onEscape }])} />
 
 <nav
   bind:this={ref}
