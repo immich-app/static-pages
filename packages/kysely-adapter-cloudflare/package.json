@@ -28,7 +28,7 @@
     "@cloudflare/workers-types": "^5.0.0",
     "kysely": "^0.29.0",
     "publint": "^0.3.0",
-    "vitest": "^4.1.0"
+    "vitest": "^5.0.0"
   },
   "peerDependencies": {
     "kysely": "^0.28.14 || ^0.29.0"
