@@ -367,7 +367,8 @@
         "title": "immich-exporter",
         "description": "Prometheus exporter for what your library holds: assets, storage, people, places, cameras, jobs, backups and integrity checks. Comes with a Grafana dashboard and alert rules, and uses only the Immich API.",
         "websiteUrl": "https://grafana.com/grafana/dashboards/26030-immich-library/",
-        "sourceCodeUrl": "https://github.com/moond4rk/immich-exporter"
+        "sourceCodeUrl": "https://github.com/moond4rk/immich-exporter",
+        "tags": ["Vibe-Coded"]
       }
     ]
   },
