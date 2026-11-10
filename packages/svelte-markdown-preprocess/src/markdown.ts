@@ -12,13 +12,6 @@ const ADMONITION_REGEX = new RegExp(
   String.raw`^:::(?<variant>${ALERT_VARIANTS.join('|')})(?:[ \t]+(?<title>[^\n]+?))?[ \t]*\n(?<body>[\s\S]*?)\n:::[ \t]*(?:\n|$)`,
 );
 
-type AlertToken = Tokens.Generic & {
-  type: 'alert';
-  variant: string;
-  title?: string;
-  tokens: Token[];
-};
-
 const renderAlert = (
   parser: { parse: (tokens: Token[]) => string },
   variant: string,
@@ -122,6 +115,12 @@ export const markedSvelte = (): MarkedExtension => {
           };
         },
         renderer(token) {
+          type AlertToken = Tokens.Generic & {
+            type: 'alert';
+            variant: string;
+            title?: string;
+            tokens: Token[];
+          };
           const { variant, title, tokens } = token as unknown as AlertToken;
           return renderAlert(this.parser, variant, title, tokens);
         },

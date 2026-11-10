@@ -10,6 +10,7 @@ type OnCloseData<T> = T extends { onClose: (data: infer R) => void }
     ? R | undefined
     : never;
 type ExtendsEmptyObject<T> = keyof T extends never ? never : T;
+// eslint-disable-next-line unicorn/prefer-smaller-scope
 type StripParamIfOptional<T> = T extends void ? [] : [T];
 
 // if the modal does not expect any props, makes the props param optional but also allows passing `{}` and `undefined`

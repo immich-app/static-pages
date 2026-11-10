@@ -27,9 +27,6 @@ const IMAGE_VARIANTS = RUNGS.map(([width, height]) => ({
 // eslint-disable-next-line unicorn/no-unnecessary-parameters
 const variantKeys = (hash: string) => RUNGS.map(([width]) => `blog/post-id-1/${hash}-${width}.avif`);
 
-type Mock<T extends object> = Mocked<Pick<T, keyof T>>;
-type Real<T> = T extends Mock<infer U> ? U : never;
-
 const config = {
   outlineApiKey: 'key',
   rootPath: '/tmp/repo',
@@ -43,6 +40,7 @@ const config = {
 };
 
 describe(ImportService.name, () => {
+  type Mock<T extends object> = Mocked<Pick<T, keyof T>>;
   let configMock: Mock<ConfigRepository>;
   let outlineMock: Mock<OutlineRepository>;
   let systemMock: Mock<SystemRepository>;
@@ -51,6 +49,7 @@ describe(ImportService.name, () => {
   let sut: ImportService;
 
   beforeEach(() => {
+    type Real<T> = T extends Mock<infer U> ? U : never;
     configMock = {
       get: vi.fn().mockReturnValue(config),
     };

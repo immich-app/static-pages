@@ -9,7 +9,6 @@ import eslintPluginBetterTailwindcss from 'eslint-plugin-better-tailwindcss';
 import { readdirSync } from 'node:fs';
 import { RulesConfig } from 'eslint';
 
-// eslint-disable-next-line unicorn/no-top-level-side-effects
 export default defineConfig([
   js.configs.recommended,
   // TODO switch to recommendedTypeChecked

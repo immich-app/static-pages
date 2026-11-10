@@ -6,12 +6,12 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitest/config';
 import { sveltekit } from '@sveltejs/kit/vite';
 
-// eslint-disable-next-line unicorn/no-top-level-side-effects
 dotenv.config({ path: '../../.env' });
+// eslint-disable-next-line unicorn/no-top-level-side-effects
 process.env.PUBLIC_CF_TURNSTILE_SITE ||= '1x00000000000000000000BB';
+// eslint-disable-next-line unicorn/no-top-level-side-effects
 process.env.PUBLIC_DATASET_API_ENDPOINT ||= '/api';
 
-// eslint-disable-next-line unicorn/no-top-level-side-effects
 export default defineConfig({
   plugins: [
     tailwindcss(),

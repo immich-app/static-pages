@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/no-top-level-side-effects */
 import { AutoRouter, IRequest } from 'itty-router';
 import { Dataset } from '../../../types/metadata';
 import { withJWTAuth } from '../auth';

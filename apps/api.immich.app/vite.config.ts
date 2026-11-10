@@ -6,12 +6,11 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitest/config';
 import dotenv from 'dotenv';
 
-// eslint-disable-next-line unicorn/no-top-level-side-effects
 dotenv.config({ path: '../../.env' });
 
+// eslint-disable-next-line unicorn/no-top-level-side-effects
 process.env.PUBLIC_IMMICH_SPEC_URL ||= 'https://docs.immich.app/openapi.json';
 
-// eslint-disable-next-line unicorn/no-top-level-side-effects
 export default defineConfig({
   plugins: [
     tailwindcss(),
