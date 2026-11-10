@@ -2,8 +2,8 @@
 opentofu = "1.13.2"
 terragrunt = "1.2.1"
 node = "26.13.0"
-pnpm = "12.16.1"
-wrangler = "4.156.0"
+pnpm = "12.18.0"
+wrangler = "4.157.0"
 
 [env]
 OP_ACCOUNT = "immich.1password.com"
