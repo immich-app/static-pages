@@ -3,12 +3,6 @@ import { Kysely, sql } from 'kysely';
 import { CloudflareD1Dialect } from 'src/d1.js';
 import { describe, expect, it, vi } from 'vitest';
 
-type Schema = {
-  user: {
-    name: string;
-  };
-};
-
 const createD1Mock = () => {
   const all = vi.fn().mockImplementation(() => {
     return {
@@ -29,6 +23,11 @@ const createD1Mock = () => {
 };
 
 const createKysely = (database: D1Database) => {
+  type Schema = {
+    user: {
+      name: string;
+    };
+  };
   return new Kysely<Schema>({ dialect: new CloudflareD1Dialect({ database }) });
 };
 
