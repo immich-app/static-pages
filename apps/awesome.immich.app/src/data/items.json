@@ -362,6 +362,13 @@
         "description": "Installs Immich and other self-hosted apps with Docker Compose and sets them up: admin accounts, API keys and the apps connected to each other. Terminal dashboard, and a built-in skill so an agent can do it for you.",
         "websiteUrl": "https://self-host.fyi",
         "sourceCodeUrl": "https://github.com/ajnart/self-host"
+      },
+      {
+        "title": "immich-exporter",
+        "description": "Prometheus exporter for what your library holds: assets, storage, people, places, cameras, jobs, backups and integrity checks. Comes with a Grafana dashboard and alert rules, and uses only the Immich API.",
+        "websiteUrl": "https://grafana.com/grafana/dashboards/26030-immich-library/",
+        "sourceCodeUrl": "https://github.com/moond4rk/immich-exporter",
+        "tags": ["Vibe-Coded"]
       }
     ]
   },
