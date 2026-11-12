@@ -282,6 +282,12 @@
         "description": "Desktop photo manager for macOS, Windows and Linux. Import from a memory card, cull, rate and edit RAW files, then mirror photos and albums to Immich in the background. Semantic search runs locally.",
         "sourceCodeUrl": "https://github.com/pasqualkreher/rollfilm",
         "tags": ["Vibe-Coded"]
+      },
+      {
+        "title": "immich-mcp",
+        "description": "MCP server that lets AI assistants (ChatGPT, Claude and other MCP clients) search, view, organize and upload to your Immich library, limited to the albums you allow with allow/exclude lists. Uses only the Immich API with a scoped key; deletes go to trash.",
+        "sourceCodeUrl": "https://github.com/mikesimone/immich-mcp",
+        "tags": ["Vibe-Coded"]
       }
     ]
   },
