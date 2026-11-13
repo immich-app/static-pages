@@ -53,6 +53,7 @@
     "autoprefixer": "^10.4.20",
     "globals": "^17.0.0",
     "publint": "^0.3.0",
+    "sass": "^1.108.2",
     "svelte": "^5.57.1",
     "svelte-check": "^4.7.5",
     "tailwindcss": "^4.2.2",
