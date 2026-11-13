@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.93.0](https://github.com/immich-app/static-pages/compare/ui-v0.92.0...ui-v0.93.0) (2026-11-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* **ui:** load CodeBlock highlight themes from CSS ([#967](https://github.com/immich-app/static-pages/issues/967))
+
+### Bug Fixes
+
+* **ui:** load CodeBlock highlight themes from CSS ([#967](https://github.com/immich-app/static-pages/issues/967)) ([c16d198](https://github.com/immich-app/static-pages/commit/c16d1983c5b58839607350d1060c0de34553adc6))
+
 ## [0.92.0](https://github.com/immich-app/static-pages/compare/ui-v0.91.1...ui-v0.92.0) (2026-11-05)
 
 
