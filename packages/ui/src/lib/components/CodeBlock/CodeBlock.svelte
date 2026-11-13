@@ -2,36 +2,22 @@
   import Card from '#lib/components/Card/Card.svelte';
   import IconButton from '#lib/components/IconButton/IconButton.svelte';
   import { zIndex } from '#lib/constants.js';
-  import { themeManager } from '#lib/services/theme-manager.svelte.js';
   import { t } from '#lib/services/translation.svelte.js';
-  import { Theme, type TranslationProps } from '#lib/types.js';
+  import type { TranslationProps } from '#lib/types.js';
   import { mdiCheckCircle, mdiContentCopy } from '@mdi/js';
   import { Highlight, LineNumbers } from 'svelte-highlight';
   import { typescript, type LanguageType } from 'svelte-highlight/languages';
-  import vsLight from 'svelte-highlight/styles/vs';
-  import vsDark from 'svelte-highlight/styles/vs2015';
 
   type Props = {
     code: string;
     language?: LanguageType<string>;
     lineNumbers?: boolean;
     highlightedLines?: number[];
-    lightTheme?: string;
-    darkTheme?: string;
     copy?: boolean;
     translations?: TranslationProps<'code_copy' | 'code_copied'>;
   };
 
-  let {
-    code,
-    copy = true,
-    language = typescript,
-    lineNumbers,
-    highlightedLines,
-    lightTheme = vsLight,
-    darkTheme = vsDark,
-    translations,
-  }: Props = $props();
+  let { code, copy = true, language = typescript, lineNumbers, highlightedLines, translations }: Props = $props();
 
   let copied = $state(false);
   let canCopy = $derived<boolean>(copy && !!(navigator.clipboard && globalThis.ClipboardItem));
@@ -47,13 +33,8 @@
   };
 </script>
 
-<svelte:head>
-  <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-  {@html themeManager.value === Theme.Dark ? darkTheme : lightTheme}
-</svelte:head>
-
 <Card class="relative">
-  <div class="text-sm">
+  <div class="code-block text-sm">
     {#if canCopy}
       <span class="absolute top-2 inset-e-2 {zIndex.CodeBlockCopyButton} cursor-pointer">
         <IconButton
@@ -75,3 +56,15 @@
     {/if}
   </div>
 </Card>
+
+<style lang="scss">
+  @use 'sass:meta';
+
+  .code-block :global {
+    @include meta.load-css('svelte-highlight/styles/vs.css');
+  }
+
+  :global(.dark) .code-block :global {
+    @include meta.load-css('svelte-highlight/styles/vs2015.css');
+  }
+</style>
