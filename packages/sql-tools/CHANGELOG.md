@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/immich-app/static-pages/compare/sql-tools-v0.7.0...sql-tools-v0.7.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* **sql-tools:** match pg_depend by classid when reading functions ([#964](https://github.com/immich-app/static-pages/issues/964)) ([4c8ec15](https://github.com/immich-app/static-pages/commit/4c8ec1554b082c9567718513bd43d4b069563854))
+
 ## [0.7.0](https://github.com/immich-app/static-pages/compare/sql-tools-v0.6.6...sql-tools-v0.7.0) (2026-11-05)
 
 
