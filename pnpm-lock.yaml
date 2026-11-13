@@ -973,13 +973,13 @@ importers:
         version: 0.29.8
       kysely-postgres-js:
         specifier: ^5.0.0
-        version: 5.0.1(kysely@0.29.8)(postgres@3.4.9)
+        version: 5.0.1(kysely@0.29.8)(postgres@4.1.0)
       pg-connection-string:
         specifier: ^2.11.0
         version: 2.14.1
       postgres:
-        specifier: ^3.4.8
-        version: 3.4.9
+        specifier: ^4.0.0
+        version: 4.1.0
     devDependencies:
       publint:
         specifier: ^0.3.0
@@ -3920,9 +3920,9 @@ packages:
     resolution: {integrity: sha512-LJlKCCAUFKOuZxipUdYw1NzIITEsPcgyOG9LkvRJvuKj/bRzbuRY0ARXvL0pWGpsZvn8jku+LMep2eU0seHp8g==}
     engines: {node: ^10 || ^12 || >=14}
 
-  postgres@3.4.9:
-    resolution: {integrity: sha512-GD3qdB0x1z9xgFI6cdRD6xu2Sp2WCOEoe3mtnyB5Ee0XrrL5Pe+e4CCnJrRMnL1zYtRDZmQQVbvOttLnKDLnaw==}
-    engines: {node: '>=12'}
+  postgres@4.1.0:
+    resolution: {integrity: sha512-s+0WH67YAyLdBQUb6XczbziBhY+C9uiQsg9S8R5RHdZhk6sdyK6202E+T2tXpiInSEEjDLRSJ3OpYBe3PN6MsQ==}
+    engines: {node: '>=18'}
 
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
@@ -6853,11 +6853,11 @@ snapshots:
 
   kolorist@1.8.0: {}
 
-  kysely-postgres-js@5.0.1(kysely@0.29.8)(postgres@3.4.9):
+  kysely-postgres-js@5.0.1(kysely@0.29.8)(postgres@4.1.0):
     dependencies:
       kysely: 0.29.8
     optionalDependencies:
-      postgres: 3.4.9
+      postgres: 4.1.0
 
   kysely@0.29.8: {}
 
@@ -7443,7 +7443,7 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.2
 
-  postgres@3.4.9: {}
+  postgres@4.1.0: {}
 
   prelude-ls@1.2.1: {}
 
