@@ -5,6 +5,12 @@
     "types": ["client", "clients"],
     "projects": [
       {
+        "title": "Ethwood Photos for iOS",
+        "description": "A native iPhone app for Immich that feels like it shipped with iOS. Your iPhone and server libraries live in one fluid timeline, backups run quietly in the background without ever uploading twice, and a built-in photo and video editor keeps your HDR and Dolby Vision intact. Browse everything offline, too.",
+        "sourceCodeUrl": "https://github.com/Arrnav/photos-app",
+        "tags": ["Vibe-Coded"]
+      },
+      {
         "title": "TV Client for Immich",
         "description": "Unofficial Android TV and Google TV client in the style of Immich: smooth timeline, memories, smart search, world map and a photo screensaver. Highly configurable and extensively tested on real TV hardware.",
         "sourceCodeUrl": "https://github.com/neforce/android-tv-immich-client",
