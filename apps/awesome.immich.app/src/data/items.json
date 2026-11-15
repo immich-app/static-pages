@@ -471,6 +471,11 @@
         "description": "Set up Immich with External Libraries on your Rockstor NAS server.",
         "websiteUrl": "https://rockstor.com/docs/interface/docker-based-rock-ons/immich.html",
         "sourceCodeUrl": "https://github.com/rockstor/rockstor-doc"
+      },
+      {
+        "title": "Mirroring Immich into Apple Photos",
+        "description": "Field notes on one-way mirroring an Immich library into Apple Photos / iCloud: 55k assets, 99.83% success, and the five AppleScript traps that cause multi-hour stalls.",
+        "websiteUrl": "https://github.com/Mason-Voss/immich-to-apple-photos-notes"
       }
     ]
   }
