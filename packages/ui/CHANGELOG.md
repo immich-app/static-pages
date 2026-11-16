@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.93.0](https://github.com/immich-app/static-pages/compare/ui-v0.92.0...ui-v0.93.0) (2026-11-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* **ui:** load CodeBlock highlight themes from CSS ([#967](https://github.com/immich-app/static-pages/issues/967))
+
+### Bug Fixes
+
+* **ui:** ignore shortcuts while an IME is composing text ([#971](https://github.com/immich-app/static-pages/issues/971)) ([36b46e3](https://github.com/immich-app/static-pages/commit/36b46e39b56ee4241c32503025e34d2fc9ebccbc))
+* **ui:** load CodeBlock highlight themes from CSS ([#967](https://github.com/immich-app/static-pages/issues/967)) ([c16d198](https://github.com/immich-app/static-pages/commit/c16d1983c5b58839607350d1060c0de34553adc6))
+
 ## [0.92.0](https://github.com/immich-app/static-pages/compare/ui-v0.91.1...ui-v0.92.0) (2026-11-05)
 
 
