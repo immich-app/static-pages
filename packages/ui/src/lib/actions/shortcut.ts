@@ -168,6 +168,11 @@ export const shortcuts =
       if (event.defaultPrevented) {
         return;
       }
+      // Keys typed while an IME composes text belong to the IME.
+      // eslint-disable-next-line unicorn/prefer-keyboard-event-key -- Safari only reports them as keyCode 229
+      if (event.isComposing || event.keyCode === 229) {
+        return;
+      }
       const ignoreShortcut = shouldIgnoreEvent(event);
       for (const { shortcut, onShortcut, ignoreInputFields = true, preventDefault = true } of options) {
         if (ignoreInputFields && ignoreShortcut) {
