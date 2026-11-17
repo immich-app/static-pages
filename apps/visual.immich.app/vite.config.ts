@@ -4,7 +4,7 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import tailwindcss from '@tailwindcss/vite';
 import dotenv from 'dotenv';
 import { resolve } from 'node:path';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 dotenv.config({ path: '../../.env' });
 
@@ -27,5 +27,10 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['@immich/ui'],
+  },
+  test: {
+    expect: { requireAssertions: true },
+    environment: 'node',
+    include: ['src/**/*.{test,spec}.{js,ts}'],
   },
 });

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "wrangler d1 migrations apply visual --local && wrangler dev",
     "build": "wrangler build",
-    "sync": "wrangler types",
+    "sync": "wrangler types --strict-vars=false",
     "check": "pnpm run sync && tsc --noEmit && tsc --noEmit -p test && sql-tools migrations verify-order --source-folder migrations",
     "test": "vitest"
   },
@@ -19,6 +19,10 @@
     "wrangler": "^4.75.0"
   },
   "dependencies": {
-    "itty-router": "^5.0.18"
+    "@immich/kysely-adapter-cloudflare": "workspace:*",
+    "hono": "^4.13.19",
+    "kysely": "^0.29.0",
+    "openid-client": "^6.9.0",
+    "zod": "^4.6.7"
   }
 }

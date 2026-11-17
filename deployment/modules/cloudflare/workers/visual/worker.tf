@@ -20,11 +20,28 @@ resource "cloudflare_worker_version" "api" {
     content_type = "application/javascript+module"
   }]
 
-  bindings = [{
-    name = "DB"
-    type = "d1"
-    id   = cloudflare_d1_database.visual.id
-  }]
+  bindings = [
+    {
+      name = "DB"
+      type = "d1"
+      id   = cloudflare_d1_database.visual.id
+    },
+    {
+      name = "OAUTH_ISSUER"
+      type = "plain_text"
+      text = var.oauth_issuer
+    },
+    {
+      name = "OAUTH_CLIENT_ID"
+      type = "plain_text"
+      text = local.oauth_client_id
+    },
+    {
+      name = "OAUTH_CLIENT_SECRET"
+      type = "secret_text"
+      text = local.oauth_client_secret
+    },
+  ]
 
   depends_on = [terraform_data.migrations]
 }

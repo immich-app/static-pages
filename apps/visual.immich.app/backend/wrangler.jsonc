@@ -13,5 +13,10 @@
       "database_id": "local",
       "migrations_dir": "migrations"
     }
-  ]
+  ],
+  "vars": {
+    "OAUTH_ISSUER": "https://auth.internal.futo.org",
+    "OAUTH_CLIENT_ID": "",
+    "OAUTH_CLIENT_SECRET": ""
+  }
 }

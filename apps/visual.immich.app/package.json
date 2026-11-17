@@ -9,7 +9,8 @@
     "build": "npm run sync && vite build && node ../../bin/postbuild.js",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "sync": "svelte-kit sync"
+    "sync": "svelte-kit sync",
+    "test": "vitest"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^4.0.0",
@@ -23,7 +24,8 @@
     "svelte-check": "^4.7.5",
     "tailwindcss": "^4.2.2",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "vite": "^8.0.12"
+    "vite": "^8.0.12",
+    "vitest": "^5.0.0"
   },
   "dependencies": {
     "@immich/ui": "workspace:*"
