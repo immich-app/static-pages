@@ -4,14 +4,18 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "wrangler d1 migrations apply visual --local && wrangler dev",
     "build": "wrangler build",
     "sync": "wrangler types",
-    "check": "pnpm run sync && tsc --noEmit"
+    "check": "pnpm run sync && tsc --noEmit && tsc --noEmit -p test && sql-tools migrations verify-order --source-folder migrations",
+    "test": "vitest"
   },
   "devDependencies": {
+    "@cloudflare/vitest-plugin": "^1.0.0",
+    "@immich/sql-tools": "workspace:*",
     "@typescript/native": "npm:typescript@^7.0.2",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "vitest": "^5.0.0",
     "wrangler": "^4.75.0"
   },
   "dependencies": {

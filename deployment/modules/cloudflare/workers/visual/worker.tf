@@ -19,6 +19,14 @@ resource "cloudflare_worker_version" "api" {
     content_file = "${var.dist_dir}/index.js"
     content_type = "application/javascript+module"
   }]
+
+  bindings = [{
+    name = "DB"
+    type = "d1"
+    id   = cloudflare_d1_database.visual.id
+  }]
+
+  depends_on = [terraform_data.migrations]
 }
 
 resource "cloudflare_workers_deployment" "api" {
