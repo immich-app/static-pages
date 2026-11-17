@@ -49,7 +49,7 @@ dir = "{{cwd}}"
 description = "Run a dev server"
 usage = '''
 arg "<app>" help="Target app" {
-  choices "api" "awesome" "buy" "datasets" "get" "my" "root" "ui"
+  choices "api" "awesome" "buy" "datasets" "get" "my" "root" "ui" "visual"
   default "root"
 }
 '''

@@ -29,5 +29,6 @@ mise dev get
 mise dev my
 mise dev root
 mise dev ui
+mise dev visual
 ##
 ```

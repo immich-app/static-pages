@@ -1,0 +1,5 @@
+@import 'tailwindcss';
+@import '@immich/ui/theme/default.css';
+@import '$common/theme/theme.css';
+@source '../../../../packages/ui/src';
+@source '../../../../common';
