@@ -11,7 +11,6 @@
     Button,
     CommandPaletteButton,
     Constants,
-    Icon,
     IconButton,
     Link,
     Logo,
@@ -110,10 +109,13 @@
 
             <Button href="/roadmap" variant="ghost" color={withActiveColor('/roadmap')}>Roadmap</Button>
 
-            <Button trailingIcon={mdiOpenInNew} href="https://futo.tech" color="secondary" variant="ghost">
-              <Icon icon={futoSymbol} class="size-4 -translate-y-px" aria-hidden />
-              FUTO
-            </Button>
+            <Button
+              leadingIcon={futoSymbol}
+              trailingIcon={mdiOpenInNew}
+              href="https://futo.tech"
+              color="secondary"
+              variant="ghost">FUTO</Button
+            >
 
             <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Store} color="secondary" variant="ghost"
               >Merch</Button
@@ -123,8 +125,13 @@
               >Docs</Button
             >
 
-            <Button trailingIcon={mdiOpenInNew} href={Constants.Socials.Github} color="secondary" variant="ghost">
-              <Icon icon={siGithub.path} class="size-4 translate-y-[-1.5px]" aria-hidden />
+            <Button
+              leadingIcon={siGithub.path}
+              trailingIcon={mdiOpenInNew}
+              href={Constants.Socials.Github}
+              color="secondary"
+              variant="ghost"
+            >
               GitHub
             </Button>
           </div>
