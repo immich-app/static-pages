@@ -16,6 +16,9 @@
     "packages/sql-tools": {
       "component": "sql-tools"
     },
+    "packages/nestjs-standard-schema": {
+      "component": "nestjs-standard-schema"
+    },
     "packages/kysely-adapter-cloudflare": {
       "component": "kysely-adapter-cloudflare"
     },

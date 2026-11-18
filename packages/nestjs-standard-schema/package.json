@@ -1,0 +1,51 @@
+{
+  "name": "@immich/nestjs-standard-schema",
+  "description": "NestJS DTOs from Standard Schema validators, documented in OpenAPI",
+  "version": "0.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/immich-app/static-pages.git",
+    "directory": "packages/nestjs-standard-schema"
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "build": "vite build && publint",
+    "test": "vitest --project unit"
+  },
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./zod": {
+      "types": "./dist/zod.d.ts",
+      "default": "./dist/zod.js"
+    }
+  },
+  "dependencies": {
+    "@standard-schema/spec": "^1.1.0"
+  },
+  "devDependencies": {
+    "@nestjs/common": "^12.5.1",
+    "@nestjs/swagger": "^12.1.2",
+    "publint": "^0.3.0",
+    "reflect-metadata": "^0.2.2",
+    "zod": "^4.6.7"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^12.0.0",
+    "@nestjs/swagger": "^12.0.0",
+    "reflect-metadata": "^0.2.0",
+    "zod": "^4.2.0"
+  },
+  "peerDependenciesMeta": {
+    "zod": {
+      "optional": true
+    }
+  }
+}
