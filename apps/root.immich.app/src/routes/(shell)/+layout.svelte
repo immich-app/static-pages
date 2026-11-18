@@ -3,7 +3,7 @@
   import { page } from '$app/state';
   import { posts } from '#lib';
   import '#lib/app.css';
-  import futoLogo from '#lib/assets/img/futo-logo.svg';
+  import futoSymbol from '#lib/assets/img/futo-symbol.svg';
   import {
     AnnouncementBanner,
     AppShell,
@@ -125,7 +125,10 @@
               GitHub
             </Button>
             <Button trailingIcon={mdiOpenInNew} href="https://futo.tech" color="secondary" variant="ghost">
-              <img src={futoLogo} alt="FUTO" class="h-5" />
+              <span class="flex items-center gap-1">
+                <img src={futoSymbol} alt="" class="size-5" />
+                FUTO
+              </span>
             </Button>
           </div>
           <div class="flex place-items-center justify-end gap-2">
