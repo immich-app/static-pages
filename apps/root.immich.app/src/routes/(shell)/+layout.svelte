@@ -122,17 +122,6 @@
 
             <Button href="/roadmap" variant="ghost" color={withActiveColor('/roadmap')}>Roadmap</Button>
 
-            <Button
-              trailingIcon={mdiOpenInNew}
-              href="https://futo.tech"
-              color="secondary"
-              variant="ghost"
-              onmouseenter={() => futoCoin?.spin()}
-            >
-              <FutoCoin bind:this={futoCoin} path={futoSymbol} fill={futoBrandFill} />
-              FUTO
-            </Button>
-
             <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Store} color="secondary" variant="ghost"
               >Merch</Button
             >
@@ -149,6 +138,17 @@
               variant="ghost"
             >
               GitHub
+            </Button>
+
+            <Button
+              trailingIcon={mdiOpenInNew}
+              href="https://futo.tech"
+              color="secondary"
+              variant="ghost"
+              onmouseenter={() => futoCoin?.spin()}
+            >
+              <FutoCoin bind:this={futoCoin} path={futoSymbol} fill={futoBrandFill} />
+              FUTO
             </Button>
           </div>
           <div class="flex place-items-center justify-end gap-2">
