@@ -1,7 +1,7 @@
 {
   "name": "@immich/nestjs-standard-schema",
   "description": "NestJS DTOs from Standard Schema validators, documented in OpenAPI",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "MIT",
   "repository": {
     "type": "git",
