@@ -17,6 +17,12 @@
         "tags": ["Vibe-Coded"]
       },
       {
+        "title": "Immich Photos for Android TV (Community Fork)",
+        "description": "Independent Android TV / Google TV fork of TV Client for Immich with direct 4K/10-bit HDR video playback on Amlogic without server transcoding, D-Pad seek HUD, justified Folders grid, Shuffle feed, SomaFM background radio, 10 UI languages, and a fully English codebase.",
+        "sourceCodeUrl": "https://github.com/zer0like/immich-photos-android-tv",
+        "tags": ["Vibe-Coded"]
+      },
+      {
         "title": "Immich Face Sheet",
         "description": "Create contact sheets, collages, and photomosaics from a person's face crops in your Immich library.",
         "websiteUrl": "https://github.com/tiagonmas/immich-face-sheet",
