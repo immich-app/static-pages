@@ -147,7 +147,7 @@
               variant="ghost"
               onmouseenter={() => futoCoin?.spin()}
             >
-              <FutoCoin bind:this={futoCoin} path={futoSymbol} fill={futoBrandFill} />
+              <FutoCoin bind:this={futoCoin} />
               FUTO
             </Button>
           </div>
