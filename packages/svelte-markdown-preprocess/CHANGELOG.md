@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.2](https://github.com/immich-app/static-pages/compare/svelte-markdown-preprocess-v0.8.1...svelte-markdown-preprocess-v0.8.2) (2026-11-20)
+
+
+### Bug Fixes
+
+* **svelte-markdown-preprocess:** component image paragraphs ([#991](https://github.com/immich-app/static-pages/issues/991)) ([2aec02b](https://github.com/immich-app/static-pages/commit/2aec02b2425ea0c78b315c2f2d20eaba292b3dc8))
+* **svelte-markdown-preprocess:** split images out of paragraphs ([#994](https://github.com/immich-app/static-pages/issues/994)) ([3b7ebb5](https://github.com/immich-app/static-pages/commit/3b7ebb5a3e32de695f5781d7063565162e243124))
+
 ## [0.8.1](https://github.com/immich-app/static-pages/compare/svelte-markdown-preprocess-v0.8.0...svelte-markdown-preprocess-v0.8.1) (2026-11-05)
 
 
