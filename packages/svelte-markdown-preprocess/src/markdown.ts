@@ -28,9 +28,26 @@ const COMPONENT_IMAGE_REGEX = /^<Markdown\.Image\b/;
 const isImage = (token: Token) =>
   token.type === 'image' || (token.type === 'html' && COMPONENT_IMAGE_REGEX.test(token.text));
 
-const isImageOnly = (tokens: Token[]) => {
-  const content = tokens.filter((token) => token.type !== 'text' || token.text.trim());
-  return content.length > 0 && content.every((token) => isImage(token));
+const hasImage = (token: Token): boolean =>
+  isImage(token) || ('tokens' in token && !!token.tokens?.some((child) => hasImage(child)));
+
+const isBlank = (token: Token) => token.type === 'text' && !token.text.trim();
+
+const splitImages = (tokens: Token[]) => {
+  const groups: Token[][] = [];
+  let prose: Token[] = [];
+  for (const token of tokens) {
+    if (!hasImage(token)) {
+      prose.push(token);
+      continue;
+    }
+
+    groups.push(prose, [token]);
+    prose = [];
+  }
+  groups.push(prose);
+
+  return groups.filter((group) => group.some((token) => !isBlank(token)));
 };
 
 const normalizeText = (text: string) => escapeHtml(emojify(text));
@@ -185,11 +202,12 @@ export const markedSvelte = (): MarkedExtension => {
         }
 
         // `Markdown.Image` renders a block level <figure>, which is invalid inside a <p>
-        if (isImageOnly(tokens)) {
-          return children;
-        }
-
-        return `<Markdown.Paragraph>${children}</Markdown.Paragraph>\n`;
+        return splitImages(tokens)
+          .map((group) => {
+            const content = this.parser.parseInline(group);
+            return hasImage(group[0]) ? content : `<Markdown.Paragraph>${content}</Markdown.Paragraph>\n`;
+          })
+          .join('');
       },
 
       text(token) {

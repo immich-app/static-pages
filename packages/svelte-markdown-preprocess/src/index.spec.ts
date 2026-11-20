@@ -125,7 +125,7 @@ describe(svelteMarkdownPreprocess.name, () => {
 
     it('should render a component preceded by prose on the same line', async () => {
       await expect(render('Look at this <Markdown.Image src="a.webp" />')).resolves.toContain(
-        '<Markdown.Paragraph>Look at this <Markdown.Image src="a.webp" /></Markdown.Paragraph>',
+        '<Markdown.Paragraph>Look at this </Markdown.Paragraph>\n<Markdown.Image src="a.webp" />',
       );
     });
 

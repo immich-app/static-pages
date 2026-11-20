@@ -35,3 +35,19 @@ describe('paragraph', () => {
     expect(output?.code).not.toContain('<Markdown.Paragraph>');
   });
 });
+
+describe('image beside text', () => {
+  const IMAGE_IN_PARAGRAPH = /<Markdown\.Paragraph>(?:(?!<\/Markdown\.Paragraph>)[\s\S])*<Markdown\.Image/;
+
+  it.each([
+    { name: 'an image', content: 'see ![a](/a.webp) here' },
+    { name: 'a component image', content: 'see <Markdown.Image src="/a.webp" /> here' },
+    { name: 'a linked image', content: 'see [![a](/a.webp)](https://immich.app) here' },
+  ])('should split $name out of the paragraph', async ({ content }) => {
+    const sut = svelteMarkdownPreprocess({});
+    const output = await sut.markup({ content: `${content}\n`, filename: 'a.md' });
+    expect(output?.code).not.toMatch(IMAGE_IN_PARAGRAPH);
+    expect(output?.code).toContain('<Markdown.Paragraph>see </Markdown.Paragraph>');
+    expect(output?.code).toContain('<Markdown.Paragraph> here</Markdown.Paragraph>');
+  });
+});

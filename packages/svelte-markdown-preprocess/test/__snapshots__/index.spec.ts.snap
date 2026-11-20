@@ -145,12 +145,14 @@ exports[`markup > should render image.md correctly 1`] = `
   "code": "<script>
   import { Markdown } from '@immich/ui';
 </script>
-<Markdown.Paragraph>This is an image <Markdown.Image src="https://immich.app/"/>
-
-This is an image with alt <Markdown.Image src="https://immich.app/" alt="alt text"/>
-
-This is an image with alt and a title <Markdown.Image src="https://immich.app/," alt="alt text" title="title text"/>
-</Markdown.Paragraph>
+<Markdown.Paragraph>This is an image </Markdown.Paragraph>
+<Markdown.Image src="https://immich.app/"/>
+<Markdown.Paragraph>
+This is an image with alt </Markdown.Paragraph>
+<Markdown.Image src="https://immich.app/" alt="alt text"/>
+<Markdown.Paragraph>
+This is an image with alt and a title </Markdown.Paragraph>
+<Markdown.Image src="https://immich.app/," alt="alt text" title="title text"/>
 ",
 }
 `;
@@ -160,8 +162,8 @@ exports[`markup > should render img-attribute-quote.md correctly 1`] = `
   "code": "<script>
   import { Markdown } from '@immich/ui';
 </script>
-<Markdown.Paragraph>This is an image with alt with quotes <Markdown.Image src="https://immich.app/" alt="alt &quot;text&quot;"/>
-</Markdown.Paragraph>
+<Markdown.Paragraph>This is an image with alt with quotes </Markdown.Paragraph>
+<Markdown.Image src="https://immich.app/" alt="alt &quot;text&quot;"/>
 ",
 }
 `;
