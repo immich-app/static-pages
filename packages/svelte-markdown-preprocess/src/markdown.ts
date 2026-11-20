@@ -23,6 +23,16 @@ const renderAlert = (
 const SVELTE_COMPONENT_REGEX = /^<[A-Z]\w*\.\w+\b[^>]*\/>/;
 const SVELTE_COMPONENT_BLOCK_REGEX = new RegExp(String.raw`${SVELTE_COMPONENT_REGEX.source}[ \t]*\n?`);
 
+const COMPONENT_IMAGE_REGEX = /^<Markdown\.Image\b/;
+
+const isImage = (token: Token) =>
+  token.type === 'image' || (token.type === 'html' && COMPONENT_IMAGE_REGEX.test(token.text));
+
+const isImageOnly = (tokens: Token[]) => {
+  const content = tokens.filter((token) => token.type !== 'text' || token.text.trim());
+  return content.length > 0 && content.every((token) => isImage(token));
+};
+
 const normalizeText = (text: string) => escapeHtml(emojify(text));
 
 export const markedSvelte = (): MarkedExtension => {
@@ -175,7 +185,7 @@ export const markedSvelte = (): MarkedExtension => {
         }
 
         // `Markdown.Image` renders a block level <figure>, which is invalid inside a <p>
-        if (tokens.length === 1 && tokens[0].type === 'image') {
+        if (isImageOnly(tokens)) {
           return children;
         }
 
