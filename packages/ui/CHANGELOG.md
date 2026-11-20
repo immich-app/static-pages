@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.94.0](https://github.com/immich-app/static-pages/compare/ui-v0.93.0...ui-v0.94.0) (2026-11-20)
+
+
+### Features
+
+* **ui:** add FutoLogo component ([#986](https://github.com/immich-app/static-pages/issues/986)) ([ee72ab3](https://github.com/immich-app/static-pages/commit/ee72ab33274c7ea9c7453dfa44980ae29d6ac5f7))
+
 ## [0.93.0](https://github.com/immich-app/static-pages/compare/ui-v0.92.0...ui-v0.93.0) (2026-11-16)
 
 
