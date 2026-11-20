@@ -70,7 +70,10 @@ Here are some highlights from those improvements:
 
 - "View similar photos" discovery
 - GPS utility for location management
-- Google Cast support![A casting session](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/3c2dc2fb1944a9cca8d2a1ea8d9d084b.webp)
+- Google Cast support
+
+  ![A casting session](https://static.immich.cloud/blog/153e5050-88b9-43e7-8b7b-ef0c0438057d/3c2dc2fb1944a9cca8d2a1ea8d9d084b.webp)
+
 - Background backup improvements
 - Optical character recognition (OCR)
 
