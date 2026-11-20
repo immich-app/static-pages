@@ -19,3 +19,19 @@ describe('markup', () => {
     expect(output).toMatchSnapshot();
   });
 });
+
+describe('paragraph', () => {
+  it.each([
+    { name: 'component image after a space', content: '&#x20;<Markdown.Image src="/a.avif" alt="" />' },
+    { name: 'images side by side', content: '![a](/a.webp) ![b](/b.webp)' },
+    { name: 'images on consecutive lines', content: '![a](/a.webp)\n![b](/b.webp)' },
+    {
+      name: 'component images together',
+      content: '&#x20;<Markdown.Image src="/a.avif" />\n<Markdown.Image src="/b.avif" />',
+    },
+  ])('should not wrap $name in a paragraph', async ({ content }) => {
+    const sut = svelteMarkdownPreprocess({});
+    const output = await sut.markup({ content: `${content}\n`, filename: 'a.md' });
+    expect(output?.code).not.toContain('<Markdown.Paragraph>');
+  });
+});
