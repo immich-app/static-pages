@@ -1,12 +1,5 @@
 <script lang="ts">
-  import { Icon } from '@immich/ui';
-
-  type Props = {
-    path: string;
-    fill: string;
-  };
-
-  const { path, fill }: Props = $props();
+  import { FutoLogo } from '@immich/ui';
 
   const duration = 2970;
   const windUpEnd = 0.14;
@@ -59,6 +52,6 @@
   };
 </script>
 
-<span bind:this={coin} class="flex size-4">
-  <Icon icon={path} color={fill} class="size-full" aria-hidden />
+<span bind:this={coin} class="flex size-4" aria-hidden="true">
+  <FutoLogo class="size-full" />
 </span>
