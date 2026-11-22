@@ -1,28 +1,14 @@
 <script lang="ts">
   import Input from '#lib/components/Input/Input.svelte';
   import type { NumberInputProps } from '#lib/types.js';
+  import { fromNumberInputValue, toNumberInputValue } from '#lib/utilities/internal.js';
 
   let { value = $bindable(), color = 'secondary', size, ...props }: NumberInputProps = $props();
 
-  const getValue = () => (typeof value === 'number' ? String(value) : '');
+  // `Input` types its value as a string, but the `<input type="number">` binding needs the number itself back
+  const getValue = () => toNumberInputValue(value) as unknown as string;
   const setValue = (newValue: string | number | null) => {
-    if (typeof newValue === 'number') {
-      value = newValue;
-      return;
-    }
-
-    // empty string or null
-    if (!newValue) {
-      value = undefined;
-      return;
-    }
-
-    const parsed = Number(newValue);
-    if (Number.isNaN(parsed)) {
-      return;
-    }
-
-    value = parsed;
+    value = fromNumberInputValue(newValue);
   };
 </script>
 
