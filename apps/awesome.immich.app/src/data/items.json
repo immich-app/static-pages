@@ -381,6 +381,12 @@
         "websiteUrl": "https://grafana.com/grafana/dashboards/26030-immich-library/",
         "sourceCodeUrl": "https://github.com/moond4rk/immich-exporter",
         "tags": ["Vibe-Coded"]
+      },
+      {
+        "title": "Puzzle for Immich",
+        "description": "Turn a photo from your Immich library into a shared link where a jigsaw puzzle of 24 to 500 pieces assembles itself live in the browser, with music and a caption. Uses only the Immich API, read-only. For a quick test it also runs without Immich, with uploaded photos.",
+        "sourceCodeUrl": "https://github.com/rheckly/immich-puzzle",
+        "tags": ["Vibe-Coded"]
       }
     ]
   },
