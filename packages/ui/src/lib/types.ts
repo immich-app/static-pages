@@ -102,6 +102,29 @@ export type ButtonProps = ButtonBase & {
   trailingIcon?: IconLike;
 } & ButtonOrAnchor;
 
+export type ButtonGroupItem<T extends string = string> = {
+  value: T;
+  label?: string;
+  icon?: IconLike;
+  title?: string;
+  disabled?: boolean;
+};
+
+export type ButtonGroupProps<T extends string = string> = {
+  items: ButtonGroupItem<T>[];
+  value?: T;
+  onValueChange?: (value: T) => void;
+  size?: Size;
+  color?: Color;
+  variant?: Variants;
+  shape?: Shape;
+  fullWidth?: boolean;
+  disabled?: boolean;
+  class?: string;
+  ref?: HTMLElement | null;
+  id?: string;
+} & Omit<HTMLAttributes<HTMLDivElement>, 'class' | 'color' | 'dir' | 'id'>;
+
 export type CloseButtonProps = {
   size?: Size;
   color?: Color;
