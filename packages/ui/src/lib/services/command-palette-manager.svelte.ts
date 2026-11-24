@@ -92,7 +92,7 @@ const asHighlight = (matches?: readonly FuseResultMatch[]) => {
 
     // merge window slices
     const merged: Array<[number, number]> = [];
-    for (const [startIndex, endIndex] of windows.toSorted((a, b) => a[0] - b[0])) {
+    for (const [startIndex, endIndex] of [...windows].sort((a, b) => a[0] - b[0])) {
       const last = merged.at(-1);
       if (last && startIndex <= last[1]) {
         last[1] = Math.max(last[1], endIndex);

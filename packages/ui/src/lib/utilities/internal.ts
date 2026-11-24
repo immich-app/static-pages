@@ -80,7 +80,7 @@ export const highlightHtml = (text: string, highlights: string[]): string => {
   // "back" vs "backup") doesn't win the regex alternation and mark only part.
   const terms = highlights
     .filter(Boolean)
-    .toSorted((a, b) => b.length - a.length)
+    .sort((a, b) => b.length - a.length)
     .map((term) => escapeRegExp(term));
   if (terms.length === 0) {
     return escaped;

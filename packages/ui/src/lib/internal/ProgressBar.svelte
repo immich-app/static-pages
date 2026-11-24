@@ -97,7 +97,7 @@
   });
 
   const barClass = $derived.by(() => {
-    for (let threshold of thresholds.toSorted((a, b) => b.from - a.from)) {
+    for (let threshold of [...thresholds].sort((a, b) => b.from - a.from)) {
       if (value >= threshold.from) {
         return threshold.className;
       }

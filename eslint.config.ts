@@ -44,6 +44,14 @@ export default defineConfig([
       '@typescript-eslint/require-array-sort-compare': 'error',
     },
   },
+  {
+    files: ['packages/ui/src/**/*.ts', 'packages/ui/src/**/*.svelte'],
+    rules: {
+      'unicorn/no-array-reverse': 'off',
+      'unicorn/no-array-sort': 'off',
+      'unicorn/prefer-promise-with-resolvers': 'off',
+    },
+  },
   ...readdirSync('apps').map((name) => ({
     files: ['apps/**/*.svelte'],
     extends: [eslintPluginBetterTailwindcss.configs.recommended],
