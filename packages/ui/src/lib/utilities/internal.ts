@@ -48,9 +48,6 @@ export const resolveIcon = ({
 
 export const asArray = <T>(items?: MaybeArray<T>) => (Array.isArray(items) ? items : items ? [items] : []);
 
-// Svelte's `bind:value` on `<input type="number">` passes the setter a number, or `null` while the text is not a valid
-// number yet (e.g. `-` or `4.`). It then rewrites the field unless the getter returns that exact value, which would
-// throw away what the user is still typing, so these must round-trip both unchanged.
 export const toNumberInputValue = (value: number | undefined) => (typeof value === 'number' ? value : null);
 
 export const fromNumberInputValue = (value: string | number | null) => {
@@ -58,7 +55,6 @@ export const fromNumberInputValue = (value: string | number | null) => {
     return value;
   }
 
-  // empty string or null
   if (!value) {
     return;
   }
