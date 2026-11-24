@@ -1,29 +1,18 @@
 import { isEnabled, isExternalLink, parseGithubLink, resolveMetadata, resolveUrl } from '#lib/utilities/common.js';
 import { DateTime } from 'luxon';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 describe('isExternalLink', () => {
-  beforeAll(() => {
-    Object.defineProperty(globalThis, 'location', {
-      value: {
-        href: 'http://localhost/',
-        origin: 'http://localhost',
-        hostname: 'localhost',
-      },
-      configurable: true,
-    });
-  });
-
   const tests = [
     { url: 'https://immich.app/test', result: true },
     { url: 'https://immich.app/test', result: true },
-    { url: 'http://localhost/test', result: false },
+    { url: `${location.origin}/test`, result: false },
     { url: 'http://localhost:1234/test', result: true },
     { url: 'mailto://something', result: true },
     { url: 'app.immich://', result: true },
     { url: '/testing', result: false },
     { url: '#testing', result: false },
-    { url: 'http://localhost/folders', result: false },
+    { url: `${location.origin}/folders`, result: false },
     { url: '/folders', result: false },
   ];
 

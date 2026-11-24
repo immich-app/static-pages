@@ -1,36 +1,37 @@
 import Image from '#lib/components/Markdown/Image.svelte';
-import { IMAGE_SIZES_QUERY } from '#lib/utilities/image-sizes.js';
-import type { ComponentProps } from 'svelte';
-import { render } from 'svelte/server';
-import { describe, expect, it } from 'vitest';
+import { test } from '#test/fixtures.js';
+import { describe, expect } from 'vitest';
 
-const html = (props: ComponentProps<typeof Image>) => render(Image, { props }).body;
+const src = 'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
+const sizes = '(min-width: 748px) 714px, calc(100vw - 34px)';
 
 describe('Markdown.Image', () => {
-  it('serves the srcset the post declares, sized against the article column', () => {
-    const srcset = 'https://cdn/x-720.avif 720w, https://cdn/x-2160.avif 2160w';
-    const body = html({ src: 'https://cdn/x-2160.avif', srcset, width: 2160, height: 1440 });
+  test('serves the srcset the post declares, sized against the article column', async ({ app, render }) => {
+    const srcset = `${src} 720w, ${src} 2160w`;
 
-    expect(body).toContain('src="https://cdn/x-2160.avif"');
-    expect(body).toContain(`srcset="${srcset}"`);
-    expect(body).toContain(`sizes="${IMAGE_SIZES_QUERY}"`);
-    expect(body).toContain('width="2160"');
-    expect(body).toContain('height="1440"');
+    await render(Image, { src, srcset, width: 2160, height: 1440, alt: 'Timeline' });
+
+    await expect.element(app.image('Timeline')).toHaveAttribute('src', src);
+    await expect.element(app.image('Timeline')).toHaveAttribute('srcset', srcset);
+    await expect.element(app.image('Timeline')).toHaveAttribute('sizes', sizes);
+    await expect.element(app.image('Timeline')).toHaveAttribute('width', '2160');
+    await expect.element(app.image('Timeline')).toHaveAttribute('height', '1440');
   });
 
-  it('renders a bare img when the post declares no variants', () => {
-    const body = html({ src: 'https://cdn/x.webp' });
+  test('renders a bare img when the post declares no variants', async ({ app, render }) => {
+    await render(Image, { src, alt: 'Timeline' });
 
-    expect(body).toContain('src="https://cdn/x.webp"');
-    expect(body).not.toContain('srcset');
-    expect(body).not.toContain('sizes');
+    await expect.element(app.image('Timeline')).toHaveAttribute('src', src);
+    await expect.element(app.image('Timeline')).not.toHaveAttribute('srcset');
+    await expect.element(app.image('Timeline')).not.toHaveAttribute('sizes');
   });
 
-  it('loads lazily unless marked as priority', () => {
-    expect(html({ src: 'https://cdn/x.webp' })).toContain('loading="lazy"');
+  test('loads lazily unless marked as priority', async ({ app, render }) => {
+    await render(Image, { src, alt: 'Lazy' });
+    await render(Image, { src, alt: 'Priority', priority: true });
 
-    const priority = html({ src: 'https://cdn/x.webp', priority: true });
-    expect(priority).toContain('loading="eager"');
-    expect(priority).toContain('fetchpriority="high"');
+    await expect.element(app.image('Lazy')).toHaveAttribute('loading', 'lazy');
+    await expect.element(app.image('Priority')).toHaveAttribute('loading', 'eager');
+    await expect.element(app.image('Priority')).toHaveAttribute('fetchpriority', 'high');
   });
 });

@@ -36,3 +36,6 @@ dist/
 
 # Dogfood artifacts (screenshots, videos, reports produced by the dogfood skill)
 dogfood-output/
+
+# Vitest browser mode
+packages/**/.vitest

@@ -50,8 +50,10 @@
     "@tailwindcss/vite": "^4.2.2",
     "@types/luxon": "^3.7.1",
     "@typescript/native": "npm:typescript@^7.0.2",
+    "@vitest/browser-playwright": "^5.1.0",
     "autoprefixer": "^10.4.20",
     "globals": "^17.0.0",
+    "playwright": "^1.65.0",
     "publint": "^0.3.0",
     "sass": "^1.108.2",
     "svelte": "^5.57.1",
@@ -59,7 +61,8 @@
     "tailwindcss": "^4.2.2",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "vite": "^8.0.12",
-    "vitest": "^5.0.0"
+    "vitest": "^5.0.0",
+    "vitest-browser-svelte": "^3.1.0"
   },
   "dependencies": {
     "@internationalized/date": "^3.10.0",
@@ -78,6 +81,7 @@
   },
   "imports": {
     "#lib": "./src/lib/index.js",
-    "#lib/*": "./src/lib/*"
+    "#lib/*": "./src/lib/*",
+    "#test/*": "./test/*"
   }
 }
