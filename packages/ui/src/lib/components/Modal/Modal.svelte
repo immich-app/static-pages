@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { setChildContext } from '#lib/common/context.svelte.js';
+  import { getModalContext, setChildContext } from '#lib/common/context.svelte.js';
   import Card from '#lib/components/Card/Card.svelte';
   import CardBody from '#lib/components/Card/CardBody.svelte';
   import CardFooter from '#lib/components/Card/CardFooter.svelte';
@@ -10,7 +10,7 @@
   import Logo from '#lib/components/Logo/Logo.svelte';
   import TooltipProvider from '#lib/components/Tooltip/TooltipProvider.svelte';
   import { ChildKey, zIndex } from '#lib/constants.js';
-  import { modalState } from '#lib/state/modal-state.svelte.js';
+  import { ModalEntry, modalState } from '#lib/state/modal-state.svelte.js';
   import type { ModalSize } from '#lib/types.js';
   import { cleanClass } from '#lib/utilities/internal.js';
   import { Dialog } from 'bits-ui';
@@ -83,11 +83,18 @@
   const interactOutsideBehavior = $derived(closeOnBackdropClick ? 'close' : 'ignore');
   const escapeKeydownBehavior = $derived(closeOnEsc ? 'close' : 'ignore');
 
-  let layer = $state<number>();
-  const isHidden = $derived(layer !== modalState.layer);
+  const managedEntry = getModalContext();
+  const entry = managedEntry ?? new ModalEntry();
+  const isHidden = $derived(modalState.isCovered(entry));
+
+  const onOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      entry.isClosing = true;
+    }
+  };
 
   const onOpenChangeComplete = (isOpen: boolean) => {
-    if (!isOpen && !isHidden) {
+    if (!isOpen) {
       onClose?.();
     }
   };
@@ -106,23 +113,29 @@
   };
 
   onMount(() => {
-    layer = modalState.incrementLayer();
+    if (managedEntry) {
+      return;
+    }
 
-    return () => modalState.decrementLayer();
+    modalState.add(entry);
+    return () => modalState.remove(entry);
   });
 </script>
 
-<Dialog.Root open={!isHidden} {onOpenChangeComplete}>
+<Dialog.Root open {onOpenChange} {onOpenChangeComplete}>
   <Dialog.Portal>
     <Dialog.Overlay
-      class="{zIndex.ModalBackdrop} fixed inset-s-0 top-0  flex h-dvh max-h-dvh w-screen bg-black/30 dark:bg-black/70"
+      class={cleanClass(
+        `${zIndex.ModalBackdrop} fixed inset-s-0 top-0 flex h-dvh max-h-dvh w-screen bg-black/30 dark:bg-black/70`,
+        isHidden && 'hidden',
+      )}
     />
     <Dialog.Content
       onOpenAutoFocus={handleOpenAutoFocus}
       onEscapeKeydown={handleEscapeKeydown}
       {escapeKeydownBehavior}
       {interactOutsideBehavior}
-      class={cleanClass(modalContentStyles({ size }))}
+      class={cleanClass(modalContentStyles({ size }), isHidden && 'invisible')}
     >
       <TooltipProvider>
         <div class={cleanClass('flex w-full grow flex-col justify-center')}>

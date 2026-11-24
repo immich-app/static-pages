@@ -22,6 +22,10 @@ export const createApp = () => ({
     page.getByLabelText(label, { exact: true }).element().focus();
     await userEvent.keyboard(text);
   },
+  modal: (title: string) => page.getByRole('dialog').filter({ hasText: title }),
+  modalCloseButton: (title: string) =>
+    page.getByRole('dialog').filter({ hasText: title }).getByRole('button', { name: 'Close', exact: true }),
+  pressKey: (key: string) => userEvent.keyboard(key),
 });
 
 export type App = ReturnType<typeof createApp>;
