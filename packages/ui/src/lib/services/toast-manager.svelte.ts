@@ -12,6 +12,7 @@ const expand = (item?: string | ToastShow): ToastShow =>
 class ToastManager {
   #ref: unknown;
   #props = $state<ToastPanelProps>({ items: [] });
+  #timers = new Map<string, ReturnType<typeof setTimeout>>();
 
   show(item: ToastShow, options?: ToastOptions) {
     return this.open(item, options);
@@ -41,11 +42,22 @@ class ToastManager {
       }
     }
 
-    this.#props.items.push(toast);
+    this.#clearTimer(id);
+
+    const index = this.#props.items.findIndex((existing) => existing.id === id);
+    if (index === -1) {
+      this.#props.items.push(toast);
+    } else {
+      this.#props.items[index] = toast;
+    }
+
     void this.mount();
 
     if (timeout) {
-      setTimeout(() => this.remove(toast), timeout);
+      this.#timers.set(
+        id,
+        setTimeout(() => this.remove(toast), timeout),
+      );
     }
   }
 
@@ -85,7 +97,13 @@ class ToastManager {
   }
 
   private remove(target: ToastWithId) {
+    this.#clearTimer(target.id);
     this.#props.items = this.#props.items.filter((item) => item.id !== target.id);
+  }
+
+  #clearTimer(id: string) {
+    clearTimeout(this.#timers.get(id));
+    this.#timers.delete(id);
   }
 }
 
