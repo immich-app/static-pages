@@ -6,8 +6,15 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import eslintPluginUnicorn from 'eslint-plugin-unicorn';
 import eslintPluginBetterTailwindcss from 'eslint-plugin-better-tailwindcss';
-import { readdirSync } from 'node:fs';
+import eslintPluginCompat from 'eslint-plugin-compat';
+import eslintPluginTscompat from '@koddsson/eslint-plugin-tscompat';
+import { readdirSync, readFileSync } from 'node:fs';
 import { RulesConfig } from 'eslint';
+
+const uiBrowsers = readFileSync(`${import.meta.dirname}/packages/ui/.browserslistrc`, 'utf8')
+  .split('\n')
+  .map((line) => line.trim())
+  .filter((line) => line && !line.startsWith('#'));
 
 export default defineConfig([
   js.configs.recommended,
@@ -50,6 +57,23 @@ export default defineConfig([
       'unicorn/no-array-reverse': 'off',
       'unicorn/no-array-sort': 'off',
       'unicorn/prefer-promise-with-resolvers': 'off',
+    },
+  },
+  {
+    files: ['packages/ui/src/**/*.ts', 'packages/ui/src/**/*.svelte'],
+    ignores: ['**/*.spec.ts'],
+    plugins: {
+      compat: eslintPluginCompat,
+      tscompat: eslintPluginTscompat,
+    },
+    settings: {
+      browsers: uiBrowsers,
+      polyfills: [],
+      lintAllEsApis: true,
+    },
+    rules: {
+      'compat/compat': 'error',
+      'tscompat/tscompat': ['error', { browserslist: uiBrowsers }],
     },
   },
   ...readdirSync('apps').map((name) => ({
