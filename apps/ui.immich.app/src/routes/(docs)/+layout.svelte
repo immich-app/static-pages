@@ -20,7 +20,6 @@
     SiteFooter,
     ThemeSwitcher,
     toastManager,
-    type NavbarProps,
   } from '@immich/ui';
   import {
     mdiAlignHorizontalLeft,
@@ -112,12 +111,9 @@
         <NavbarItem
           {href}
           isActive={() => page.url.pathname === href}
-          title={component.title ?? component.name}
+          title={component.name}
           icon={component.icon}
           activeIcon={component.activeIcon}
-          items={component.items?.map(
-            ({ name, ...item }) => ({ title: name, href: asComponentHref(name), ...item }) as NavbarProps,
-          )}
         />
       {/each}
     </div>

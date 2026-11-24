@@ -119,11 +119,9 @@ export const siteMetadata = {
 
 export type ComponentItem = {
   name: string;
-  title?: string;
   href?: string;
   icon: IconLike;
   activeIcon?: string;
-  items?: ComponentItem[];
 };
 
 export type ComponentGroup = {
@@ -132,63 +130,47 @@ export type ComponentGroup = {
 };
 
 export const components: ComponentItem[] = [
+  { name: 'ActionBar', icon: mdiCardOutline, activeIcon: mdiCard },
+  { name: 'ActionButton', icon: mdiButtonPointer },
+  { name: 'Alert', icon: mdiAlertOutline, activeIcon: mdiAlert },
   { name: 'AnnouncementBanner', icon: mdiBullhornVariantOutline, activeIcon: mdiBullhornVariant },
   { name: 'AppShell', icon: mdiApplicationOutline, activeIcon: mdiApplication },
-  { name: 'Alert', icon: mdiAlertOutline, activeIcon: mdiAlert },
   { name: 'Avatar', icon: mdiAccountCircleOutline, activeIcon: mdiAccountCircle },
   { name: 'Badge', icon: mdiTagOutline, activeIcon: mdiTag },
+  { name: 'BasicModal', icon: mdiWindowMaximize },
   { name: 'Breadcrumbs', icon: mdiSlashForward },
-  {
-    name: 'Button',
-    title: 'Buttons',
-    icon: mdiButtonCursor,
-    items: [
-      { name: 'ActionButton', icon: mdiButtonPointer },
-      { name: 'CloseButton', icon: mdiCloseCircleOutline, activeIcon: mdiCloseCircle },
-      { name: 'IconButton', icon: mdiHomeCircleOutline, activeIcon: mdiHomeCircle },
-      { name: 'ListButton', icon: mdiButtonPointer },
-    ],
-  },
+  { name: 'Button', icon: mdiButtonCursor },
   { name: 'Card', icon: mdiCardOutline, activeIcon: mdiCard },
   { name: 'Checkbox', icon: mdiCheckboxOutline, activeIcon: mdiCheckboxMarked },
+  { name: 'CloseButton', icon: mdiCloseCircleOutline, activeIcon: mdiCloseCircle },
   { name: 'Code', icon: mdiCodeBraces },
   { name: 'CodeBlock', icon: mdiCodeBlockBraces },
   { name: 'Colors', icon: mdiPalette },
   { name: 'CommandPalette', icon: mdiMenu, activeIcon: mdiMenu },
+  { name: 'ConfirmModal', icon: mdiCheckboxOutline },
   { name: 'Container', icon: mdiSquareOutline, activeIcon: mdiSquare },
   { name: 'ContextMenu', icon: mdiDotsVertical },
-  {
-    name: 'ControlBar',
-    icon: mdiApplicationOutline,
-    activeIcon: mdiApplication,
-    items: [{ name: 'ActionBar', icon: mdiCardOutline, activeIcon: mdiCard }],
-  },
+  { name: 'ControlBar', icon: mdiApplicationOutline, activeIcon: mdiApplication },
   { name: 'DatePicker', icon: mdiCalendar },
   { name: 'Field', icon: mdiListBoxOutline, activeIcon: mdiListBox },
   { name: 'FormatBytes', icon: mdiNumeric },
+  { name: 'FormModal', icon: mdiWindowMaximize },
   { name: 'FutoLogo', icon: mdiCircleOutline, activeIcon: mdiCircle },
   { name: 'GithubLink', icon: siGithub },
   { name: 'Heading', icon: mdiFormTextbox },
   { name: 'HelperText', icon: mdiHelpBoxOutline, activeIcon: mdiHelpBox },
   { name: 'Icon', icon: mdiVectorSquare },
+  { name: 'IconButton', icon: mdiHomeCircleOutline, activeIcon: mdiHomeCircle },
   { name: 'ImageCarousel', icon: mdiViewCarouselOutline, activeIcon: mdiViewCarousel },
   { name: 'Input', icon: mdiFormTextbox },
   { name: 'Kbd', icon: mdiKeyboardVariant },
   { name: 'Link', icon: mdiLink },
+  { name: 'ListButton', icon: mdiButtonPointer },
   { name: 'LoadingSpinner', icon: mdiDotsCircle },
   { name: 'Logo', icon: mdiImageOutline, activeIcon: mdiImage },
   { name: 'Markdown', icon: mdiLanguageMarkdownOutline, activeIcon: mdiLanguageMarkdownOutline },
   { name: 'Meter', icon: mdiGauge },
-  {
-    name: 'Modal',
-    title: 'Modals',
-    icon: mdiWindowMaximize,
-    items: [
-      { name: 'BasicModal', icon: mdiWindowMaximize },
-      { name: 'ConfirmModal', icon: mdiCheckboxOutline },
-      { name: 'FormModal', icon: mdiWindowMaximize },
-    ],
-  },
+  { name: 'Modal', icon: mdiWindowMaximize },
   { name: 'MultiSelect', icon: mdiCheckboxMultipleMarkedOutline, activeIcon: mdiCheckboxMultipleMarked },
   { name: 'Navbar', icon: mdiMenu },
   { name: 'NumberInput', icon: mdiNumeric },
@@ -196,11 +178,11 @@ export const components: ComponentItem[] = [
   { name: 'PasswordInput', icon: mdiFormTextboxPassword },
   { name: 'PinInput', icon: mdiLockSmart },
   { name: 'ProgressBar', icon: mdiProgressHelper },
+  { name: 'Scrollable', icon: mdiPanVertical },
   { name: 'Select', icon: mdiFormDropdown },
+  { name: 'Stack', icon: mdiViewSequentialOutline, activeIcon: mdiViewSequential },
   { name: 'SupporterBadge', icon: mdiPartyPopper },
   { name: 'Switch', icon: mdiToggleSwitchOutline, activeIcon: mdiToggleSwitch },
-  { name: 'Scrollable', icon: mdiPanVertical },
-  { name: 'Stack', icon: mdiViewSequentialOutline, activeIcon: mdiViewSequential },
   { name: 'Table', icon: mdiTable },
   { name: 'TableOfContents', icon: mdiFormatListBulleted },
   { name: 'Text', icon: mdiFormatHeaderPound },
@@ -447,11 +429,6 @@ const asCommand = (component: ComponentItem): ActionItem => {
 };
 
 export const getDocsProviders = () => {
-  const commands: ActionItem[] = [];
-  for (const component of components) {
-    commands.push(asCommand(component), ...(component.items ?? []).map((item) => asCommand(item)));
-  }
-
   return [
     defaultProvider({
       name: 'Pages',
@@ -466,6 +443,10 @@ export const getDocsProviders = () => {
         { title: 'Components', description: 'List of components', href: '/components' },
       ]),
     }),
-    defaultProvider({ name: 'Components', types: ['component', 'components'], actions: commands }),
+    defaultProvider({
+      name: 'Components',
+      types: ['component', 'components'],
+      actions: components.map((component) => asCommand(component)),
+    }),
   ];
 };
