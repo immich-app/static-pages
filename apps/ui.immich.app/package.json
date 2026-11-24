@@ -9,9 +9,11 @@
     "build": "npm run sync && vite build && node ../../bin/postbuild.js",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "sync": "svelte-kit sync"
+    "sync": "svelte-kit sync",
+    "test:medium": "playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "@sveltejs/adapter-static": "^4.0.0",
     "@sveltejs/kit": "^3.0.0",
     "@sveltejs/package": "^3.0.0",
