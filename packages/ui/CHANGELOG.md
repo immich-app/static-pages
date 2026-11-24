@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.95.0](https://github.com/immich-app/static-pages/compare/ui-v0.94.0...ui-v0.95.0) (2026-11-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* **ui:** stacked modals ([#1015](https://github.com/immich-app/static-pages/issues/1015))
+
+### Features
+
+* **ui:** button group component ([#1000](https://github.com/immich-app/static-pages/issues/1000)) ([78518a5](https://github.com/immich-app/static-pages/commit/78518a55273a421707d8a1b5515d060c88059ce1))
+
+
+### Bug Fixes
+
+* **ui:** carousel navigation in RTL ([#1011](https://github.com/immich-app/static-pages/issues/1011)) ([3bc493a](https://github.com/immich-app/static-pages/commit/3bc493af83e3c0eac18c7001e9e547a9abe6daa0))
+* **ui:** checkbox field label ([#1012](https://github.com/immich-app/static-pages/issues/1012)) ([8ff1903](https://github.com/immich-app/static-pages/commit/8ff19038c29e43294b8de92e5a7c333ac0ae2013))
+* **ui:** command palette enter lockup ([#1007](https://github.com/immich-app/static-pages/issues/1007)) ([37e7a28](https://github.com/immich-app/static-pages/commit/37e7a285a3b6fd744f8efb0c418bcebf14c1f016))
+* **ui:** disabled link buttons ([#1008](https://github.com/immich-app/static-pages/issues/1008)) ([42b1c63](https://github.com/immich-app/static-pages/commit/42b1c63342a42274b9a4dab90bd13ad26e8e7157))
+* **ui:** ignore shortcuts in editable fields ([#1009](https://github.com/immich-app/static-pages/issues/1009)) ([a31ae03](https://github.com/immich-app/static-pages/commit/a31ae03715beaffcb73023e17e2880731f1ece58))
+* **ui:** sorting on Chrome 109 ([#1013](https://github.com/immich-app/static-pages/issues/1013)) ([54fa4d0](https://github.com/immich-app/static-pages/commit/54fa4d059400391cc1c191d9c05913b130b9b43f))
+* **ui:** stacked modals ([#1015](https://github.com/immich-app/static-pages/issues/1015)) ([7779fbc](https://github.com/immich-app/static-pages/commit/7779fbc2bedc3027a6772d6e5a6684233c5e538b))
+* **ui:** toast duplicate id ([#1010](https://github.com/immich-app/static-pages/issues/1010)) ([5b36f69](https://github.com/immich-app/static-pages/commit/5b36f696c1b08cdbf4746beb191a2924c8506666))
+* **ui:** unreadable theme storage ([#1017](https://github.com/immich-app/static-pages/issues/1017)) ([655ef56](https://github.com/immich-app/static-pages/commit/655ef56c7d7b4053ff39a14df568641cde2df223))
+
 ## [0.94.0](https://github.com/immich-app/static-pages/compare/ui-v0.93.0...ui-v0.94.0) (2026-11-24)
 
 
