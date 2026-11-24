@@ -54,6 +54,10 @@
       }
 
       case 'select': {
+        if (!commandPaletteManager.selectedItem) {
+          break;
+        }
+
         onClose({ action: commandPaletteManager.selectedItem, event });
         break;
       }
