@@ -38,6 +38,8 @@
 
   const disabled = $derived((restProps as HTMLButtonAttributes).disabled || loading);
 
+  const disabledLinkProps: HTMLAnchorAttributes = { href: undefined, role: 'link', tabindex: -1, onclick: undefined };
+
   const buttonVariants = tv({
     base: 'flex items-center justify-center gap-1 rounded-md text-sm font-medium outline-offset-2 transition-colors focus-visible:outline-2',
     variants: {
@@ -168,6 +170,7 @@
         target={external ? '_blank' : undefined}
         rel={external ? 'noopener noreferrer' : undefined}
         {...restProps as HTMLAnchorAttributes}
+        {...disabled ? disabledLinkProps : {}}
       >
         {@render wrapper()}
       </a>
