@@ -1,4 +1,5 @@
 import type { ChildKey } from '#lib/constants.js';
+import type { ModalEntry } from '#lib/state/modal-state.svelte.js';
 import type { ChildContext, ChildData, FieldContext, TableContext } from '#lib/types.js';
 import { withPrefix } from '#lib/utilities/internal.js';
 import { getContext, setContext } from 'svelte';
@@ -35,6 +36,11 @@ export const getTableContext = () => {
     return { spacing, size, striped };
   };
 };
+
+const modalKey = Symbol(withPrefix('modal'));
+
+export const newModalContext = (entry: ModalEntry) => new SvelteMap([[modalKey, entry]]);
+export const getModalContext = () => getContext<ModalEntry | undefined>(modalKey);
 
 const asChildKey = (key: ChildKey) => withPrefix(key);
 

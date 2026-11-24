@@ -1,7 +1,6 @@
 import { matchesShortcut, shortcuts, shouldIgnoreEvent } from '#lib/actions/shortcut.js';
 import CommandPaletteModal from '#lib/internal/CommandPaletteModal.svelte';
 import { modalManager } from '#lib/services/modal-manager.svelte.js';
-import { isModalOpen } from '#lib/state/modal-state.svelte.js';
 import type { ActionEvent, ActionItem, MaybePromise, TranslationProps } from '#lib/types.js';
 import { isEnabled } from '#lib/utilities/common.js';
 import { asArray, generateId } from '#lib/utilities/internal.js';
@@ -197,7 +196,7 @@ class CommandPaletteManager {
   }
 
   async #handleKeydown(event: KeyboardEvent) {
-    if (event.defaultPrevented || isModalOpen()) {
+    if (event.defaultPrevented || modalManager.isOpen()) {
       return;
     }
 

@@ -1,22 +1,34 @@
+export class ModalEntry {
+  isClosing = $state(false);
+
+  constructor(readonly close?: () => Promise<void>) {}
+}
+
 class ModalState {
-  #layer = $state(0);
+  #entries = $state<ModalEntry[]>([]);
 
-  get layer() {
-    return this.#layer;
+  get entries() {
+    return this.#entries;
   }
 
-  incrementLayer() {
-    return ++this.#layer;
+  add(entry: ModalEntry) {
+    this.#entries.push(entry);
+    return entry;
   }
 
-  decrementLayer() {
-    if (this.#layer < 1) {
-      throw new Error('Tried to decrement the modal layer <0');
+  remove(entry: ModalEntry) {
+    const index = this.#entries.indexOf(entry);
+    if (index === -1) {
+      return;
     }
 
-    return --this.#layer;
+    this.#entries.splice(index, 1);
+  }
+
+  isCovered(entry: ModalEntry) {
+    const index = this.#entries.indexOf(entry);
+    return index !== -1 && this.#entries.slice(index + 1).some(({ isClosing }) => !isClosing);
   }
 }
 
 export const modalState = new ModalState();
-export const isModalOpen = () => modalState.layer > 0;

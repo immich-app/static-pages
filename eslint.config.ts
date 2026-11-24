@@ -44,7 +44,7 @@ export default defineConfig([
         tsconfigRootDir: import.meta.dirname,
       },
     },
-    files: ['**/src/**/*.ts', '**/src/**/*.svelte'],
+    files: ['**/src/**/*.ts', '**/src/**/*.svelte', '**/test/**/*.svelte'],
     ignores: ['**/*spec.ts'],
     rules: {
       'svelte/no-navigation-without-resolve': 'off',
