@@ -48,6 +48,21 @@ export const resolveIcon = ({
 
 export const asArray = <T>(items?: MaybeArray<T>) => (Array.isArray(items) ? items : items ? [items] : []);
 
+export const toNumberInputValue = (value: number | undefined) => (typeof value === 'number' ? value : null);
+
+export const fromNumberInputValue = (value: string | number | null) => {
+  if (typeof value === 'number') {
+    return value;
+  }
+
+  if (!value) {
+    return;
+  }
+
+  const parsed = Number(value);
+  return Number.isNaN(parsed) ? undefined : parsed;
+};
+
 export const escapeHtml = (text: string) => {
   return text
     .replaceAll('&', '&amp;')
