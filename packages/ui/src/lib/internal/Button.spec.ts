@@ -38,7 +38,7 @@ describe.each(components)('$name with href', ({ component, props }) => {
     await expect.element(app.link('Open')).toHaveFocus();
   });
 
-  test.for(states)('does not navigate or call onclick when $state', async ({ state, props: stateProps }, { app, render }) => {
+  test.for(states)('ignores clicks when $state', async ({ state, props: stateProps }, { app, render }) => {
     const onclick = vi.fn();
     await render(component, { ...props, ...stateProps, href: `#${state}`, onclick });
 
