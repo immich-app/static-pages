@@ -103,6 +103,7 @@
       className,
     )}
     bind:checked
+    id={inputId}
     disabled={disabled || readOnly}
     required={!!required}
     aria-readonly={disabled || readOnly}
