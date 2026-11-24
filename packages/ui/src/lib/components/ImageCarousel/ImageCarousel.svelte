@@ -26,15 +26,20 @@
   let innerWidth = $state(0);
   let scrollPosition = $state(0);
 
-  let canScrollLeft = $derived(scrollPosition > 0);
-  let canScrollRight = $derived(Math.ceil(scrollPosition) < Math.floor(innerWidth - offsetWidth));
+  let canScrollPrevious = $derived(scrollPosition > 0);
+  let canScrollNext = $derived(Math.ceil(scrollPosition) < Math.floor(innerWidth - offsetWidth));
 
   const onScroll = () => {
-    scrollPosition = ref?.scrollLeft ?? 0;
+    scrollPosition = Math.abs(ref?.scrollLeft ?? 0);
   };
 
-  const scrollLeft = () => ref?.scrollBy({ left: -scrollBy, behavior: 'smooth' });
-  const scrollRight = () => ref?.scrollBy({ left: scrollBy, behavior: 'smooth' });
+  const scrollForward = (distance: number) => {
+    const isRtl = ref && getComputedStyle(ref).direction === 'rtl';
+    ref?.scrollBy({ left: isRtl ? -distance : distance, behavior: 'smooth' });
+  };
+
+  const scrollPrevious = () => scrollForward(-scrollBy);
+  const scrollNext = () => scrollForward(scrollBy);
 </script>
 
 {#snippet defaultChild(item: CarouselImageItem)}
@@ -49,9 +54,9 @@
     style="scrollbar-width:none"
     onscroll={onScroll}
   >
-    {#if canScrollLeft || canScrollRight}
+    {#if canScrollPrevious || canScrollNext}
       <div class="sticky inset-s-0 light {zIndex.CarouselImage}">
-        {#if canScrollLeft}
+        {#if canScrollPrevious}
           <div class="absolute inset-s-4 top-27 -translate-y-1/2 max-md:top-19" transition:fade={{ duration: 200 }}>
             <IconButton
               icon={mdiChevronLeft}
@@ -62,11 +67,11 @@
               class="opacity-50 hover:opacity-100"
               size="giant"
               aria-label={t('navigate_previous', translations)}
-              onclick={scrollLeft}
+              onclick={scrollPrevious}
             />
           </div>
         {/if}
-        {#if canScrollRight}
+        {#if canScrollNext}
           <div class="absolute inset-e-4 top-27 -translate-y-1/2 max-md:top-19" transition:fade={{ duration: 200 }}>
             <IconButton
               icon={mdiChevronRight}
@@ -77,7 +82,7 @@
               class="opacity-50 hover:opacity-100"
               size="giant"
               aria-label={t('navigate_next', translations)}
-              onclick={scrollRight}
+              onclick={scrollNext}
             />
           </div>
         {/if}

@@ -12,6 +12,9 @@ export const createApp = () => ({
   pressTab: () => userEvent.tab(),
   field: (label: string) => page.getByLabelText(label, { exact: true }),
   text: (value: string) => page.getByText(value, { exact: true }),
+  button: (name: string) => page.getByRole('button', { name, exact: true }),
+  scrollerOf: (name: string) => page.getByRole('img', { name, exact: true }).element().closest('section')!,
+  setDirection: (dir: 'ltr' | 'rtl') => document.documentElement.setAttribute('dir', dir),
   resizeWindow: (width: number) => page.viewport(width, 800),
   typeInField: async (label: string, text: string) => {
     page.getByLabelText(label, { exact: true }).element().focus();
