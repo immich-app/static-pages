@@ -2,6 +2,6 @@
   "packages/sql-tools": "0.7.0",
   "packages/kysely-adapter-cloudflare": "0.1.2",
   "packages/svelte-markdown-preprocess": "0.8.2",
-  "packages/ui": "0.93.0",
+  "packages/ui": "0.94.0",
   "packages/nestjs-standard-schema": "0.1.0"
 }
