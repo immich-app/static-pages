@@ -26,6 +26,7 @@ export { default as Badge } from '#lib/components/Badge/Badge.svelte';
 export { default as BasicModal } from '#lib/components/BasicModal/BasicModal.svelte';
 export { default as Breadcrumbs } from '#lib/components/Breadcrumbs/Breadcrumbs.svelte';
 export { default as Button } from '#lib/components/Button/Button.svelte';
+export { default as ButtonGroup } from '#lib/components/ButtonGroup/ButtonGroup.svelte';
 export { default as Card } from '#lib/components/Card/Card.svelte';
 export { default as CardBody } from '#lib/components/Card/CardBody.svelte';
 export { default as CardDescription } from '#lib/components/Card/CardDescription.svelte';

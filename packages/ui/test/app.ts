@@ -4,6 +4,7 @@ const link = (name: string) => page.getByRole('link', { name, exact: true });
 
 export const createApp = () => ({
   checkbox: (name: string) => page.getByRole('checkbox', { name, exact: true }),
+  radio: (name: string) => page.getByRole('radio', { name, exact: true }),
   image: (name: string) => page.getByRole('img', { name, exact: true }),
   link,
   textarea: (label: string) => page.getByRole('textbox', { name: label, exact: true }),

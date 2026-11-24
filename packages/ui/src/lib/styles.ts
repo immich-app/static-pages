@@ -81,6 +81,45 @@ export const styleVariants = {
     info: 'not-disabled:hover:bg-info/80',
   },
 
+  buttonPadding: {
+    tiny: 'px-3 py-1',
+    small: 'px-4 py-2',
+    medium: 'px-5 py-2',
+    large: 'px-8 py-2.5',
+    giant: 'px-10 py-3',
+  },
+  buttonRoundedSize: {
+    tiny: 'rounded-lg',
+    small: 'rounded-lg',
+    medium: 'rounded-xl',
+    large: 'rounded-xl',
+    giant: 'rounded-2xl',
+  },
+  focusOutlineColor: {
+    primary: 'outline-primary',
+    secondary: 'outline-dark',
+    success: 'outline-success',
+    danger: 'outline-danger',
+    warning: 'outline-warning',
+    info: 'outline-info',
+  },
+  outlineColor: {
+    primary: 'border-primary bg-primary/10 text-primary not-disabled:hover:bg-primary/20 border',
+    secondary: 'border-dark bg-light-100 text-dark not-disabled:hover:bg-light-200 border',
+    success: 'border-success bg-success/10 text-success not-disabled:hover:bg-success/20 border',
+    danger: 'border-danger bg-danger/10 text-danger not-disabled:hover:bg-danger/20 border',
+    warning: 'border-warning bg-warning/10 text-warning not-disabled:hover:bg-warning/20 border',
+    info: 'border-info bg-info/10 text-info not-disabled:hover:bg-info/20 border',
+  },
+  ghostColor: {
+    primary: 'text-primary not-disabled:hover:bg-primary/15',
+    secondary: 'text-dark not-disabled:hover:bg-dark/10',
+    success: 'text-success not-disabled:hover:bg-success/15',
+    danger: 'text-danger not-disabled:hover:bg-danger/15',
+    warning: 'text-warning not-disabled:hover:bg-warning/15',
+    info: 'text-info not-disabled:hover:bg-info/15',
+  },
+
   textSize: {
     tiny: 'text-xs',
     small: 'text-sm',
