@@ -1,24 +1,24 @@
 import FutoLogo from '#lib/components/FutoLogo/FutoLogo.svelte';
-import { render } from 'svelte/server';
-import { describe, expect, it } from 'vitest';
-
-const html = (props: { class?: string } = {}) => render(FutoLogo, { props }).body;
+import { test } from '#test/fixtures.js';
+import { describe, expect } from 'vitest';
 
 describe('FutoLogo', () => {
-  it('fills the coin with its own brand gradient', () => {
-    const body = html();
-    const id = /<linearGradient id="([^"]+)"/.exec(body)?.[1];
+  test('fills the coin with its own brand gradient', async ({ app, render }) => {
+    await render(FutoLogo, {});
 
-    expect(id).toBeTruthy();
-    expect(body).toContain(`fill="url(#${id})"`);
-    expect(body).toContain('stop-color="#405DB1"');
-    expect(body).toContain('stop-color="#1BACC6"');
+    const logo = app.image('FUTO logo').element();
+    const gradient = logo.querySelector('linearGradient');
+    const stops = [...logo.querySelectorAll('stop')].map((stop) => stop.getAttribute('stop-color'));
+
+    expect(gradient?.id).toBeTruthy();
+    expect(logo.querySelector('path')?.getAttribute('fill')).toBe(`url(#${gradient?.id})`);
+    expect(stops).toEqual(['#405DB1', '#4F91DC', '#1BACC6']);
   });
 
-  it('lets a class override the size', () => {
-    const body = html({ class: 'size-4' });
+  test('lets a class override the size', async ({ app, render }) => {
+    await render(FutoLogo, { class: 'size-4' });
 
-    expect(body).toContain('size-4');
-    expect(body).not.toContain('h-12');
+    await expect.element(app.image('FUTO logo')).toHaveClass('size-4');
+    await expect.element(app.image('FUTO logo')).not.toHaveClass('h-12');
   });
 });

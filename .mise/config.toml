@@ -68,6 +68,11 @@ depends = [ { task = "watch" }, { task = "open", args = ["{{usage.app}}"] } ]
 [tasks.watch]
 run = "pnpm --filter @immich/ui --filter @immich/svelte-markdown-preprocess --parallel run watch"
 
+[tasks."playwright-install"]
+description = "Install the Chromium build the ui tests run in"
+dir = "{{config_root}}"
+run = "pnpm --filter @immich/ui exec playwright install chromium"
+
 [tasks.import-post]
 dir = "{{config_root}}"
 run = "pnpm --filter @immich/import-post run import"

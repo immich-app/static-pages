@@ -68,6 +68,10 @@ jobs:
         run: pnpm format
         if: ${{ !cancelled() }}
 
+      - name: Install Playwright browsers
+        run: mise run playwright-install
+        if: ${{ !cancelled() }}
+
       - name: Run unit tests
         run: pnpm test
         if: ${{ !cancelled() }}
