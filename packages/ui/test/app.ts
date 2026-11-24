@@ -3,6 +3,7 @@ import { page, userEvent } from 'vitest/browser';
 const link = (name: string) => page.getByRole('link', { name, exact: true });
 
 export const createApp = () => ({
+  checkbox: (name: string) => page.getByRole('checkbox', { name, exact: true }),
   image: (name: string) => page.getByRole('img', { name, exact: true }),
   link,
   textarea: (label: string) => page.getByRole('textbox', { name: label, exact: true }),
@@ -15,6 +16,7 @@ export const createApp = () => ({
   button: (name: string) => page.getByRole('button', { name, exact: true }),
   scrollerOf: (name: string) => page.getByRole('img', { name, exact: true }).element().closest('section')!,
   setDirection: (dir: 'ltr' | 'rtl') => document.documentElement.setAttribute('dir', dir),
+  clickText: (text: string) => page.getByText(text, { exact: true }).click(),
   resizeWindow: (width: number) => page.viewport(width, 800),
   typeInField: async (label: string, text: string) => {
     page.getByLabelText(label, { exact: true }).element().focus();
