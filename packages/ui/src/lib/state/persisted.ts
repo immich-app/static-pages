@@ -73,21 +73,31 @@ export class PersistedLocalStorage<T> extends PersistedBase<T> {
           return;
         }
 
-        const item = localStorage.getItem(key) ?? undefined;
-        if (item === undefined) {
+        try {
+          const item = localStorage.getItem(key) ?? undefined;
+          if (item === undefined) {
+            return;
+          }
+
+          const parsed = serializer.parse(item);
+          if (!valid(parsed)) {
+            return;
+          }
+
+          return upgrade(parsed);
+        } catch {
           return;
         }
-
-        const parsed = serializer.parse(item);
-        if (!valid(parsed)) {
-          return;
-        }
-
-        return upgrade(parsed);
       },
       write: (key: string, value: T) => {
-        if (browser) {
+        if (!browser) {
+          return;
+        }
+
+        try {
           localStorage.setItem(key, serializer.stringify(value));
+        } catch {
+          return;
         }
       },
     });
