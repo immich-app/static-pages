@@ -39,3 +39,7 @@ dogfood-output/
 
 # Vitest browser mode
 packages/**/.vitest
+
+# Playwright
+apps/**/test-results
+apps/**/playwright-report
