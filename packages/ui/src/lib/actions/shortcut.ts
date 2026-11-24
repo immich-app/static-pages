@@ -1,3 +1,4 @@
+import { editableFieldTypes } from '#lib/constants.js';
 import type { IconLike } from '#lib/types.js';
 import {
   mdiAppleKeyboardCommand,
@@ -61,8 +62,8 @@ export const shouldIgnoreEvent = (event: KeyboardEvent | ClipboardEvent): boolea
   if (event.target === event.currentTarget) {
     return false;
   }
-  const type = (event.target as HTMLInputElement).type;
-  return ['textarea', 'text', 'date', 'datetime-local', 'email', 'password'].includes(type);
+  const target = event.target as HTMLInputElement;
+  return target.isContentEditable || editableFieldTypes.has(target.type);
 };
 
 export const matchesShortcut = (event: KeyboardEvent, shortcut: Shortcut) => {

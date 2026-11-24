@@ -1,5 +1,6 @@
 import { shortcut } from '#lib/actions/shortcut.js';
-import { describe, expect, it, vi } from 'vitest';
+import { test } from '#test/fixtures.js';
+import { describe, expect, it, onTestFinished, vi } from 'vitest';
 
 const keydown = (init: { key: string; isComposing?: boolean; keyCode?: number }) => {
   const event = new Event('keydown', { cancelable: true });
@@ -21,7 +22,74 @@ const bindEnter = () => {
   return { node, onShortcut };
 };
 
+const mount = (html: string) => {
+  const host = document.createElement('div');
+  host.innerHTML = html;
+  document.body.append(host);
+  onTestFinished(() => host.remove());
+};
+
+const bindSlashOnBody = () => {
+  const onShortcut = vi.fn();
+  onTestFinished(shortcut({ shortcut: { key: '/' }, onShortcut })(document.body) as () => void);
+  return onShortcut;
+};
+
+const editableFields = [
+  { kind: 'text input', html: '<input type="text" aria-label="Field">' },
+  { kind: 'search input', html: '<input type="search" aria-label="Field">' },
+  { kind: 'url input', html: '<input type="url" aria-label="Field">' },
+  { kind: 'tel input', html: '<input type="tel" aria-label="Field">' },
+  { kind: 'number input', html: '<input type="number" aria-label="Field">' },
+  { kind: 'time input', html: '<input type="time" aria-label="Field">' },
+  { kind: 'textarea', html: '<textarea aria-label="Field"></textarea>' },
+  { kind: 'select', html: '<select aria-label="Field"><option>a</option><option>/b</option></select>' },
+  { kind: 'contenteditable', html: '<div contenteditable="true" aria-label="Field"></div>' },
+];
+
+const textFields = [
+  { kind: 'search input', html: '<input type="search" aria-label="Field">' },
+  { kind: 'url input', html: '<input type="url" aria-label="Field">' },
+  { kind: 'tel input', html: '<input type="tel" aria-label="Field">' },
+];
+
 describe('shortcut', () => {
+  test.for(editableFields)('ignores a key typed in a $kind', async ({ html }, { app }) => {
+    mount(html);
+    const onShortcut = bindSlashOnBody();
+
+    await app.typeInField('Field', '/');
+
+    expect(onShortcut).not.toHaveBeenCalled();
+  });
+
+  test.for(textFields)('keeps a typed / in a $kind', async ({ html }, { app }) => {
+    mount(html);
+    bindSlashOnBody();
+
+    await app.typeInField('Field', 'a/b');
+
+    await expect.element(app.field('Field')).toHaveValue('a/b');
+  });
+
+  test('keeps a typed / in a contenteditable', async ({ app }) => {
+    mount('<div contenteditable="true" aria-label="Field"></div>');
+    bindSlashOnBody();
+
+    await app.typeInField('Field', 'a/b');
+
+    await expect.element(app.field('Field')).toHaveTextContent('a/b');
+  });
+
+  test('runs while a checkbox has focus', async ({ app }) => {
+    mount('<input type="checkbox" aria-label="Field">');
+    const onShortcut = bindSlashOnBody();
+
+    await app.typeInField('Field', '/');
+
+    expect(onShortcut).toHaveBeenCalledOnce();
+  });
+
   it('runs the handler for a matching key', () => {
     const { node, onShortcut } = bindEnter();
     const event = keydown({ key: 'Enter' });

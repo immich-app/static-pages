@@ -36,3 +36,21 @@ export const zIndex = {
   Tooltip: 'z-90',
   ScreencastOverlay: 'z-10000',
 };
+
+export const editableFieldTypes = new Set([
+  'date',
+  'datetime-local',
+  'email',
+  'month',
+  'number',
+  'password',
+  'search',
+  'select-multiple',
+  'select-one',
+  'tel',
+  'text',
+  'textarea',
+  'time',
+  'url',
+  'week',
+]);
