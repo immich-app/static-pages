@@ -36,9 +36,9 @@
     <Stack gap={2}>
       <div>
         <Heading size="large" tag="h2">Mobile Apps</Heading>
-        <Text color="muted"
-          >Download Immich app and start backing up your photos and videos securely to your own server</Text
-        >
+        <Text color="muted">
+          Download Immich app and start backing up your photos and videos securely to your own server
+        </Text>
       </div>
 
       <div class="l grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
@@ -129,9 +129,9 @@
         <Card color="secondary" class="h-full">
           <CardHeader>
             <CardTitle>TrueNAS SCALE</CardTitle>
-            <CardDescription
-              >Run Immich on <Link href="https://www.truenas.com/truenas-scale/">TrueNAS SCALE</Link></CardDescription
-            >
+            <CardDescription>
+              Run Immich on <Link href="https://www.truenas.com/truenas-scale/">TrueNAS SCALE</Link>
+            </CardDescription>
           </CardHeader>
           <CardBody class="flex items-center justify-center align-middle">
             <img src={truenasIcon} class="w-24" alt="TrueNAS SCALE logo" />

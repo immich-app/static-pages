@@ -74,15 +74,15 @@
           {/if}
         {:else}
           {#if errorMessage}
-            <Text class="rounded-lg border border-red-900 bg-red-100 p-4 pb-4 dark:border-red-100 dark:bg-red-900"
-              >{errorMessage}</Text
-            >
+            <Text class="rounded-lg border border-red-900 bg-red-100 p-4 pb-4 dark:border-red-100 dark:bg-red-900">
+              {errorMessage}
+            </Text>
           {/if}
           <Text>Connecting to an Immich API makes it possible to see live responses for some endpoints.</Text>
 
-          <Button type="button" size="small" color="info" shape="round" onclick={handleDemoLogin}
-            >Use the demo server</Button
-          >
+          <Button type="button" size="small" color="info" shape="round" onclick={handleDemoLogin}>
+            Use the demo server
+          </Button>
 
           <Field label="Server URL">
             <Input bind:value={apiUrl} autocomplete="off" />
@@ -96,8 +96,9 @@
 
           <Text
             class="rounded-lg border border-yellow-900 bg-yellow-100 p-4 pb-4 dark:border-yellow-100 dark:bg-yellow-900"
-            >Note: In order to connect, CORS has to be enabled on the remote server.</Text
           >
+            Note: In order to connect, CORS has to be enabled on the remote server.
+          </Text>
         {/if}
       </Stack>
     </form>
@@ -107,9 +108,9 @@
     <HStack gap={2} class="w-full">
       {#if playgroundManager.connected}
         <Button fullWidth shape="round" color="secondary" onclick={onClose}>Cancel</Button>
-        <Button fullWidth shape="round" color="warning" type="button" onclick={() => handleDisconnect()}
-          >Disconnect</Button
-        >
+        <Button fullWidth shape="round" color="warning" type="button" onclick={() => handleDisconnect()}>
+          Disconnect
+        </Button>
       {:else}
         <Button fullWidth shape="round" color="secondary" onclick={onClose}>Cancel</Button>
         <Button fullWidth shape="round" type="submit" form="configure-form">Save</Button>

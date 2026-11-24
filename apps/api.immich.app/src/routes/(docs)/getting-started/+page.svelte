@@ -16,21 +16,25 @@
 >
   <section class="flex flex-col gap-2">
     <Heading tag="h2">1. Create an API key</Heading>
-    <Text
-      >The easiest way to get started building with the Immich API is to <Link
-        href="https://my.immich.app/user-settings?isOpen=api-keys">create an API key</Link
-      >. API keys can be created in User Settings &gt; API Keys in the Immich web application. While they can be created
-      with fine-grainted permissions, the easiest way to get started is to just use the <ApiPermission value="all" /> permission.
-      For more details on the permissions system, see the <Link href={ApiPage.Permissions}>Permission</Link> documentation
-      page.
+    <Text>
+      The easiest way to get started building with the Immich API is to <Link
+        href="https://my.immich.app/user-settings?isOpen=api-keys"
+      >
+        create an API key
+      </Link>. API keys can be created in User Settings &gt; API Keys in the Immich web application. While they can be
+      created with fine-grainted permissions, the easiest way to get started is to just use the <ApiPermission
+        value="all"
+      /> permission. For more details on the permissions system, see the <Link href={ApiPage.Permissions}>
+        Permission
+      </Link> documentation page.
     </Text>
   </section>
 
   <Alert color="warning" title="Warning" shape="rectangle">
-    <Text
-      >API keys are like passwords, which can give access to your account. It is important to keep them safe, and only
-      share them with applications you trust.</Text
-    >
+    <Text>
+      API keys are like passwords, which can give access to your account. It is important to keep them safe, and only
+      share them with applications you trust.
+    </Text>
   </Alert>
 
   <Alert color="success" title="Tip" icon={mdiLightbulbOnOutline} shape="rectangle">
@@ -39,10 +43,10 @@
 
   <section class="flex flex-col gap-2">
     <Heading tag="h2">2. Explore!</Heading>
-    <Text
-      >Explore the documentation, view <Link href={ApiPage.Endpoints}>Endpoints</Link>, <Link href={ApiPage.Models}
-        >Models</Link
-      > and other resources to learn more about the Immich API.
+    <Text>
+      Explore the documentation, view <Link href={ApiPage.Endpoints}>Endpoints</Link>, <Link href={ApiPage.Models}>
+        Models
+      </Link> and other resources to learn more about the Immich API.
     </Text>
   </section>
 </ApiPageContent>

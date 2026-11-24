@@ -69,9 +69,9 @@
       {#if item.tags && item.tags.length > 0}
         <div class="mt-2 flex gap-1">
           {#each normalizeTags(item.tags) as tag (tag.value)}
-            <Badge color={tag.color ?? 'primary'} size="small" shape={tag.shape ?? 'round'} class={tag.class}
-              >{tag.value}</Badge
-            >
+            <Badge color={tag.color ?? 'primary'} size="small" shape={tag.shape ?? 'round'} class={tag.class}>
+              {tag.value}
+            </Badge>
           {/each}
         </div>
       {/if}

@@ -90,8 +90,10 @@
           <Markdown.Alert variant="tip">
             <div>
               This is a software-only purchase and still requires hardware. See the <Link
-                href="https://docs.immich.app/">docs</Link
-              > for setup and install instructions.
+                href="https://docs.immich.app/"
+              >
+                docs
+              </Link> for setup and install instructions.
             </div>
           </Markdown.Alert>
 

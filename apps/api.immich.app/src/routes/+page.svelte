@@ -45,9 +45,9 @@
         <Heading size="title" tag="h1">Immich API</Heading>
         <Text color="muted">Documentation for the REST API that powers Immich</Text>
       </div>
-      <Button size="large" href="/introduction" color="secondary" shape="round" leadingIcon={mdiCubeOutline}
-        >Start Building</Button
-      >
+      <Button size="large" href="/introduction" color="secondary" shape="round" leadingIcon={mdiCubeOutline}>
+        Start Building
+      </Button>
 
       <img src={stackedBlocksUrl} alt="Stacked blocks" />
 
@@ -55,9 +55,9 @@
         <Heading tag="h3">Not a developer?</Heading>
         <Text color="muted">Learn more about Immich at <Link href={Constants.Sites.Docs} /></Text>
       </div>
-      <Button href={Constants.Sites.Docs} target="_blank" color="secondary" shape="round" leadingIcon={mdiOpenInNew}
-        >Open Docs</Button
-      >
+      <Button href={Constants.Sites.Docs} target="_blank" color="secondary" shape="round" leadingIcon={mdiOpenInNew}>
+        Open Docs
+      </Button>
     </VStack>
   </PageContent>
 </AppShell>

@@ -46,12 +46,13 @@
         {#if clipboardStatus === 'error'}
           <Text color="danger">Unable to copy to clipboard</Text>
         {:else if clipboardStatus === 'success'}
-          <Button disabled color="secondary" size="medium" fullWidth leadingIcon={mdiCheckCircleOutline}>Copied!</Button
-          >
+          <Button disabled color="secondary" size="medium" fullWidth leadingIcon={mdiCheckCircleOutline}>
+            Copied!
+          </Button>
         {:else}
-          <Button leadingIcon={mdiContentCopy} onclick={handleCopy} color="secondary" size="medium" fullWidth
-            >Copy</Button
-          >
+          <Button leadingIcon={mdiContentCopy} onclick={handleCopy} color="secondary" size="medium" fullWidth>
+            Copy
+          </Button>
         {/if}
       </div>
     </div>

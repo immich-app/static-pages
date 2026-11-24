@@ -131,11 +131,11 @@
                   <Select.Trigger
                     class="focus-visible:ring-2 flex items-center gap-1 bg-transparent border-none font-semibold cursor-pointer outline-none rounded-lg px-1 text-inherit hover:bg-light-200 dark:hover:bg-light-300"
                   >
-                    <span
-                      >{new Intl.DateTimeFormat(getLocale(), { month: 'long' }).format(
+                    <span>
+                      {new Intl.DateTimeFormat(getLocale(), { month: 'long' }).format(
                         new Date(2000, current.month - 1),
-                      )}</span
-                    >
+                      )}
+                    </span>
                     <Icon icon={mdiChevronDown} size="1.25rem" />
                   </Select.Trigger>
 

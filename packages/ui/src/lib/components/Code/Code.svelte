@@ -67,5 +67,7 @@
     }),
     className,
   )}
-  {...restProps}>{@render children()}</code
+  {...restProps}
 >
+  {@render children()}
+</code>

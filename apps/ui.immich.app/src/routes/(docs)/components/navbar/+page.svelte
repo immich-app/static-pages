@@ -15,11 +15,13 @@
 </script>
 
 <ComponentPage name="Navbar" description="A component for creating navigation items in a sidebar">
-  <PageDescription
-    >This component exports a NavbarItem for creating navigation menus. This is usually used in conjunction with the <Link
-      href={asComponentHref('AppShell')}>AppSidebar</Link
-    > component</PageDescription
-  >
+  <PageDescription>
+    This component exports a NavbarItem for creating navigation menus. This is usually used in conjunction with the <Link
+      href={asComponentHref('AppShell')}
+    >
+      AppSidebar
+    </Link> component
+  </PageDescription>
   <ComponentExamples
     examples={[
       { title: 'Basic', code: basicExample, component: BasicExample },
