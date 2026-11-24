@@ -53,9 +53,9 @@
           published on <Link href={Constants.Npm.Ui}>npm</Link>.
         </Text>
       </div>
-      <Button size="large" href="/components" color="secondary" shape="round" leadingIcon={mdiCodeBraces}
-        >View components</Button
-      >
+      <Button size="large" href="/components" color="secondary" shape="round" leadingIcon={mdiCodeBraces}>
+        View components
+      </Button>
 
       <img src={imageUrl} alt="Designing a website" />
 
@@ -65,9 +65,9 @@
           Read the Immich Documentation at <Link href={Constants.Sites.Docs} />
         </Text>
       </div>
-      <Button href={Constants.Sites.Docs} target="_blank" color="secondary" shape="round" leadingIcon={mdiOpenInNew}
-        >Open Docs</Button
-      >
+      <Button href={Constants.Sites.Docs} target="_blank" color="secondary" shape="round" leadingIcon={mdiOpenInNew}>
+        Open Docs
+      </Button>
     </VStack>
   </Container>
 

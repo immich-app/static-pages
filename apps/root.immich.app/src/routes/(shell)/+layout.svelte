@@ -122,13 +122,13 @@
 
             <Button href="/roadmap" variant="ghost" color={withActiveColor('/roadmap')}>Roadmap</Button>
 
-            <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Store} color="secondary" variant="ghost"
-              >Merch</Button
-            >
+            <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Store} color="secondary" variant="ghost">
+              Merch
+            </Button>
 
-            <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Docs} color="secondary" variant="ghost"
-              >Docs</Button
-            >
+            <Button trailingIcon={mdiOpenInNew} href={Constants.Sites.Docs} color="secondary" variant="ghost">
+              Docs
+            </Button>
 
             <Button
               leadingIcon={siGithub.path}

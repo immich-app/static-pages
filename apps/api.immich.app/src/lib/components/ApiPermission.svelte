@@ -8,5 +8,7 @@
 
 <span
   class="rounded-lg bg-purple-200 px-2 py-0.5 text-sm text-dark dark:bg-purple-900 dark:text-purple-50"
-  title="The {value} permission">Permission: {value}</span
+  title="The {value} permission"
 >
+  Permission: {value}
+</span>

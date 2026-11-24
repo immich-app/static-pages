@@ -17,14 +17,14 @@
       <div class="grid gap-4 md:grid-cols-2">
         <ProjectCard icon={mdiCameraEnhance} title="EXIF Dataset" href="/projects/exif">
           {#snippet description()}
-            <Text
-              ><Link href="https://en.wikipedia.org/wiki/Exif">EXIF</Link> stands for Exchangeable Image File Format. It is
+            <Text>
+              <Link href="https://en.wikipedia.org/wiki/Exif">EXIF</Link> stands for Exchangeable Image File Format. It is
               a standard that specifies the metadata that can be embedded in image files, especially those captured by digital
-              cameras and smartphones.</Text
-            >
+              cameras and smartphones.
+            </Text>
 
-            <Text
-              >Help us improve this dataset by submitting photos and videos taken from a variety of devices, including
+            <Text>
+              Help us improve this dataset by submitting photos and videos taken from a variety of devices, including
               smartphones, DSLRs, and action cameras, as well as photos with unique features, such as panoramas, burst
               photos, and photo spheres.
             </Text>
@@ -38,12 +38,12 @@
       <div class="grid gap-4 md:grid-cols-2">
         <ProjectCard icon={mdiPaw} title="Pet Dataset">
           {#snippet description()}
-            <Text
-              >Pet recognition models rely on training data to learn how to identify and classify different pets.
+            <Text>
+              Pet recognition models rely on training data to learn how to identify and classify different pets.
             </Text>
-            <Text
-              >Help us create a dataset of pet photos and videos to make it possible to recognize pets in Immich.</Text
-            >
+            <Text>
+              Help us create a dataset of pet photos and videos to make it possible to recognize pets in Immich.
+            </Text>
           {/snippet}
         </ProjectCard>
       </div>

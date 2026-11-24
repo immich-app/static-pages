@@ -55,8 +55,10 @@
         variant={item.variant ?? 'ghost'}
         leadingIcon={(item.icon as { path?: string })?.path ?? (item.icon as string)}
         trailingIcon={isExternalLink(item.href) ? mdiOpenInNew : undefined}
-        color={item.color ?? (isActive(item.href) ? 'primary' : 'secondary')}>{item.title}</Button
+        color={item.color ?? (isActive(item.href) ? 'primary' : 'secondary')}
       >
+        {item.title}
+      </Button>
     {/each}
     <CommandPaletteButton />
     <ThemeSwitcher />

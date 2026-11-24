@@ -87,9 +87,9 @@
       {...restProps}
     />
     {#if trailingText}
-      <Text {size} color="muted" class={trailingTextStyles({ padding: trailingIcon ? 'icon' : 'base' })}
-        >{trailingText}</Text
-      >
+      <Text {size} color="muted" class={trailingTextStyles({ padding: trailingIcon ? 'icon' : 'base' })}>
+        {trailingText}
+      </Text>
     {/if}
 
     <InputIcon icon={trailingIcon} {size} />

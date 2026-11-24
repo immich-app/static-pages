@@ -41,9 +41,9 @@
     <div class="flex justify-between">
       <CardTitle tag="h2">{title}</CardTitle>
       <HStack gap={1}>
-        <Button leadingIcon={mdiEye} disabled={viewMode === 'preview'} onclick={handleToggle} size="small"
-          >Preview</Button
-        >
+        <Button leadingIcon={mdiEye} disabled={viewMode === 'preview'} onclick={handleToggle} size="small">
+          Preview
+        </Button>
         <Button leadingIcon={mdiXml} disabled={viewMode === 'code'} onclick={handleToggle} size="small">Code</Button>
       </HStack>
     </div>

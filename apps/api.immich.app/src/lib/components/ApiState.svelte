@@ -48,5 +48,5 @@
 
 <span class={styles({ state })} title={getTitle(state)}>
   {#if !short}Status:
-  {/if}{state}</span
->
+  {/if}{state}
+</span>

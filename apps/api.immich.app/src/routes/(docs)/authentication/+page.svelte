@@ -27,8 +27,8 @@
 
   <section class="flex flex-col gap-2">
     <Heading tag="h2">Authentication</Heading>
-    <Text
-      >Users or applications can authenticate with the Immich API using one of the values listed below. API keys can
+    <Text>
+      Users or applications can authenticate with the Immich API using one of the values listed below. API keys can
       optionally be created with scoped permissions, while session tokens are tied to a specific user session, and have
       an implied <ApiPermission value="all" /> permission.
     </Text>
@@ -90,10 +90,10 @@
   </section>
 
   <Alert color="success" icon={mdiLightbulbOnOutline} class="mt-4" shape="rectangle">
-    <Text
-      >User-scoped api keys can be created in <Link href="https://my.immich.app/user-settings?isOpen=api-keys"
-        >user settings</Link
-      >
+    <Text>
+      User-scoped api keys can be created in <Link href="https://my.immich.app/user-settings?isOpen=api-keys">
+        user settings
+      </Link>
     </Text>
   </Alert>
 

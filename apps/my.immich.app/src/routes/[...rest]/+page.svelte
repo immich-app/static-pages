@@ -61,8 +61,8 @@
       <Heading size="large" color="primary" tag="h1">My Immich</Heading>
     </SupporterBadge>
     <Text>My Immich allows public links to link you to specific areas of your personal Immich instance.</Text>
-    <Text
-      >For example, if you save <Link href="https://demo.immich.app" /> as your instance URL, navigating to
+    <Text>
+      For example, if you save <Link href="https://demo.immich.app" /> as your instance URL, navigating to
       <Link href="https://my.immich.app/albums" /> will redirect to <Link href="https://demo.immich.app/albums" />.
     </Text>
 

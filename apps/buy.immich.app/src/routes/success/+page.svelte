@@ -85,9 +85,9 @@
     {:else}
       {#if response.status === PurchaseStatus.Pending}
         <Alert title="Pending purchase" color="secondary">
-          <Text
-            >Purchase is still pending, please check your email after a few minutes for the product key. Payment can
-            take up to 48 hours in some cases, depending on payment provider.
+          <Text>
+            Purchase is still pending, please check your email after a few minutes for the product key. Payment can take
+            up to 48 hours in some cases, depending on payment provider.
           </Text>
         </Alert>
       {/if}
@@ -102,13 +102,17 @@
         {#if response.purchaseId}
           {#if data.instanceUrl}
             <Alert title="Success" color="success">
-              <Text
-                >You will now be redirected back to your instance. Click the button below to navigate immediately.</Text
-              >
+              <Text>
+                You will now be redirected back to your instance. Click the button below to navigate immediately.
+              </Text>
               <div class="flex w-full">
-                <Button href={getRedirectUrl(response.purchaseId, data.instanceUrl)} variant="outline" color="secondary"
-                  >Activate your instance</Button
+                <Button
+                  href={getRedirectUrl(response.purchaseId, data.instanceUrl)}
+                  variant="outline"
+                  color="secondary"
                 >
+                  Activate your instance
+                </Button>
               </div>
             </Alert>
           {:else}

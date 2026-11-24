@@ -311,8 +311,9 @@
                 variant="ghost"
                 color="secondary"
                 onclick={() => (config.advanced = !config.advanced)}
-                >{config.advanced ? 'Hide advanced options' : 'Show advanced options'}</Button
               >
+                {config.advanced ? 'Hide advanced options' : 'Show advanced options'}
+              </Button>
             </div>
             <Stack gap={6}>
               <Card color="secondary">
@@ -331,8 +332,10 @@
                             variant={config.version.pinned ? 'ghost' : 'filled'}
                             color={config.version.pinned ? 'secondary' : 'primary'}
                             data-field="version"
-                            onclick={() => (config.version.pinned = false)}>Rolling</Button
+                            onclick={() => (config.version.pinned = false)}
                           >
+                            Rolling
+                          </Button>
 
                           <Button
                             size="small"
@@ -340,8 +343,10 @@
                             variant={config.version.pinned ? 'filled' : 'ghost'}
                             color={config.version.pinned ? 'primary' : 'secondary'}
                             data-field="version"
-                            onclick={() => (config.version.pinned = true)}>Pinned</Button
+                            onclick={() => (config.version.pinned = true)}
                           >
+                            Pinned
+                          </Button>
                         </div>
                         {#if config.version.pinned}
                           <Input
@@ -455,8 +460,9 @@
                         />
                       </Field>
                       {#if config.storage.customFolders}
-                        <Text size="small" color="muted">Leave a field blank to keep it under the upload location.</Text
-                        >
+                        <Text size="small" color="muted">
+                          Leave a field blank to keep it under the upload location.
+                        </Text>
                         {#each FOLDER_OVERRIDES as folder (folder.key)}
                           {@const error = errors[`storage.overrides.${folder.key}`]}
                           <Field label={folder.label} invalid={!!error}>
@@ -472,9 +478,9 @@
 
                       <Stack gap={2}>
                         <Label label="External libraries" size="small" />
-                        <Text size="small" color="muted"
-                          >Existing media, mounted at the same path inside the container.</Text
-                        >
+                        <Text size="small" color="muted">
+                          Existing media, mounted at the same path inside the container.
+                        </Text>
                         {#each config.storage.externalLibraries as library, index (index)}
                           {@const error = errors[`storage.externalLibraries.${index}.path`]}
                           {@const name = library.path.trim() || `row ${index + 1}`}
@@ -573,9 +579,9 @@
                     {#if config.advanced && config.machineLearning.external}
                       <Text size="small" color="muted">
                         Point your server at the remote instance in the admin settings. See the
-                        <Link href="https://docs.immich.app/guides/remote-machine-learning"
-                          >remote machine learning guide</Link
-                        >.
+                        <Link href="https://docs.immich.app/guides/remote-machine-learning">
+                          remote machine learning guide
+                        </Link>.
                       </Text>
                     {/if}
                     {#if !config.machineLearning.external}
@@ -607,9 +613,9 @@
                     {#if config.advanced && config.database.external}
                       <Text size="small" color="muted">
                         The VectorChord extension must be installed. See the
-                        <Link href="https://docs.immich.app/administration/postgres-standalone"
-                          >standalone Postgres guide</Link
-                        >.
+                        <Link href="https://docs.immich.app/administration/postgres-standalone">
+                          standalone Postgres guide
+                        </Link>.
                       </Text>
                       <Field label="Connection URL" invalid={!!errors['database.externalUrl']}>
                         <Input
@@ -739,16 +745,20 @@
                     shape="round"
                     variant={showDiff ? 'ghost' : 'filled'}
                     color={showDiff ? 'secondary' : 'primary'}
-                    onclick={() => (showDiff = false)}>YAML</Button
+                    onclick={() => (showDiff = false)}
                   >
+                    YAML
+                  </Button>
 
                   <Button
                     size="tiny"
                     shape="round"
                     variant={showDiff ? 'filled' : 'ghost'}
                     color={showDiff ? 'primary' : 'secondary'}
-                    onclick={() => (showDiff = true)}>Diff</Button
+                    onclick={() => (showDiff = true)}
                   >
+                    Diff
+                  </Button>
                 </div>
                 <CodeBlock
                   code={showDiff ? composeDiff : compose}
