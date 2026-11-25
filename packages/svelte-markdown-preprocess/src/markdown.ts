@@ -123,7 +123,7 @@ export const markedSvelte = (): MarkedExtension => {
         name: 'alert',
         level: 'block',
         start(src) {
-          return src.match(/^:::/m)?.index;
+          return /^:::/m.exec(src)?.index;
         },
         tokenizer(src) {
           const match = ADMONITION_REGEX.exec(src);
