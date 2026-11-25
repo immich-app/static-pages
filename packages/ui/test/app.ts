@@ -1,9 +1,18 @@
 import { page, userEvent } from 'vitest/browser';
 
 const link = (name: string) => page.getByRole('link', { name, exact: true });
+const combobox = (name: string) => page.getByRole('combobox', { name, exact: true });
+const option = (name: string) => page.getByRole('option', { name, exact: true });
 
 export const createApp = () => ({
   checkbox: (name: string) => page.getByRole('checkbox', { name, exact: true }),
+  switch: (name: string) => page.getByRole('switch', { name, exact: true }),
+  combobox,
+  option,
+  selectOption: async (label: string, name: string) => {
+    await combobox(label).click();
+    await option(name).click();
+  },
   radio: (name: string) => page.getByRole('radio', { name, exact: true }),
   image: (name: string) => page.getByRole('img', { name, exact: true }),
   link,
