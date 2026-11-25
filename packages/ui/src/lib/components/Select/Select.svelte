@@ -4,11 +4,14 @@
 
   let { onChange, onSelect, value = $bindable(), ...restProps }: SelectProps<T> = $props();
 
-  let values = $derived(value === null || value === undefined ? [] : [value]);
+  const getValues = () => (value === null || value === undefined ? [] : [value]);
+
+  const setValues = (values: T[]) => {
+    value = values[0];
+  };
 
   const handleChange = (values: T[]) => {
-    value = values[0];
-    onChange?.(value);
+    onChange?.(values[0]);
   };
 
   const handleSelect = (items: SelectOption<T>[]) => {
@@ -16,4 +19,4 @@
   };
 </script>
 
-<InternalSelect bind:values onChange={handleChange} onSelect={handleSelect} {...restProps} />
+<InternalSelect bind:values={getValues, setValues} onChange={handleChange} onSelect={handleSelect} {...restProps} />

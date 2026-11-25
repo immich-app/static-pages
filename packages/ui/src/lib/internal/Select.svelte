@@ -57,7 +57,7 @@
 
   let open = $state(false);
   let triggerRef = $state<HTMLButtonElement | null>(null);
-  let internalValue = $derived(multiple ? values : (values[0] ?? ''));
+  const getInternalValue = () => (multiple ? values : (values[0] ?? '')) as never;
   const selectedLabel = $derived(asLabel(valuesToOptions(values)));
 
   const id = generateId();
@@ -147,14 +147,11 @@
     },
   });
 
-  const onValueChange = (newValues: string[] | string) => {
-    values = (Array.isArray(newValues) ? newValues : [newValues]) as T[];
-    const items = values
-      .map((value) => findOption(value))
-      .filter((item): item is SelectOption<T> => item !== undefined);
-
-    onChange?.(values);
-    onItemChange?.(items);
+  const setInternalValue = (newValues: never) => {
+    const nextValues = [newValues].flat() as T[];
+    values = nextValues;
+    onChange?.(nextValues);
+    onItemChange?.(valuesToOptions(nextValues));
   };
 </script>
 
@@ -182,10 +179,9 @@
 
   <Select.Root
     type={multiple ? 'multiple' : 'single'}
-    bind:value={internalValue as never}
+    bind:value={getInternalValue, setInternalValue}
     bind:open
     items={options.map(({ value, label, disabled }) => ({ value, label: label ?? value, disabled }))}
-    {onValueChange}
   >
     <Tooltip text={title}>
       {#snippet child({ props })}
