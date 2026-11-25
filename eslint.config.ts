@@ -119,6 +119,7 @@ export default defineConfig([
       'unicorn/prefer-simple-condition-first': 'off',
       'unicorn/prefer-ternary': 'off',
       'unicorn/prefer-combined-guards': 'off',
+      'unicorn/prefer-options-parameter': 'off',
       // prefer the typescript-eslint type-aware version
       'unicorn/require-array-sort-compare': 'off',
       'unicorn/class-reference-in-static-methods': ['error', { preferThis: false, preferSuper: false }],
