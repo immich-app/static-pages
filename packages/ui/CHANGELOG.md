@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.95.1](https://github.com/immich-app/static-pages/compare/ui-v0.95.0...ui-v0.95.1) (2026-11-25)
+
+
+### Bug Fixes
+
+* **ui:** controlled select ([#1023](https://github.com/immich-app/static-pages/issues/1023)) ([ba71163](https://github.com/immich-app/static-pages/commit/ba71163aa1110c89fa8a90763909254a0d042db8))
+
 ## [0.95.0](https://github.com/immich-app/static-pages/compare/ui-v0.94.0...ui-v0.95.0) (2026-11-24)
 
 
