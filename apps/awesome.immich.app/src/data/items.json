@@ -398,7 +398,8 @@
         "title": "Backuparr",
         "description": "Scheduled, encrypted backups of Immich's database, alongside 26 other self-hosted apps, to local storage, Google Drive, OneDrive or Dropbox, with restores from its web UI. Uses only the Immich API: Immich makes the dump, Backuparr downloads it and then deletes it. Photos and videos aren't included.",
         "websiteUrl": "https://backuparr.com/",
-        "sourceCodeUrl": "https://github.com/rsaturns/backuparr"
+        "sourceCodeUrl": "https://github.com/rsaturns/backuparr",
+        "tags": ["Vibe-Coded"]
       }
     ]
   },
