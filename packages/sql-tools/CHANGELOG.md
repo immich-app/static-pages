@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.8.0](https://github.com/immich-app/static-pages/compare/sql-tools-v0.7.1...sql-tools-v0.8.0) (2026-11-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* **npm:** update dependency postgres to v4 ([#954](https://github.com/immich-app/static-pages/issues/954))
+
+### Features
+
+* **npm:** update dependency postgres to v4 ([#954](https://github.com/immich-app/static-pages/issues/954)) ([26bbe14](https://github.com/immich-app/static-pages/commit/26bbe147d9697ced0966e42dc979780624485910))
+
 ## [0.7.1](https://github.com/immich-app/static-pages/compare/sql-tools-v0.7.0...sql-tools-v0.7.1) (2026-11-25)
 
 
